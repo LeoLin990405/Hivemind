@@ -1,28 +1,119 @@
-# 单轮次优化 Claude Code Bridge (CCB)
+# CCB - Claude Code Bridge (Optimized Fork)
 
-> Optimized fork based on **bfly123/claude_code_bridge**. Thanks to the original author and community.
+> **An optimized fork of [bfly123/claude_code_bridge](https://github.com/bfly123/claude_code_bridge)**
+>
+> Special thanks to the original author **bfly123** and the community for creating this amazing multi-AI collaboration framework.
 
 **English** | [中文说明](README_zh.md)
 
-## What this fork focuses on
-This version is built for a *single‑round, on‑demand* workflow: Claude acts as the main brain, and CCB opens/controls other CLIs only when needed, then closes them automatically. The goal is higher reliability with less manual pane management.
+---
 
-## Key optimizations (high‑impact)
-- **Sidecar auto‑open/close**: when you call `ask <provider>`, the pane opens on demand and closes after completion.
-- **WezTerm anchor override**: explicit pane targeting to avoid “no split / wrong window” issues.
-- **Unified CLI delay**: consistent send delay across providers via `CCB_CLI_READY_WAIT_S`.
-- **Gemini startup gating**: extra readiness checks to avoid “send before ready”.
-- **DeepSeek reliability**: quick/headless mode to ensure Claude receives replies; optional sidecar preview window.
-- **OpenCode stability**: wait for session file + minimum open time to prevent instant close.
-- **Unified commands**: `ask/ping/pend` for all providers, including DeepSeek.
+## About This Fork
 
-## Quick start
-1. Install dependencies (WezTerm + provider CLIs)
-2. Set environment variables (example below)
-3. Run `claude`, then `ask gemini|opencode|deepseek ...`
+This repository is a **collaborative optimization project** by:
+- **Leo** ([@LeoLin990405](https://github.com/LeoLin990405)) - Project lead & integration
+- **Claude** (Anthropic Claude Opus 4.5) - Architecture design & code optimization
+- **Codex** (OpenAI GPT-5.2 Codex) - Script development & debugging
 
-### Example env (zsh)
+We focused on improving **reliability**, **stability**, and **ease of use** for single-round, on-demand AI collaboration workflows.
+
+---
+
+## Key Optimizations & Changes
+
+### 1. Extended Provider Support
+| Provider | Original | This Fork |
+|----------|----------|-----------|
+| Claude | ✓ | ✓ |
+| Codex | ✓ | ✓ |
+| Gemini | ✓ | ✓ (enhanced) |
+| OpenCode | ✓ | ✓ (enhanced) |
+| iFlow | ✗ | ✓ **NEW** |
+| Kimi | ✗ | ✓ **NEW** |
+| Qwen | ✗ | ✓ **NEW** |
+| DeepSeek | ✗ | ✓ **NEW** |
+| Grok | ✗ | ✓ **NEW** |
+
+### 2. Sidecar Auto-Management
+- **Auto-open**: Panes open on-demand when you call `ask <provider>`
+- **Auto-close**: Panes close automatically after task completion
+- **Configurable timing**: `*_MIN_OPEN_S` variables control minimum open duration
+
+### 3. WezTerm Integration Improvements
+- **Explicit pane targeting**: Avoids "no split / wrong window" issues
+- **Anchor override**: Reliable pane positioning with `CCB_SIDECAR_DIRECTION`
+- **Border scripts**: Visual feedback for active AI sessions
+
+### 4. Provider-Specific Stability Fixes
+
+#### Gemini
+- Extra readiness checks to prevent "send before ready" errors
+- Improved startup gating with configurable delays
+
+#### OpenCode
+- Session file wait mechanism (`CCB_OASKD_SESSION_WAIT_S`)
+- Minimum open time to prevent instant close
+
+#### DeepSeek
+- Quick/headless mode for reliable replies (`CCB_DSKASKD_QUICK_MODE`)
+- Optional sidecar preview window
+- Force sidecar option for debugging
+
+#### Kimi / Qwen / iFlow
+- Full command set: `*ask`, `*ping`, `*pend`
+- Consistent behavior with other providers
+
+### 5. Unified Command Interface
+All providers now support the same command pattern:
 ```bash
+# Ask a question (background, non-blocking)
+<provider>ask "your question"
+
+# Check connectivity
+<provider>ping
+
+# Get pending reply (explicit request only)
+<provider>pend
+```
+
+### 6. Configuration Improvements
+- Unified CLI delay via `CCB_CLI_READY_WAIT_S`
+- Per-provider environment variables for fine-tuning
+- Centralized config in `~/.ccb/ccb.config`
+
+### 7. CLAUDE.md Integration
+- Pre-configured collaboration rules for all providers
+- Command map with prefixes and shortcuts
+- Fast-path dispatch for minimal latency
+
+---
+
+## Quick Start
+
+### Prerequisites
+- [WezTerm](https://wezfurlong.org/wezterm/) (recommended) or tmux
+- Provider CLIs installed:
+  - `claude` (Anthropic)
+  - `codex` (OpenAI)
+  - `gemini` (Google)
+  - `opencode` (OpenCode CLI)
+  - `deepseek` (DeepSeek CLI)
+  - Others as needed
+
+### Installation
+```bash
+# Clone this repository
+git clone https://github.com/LeoLin990405/-Claude-Code-Bridge.git ~/.local/share/codex-dual
+
+# Run installer
+cd ~/.local/share/codex-dual
+./install.sh
+```
+
+### Environment Variables (Example)
+Add to your `~/.zshrc` or `~/.bashrc`:
+```bash
+# CCB Core
 export CCB_SIDECAR_AUTOSTART=1
 export CCB_SIDECAR_DIRECTION=right
 export CCB_CLI_READY_WAIT_S=20
@@ -32,23 +123,111 @@ export CCB_DSKASKD_QUICK_MODE=1
 export CCB_DSKASKD_ALLOW_NO_SESSION=1
 export CCB_DSKASKD_FORCE_SIDECAR=1
 export CCB_DSKASKD_SIDECAR_MIN_OPEN_S=5
-export DEEPSEEK_BIN=/Users/leo/.npm-global/bin/deepseek
+export DEEPSEEK_BIN=/path/to/deepseek
 
 # OpenCode sidecar stability
 export CCB_OASKD_SESSION_WAIT_S=12
 export CCB_OASKD_SIDECAR_MIN_OPEN_S=5
+
+# Gemini
+export CCB_GASKD_READY_WAIT_S=15
 ```
+
+---
 
 ## Usage
+
+### From Claude Code
 ```bash
-ask gemini "测试联网"
-ask opencode "测试联网"
-ask deepseek "测试联网"
+# Using prefixes
+@codex review this code
+@gemini search for latest React docs
+@deepseek 分析这个算法
+
+# Using ask command
+ask codex "explain this function"
+ask gemini "what is the weather today"
 ```
 
-## Notes
-- If you **really want DeepSeek TUI**, set `CCB_DSKASKD_QUICK_MODE=0` (less stable).
-- Sidecar auto‑close is driven by the request lifecycle; adjust `*_MIN_OPEN_S` if you want the pane to stay longer.
+### Direct Commands
+```bash
+# Ask questions
+cask "review this code"
+gask "search for documentation"
+dskask "分析代码"
+
+# Check connectivity
+cping
+gping
+dskping
+
+# Get pending replies (when explicitly needed)
+cpend
+gpend
+dskpend
+```
+
+---
+
+## File Structure
+```
+~/.local/share/codex-dual/
+├── bin/           # 45 command scripts (ask/ping/pend for each provider)
+├── lib/           # 57 library scripts
+├── config/        # Configuration templates
+├── skills/        # Claude Code skills
+├── codex_skills/  # Codex skills
+├── commands/      # Custom commands
+├── ccb            # Main CCB binary
+└── install.sh     # Installer script
+```
+
+---
+
+## Troubleshooting
+
+### Provider not responding
+1. Check connectivity: `<provider>ping`
+2. Verify CLI is installed and authenticated
+3. Check environment variables are set
+
+### Sidecar not opening
+1. Ensure WezTerm is running
+2. Check `CCB_SIDECAR_AUTOSTART=1`
+3. Verify `CCB_SIDECAR_DIRECTION` is set
+
+### DeepSeek TUI mode issues
+Set `CCB_DSKASKD_QUICK_MODE=0` for TUI mode (less stable but interactive)
+
+---
 
 ## Acknowledgements
-This repository is an optimized fork of **bfly123/claude_code_bridge**. All credit to the original author and community.
+
+This project would not be possible without:
+
+- **[bfly123](https://github.com/bfly123)** - Original author of claude_code_bridge. Thank you for creating this innovative multi-AI collaboration framework!
+- **The claude_code_bridge community** - For feedback and contributions
+- **Anthropic** - For Claude and Claude Code
+- **OpenAI** - For Codex
+- **Google** - For Gemini
+- **DeepSeek, Kimi, Qwen, iFlow teams** - For their excellent AI assistants
+
+---
+
+## License
+
+MIT License - See [LICENSE](LICENSE) for details.
+
+---
+
+## Contributing
+
+Issues and PRs are welcome! Please feel free to:
+- Report bugs
+- Suggest new features
+- Add support for more providers
+- Improve documentation
+
+---
+
+*Built with ❤️ by Leo, Claude, and Codex*
