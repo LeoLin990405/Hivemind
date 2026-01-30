@@ -341,17 +341,21 @@ class PerformanceTracker:
                 for row in cursor.fetchall()
             ]
 
-    def cleanup_old_metrics(self, retention_days: int = 30) -> int:
+    def cleanup_old_metrics(self, retention_days: int = 30, hours: int = None) -> int:
         """
         Remove metrics older than retention period.
 
         Args:
-            retention_days: Number of days to retain
+            retention_days: Number of days to retain (default: 30)
+            hours: Alternative: number of hours to retain (overrides retention_days)
 
         Returns:
             Number of metrics deleted
         """
-        cutoff = time.time() - (retention_days * 24 * 3600)
+        if hours is not None:
+            cutoff = time.time() - (hours * 3600)
+        else:
+            cutoff = time.time() - (retention_days * 24 * 3600)
 
         with self._get_connection() as conn:
             cursor = conn.execute(
