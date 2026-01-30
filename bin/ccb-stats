@@ -1,0 +1,374 @@
+#!/usr/bin/env python3
+"""
+ccb-stats - Performance statistics CLI for CCB
+
+Displays provider performance metrics including latency, success rates,
+and token usage.
+
+Usage:
+    ccb stats                    # Show all provider statistics
+    ccb stats --provider claude  # Show specific provider stats
+    ccb stats --hours 24         # Specify time window
+    ccb stats --export csv       # Export data to CSV
+    ccb stats --recent           # Show recent metrics
+    ccb stats --summary          # Show summary only
+"""
+from __future__ import annotations
+
+import sys
+import argparse
+import csv
+import json
+from pathlib import Path
+from datetime import datetime
+from typing import Optional
+
+# Add lib to path
+script_dir = Path(__file__).resolve().parent.parent
+sys.path.insert(0, str(script_dir / "lib"))
+
+from performance_tracker import PerformanceTracker, ProviderStats
+
+
+def format_timestamp(ts: float) -> str:
+    """Format timestamp for display."""
+    return datetime.fromtimestamp(ts).strftime("%Y-%m-%d %H:%M:%S")
+
+
+def format_latency(ms: float) -> str:
+    """Format latency for display."""
+    if ms < 1000:
+        return f"{ms:.0f}ms"
+    return f"{ms/1000:.2f}s"
+
+
+def format_rate(rate: float) -> str:
+    """Format rate as percentage."""
+    return f"{rate*100:.1f}%"
+
+
+def cmd_stats(args: argparse.Namespace) -> int:
+    """Show provider statistics."""
+    tracker = PerformanceTracker()
+
+    if args.provider:
+        # Single provider stats
+        stats = tracker.get_provider_stats(args.provider, args.hours)
+        if not stats:
+            print(f"No data for provider '{args.provider}' in the last {args.hours} hours")
+            return 1
+
+        print_provider_stats(stats)
+    else:
+        # All providers
+        all_stats = tracker.get_all_stats(args.hours)
+        if not all_stats:
+            print(f"No performance data in the last {args.hours} hours")
+            return 0
+
+        print_all_stats(all_stats, args.hours)
+
+    return 0
+
+
+def print_provider_stats(stats: ProviderStats) -> None:
+    """Print detailed stats for a single provider."""
+    print("=" * 60)
+    print(f"Provider: {stats.provider}")
+    print(f"Period: Last {stats.period_hours} hours")
+    print("=" * 60)
+    print()
+    print("Request Statistics:")
+    print(f"  Total Requests:    {stats.total_requests}")
+    print(f"  Successful:        {stats.successful_requests}")
+    print(f"  Failed:            {stats.failed_requests}")
+    print(f"  Success Rate:      {format_rate(stats.success_rate)}")
+    print()
+    print("Latency Statistics:")
+    print(f"  Average:           {format_latency(stats.avg_latency_ms)}")
+    print(f"  Minimum:           {format_latency(stats.min_latency_ms)}")
+    print(f"  Maximum:           {format_latency(stats.max_latency_ms)}")
+    print(f"  P50 (Median):      {format_latency(stats.p50_latency_ms)}")
+    print(f"  P95:               {format_latency(stats.p95_latency_ms)}")
+    print()
+    print("Token Usage:")
+    print(f"  Total Tokens:      {stats.total_tokens:,}")
+    print("=" * 60)
+
+
+def print_all_stats(all_stats: list[ProviderStats], hours: int) -> None:
+    """Print summary table for all providers."""
+    print("=" * 90)
+    print(f"Provider Performance Statistics (Last {hours} hours)")
+    print("=" * 90)
+    print(f"{'Provider':<12} {'Requests':>10} {'Success':>10} {'Avg Lat':>10} {'P95 Lat':>10} {'Tokens':>12}")
+    print("-" * 90)
+
+    for stats in all_stats:
+        print(
+            f"{stats.provider:<12} "
+            f"{stats.total_requests:>10} "
+            f"{format_rate(stats.success_rate):>10} "
+            f"{format_latency(stats.avg_latency_ms):>10} "
+            f"{format_latency(stats.p95_latency_ms):>10} "
+            f"{stats.total_tokens:>12,}"
+        )
+
+    print("-" * 90)
+
+    # Totals
+    total_requests = sum(s.total_requests for s in all_stats)
+    total_successful = sum(s.successful_requests for s in all_stats)
+    total_tokens = sum(s.total_tokens for s in all_stats)
+    overall_rate = total_successful / total_requests if total_requests > 0 else 0.0
+
+    print(
+        f"{'TOTAL':<12} "
+        f"{total_requests:>10} "
+        f"{format_rate(overall_rate):>10} "
+        f"{'-':>10} "
+        f"{'-':>10} "
+        f"{total_tokens:>12,}"
+    )
+    print("=" * 90)
+
+
+def cmd_recent(args: argparse.Namespace) -> int:
+    """Show recent metrics."""
+    tracker = PerformanceTracker()
+    metrics = tracker.get_recent_metrics(
+        provider=args.provider,
+        limit=args.limit,
+        hours=args.hours if args.hours != 24 else None,
+    )
+
+    if not metrics:
+        print("No recent metrics found")
+        return 0
+
+    print("=" * 100)
+    print("Recent Performance Metrics")
+    print("=" * 100)
+    print(f"{'Timestamp':<20} {'Provider':<12} {'Latency':>10} {'Status':>10} {'Tokens':>10} {'Task ID':<10}")
+    print("-" * 100)
+
+    for m in metrics:
+        status = "OK" if m.success else "FAIL"
+        tokens = str(m.token_count) if m.token_count else "-"
+        task_id = m.task_id[:8] if m.task_id else "-"
+
+        print(
+            f"{format_timestamp(m.timestamp):<20} "
+            f"{m.provider:<12} "
+            f"{format_latency(m.latency_ms):>10} "
+            f"{status:>10} "
+            f"{tokens:>10} "
+            f"{task_id:<10}"
+        )
+
+    print("=" * 100)
+    return 0
+
+
+def cmd_summary(args: argparse.Namespace) -> int:
+    """Show summary statistics."""
+    tracker = PerformanceTracker()
+    summary = tracker.get_summary(args.hours)
+
+    if summary["total_requests"] == 0:
+        print(f"No performance data in the last {args.hours} hours")
+        return 0
+
+    print("=" * 50)
+    print(f"Performance Summary (Last {args.hours} hours)")
+    print("=" * 50)
+    print(f"Total Requests:      {summary['total_requests']:,}")
+    print(f"Successful:          {summary['total_successful']:,}")
+    print(f"Failed:              {summary['total_failed']:,}")
+    print(f"Success Rate:        {format_rate(summary['overall_success_rate'])}")
+    print(f"Total Tokens:        {summary['total_tokens']:,}")
+    print(f"Active Providers:    {summary['provider_count']}")
+    print(f"Best Provider:       {summary['best_provider'] or 'N/A'}")
+    print("=" * 50)
+    return 0
+
+
+def cmd_export(args: argparse.Namespace) -> int:
+    """Export statistics to file."""
+    tracker = PerformanceTracker()
+
+    if args.format == "csv":
+        return export_csv(tracker, args)
+    elif args.format == "json":
+        return export_json(tracker, args)
+    else:
+        print(f"Unknown export format: {args.format}", file=sys.stderr)
+        return 1
+
+
+def export_csv(tracker: PerformanceTracker, args: argparse.Namespace) -> int:
+    """Export to CSV format."""
+    all_stats = tracker.get_all_stats(args.hours)
+
+    output = args.output or sys.stdout
+    if isinstance(output, str):
+        output = open(output, 'w', newline='')
+
+    writer = csv.writer(output)
+    writer.writerow([
+        "provider", "total_requests", "successful_requests", "failed_requests",
+        "success_rate", "avg_latency_ms", "min_latency_ms", "max_latency_ms",
+        "p50_latency_ms", "p95_latency_ms", "total_tokens", "period_hours"
+    ])
+
+    for stats in all_stats:
+        writer.writerow([
+            stats.provider,
+            stats.total_requests,
+            stats.successful_requests,
+            stats.failed_requests,
+            f"{stats.success_rate:.4f}",
+            f"{stats.avg_latency_ms:.2f}",
+            f"{stats.min_latency_ms:.2f}",
+            f"{stats.max_latency_ms:.2f}",
+            f"{stats.p50_latency_ms:.2f}",
+            f"{stats.p95_latency_ms:.2f}",
+            stats.total_tokens,
+            stats.period_hours,
+        ])
+
+    if args.output:
+        output.close()
+        print(f"Exported to {args.output}")
+
+    return 0
+
+
+def export_json(tracker: PerformanceTracker, args: argparse.Namespace) -> int:
+    """Export to JSON format."""
+    summary = tracker.get_summary(args.hours)
+
+    output = args.output or sys.stdout
+    if isinstance(output, str):
+        with open(output, 'w') as f:
+            json.dump(summary, f, indent=2)
+        print(f"Exported to {args.output}")
+    else:
+        json.dump(summary, output, indent=2)
+        print()
+
+    return 0
+
+
+def cmd_cleanup(args: argparse.Namespace) -> int:
+    """Cleanup old metrics."""
+    tracker = PerformanceTracker()
+    deleted = tracker.cleanup_old_metrics(args.days)
+    print(f"Deleted {deleted} metrics older than {args.days} days")
+    return 0
+
+
+def cmd_best(args: argparse.Namespace) -> int:
+    """Show best performing provider."""
+    tracker = PerformanceTracker()
+    best = tracker.get_best_provider(hours=args.hours, min_requests=args.min_requests)
+
+    if best:
+        print(f"Best provider: {best}")
+        stats = tracker.get_provider_stats(best, args.hours)
+        if stats:
+            print(f"  Success rate: {format_rate(stats.success_rate)}")
+            print(f"  Avg latency:  {format_latency(stats.avg_latency_ms)}")
+    else:
+        print("Insufficient data to determine best provider")
+        return 1
+
+    return 0
+
+
+def main() -> int:
+    parser = argparse.ArgumentParser(
+        prog="ccb-stats",
+        description="Performance statistics CLI for CCB",
+    )
+
+    parser.add_argument(
+        "-p", "--provider",
+        help="Filter by specific provider",
+    )
+    parser.add_argument(
+        "-H", "--hours",
+        type=int,
+        default=24,
+        help="Time window in hours (default: 24)",
+    )
+
+    # Subcommands via flags
+    parser.add_argument(
+        "--recent",
+        action="store_true",
+        help="Show recent metrics",
+    )
+    parser.add_argument(
+        "--summary",
+        action="store_true",
+        help="Show summary only",
+    )
+    parser.add_argument(
+        "--best",
+        action="store_true",
+        help="Show best performing provider",
+    )
+    parser.add_argument(
+        "--export",
+        choices=["csv", "json"],
+        metavar="FORMAT",
+        help="Export data (csv or json)",
+    )
+    parser.add_argument(
+        "-o", "--output",
+        help="Output file for export",
+    )
+    parser.add_argument(
+        "--cleanup",
+        action="store_true",
+        help="Cleanup old metrics",
+    )
+    parser.add_argument(
+        "--days",
+        type=int,
+        default=30,
+        help="Retention days for cleanup (default: 30)",
+    )
+    parser.add_argument(
+        "-l", "--limit",
+        type=int,
+        default=20,
+        help="Limit for recent metrics (default: 20)",
+    )
+    parser.add_argument(
+        "--min-requests",
+        type=int,
+        default=5,
+        help="Minimum requests for best provider (default: 5)",
+    )
+
+    args = parser.parse_args()
+    args.format = args.export  # Alias for export command
+
+    if args.recent:
+        return cmd_recent(args)
+    elif args.summary:
+        return cmd_summary(args)
+    elif args.best:
+        return cmd_best(args)
+    elif args.export:
+        return cmd_export(args)
+    elif args.cleanup:
+        return cmd_cleanup(args)
+    else:
+        return cmd_stats(args)
+
+
+if __name__ == "__main__":
+    sys.exit(main())

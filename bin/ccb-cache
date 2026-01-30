@@ -1,0 +1,216 @@
+#!/usr/bin/env python3
+"""
+ccb-cache - Response cache management CLI for CCB
+
+Manages the response cache for AI providers.
+
+Usage:
+    ccb cache stats              # Show cache statistics
+    ccb cache list               # List cached entries
+    ccb cache clear              # Clear all cache
+    ccb cache clear --provider X # Clear cache for specific provider
+    ccb cache cleanup            # Remove expired entries
+"""
+from __future__ import annotations
+
+import sys
+import argparse
+from pathlib import Path
+from datetime import datetime
+from typing import Optional
+
+# Add lib to path
+script_dir = Path(__file__).resolve().parent.parent
+sys.path.insert(0, str(script_dir / "lib"))
+
+from response_cache import ResponseCache
+
+
+def format_timestamp(ts: float) -> str:
+    """Format timestamp for display."""
+    return datetime.fromtimestamp(ts).strftime("%Y-%m-%d %H:%M:%S")
+
+
+def format_size(bytes_size: int) -> str:
+    """Format size in human-readable format."""
+    if bytes_size < 1024:
+        return f"{bytes_size} B"
+    elif bytes_size < 1024 * 1024:
+        return f"{bytes_size / 1024:.1f} KB"
+    else:
+        return f"{bytes_size / (1024 * 1024):.1f} MB"
+
+
+def cmd_stats(args: argparse.Namespace) -> int:
+    """Show cache statistics."""
+    cache = ResponseCache()
+    stats = cache.get_stats()
+
+    print("=" * 50)
+    print("Response Cache Statistics")
+    print("=" * 50)
+    print(f"Total Entries:    {stats.total_entries}")
+    print(f"Cache Size:       {format_size(stats.size_bytes)}")
+    print(f"Total Hits:       {stats.total_hits}")
+    print(f"Total Misses:     {stats.total_misses}")
+    print(f"Hit Rate:         {stats.hit_rate*100:.1f}%")
+    if stats.oldest_entry:
+        print(f"Oldest Entry:     {format_timestamp(stats.oldest_entry)}")
+    if stats.newest_entry:
+        print(f"Newest Entry:     {format_timestamp(stats.newest_entry)}")
+    print("=" * 50)
+    return 0
+
+
+def cmd_list(args: argparse.Namespace) -> int:
+    """List cache entries."""
+    cache = ResponseCache()
+    entries = cache.list_entries(
+        provider=args.provider,
+        limit=args.limit,
+        include_expired=args.expired,
+    )
+
+    if not entries:
+        print("No cache entries found")
+        return 0
+
+    print("=" * 100)
+    print("Cached Responses")
+    print("=" * 100)
+    print(f"{'Provider':<12} {'Hits':>6} {'Created':<20} {'Expires':<20} {'Response Preview'}")
+    print("-" * 100)
+
+    for entry in entries:
+        # Truncate response for preview
+        preview = entry.response[:40].replace("\n", " ")
+        if len(entry.response) > 40:
+            preview += "..."
+
+        print(
+            f"{entry.provider:<12} "
+            f"{entry.hit_count:>6} "
+            f"{format_timestamp(entry.created_at):<20} "
+            f"{format_timestamp(entry.expires_at):<20} "
+            f"{preview}"
+        )
+
+    print("=" * 100)
+    print(f"Total: {len(entries)} entries")
+    return 0
+
+
+def cmd_clear(args: argparse.Namespace) -> int:
+    """Clear cache entries."""
+    cache = ResponseCache()
+
+    if args.provider:
+        count = cache.invalidate(provider=args.provider)
+        print(f"Cleared {count} cache entries for provider '{args.provider}'")
+    elif args.pattern:
+        count = cache.invalidate(pattern=args.pattern)
+        print(f"Cleared {count} cache entries matching '{args.pattern}'")
+    else:
+        count = cache.clear()
+        print(f"Cleared all {count} cache entries")
+
+    return 0
+
+
+def cmd_cleanup(args: argparse.Namespace) -> int:
+    """Remove expired cache entries."""
+    cache = ResponseCache()
+    count = cache.cleanup_expired()
+    print(f"Removed {count} expired cache entries")
+    return 0
+
+
+def cmd_get(args: argparse.Namespace) -> int:
+    """Get a specific cache entry."""
+    cache = ResponseCache()
+    entry = cache.get_entry(args.key)
+
+    if not entry:
+        print(f"Cache entry not found: {args.key}")
+        return 1
+
+    print("=" * 60)
+    print(f"Cache Entry: {entry.key}")
+    print("=" * 60)
+    print(f"Provider:    {entry.provider}")
+    print(f"Created:     {format_timestamp(entry.created_at)}")
+    print(f"Expires:     {format_timestamp(entry.expires_at)}")
+    print(f"Hit Count:   {entry.hit_count}")
+    print("-" * 60)
+    print("Response:")
+    print(entry.response)
+    print("=" * 60)
+    return 0
+
+
+def main() -> int:
+    parser = argparse.ArgumentParser(
+        prog="ccb-cache",
+        description="Response cache management CLI for CCB",
+    )
+
+    subparsers = parser.add_subparsers(dest="command", help="Cache commands")
+
+    # stats command
+    subparsers.add_parser("stats", help="Show cache statistics")
+
+    # list command
+    list_parser = subparsers.add_parser("list", help="List cached entries")
+    list_parser.add_argument(
+        "-p", "--provider",
+        help="Filter by provider",
+    )
+    list_parser.add_argument(
+        "-l", "--limit",
+        type=int,
+        default=20,
+        help="Maximum entries to show (default: 20)",
+    )
+    list_parser.add_argument(
+        "--expired",
+        action="store_true",
+        help="Include expired entries",
+    )
+
+    # clear command
+    clear_parser = subparsers.add_parser("clear", help="Clear cache entries")
+    clear_parser.add_argument(
+        "-p", "--provider",
+        help="Clear only entries for specific provider",
+    )
+    clear_parser.add_argument(
+        "--pattern",
+        help="Clear entries matching message pattern",
+    )
+
+    # cleanup command
+    subparsers.add_parser("cleanup", help="Remove expired entries")
+
+    # get command
+    get_parser = subparsers.add_parser("get", help="Get specific cache entry")
+    get_parser.add_argument("key", help="Cache key to retrieve")
+
+    args = parser.parse_args()
+
+    if args.command == "stats" or args.command is None:
+        return cmd_stats(args)
+    elif args.command == "list":
+        return cmd_list(args)
+    elif args.command == "clear":
+        return cmd_clear(args)
+    elif args.command == "cleanup":
+        return cmd_cleanup(args)
+    elif args.command == "get":
+        return cmd_get(args)
+    else:
+        parser.print_help()
+        return 0
+
+
+if __name__ == "__main__":
+    sys.exit(main())

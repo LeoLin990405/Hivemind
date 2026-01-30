@@ -1,0 +1,496 @@
+"""
+Web UI Server for CCB Dashboard
+
+Provides a web-based dashboard for monitoring and managing CCB.
+Uses FastAPI with HTMX for a lightweight, responsive interface.
+"""
+from __future__ import annotations
+
+import sys
+from pathlib import Path
+from datetime import datetime
+from typing import Optional
+
+# Add lib to path
+script_dir = Path(__file__).resolve().parent
+sys.path.insert(0, str(script_dir))
+
+try:
+    from fastapi import FastAPI, Request, HTTPException
+    from fastapi.responses import HTMLResponse, JSONResponse
+    from fastapi.staticfiles import StaticFiles
+    HAS_FASTAPI = True
+except ImportError:
+    HAS_FASTAPI = False
+
+from performance_tracker import PerformanceTracker
+from response_cache import ResponseCache
+from task_tracker import TaskTracker, TaskStatus
+
+
+def check_dependencies():
+    """Check if required dependencies are installed."""
+    if not HAS_FASTAPI:
+        print("Error: FastAPI is not installed.")
+        print("Install with: pip install fastapi uvicorn jinja2")
+        return False
+    return True
+
+
+# HTML Templates (embedded for simplicity)
+BASE_TEMPLATE = """
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CCB Dashboard</title>
+    <script src="https://unpkg.com/htmx.org@1.9.10"></script>
+    <style>
+        :root {{
+            --bg-primary: #1a1a2e;
+            --bg-secondary: #16213e;
+            --bg-card: #0f3460;
+            --text-primary: #eee;
+            --text-secondary: #aaa;
+            --accent: #e94560;
+            --success: #4ade80;
+            --warning: #fbbf24;
+            --error: #ef4444;
+        }}
+        * {{ box-sizing: border-box; margin: 0; padding: 0; }}
+        body {{
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            min-height: 100vh;
+        }}
+        .container {{ max-width: 1200px; margin: 0 auto; padding: 20px; }}
+        header {{
+            background: var(--bg-secondary);
+            padding: 15px 20px;
+            border-bottom: 2px solid var(--accent);
+        }}
+        header h1 {{ font-size: 1.5rem; }}
+        nav {{ margin-top: 10px; }}
+        nav a {{
+            color: var(--text-secondary);
+            text-decoration: none;
+            margin-right: 20px;
+            padding: 5px 10px;
+            border-radius: 4px;
+        }}
+        nav a:hover, nav a.active {{
+            color: var(--text-primary);
+            background: var(--bg-card);
+        }}
+        .card {{
+            background: var(--bg-card);
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }}
+        .card h2 {{ margin-bottom: 15px; font-size: 1.2rem; }}
+        .grid {{ display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; }}
+        .stat {{
+            text-align: center;
+            padding: 15px;
+        }}
+        .stat-value {{ font-size: 2rem; font-weight: bold; color: var(--accent); }}
+        .stat-label {{ color: var(--text-secondary); font-size: 0.9rem; }}
+        table {{ width: 100%; border-collapse: collapse; }}
+        th, td {{ padding: 12px; text-align: left; border-bottom: 1px solid var(--bg-secondary); }}
+        th {{ color: var(--text-secondary); font-weight: 500; }}
+        .status-ok {{ color: var(--success); }}
+        .status-fail {{ color: var(--error); }}
+        .status-pending {{ color: var(--warning); }}
+        .btn {{
+            background: var(--accent);
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+        }}
+        .btn:hover {{ opacity: 0.9; }}
+        .refresh {{ float: right; font-size: 0.8rem; }}
+    </style>
+</head>
+<body>
+    <header>
+        <h1>CCB Dashboard</h1>
+        <nav>
+            <a href="/" class="{nav_home}">Dashboard</a>
+            <a href="/tasks" class="{nav_tasks}">Tasks</a>
+            <a href="/stats" class="{nav_stats}">Performance</a>
+            <a href="/cache" class="{nav_cache}">Cache</a>
+            <a href="/health" class="{nav_health}">Health</a>
+        </nav>
+    </header>
+    <div class="container">
+        {content}
+    </div>
+</body>
+</html>
+"""
+
+
+def create_app() -> "FastAPI":
+    """Create and configure the FastAPI application."""
+    if not HAS_FASTAPI:
+        raise ImportError("FastAPI is required. Install with: pip install fastapi uvicorn")
+
+    app = FastAPI(title="CCB Dashboard", version="1.0.0")
+
+    # Initialize trackers
+    perf_tracker = PerformanceTracker()
+    cache = ResponseCache()
+    task_tracker = TaskTracker()
+
+    def render_page(content: str, active: str = "") -> str:
+        """Render a page with the base template."""
+        nav_classes = {
+            "nav_home": "active" if active == "home" else "",
+            "nav_tasks": "active" if active == "tasks" else "",
+            "nav_stats": "active" if active == "stats" else "",
+            "nav_cache": "active" if active == "cache" else "",
+            "nav_health": "active" if active == "health" else "",
+        }
+        return BASE_TEMPLATE.format(content=content, **nav_classes)
+
+    @app.get("/", response_class=HTMLResponse)
+    async def dashboard():
+        """Main dashboard page."""
+        # Get summary stats
+        perf_summary = perf_tracker.get_summary(hours=24)
+        cache_stats = cache.get_stats()
+        task_stats = task_tracker.get_stats()
+
+        content = f"""
+        <h2>Overview (Last 24 Hours)</h2>
+        <div class="grid">
+            <div class="card stat">
+                <div class="stat-value">{perf_summary.get('total_requests', 0)}</div>
+                <div class="stat-label">Total Requests</div>
+            </div>
+            <div class="card stat">
+                <div class="stat-value">{perf_summary.get('overall_success_rate', 0)*100:.1f}%</div>
+                <div class="stat-label">Success Rate</div>
+            </div>
+            <div class="card stat">
+                <div class="stat-value">{cache_stats.total_entries}</div>
+                <div class="stat-label">Cached Responses</div>
+            </div>
+            <div class="card stat">
+                <div class="stat-value">{cache_stats.hit_rate*100:.1f}%</div>
+                <div class="stat-label">Cache Hit Rate</div>
+            </div>
+        </div>
+
+        <div class="card">
+            <h2>Provider Performance</h2>
+            <table>
+                <tr>
+                    <th>Provider</th>
+                    <th>Requests</th>
+                    <th>Success Rate</th>
+                    <th>Avg Latency</th>
+                </tr>
+        """
+
+        for p in perf_summary.get('providers', []):
+            content += f"""
+                <tr>
+                    <td>{p['provider']}</td>
+                    <td>{p['requests']}</td>
+                    <td class="{'status-ok' if p['success_rate'] > 0.9 else 'status-fail'}">{p['success_rate']*100:.1f}%</td>
+                    <td>{p['avg_latency_ms']:.0f}ms</td>
+                </tr>
+            """
+
+        content += """
+            </table>
+        </div>
+
+        <div class="card">
+            <h2>Task Status</h2>
+            <div class="grid">
+        """
+
+        for status, count in task_stats.items():
+            status_class = "status-ok" if status == "completed" else ("status-fail" if status == "failed" else "status-pending")
+            content += f"""
+                <div class="stat">
+                    <div class="stat-value {status_class}">{count}</div>
+                    <div class="stat-label">{status.title()}</div>
+                </div>
+            """
+
+        content += """
+            </div>
+        </div>
+        """
+
+        return render_page(content, active="home")
+
+    @app.get("/tasks", response_class=HTMLResponse)
+    async def tasks_page():
+        """Tasks list page."""
+        tasks = task_tracker.list_tasks(limit=50)
+
+        content = """
+        <div class="card">
+            <h2>Recent Tasks</h2>
+            <table>
+                <tr>
+                    <th>ID</th>
+                    <th>Provider</th>
+                    <th>Status</th>
+                    <th>Message</th>
+                    <th>Created</th>
+                </tr>
+        """
+
+        for task in tasks:
+            status_class = {
+                TaskStatus.COMPLETED: "status-ok",
+                TaskStatus.FAILED: "status-fail",
+                TaskStatus.RUNNING: "status-pending",
+                TaskStatus.PENDING: "status-pending",
+            }.get(task.status, "")
+
+            created = datetime.fromtimestamp(task.created_at).strftime("%Y-%m-%d %H:%M")
+            msg_preview = task.message[:50] + "..." if len(task.message) > 50 else task.message
+
+            content += f"""
+                <tr>
+                    <td>{task.id}</td>
+                    <td>{task.provider}</td>
+                    <td class="{status_class}">{task.status.value}</td>
+                    <td>{msg_preview}</td>
+                    <td>{created}</td>
+                </tr>
+            """
+
+        content += """
+            </table>
+        </div>
+        """
+
+        return render_page(content, active="tasks")
+
+    @app.get("/stats", response_class=HTMLResponse)
+    async def stats_page():
+        """Performance statistics page."""
+        all_stats = perf_tracker.get_all_stats(hours=24)
+
+        content = """
+        <div class="card">
+            <h2>Provider Performance (24h)</h2>
+            <table>
+                <tr>
+                    <th>Provider</th>
+                    <th>Requests</th>
+                    <th>Success</th>
+                    <th>Failed</th>
+                    <th>Success Rate</th>
+                    <th>Avg Latency</th>
+                    <th>P95 Latency</th>
+                </tr>
+        """
+
+        for stats in all_stats:
+            rate_class = "status-ok" if stats.success_rate > 0.9 else ("status-fail" if stats.success_rate < 0.7 else "status-pending")
+            content += f"""
+                <tr>
+                    <td>{stats.provider}</td>
+                    <td>{stats.total_requests}</td>
+                    <td class="status-ok">{stats.successful_requests}</td>
+                    <td class="status-fail">{stats.failed_requests}</td>
+                    <td class="{rate_class}">{stats.success_rate*100:.1f}%</td>
+                    <td>{stats.avg_latency_ms:.0f}ms</td>
+                    <td>{stats.p95_latency_ms:.0f}ms</td>
+                </tr>
+            """
+
+        content += """
+            </table>
+        </div>
+        """
+
+        return render_page(content, active="stats")
+
+    @app.get("/cache", response_class=HTMLResponse)
+    async def cache_page():
+        """Cache management page."""
+        stats = cache.get_stats()
+        entries = cache.list_entries(limit=20)
+
+        content = f"""
+        <div class="grid">
+            <div class="card stat">
+                <div class="stat-value">{stats.total_entries}</div>
+                <div class="stat-label">Cached Entries</div>
+            </div>
+            <div class="card stat">
+                <div class="stat-value">{stats.hit_rate*100:.1f}%</div>
+                <div class="stat-label">Hit Rate</div>
+            </div>
+            <div class="card stat">
+                <div class="stat-value">{stats.total_hits}</div>
+                <div class="stat-label">Total Hits</div>
+            </div>
+            <div class="card stat">
+                <div class="stat-value">{stats.total_misses}</div>
+                <div class="stat-label">Total Misses</div>
+            </div>
+        </div>
+
+        <div class="card">
+            <h2>Recent Cache Entries</h2>
+            <table>
+                <tr>
+                    <th>Provider</th>
+                    <th>Hits</th>
+                    <th>Created</th>
+                    <th>Expires</th>
+                </tr>
+        """
+
+        for entry in entries:
+            created = datetime.fromtimestamp(entry.created_at).strftime("%Y-%m-%d %H:%M")
+            expires = datetime.fromtimestamp(entry.expires_at).strftime("%Y-%m-%d %H:%M")
+            content += f"""
+                <tr>
+                    <td>{entry.provider}</td>
+                    <td>{entry.hit_count}</td>
+                    <td>{created}</td>
+                    <td>{expires}</td>
+                </tr>
+            """
+
+        content += """
+            </table>
+        </div>
+        """
+
+        return render_page(content, active="cache")
+
+    @app.get("/health", response_class=HTMLResponse)
+    async def health_page():
+        """Provider health status page."""
+        import subprocess
+
+        providers = ["claude", "codex", "gemini", "opencode", "deepseek", "droid", "iflow", "kimi", "qwen"]
+        ping_commands = {
+            "claude": "lping", "codex": "cping", "gemini": "gping",
+            "opencode": "oping", "deepseek": "dskping", "droid": "dping",
+            "iflow": "iping", "kimi": "kping", "qwen": "qping",
+        }
+
+        content = """
+        <div class="card">
+            <h2>Provider Health Status</h2>
+            <button class="btn refresh" hx-get="/health" hx-target="body">Refresh</button>
+            <table>
+                <tr>
+                    <th>Provider</th>
+                    <th>Status</th>
+                    <th>Latency</th>
+                </tr>
+        """
+
+        for provider in providers:
+            ping_cmd = ping_commands.get(provider)
+            try:
+                import time
+                start = time.time()
+                result = subprocess.run([ping_cmd], capture_output=True, timeout=5)
+                latency = (time.time() - start) * 1000
+
+                if result.returncode == 0:
+                    status = "Healthy"
+                    status_class = "status-ok"
+                else:
+                    status = "Unavailable"
+                    status_class = "status-fail"
+            except Exception:
+                status = "Error"
+                status_class = "status-fail"
+                latency = 0
+
+            content += f"""
+                <tr>
+                    <td>{provider}</td>
+                    <td class="{status_class}">{status}</td>
+                    <td>{latency:.0f}ms</td>
+                </tr>
+            """
+
+        content += """
+            </table>
+        </div>
+        """
+
+        return render_page(content, active="health")
+
+    # API endpoints
+    @app.get("/api/stats")
+    async def api_stats():
+        """API endpoint for performance stats."""
+        return perf_tracker.get_summary(hours=24)
+
+    @app.get("/api/tasks")
+    async def api_tasks(limit: int = 20):
+        """API endpoint for tasks."""
+        tasks = task_tracker.list_tasks(limit=limit)
+        return [t.to_dict() for t in tasks]
+
+    @app.get("/api/cache/stats")
+    async def api_cache_stats():
+        """API endpoint for cache stats."""
+        stats = cache.get_stats()
+        return {
+            "total_entries": stats.total_entries,
+            "hit_rate": stats.hit_rate,
+            "total_hits": stats.total_hits,
+            "total_misses": stats.total_misses,
+        }
+
+    @app.post("/api/cache/clear")
+    async def api_cache_clear():
+        """API endpoint to clear cache."""
+        count = cache.clear()
+        return {"cleared": count}
+
+    return app
+
+
+def run_server(host: str = "127.0.0.1", port: int = 8080, auto_open: bool = True):
+    """Run the web server."""
+    if not check_dependencies():
+        return 1
+
+    try:
+        import uvicorn
+    except ImportError:
+        print("Error: uvicorn is not installed.")
+        print("Install with: pip install uvicorn")
+        return 1
+
+    app = create_app()
+
+    if auto_open:
+        import webbrowser
+        import threading
+
+        def open_browser():
+            import time
+            time.sleep(1)
+            webbrowser.open(f"http://{host}:{port}")
+
+        threading.Thread(target=open_browser, daemon=True).start()
+
+    print(f"Starting CCB Dashboard at http://{host}:{port}")
+    uvicorn.run(app, host=host, port=port, log_level="info")
+    return 0

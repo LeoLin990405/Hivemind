@@ -1,0 +1,254 @@
+#!/usr/bin/env python3
+"""
+ccb-batch - Batch processing CLI for CCB
+
+Process multiple messages in parallel.
+
+Usage:
+    ccb batch -f tasks.txt           # From file (one message per line)
+    ccb batch "msg1" "msg2" "msg3"   # From command line
+    ccb batch --stdin                # From stdin
+    ccb batch status <job_id>        # Check job status
+    ccb batch list                   # List recent jobs
+"""
+from __future__ import annotations
+
+import sys
+import argparse
+from pathlib import Path
+from typing import Optional, List
+
+# Add lib to path
+script_dir = Path(__file__).resolve().parent.parent
+sys.path.insert(0, str(script_dir / "lib"))
+
+from batch_processor import BatchProcessor, BatchJob, BatchTask, format_batch_status
+
+
+# Global processor instance for job persistence within session
+_processor: Optional[BatchProcessor] = None
+
+
+def get_processor(max_concurrent: int = 5, provider: Optional[str] = None) -> BatchProcessor:
+    """Get or create batch processor."""
+    global _processor
+    if _processor is None:
+        _processor = BatchProcessor(max_concurrent=max_concurrent, default_provider=provider)
+    return _processor
+
+
+def cmd_run(args: argparse.Namespace) -> int:
+    """Run a batch job."""
+    messages: List[str] = []
+
+    # Collect messages from various sources
+    if args.file:
+        try:
+            with open(args.file, 'r') as f:
+                messages = [line.strip() for line in f if line.strip()]
+        except Exception as e:
+            print(f"Error reading file: {e}", file=sys.stderr)
+            return 1
+
+    elif args.stdin:
+        messages = [line.strip() for line in sys.stdin if line.strip()]
+
+    elif args.messages:
+        messages = args.messages
+
+    if not messages:
+        print("Error: No messages provided", file=sys.stderr)
+        return 1
+
+    print(f"Creating batch job with {len(messages)} tasks...")
+
+    processor = get_processor(
+        max_concurrent=args.concurrent,
+        provider=args.provider,
+    )
+
+    job = processor.create_batch(messages, provider=args.provider)
+    print(f"Job ID: {job.id}")
+
+    # Progress callback
+    def on_progress(job: BatchJob, task: BatchTask):
+        status = "OK" if task.status.value == "completed" else "FAIL"
+        print(f"  [{job.progress * 100:.0f}%] {task.id}: {status}")
+
+    # Execute
+    print("Executing...")
+    job = processor.execute_batch(job, on_progress if args.verbose else None)
+
+    # Show results
+    print()
+    print(format_batch_status(job, verbose=args.verbose))
+
+    # Optionally show results
+    if args.output:
+        with open(args.output, 'w') as f:
+            for task in job.tasks:
+                f.write(f"=== Task {task.id} ===\n")
+                if task.result:
+                    f.write(task.result)
+                elif task.error:
+                    f.write(f"Error: {task.error}\n")
+                f.write("\n")
+        print(f"Results written to: {args.output}")
+
+    return 0 if job.successful_count > 0 else 1
+
+
+def cmd_status(args: argparse.Namespace) -> int:
+    """Show status of a batch job."""
+    processor = get_processor()
+    job = processor.get_job(args.job_id)
+
+    if not job:
+        print(f"Job not found: {args.job_id}", file=sys.stderr)
+        return 1
+
+    print(format_batch_status(job, verbose=args.verbose))
+    return 0
+
+
+def cmd_list(args: argparse.Namespace) -> int:
+    """List recent batch jobs."""
+    processor = get_processor()
+    jobs = processor.list_jobs(limit=args.limit)
+
+    if not jobs:
+        print("No batch jobs found")
+        return 0
+
+    print("=" * 70)
+    print("Recent Batch Jobs")
+    print("=" * 70)
+    print(f"{'Job ID':<10} {'Status':<12} {'Tasks':<8} {'Success':<8} {'Failed':<8} {'Progress'}")
+    print("-" * 70)
+
+    for job in jobs:
+        print(
+            f"{job.id:<10} "
+            f"{job.status.value:<12} "
+            f"{len(job.tasks):<8} "
+            f"{job.successful_count:<8} "
+            f"{job.failed_count:<8} "
+            f"{job.progress * 100:.0f}%"
+        )
+
+    print("=" * 70)
+    return 0
+
+
+def cmd_cancel(args: argparse.Namespace) -> int:
+    """Cancel a batch job."""
+    processor = get_processor()
+
+    if processor.cancel_batch(args.job_id):
+        print(f"Job {args.job_id} marked for cancellation")
+        return 0
+    else:
+        print(f"Job not found: {args.job_id}", file=sys.stderr)
+        return 1
+
+
+def main() -> int:
+    parser = argparse.ArgumentParser(
+        prog="ccb-batch",
+        description="Batch processing CLI for CCB",
+    )
+
+    subparsers = parser.add_subparsers(dest="command", help="Batch commands")
+
+    # run command (default)
+    run_parser = subparsers.add_parser("run", help="Run a batch job")
+    run_parser.add_argument(
+        "messages",
+        nargs="*",
+        help="Messages to process",
+    )
+    run_parser.add_argument(
+        "-f", "--file",
+        help="Read messages from file (one per line)",
+    )
+    run_parser.add_argument(
+        "--stdin",
+        action="store_true",
+        help="Read messages from stdin",
+    )
+    run_parser.add_argument(
+        "-p", "--provider",
+        help="Provider to use for all tasks",
+    )
+    run_parser.add_argument(
+        "-c", "--concurrent",
+        type=int,
+        default=5,
+        help="Maximum concurrent tasks (default: 5)",
+    )
+    run_parser.add_argument(
+        "-o", "--output",
+        help="Write results to file",
+    )
+    run_parser.add_argument(
+        "-v", "--verbose",
+        action="store_true",
+        help="Show detailed progress",
+    )
+
+    # status command
+    status_parser = subparsers.add_parser("status", help="Show job status")
+    status_parser.add_argument("job_id", help="Job ID to check")
+    status_parser.add_argument(
+        "-v", "--verbose",
+        action="store_true",
+        help="Show task details",
+    )
+
+    # list command
+    list_parser = subparsers.add_parser("list", help="List recent jobs")
+    list_parser.add_argument(
+        "-l", "--limit",
+        type=int,
+        default=20,
+        help="Maximum jobs to show (default: 20)",
+    )
+
+    # cancel command
+    cancel_parser = subparsers.add_parser("cancel", help="Cancel a job")
+    cancel_parser.add_argument("job_id", help="Job ID to cancel")
+
+    args = parser.parse_args()
+
+    # Default to run if messages provided without subcommand
+    if args.command is None:
+        # Check if there are positional args that look like messages
+        if len(sys.argv) > 1 and not sys.argv[1].startswith("-"):
+            # Treat as run command with messages
+            args.command = "run"
+            args.messages = sys.argv[1:]
+            args.file = None
+            args.stdin = False
+            args.provider = None
+            args.concurrent = 5
+            args.output = None
+            args.verbose = False
+        else:
+            parser.print_help()
+            return 0
+
+    if args.command == "run":
+        return cmd_run(args)
+    elif args.command == "status":
+        return cmd_status(args)
+    elif args.command == "list":
+        return cmd_list(args)
+    elif args.command == "cancel":
+        return cmd_cancel(args)
+    else:
+        parser.print_help()
+        return 0
+
+
+if __name__ == "__main__":
+    sys.exit(main())

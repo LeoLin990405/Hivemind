@@ -5056,6 +5056,30 @@ def main():
         # ccb tasks <subcommand> -> ccb-tasks <subcommand>
         return subprocess.run([sys.executable, str(ccb_tasks_bin)] + argv[1:]).returncode
 
+    # Performance statistics commands
+    if argv and argv[0] == "stats":
+        ccb_stats_bin = script_dir / "bin" / "ccb-stats"
+        # ccb stats <options> -> ccb-stats <options>
+        return subprocess.run([sys.executable, str(ccb_stats_bin)] + argv[1:]).returncode
+
+    # Cache management commands
+    if argv and argv[0] == "cache":
+        ccb_cache_bin = script_dir / "bin" / "ccb-cache"
+        # ccb cache <subcommand> -> ccb-cache <subcommand>
+        return subprocess.run([sys.executable, str(ccb_cache_bin)] + argv[1:]).returncode
+
+    # Batch processing commands
+    if argv and argv[0] == "batch":
+        ccb_batch_bin = script_dir / "bin" / "ccb-batch"
+        # ccb batch <subcommand> -> ccb-batch <subcommand>
+        return subprocess.run([sys.executable, str(ccb_batch_bin)] + argv[1:]).returncode
+
+    # Web UI commands
+    if argv and argv[0] == "web":
+        ccb_web_bin = script_dir / "bin" / "ccb-web"
+        # ccb web [options] -> ccb-web [options]
+        return subprocess.run([sys.executable, str(ccb_web_bin)] + argv[1:]).returncode
+
     # Documentation lookup commands
     if argv and argv[0] == "docs":
         ccb_docs_bin = script_dir / "bin" / "ccb-docs"
@@ -5095,7 +5119,7 @@ def main():
     start_parser = argparse.ArgumentParser(
         description="Claude AI unified launcher",
         add_help=True,
-        epilog="Other commands: ccb ask | ccb route | ccb health | ccb magic | ccb tasks | ccb docs | ccb update | ccb version | ccb kill | ccb uninstall | ccb reinstall | ccb droid setup-delegation",
+        epilog="Other commands: ccb ask | ccb route | ccb health | ccb magic | ccb tasks | ccb stats | ccb cache | ccb batch | ccb web | ccb docs | ccb update | ccb version | ccb kill | ccb uninstall | ccb reinstall | ccb droid setup-delegation",
     )
     start_parser.add_argument(
         "providers",

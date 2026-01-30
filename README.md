@@ -16,6 +16,12 @@
 - **Intelligent Routing**: Automatically selects the best AI provider for each task
 - **Magic Keywords**: Special keywords (`@deep`, `@review`, `@all`, etc.) trigger enhanced behaviors
 - **Task Tracking**: SQLite-backed task management with status tracking
+- **Performance Analytics**: Track provider latency, success rates, and token usage
+- **Smart Caching**: Cache responses to reduce redundant requests
+- **Auto Retry**: Automatic retry with exponential backoff and provider fallback
+- **Multi-Provider Queries**: Query multiple providers simultaneously with result aggregation
+- **Batch Processing**: Process multiple tasks in parallel
+- **Web Dashboard**: Real-time monitoring and management UI
 - **9 AI Providers**: Claude, Codex, Gemini, OpenCode, DeepSeek, Droid, iFlow, Kimi, Qwen
 - **Unified Interface**: Consistent command pattern across all providers
 - **Health Monitoring**: Real-time provider status checking
@@ -97,6 +103,189 @@ ccb ask "@review check this code for security issues"
 ccb ask "@all what's the best approach for this problem"
 ccb route "smartroute optimize this function"
 ```
+
+---
+
+## Performance Analytics
+
+Track and analyze provider performance over time:
+
+```bash
+# View all provider statistics (last 24 hours)
+ccb stats
+
+# View specific provider stats
+ccb stats --provider claude --hours 48
+
+# Show recent requests
+ccb stats recent --limit 20
+
+# Get summary report
+ccb stats summary
+
+# Find best performing provider
+ccb stats best
+
+# Export data
+ccb stats --export csv > performance.csv
+ccb stats --export json > performance.json
+
+# Cleanup old data
+ccb stats cleanup --days 30
+```
+
+### Tracked Metrics
+- **Latency**: Response time in milliseconds
+- **Success Rate**: Percentage of successful requests
+- **Token Usage**: Input/output token counts (when available)
+- **Request Volume**: Total requests per provider
+
+---
+
+## Smart Caching
+
+Reduce redundant requests with intelligent response caching:
+
+```bash
+# View cache statistics
+ccb cache stats
+
+# List cached entries
+ccb cache list --limit 20
+
+# Get specific cache entry
+ccb cache get <key>
+
+# Clear all cache
+ccb cache clear
+
+# Cleanup expired entries
+ccb cache cleanup
+```
+
+### Cache Features
+- **Automatic Caching**: Responses cached automatically (configurable TTL)
+- **Hit Rate Tracking**: Monitor cache effectiveness
+- **Provider-Specific**: Cache entries tagged by provider
+- **Disable Per-Request**: Use `--no-cache` flag to bypass
+
+```bash
+# Bypass cache for fresh response
+ccb ask --no-cache "what is the current time"
+```
+
+---
+
+## Auto Retry & Fallback
+
+Automatic retry with exponential backoff and provider fallback chains:
+
+```bash
+# Enable retry (default)
+ccb ask --retry "your question"
+
+# Disable retry
+ccb ask --no-retry "your question"
+
+# Custom retry attempts
+ccb ask --max-retries 5 "your question"
+```
+
+### Fallback Chains
+When a provider fails, CCB automatically tries fallback providers:
+
+| Primary | Fallback Chain |
+|---------|----------------|
+| claude | gemini → codex |
+| gemini | claude → codex |
+| codex | claude → gemini |
+| deepseek | claude → gemini |
+| kimi | claude → qwen |
+| qwen | claude → kimi |
+
+---
+
+## Multi-Provider Queries
+
+Query multiple providers simultaneously and aggregate results:
+
+```bash
+# Query all default providers (claude, gemini, codex)
+ccb ask "@all what is the best approach"
+
+# Specify providers
+ccb ask --multi --providers claude,gemini,deepseek "analyze this"
+
+# Different aggregation strategies
+ccb ask --multi --strategy all "your question"      # Show all results
+ccb ask --multi --strategy merge "your question"   # Merge results
+ccb ask --multi --strategy compare "your question" # Side-by-side comparison
+ccb ask --multi --strategy first_success "question" # First successful response
+```
+
+---
+
+## Batch Processing
+
+Process multiple tasks in parallel:
+
+```bash
+# From file (one message per line)
+ccb batch run -f tasks.txt
+
+# From command line
+ccb batch run "msg1" "msg2" "msg3"
+
+# From stdin
+echo -e "task1\ntask2\ntask3" | ccb batch run --stdin
+
+# With specific provider
+ccb batch run -p claude -f tasks.txt
+
+# Control concurrency
+ccb batch run -c 10 -f tasks.txt  # 10 concurrent tasks
+
+# Output results to file
+ccb batch run -f tasks.txt -o results.txt
+
+# Check job status
+ccb batch status <job_id>
+
+# List recent jobs
+ccb batch list
+
+# Cancel a job
+ccb batch cancel <job_id>
+```
+
+---
+
+## Web Dashboard
+
+Real-time monitoring and management through a web interface:
+
+```bash
+# Start web server (default: localhost:8080)
+ccb web
+
+# Custom port
+ccb web --port 9000
+
+# Allow external access
+ccb web --host 0.0.0.0
+
+# Don't auto-open browser
+ccb web --no-browser
+```
+
+### Dashboard Features
+- **Overview**: Total requests, success rate, cache stats
+- **Provider Performance**: Latency, success rate per provider
+- **Task Management**: View and manage tasks
+- **Cache Management**: View and clear cache
+- **Health Status**: Real-time provider health checks
+
+**Note**: Requires `pip install fastapi uvicorn jinja2`
 
 ### Configuration
 Edit `~/.ccb_config/unified-router.yaml` to customize routing rules:
@@ -265,6 +454,8 @@ ccb codex gemini opencode
 # Intelligent routing
 ccb ask "your question"
 ccb ask --track "tracked question"  # With task tracking
+ccb ask --no-cache "fresh query"    # Bypass cache
+ccb ask --retry "reliable query"    # With auto-retry
 ccb route "show routing only"
 ccb health
 ccb magic                           # List magic keywords
@@ -274,6 +465,24 @@ ccb tasks list
 ccb tasks get <task_id>
 ccb tasks stats
 ccb tasks cleanup
+
+# Performance analytics
+ccb stats                           # View provider stats
+ccb stats --provider claude         # Specific provider
+ccb stats best                      # Best performing provider
+
+# Cache management
+ccb cache stats                     # Cache statistics
+ccb cache list                      # List entries
+ccb cache clear                     # Clear cache
+
+# Batch processing
+ccb batch run -f tasks.txt          # Process batch
+ccb batch status <job_id>           # Check status
+ccb batch list                      # List jobs
+
+# Web dashboard
+ccb web                             # Start web UI
 
 # Documentation lookup (requires Context7)
 ccb docs react "how to use hooks"
@@ -293,12 +502,22 @@ ccb update
 ├── bin/                    # Command scripts (ask/ping/pend)
 │   ├── ccb-ask            # Intelligent routing CLI
 │   ├── ccb-tasks          # Task management CLI
+│   ├── ccb-stats          # Performance analytics CLI
+│   ├── ccb-cache          # Cache management CLI
+│   ├── ccb-batch          # Batch processing CLI
+│   ├── ccb-web            # Web dashboard CLI
 │   ├── ccb-docs           # Documentation lookup CLI
 │   ├── cask, gask, ...    # Provider ask commands
 │   └── cping, gping, ...  # Provider ping commands
 ├── lib/                    # Library modules
 │   ├── unified_router.py  # Routing engine with magic keywords
 │   ├── task_tracker.py    # Task tracking system
+│   ├── performance_tracker.py  # Performance analytics
+│   ├── response_cache.py  # Smart caching system
+│   ├── retry_policy.py    # Auto retry with fallback
+│   ├── multi_provider.py  # Multi-provider execution
+│   ├── batch_processor.py # Batch task processing
+│   ├── web_server.py      # Web dashboard server
 │   ├── context7_client.py # Context7 integration
 │   └── *_daemon.py        # Provider daemons
 ├── config/                 # Configuration templates
@@ -308,6 +527,8 @@ ccb update
 ~/.ccb_config/
 ├── unified-router.yaml    # Routing configuration
 ├── tasks.db               # Task tracking database
+├── performance.db         # Performance metrics database
+├── cache.db               # Response cache database
 └── .*-session             # Provider session files
 ```
 

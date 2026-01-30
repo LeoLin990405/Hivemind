@@ -1,0 +1,71 @@
+#!/usr/bin/env python3
+"""
+ccb-web - Web UI server for CCB Dashboard
+
+Starts a web server for monitoring and managing CCB.
+
+Usage:
+    ccb web                  # Start server (default: localhost:8080)
+    ccb web --port 9000      # Custom port
+    ccb web --host 0.0.0.0   # Allow external access
+    ccb web --no-browser     # Don't auto-open browser
+"""
+from __future__ import annotations
+
+import sys
+import argparse
+from pathlib import Path
+
+# Add lib to path
+script_dir = Path(__file__).resolve().parent.parent
+sys.path.insert(0, str(script_dir / "lib"))
+
+
+def main() -> int:
+    parser = argparse.ArgumentParser(
+        prog="ccb-web",
+        description="Web UI server for CCB Dashboard",
+    )
+
+    parser.add_argument(
+        "--host",
+        default="127.0.0.1",
+        help="Host to bind to (default: 127.0.0.1)",
+    )
+    parser.add_argument(
+        "--port",
+        type=int,
+        default=8080,
+        help="Port to listen on (default: 8080)",
+    )
+    parser.add_argument(
+        "--no-browser",
+        action="store_true",
+        help="Don't auto-open browser",
+    )
+
+    args = parser.parse_args()
+
+    try:
+        from web_server import run_server, check_dependencies
+
+        if not check_dependencies():
+            return 1
+
+        return run_server(
+            host=args.host,
+            port=args.port,
+            auto_open=not args.no_browser,
+        )
+
+    except ImportError as e:
+        print(f"Error: Missing dependency - {e}")
+        print("Install required packages with: pip install fastapi uvicorn jinja2")
+        return 1
+    except KeyboardInterrupt:
+        print("\nServer stopped.")
+        return 0
+
+
+if __name__ == "__main__":
+    sys.exit(main())

@@ -29,10 +29,32 @@ sys.path.insert(0, str(script_dir / "lib"))
 
 from unified_router import UnifiedRouter, ChannelType, ProviderStatus, ProviderHealth
 from task_tracker import TaskTracker, TaskStatus
+from performance_tracker import PerformanceTracker
+from response_cache import ResponseCache
+from retry_policy import RetryExecutor, RetryConfig, RetryAttempt
+from multi_provider import MultiProviderExecutor, AggregationStrategy, format_multi_result
 
 
-# Create a global router instance for command lookups
+# Create global instances
 _router = UnifiedRouter()
+_perf_tracker: Optional[PerformanceTracker] = None
+_cache: Optional[ResponseCache] = None
+
+
+def get_perf_tracker() -> PerformanceTracker:
+    """Get or create performance tracker instance."""
+    global _perf_tracker
+    if _perf_tracker is None:
+        _perf_tracker = PerformanceTracker()
+    return _perf_tracker
+
+
+def get_cache() -> ResponseCache:
+    """Get or create response cache instance."""
+    global _cache
+    if _cache is None:
+        _cache = ResponseCache()
+    return _cache
 
 
 def get_ask_command(provider: str) -> str:
@@ -104,13 +126,19 @@ def check_daemon_health(provider: str) -> ProviderHealth:
 
 
 def execute_ask(provider: str, message: str, use_daemon: bool = True,
-                tracker: Optional[TaskTracker] = None, task_id: Optional[str] = None) -> int:
+                tracker: Optional[TaskTracker] = None, task_id: Optional[str] = None,
+                record_perf: bool = True) -> int:
     """Execute the ask command for a provider."""
     ask_cmd = get_ask_command(provider)
 
     # Update task status to running if tracking
     if tracker and task_id:
         tracker.update_status(task_id, TaskStatus.RUNNING)
+
+    # Record start time for performance tracking
+    start_time = time.time()
+    success = False
+    error_msg = None
 
     if use_daemon:
         # Use heredoc style for daemon
@@ -120,21 +148,48 @@ def execute_ask(provider: str, message: str, use_daemon: bool = True,
             capture_output=False,
         )
 
+        success = result.returncode == 0
+
         # Update task status based on result
         if tracker and task_id:
-            if result.returncode == 0:
+            if success:
                 tracker.update_status(task_id, TaskStatus.COMPLETED)
             else:
-                tracker.update_status(task_id, TaskStatus.FAILED,
-                                     error=f"Exit code: {result.returncode}")
+                error_msg = f"Exit code: {result.returncode}"
+                tracker.update_status(task_id, TaskStatus.FAILED, error=error_msg)
+
+        # Record performance metric
+        if record_perf:
+            latency_ms = (time.time() - start_time) * 1000
+            perf_tracker = get_perf_tracker()
+            perf_tracker.record(
+                provider=provider,
+                latency_ms=latency_ms,
+                success=success,
+                task_id=task_id,
+                error=error_msg,
+            )
 
         return result.returncode
     else:
         # Direct CLI fallback (provider-specific)
         print(f"[Fallback] Direct CLI not implemented for {provider}")
+        error_msg = "Direct CLI not implemented"
         if tracker and task_id:
-            tracker.update_status(task_id, TaskStatus.FAILED,
-                                 error="Direct CLI not implemented")
+            tracker.update_status(task_id, TaskStatus.FAILED, error=error_msg)
+
+        # Record failed attempt
+        if record_perf:
+            latency_ms = (time.time() - start_time) * 1000
+            perf_tracker = get_perf_tracker()
+            perf_tracker.record(
+                provider=provider,
+                latency_ms=latency_ms,
+                success=False,
+                task_id=task_id,
+                error=error_msg,
+            )
+
         return 1
 
 
@@ -222,6 +277,10 @@ def cmd_ask(args: argparse.Namespace) -> int:
         print("Error: No message provided", file=sys.stderr)
         return 1
 
+    # Check for @all keyword - use multi-provider execution
+    if "@all" in message.lower() or args.multi:
+        return cmd_multi_provider(args, message, router)
+
     decision = router.route(
         message=message,
         files=args.files,
@@ -232,6 +291,16 @@ def cmd_ask(args: argparse.Namespace) -> int:
     if args.verbose:
         print(f"[Router] {decision.reason}")
         print(f"[Router] Using: {decision.provider} via {decision.channel.value}")
+
+    # Check cache first (if enabled)
+    if args.cache:
+        cache = get_cache()
+        cached_response = cache.get(message, decision.provider)
+        if cached_response:
+            if args.verbose:
+                print("[Cache] Hit - returning cached response")
+            print(cached_response)
+            return 0
 
     # Check daemon health
     health = check_daemon_health(decision.provider)
@@ -258,7 +327,144 @@ def cmd_ask(args: argparse.Namespace) -> int:
         task_id = task.id
         print(f"[Task] Created task: {task_id}")
 
-    return execute_ask(decision.provider, message, use_daemon, tracker, task_id)
+    # Execute with or without retry
+    if args.retry:
+        return execute_with_retry(
+            decision.provider,
+            message,
+            use_daemon,
+            tracker,
+            task_id,
+            max_retries=args.max_retries,
+            verbose=args.verbose,
+        )
+    else:
+        return execute_ask(decision.provider, message, use_daemon, tracker, task_id)
+
+
+def cmd_multi_provider(args: argparse.Namespace, message: str, router: UnifiedRouter) -> int:
+    """Execute query on multiple providers."""
+    # Remove @all from message for actual query
+    clean_message = message.replace("@all", "").replace("@ALL", "").strip()
+
+    # Determine providers
+    if args.providers:
+        providers = [p.strip() for p in args.providers.split(",")]
+    else:
+        # Get from magic keyword config or use defaults
+        magic_info = router.get_magic_keyword_info("@all")
+        if magic_info and magic_info.get("providers"):
+            providers = magic_info["providers"]
+        else:
+            providers = ["claude", "gemini", "codex"]
+
+    # Determine strategy
+    strategy_map = {
+        "first": AggregationStrategy.FIRST_SUCCESS,
+        "all": AggregationStrategy.ALL,
+        "merge": AggregationStrategy.MERGE,
+        "compare": AggregationStrategy.COMPARE,
+    }
+    strategy = strategy_map.get(args.strategy, AggregationStrategy.ALL)
+
+    if args.verbose:
+        print(f"[Multi] Querying providers: {', '.join(providers)}")
+        print(f"[Multi] Strategy: {strategy.value}")
+
+    # Execute
+    executor = MultiProviderExecutor(
+        providers=providers,
+        strategy=strategy,
+        timeout_s=args.timeout,
+    )
+
+    def on_result(result):
+        if args.verbose:
+            status = "OK" if result.success else "FAIL"
+            print(f"[Multi] {result.provider}: {status} ({result.latency_ms:.0f}ms)")
+
+    result = executor.execute_parallel(clean_message, on_result)
+
+    # Record performance metrics
+    perf_tracker = get_perf_tracker()
+    for provider, pr in result.results.items():
+        perf_tracker.record(
+            provider=provider,
+            latency_ms=pr.latency_ms,
+            success=pr.success,
+            error=pr.error,
+        )
+
+    # Output result
+    output = format_multi_result(result, verbose=args.verbose)
+    print(output)
+
+    return 0 if result.successful_count > 0 else 1
+
+
+def execute_with_retry(
+    provider: str,
+    message: str,
+    use_daemon: bool,
+    tracker: Optional[TaskTracker],
+    task_id: Optional[str],
+    max_retries: int = 3,
+    verbose: bool = False,
+) -> int:
+    """Execute ask with automatic retry."""
+    config = RetryConfig(max_attempts=max_retries)
+    executor = RetryExecutor(config)
+
+    def on_retry(attempt: RetryAttempt):
+        if verbose:
+            print(f"[Retry] Attempt {attempt.attempt_number} failed: {attempt.error}")
+            print(f"[Retry] Trying provider: {attempt.provider}")
+
+    def execute_fn(prov: str):
+        """Execute function for retry."""
+        ask_cmd = get_ask_command(prov)
+        start_time = time.time()
+
+        if use_daemon:
+            cmd = f"{ask_cmd} <<'EOF'\n{message}\nEOF"
+            result = subprocess.run(
+                ["bash", "-c", cmd],
+                capture_output=False,
+            )
+            success = result.returncode == 0
+            error = None if success else f"Exit code: {result.returncode}"
+            return success, None, error
+        else:
+            return False, None, "Direct CLI not implemented"
+
+    result = executor.execute_with_retry(execute_fn, provider, on_retry)
+
+    # Record performance for final attempt
+    perf_tracker = get_perf_tracker()
+    for attempt in result.attempts:
+        perf_tracker.record(
+            provider=attempt.provider,
+            latency_ms=attempt.latency_ms,
+            success=attempt.success,
+            task_id=task_id,
+            error=attempt.error,
+        )
+
+    # Update task status
+    if tracker and task_id:
+        if result.success:
+            tracker.update_status(task_id, TaskStatus.COMPLETED)
+        else:
+            tracker.update_status(
+                task_id,
+                TaskStatus.FAILED,
+                error=f"Failed after {result.total_attempts} attempts: {result.error}",
+            )
+
+    if verbose:
+        print(f"[Retry] Completed: {result.total_attempts} attempts, final provider: {result.final_provider}")
+
+    return 0 if result.success else 1
 
 
 def main() -> int:
@@ -308,8 +514,65 @@ def main() -> int:
         action="store_true",
         help="List available magic keywords",
     )
+    parser.add_argument(
+        "--cache",
+        action="store_true",
+        default=False,
+        help="Enable response caching (check cache before request)",
+    )
+    parser.add_argument(
+        "--no-cache",
+        action="store_true",
+        help="Disable response caching",
+    )
+    parser.add_argument(
+        "--retry",
+        action="store_true",
+        default=False,
+        help="Enable automatic retry on failure",
+    )
+    parser.add_argument(
+        "--no-retry",
+        action="store_true",
+        help="Disable automatic retry",
+    )
+    parser.add_argument(
+        "--max-retries",
+        type=int,
+        default=3,
+        help="Maximum retry attempts (default: 3)",
+    )
+    parser.add_argument(
+        "--multi",
+        action="store_true",
+        help="Enable multi-provider execution (same as @all)",
+    )
+    parser.add_argument(
+        "--providers",
+        help="Comma-separated list of providers for multi-provider mode",
+    )
+    parser.add_argument(
+        "--strategy",
+        choices=["first", "all", "merge", "compare"],
+        default="all",
+        help="Aggregation strategy for multi-provider (default: all)",
+    )
+    parser.add_argument(
+        "--timeout",
+        type=float,
+        default=60.0,
+        help="Timeout per provider in seconds (default: 60)",
+    )
 
     args = parser.parse_args()
+
+    # Handle cache flag logic
+    if args.no_cache:
+        args.cache = False
+
+    # Handle retry flag logic
+    if args.no_retry:
+        args.retry = False
 
     # Normalize files to list (action="append" creates list)
     if not args.files:
