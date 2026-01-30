@@ -380,6 +380,8 @@ def create_app() -> "FastAPI":
     async def health_page():
         """Provider health status page."""
         import subprocess
+        import asyncio
+        from concurrent.futures import ThreadPoolExecutor
 
         providers = ["claude", "codex", "gemini", "opencode", "deepseek", "droid", "iflow", "kimi", "qwen"]
         ping_commands = {
@@ -387,6 +389,30 @@ def create_app() -> "FastAPI":
             "opencode": "oping", "deepseek": "dskping", "droid": "dping",
             "iflow": "iping", "kimi": "kping", "qwen": "qping",
         }
+
+        def check_provider(provider: str) -> tuple:
+            """Check a single provider's health."""
+            ping_cmd = ping_commands.get(provider)
+            try:
+                import time
+                start = time.time()
+                result = subprocess.run([ping_cmd], capture_output=True, timeout=5)
+                latency = (time.time() - start) * 1000
+
+                if result.returncode == 0:
+                    return (provider, "Healthy", "status-ok", latency)
+                else:
+                    return (provider, "Unavailable", "status-fail", latency)
+            except Exception:
+                return (provider, "Error", "status-fail", 0)
+
+        # Run health checks in parallel using thread pool
+        loop = asyncio.get_event_loop()
+        with ThreadPoolExecutor(max_workers=len(providers)) as executor:
+            results = await asyncio.gather(*[
+                loop.run_in_executor(executor, check_provider, p)
+                for p in providers
+            ])
 
         content = """
         <div class="card">
@@ -400,25 +426,7 @@ def create_app() -> "FastAPI":
                 </tr>
         """
 
-        for provider in providers:
-            ping_cmd = ping_commands.get(provider)
-            try:
-                import time
-                start = time.time()
-                result = subprocess.run([ping_cmd], capture_output=True, timeout=5)
-                latency = (time.time() - start) * 1000
-
-                if result.returncode == 0:
-                    status = "Healthy"
-                    status_class = "status-ok"
-                else:
-                    status = "Unavailable"
-                    status_class = "status-fail"
-            except Exception:
-                status = "Error"
-                status_class = "status-fail"
-                latency = 0
-
+        for provider, status, status_class, latency in results:
             content += f"""
                 <tr>
                     <td>{provider}</td>
