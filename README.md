@@ -227,7 +227,7 @@ ccb ask --multi --strategy first_success "question" # First successful response
 
 ## Batch Processing
 
-Process multiple tasks in parallel:
+Process multiple tasks in parallel with SQLite persistence:
 
 ```bash
 # From file (one message per line)
@@ -256,7 +256,19 @@ ccb batch list
 
 # Cancel a job
 ccb batch cancel <job_id>
+
+# Clean up old jobs
+ccb batch cleanup --hours 24
+
+# Delete a specific job
+ccb batch delete <job_id>
 ```
+
+### Batch Features
+- **SQLite Persistence**: Jobs survive process restarts
+- **Parallel Execution**: Configurable concurrency
+- **Progress Tracking**: Real-time status updates
+- **Job Management**: List, cancel, cleanup, delete
 
 ---
 

@@ -96,9 +96,10 @@ ccb ask --multi --strategy merge "问题"
 
 并行处理多个任务：
 
+- SQLite 持久化存储
 - 可控并发数
 - 进度追踪
-- 任务取消
+- 任务取消、清理、删除
 
 ```bash
 ccb batch run -f tasks.txt   # 从文件
@@ -106,6 +107,8 @@ ccb batch run "msg1" "msg2"  # 命令行
 ccb batch status <job_id>    # 检查状态
 ccb batch list               # 列出任务
 ccb batch cancel <job_id>    # 取消任务
+ccb batch cleanup --hours 24 # 清理旧任务
+ccb batch delete <job_id>    # 删除任务
 ```
 
 ### 6. Web 仪表盘 (Phase 3F)

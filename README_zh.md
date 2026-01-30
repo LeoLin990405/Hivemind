@@ -227,7 +227,7 @@ ccb ask --multi --strategy first_success "问题" # 第一个成功的响应
 
 ## 批量处理
 
-并行处理多个任务：
+并行处理多个任务，支持 SQLite 持久化：
 
 ```bash
 # 从文件读取（每行一条消息）
@@ -256,7 +256,19 @@ ccb batch list
 
 # 取消任务
 ccb batch cancel <job_id>
+
+# 清理旧任务
+ccb batch cleanup --hours 24
+
+# 删除特定任务
+ccb batch delete <job_id>
 ```
+
+### 批量处理特性
+- **SQLite 持久化**：任务在进程重启后保留
+- **并行执行**：可配置并发数
+- **进度追踪**：实时状态更新
+- **任务管理**：列出、取消、清理、删除
 
 ---
 
