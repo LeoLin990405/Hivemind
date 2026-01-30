@@ -1,0 +1,145 @@
+#!/usr/bin/env python3
+"""
+ccb-docs - Context7 documentation lookup CLI for CCB
+
+Query up-to-date library documentation to reduce AI hallucinations.
+
+Usage:
+    ccb docs react "how to use hooks"
+    ccb docs pandas "dataframe operations"
+    ccb docs --cache-stats
+    ccb docs --clear-cache
+"""
+from __future__ import annotations
+
+import sys
+import argparse
+from pathlib import Path
+
+# Add lib to path
+script_dir = Path(__file__).resolve().parent.parent
+sys.path.insert(0, str(script_dir / "lib"))
+
+from context7_client import Context7Client
+
+
+def cmd_query(args: argparse.Namespace) -> int:
+    """Query documentation for a library."""
+    client = Context7Client(
+        cache_ttl_s=args.cache_ttl,
+        max_results=args.max_results,
+    )
+
+    library = args.library
+    query = " ".join(args.query)
+
+    if not query:
+        print("Error: No query provided", file=sys.stderr)
+        return 1
+
+    print(f"Searching {library} documentation for: {query}")
+    print("-" * 60)
+
+    result = client.search_docs(library, query)
+
+    if result:
+        if result.cached:
+            print("[Cached result]")
+        print(f"Library: {result.library_id}")
+        print(f"Query: {result.query}")
+        print("-" * 60)
+        print(result.content)
+        if result.sources:
+            print("-" * 60)
+            print("Sources:")
+            for src in result.sources:
+                print(f"  - {src}")
+        return 0
+    else:
+        print("No documentation found.")
+        print("\nNote: Context7 MCP server integration is required.")
+        print("Please ensure the Context7 MCP server is configured in your Claude settings.")
+        return 1
+
+
+def cmd_cache_stats(args: argparse.Namespace) -> int:
+    """Show cache statistics."""
+    client = Context7Client()
+    stats = client.get_cache_stats()
+
+    print("=" * 40)
+    print("Context7 Cache Statistics")
+    print("=" * 40)
+    print(f"Total entries:   {stats['total_entries']}")
+    print(f"Valid entries:   {stats['valid_entries']}")
+    print(f"Expired entries: {stats['expired_entries']}")
+    print(f"Cache TTL:       {stats['cache_ttl_s']}s")
+    print("=" * 40)
+
+    return 0
+
+
+def cmd_clear_cache(args: argparse.Namespace) -> int:
+    """Clear the documentation cache."""
+    client = Context7Client()
+    count = client.clear_cache()
+    print(f"Cleared {count} cache entries.")
+    return 0
+
+
+def main() -> int:
+    parser = argparse.ArgumentParser(
+        prog="ccb-docs",
+        description="Context7 documentation lookup CLI for CCB",
+    )
+
+    parser.add_argument(
+        "library",
+        nargs="?",
+        help="Library name to query (e.g., react, pandas, express)",
+    )
+    parser.add_argument(
+        "query",
+        nargs="*",
+        help="Documentation query",
+    )
+    parser.add_argument(
+        "--cache-ttl",
+        type=int,
+        default=3600,
+        help="Cache TTL in seconds (default: 3600)",
+    )
+    parser.add_argument(
+        "--max-results",
+        type=int,
+        default=5,
+        help="Maximum results to return (default: 5)",
+    )
+    parser.add_argument(
+        "--cache-stats",
+        action="store_true",
+        help="Show cache statistics",
+    )
+    parser.add_argument(
+        "--clear-cache",
+        action="store_true",
+        help="Clear the documentation cache",
+    )
+
+    args = parser.parse_args()
+
+    if args.cache_stats:
+        return cmd_cache_stats(args)
+
+    if args.clear_cache:
+        return cmd_clear_cache(args)
+
+    if not args.library:
+        parser.print_help()
+        return 0
+
+    return cmd_query(args)
+
+
+if __name__ == "__main__":
+    sys.exit(main())

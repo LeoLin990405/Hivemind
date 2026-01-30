@@ -10,6 +10,8 @@ Usage:
     ccb-ask -p gemini <message> # Force specific provider
     ccb-ask --route <message>   # Show routing decision only
     ccb-ask --health            # Check provider health
+    ccb-ask --track <message>   # Track task with ID
+    ccb-ask --magic             # List magic keywords
 """
 from __future__ import annotations
 
@@ -19,12 +21,14 @@ import argparse
 import subprocess
 import time
 from pathlib import Path
+from typing import Optional
 
 # Add lib to path
 script_dir = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(script_dir / "lib"))
 
 from unified_router import UnifiedRouter, ChannelType, ProviderStatus, ProviderHealth
+from task_tracker import TaskTracker, TaskStatus
 
 
 # Create a global router instance for command lookups
@@ -99,9 +103,14 @@ def check_daemon_health(provider: str) -> ProviderHealth:
         )
 
 
-def execute_ask(provider: str, message: str, use_daemon: bool = True) -> int:
+def execute_ask(provider: str, message: str, use_daemon: bool = True,
+                tracker: Optional[TaskTracker] = None, task_id: Optional[str] = None) -> int:
     """Execute the ask command for a provider."""
     ask_cmd = get_ask_command(provider)
+
+    # Update task status to running if tracking
+    if tracker and task_id:
+        tracker.update_status(task_id, TaskStatus.RUNNING)
 
     if use_daemon:
         # Use heredoc style for daemon
@@ -110,10 +119,22 @@ def execute_ask(provider: str, message: str, use_daemon: bool = True) -> int:
             ["bash", "-c", cmd],
             capture_output=False,
         )
+
+        # Update task status based on result
+        if tracker and task_id:
+            if result.returncode == 0:
+                tracker.update_status(task_id, TaskStatus.COMPLETED)
+            else:
+                tracker.update_status(task_id, TaskStatus.FAILED,
+                                     error=f"Exit code: {result.returncode}")
+
         return result.returncode
     else:
         # Direct CLI fallback (provider-specific)
         print(f"[Fallback] Direct CLI not implemented for {provider}")
+        if tracker and task_id:
+            tracker.update_status(task_id, TaskStatus.FAILED,
+                                 error="Direct CLI not implemented")
         return 1
 
 
@@ -167,6 +188,31 @@ def cmd_health(args: argparse.Namespace) -> int:
     return 0
 
 
+def cmd_magic(args: argparse.Namespace) -> int:
+    """List available magic keywords."""
+    router = UnifiedRouter()
+    keywords = router.list_magic_keywords()
+
+    print("=" * 70)
+    print("Magic Keywords")
+    print("=" * 70)
+    print(f"{'Keyword':<12} {'Action':<18} {'Provider':<12} {'Description'}")
+    print("-" * 70)
+
+    for kw in keywords:
+        keyword = kw.get("keyword", "")
+        action = kw.get("action", "")
+        provider = kw.get("provider", kw.get("providers", [""])[0] if kw.get("providers") else "")
+        description = kw.get("description", "")
+
+        print(f"{keyword:<12} {action:<18} {provider:<12} {description}")
+
+    print("=" * 70)
+    print("\nUsage: Include magic keyword in your message to trigger special behavior.")
+    print("Example: ccb ask '@deep analyze this algorithm'")
+    return 0
+
+
 def cmd_ask(args: argparse.Namespace) -> int:
     """Route and execute ask command."""
     router = UnifiedRouter()
@@ -199,7 +245,20 @@ def cmd_ask(args: argparse.Namespace) -> int:
             print(f"Error: Provider {decision.provider} is unavailable", file=sys.stderr)
             return 1
 
-    return execute_ask(decision.provider, message, use_daemon)
+    # Task tracking
+    tracker = None
+    task_id = None
+    if args.track:
+        tracker = TaskTracker()
+        task = tracker.create_task(
+            provider=decision.provider,
+            message=message,
+            metadata={"files": args.files, "reason": decision.reason},
+        )
+        task_id = task.id
+        print(f"[Task] Created task: {task_id}")
+
+    return execute_ask(decision.provider, message, use_daemon, tracker, task_id)
 
 
 def main() -> int:
@@ -230,6 +289,11 @@ def main() -> int:
         help="Show routing decision",
     )
     parser.add_argument(
+        "-t", "--track",
+        action="store_true",
+        help="Enable task tracking (creates task ID)",
+    )
+    parser.add_argument(
         "--route",
         action="store_true",
         help="Show routing decision only (don't execute)",
@@ -238,6 +302,11 @@ def main() -> int:
         "--health",
         action="store_true",
         help="Check provider health status",
+    )
+    parser.add_argument(
+        "--magic",
+        action="store_true",
+        help="List available magic keywords",
     )
 
     args = parser.parse_args()
@@ -248,6 +317,9 @@ def main() -> int:
 
     if args.health:
         return cmd_health(args)
+
+    if args.magic:
+        return cmd_magic(args)
 
     if args.route:
         if not args.message:

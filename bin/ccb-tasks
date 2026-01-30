@@ -1,0 +1,246 @@
+#!/usr/bin/env python3
+"""
+ccb-tasks - Task management CLI for CCB
+
+Commands:
+    ccb tasks list [--status pending|running|completed|failed|cancelled] [--provider NAME]
+    ccb tasks get <task_id>
+    ccb tasks cancel <task_id>
+    ccb tasks cleanup [--hours 24]
+    ccb tasks stats
+"""
+from __future__ import annotations
+
+import sys
+import argparse
+from pathlib import Path
+from datetime import datetime
+
+# Add lib to path
+script_dir = Path(__file__).resolve().parent.parent
+sys.path.insert(0, str(script_dir / "lib"))
+
+from task_tracker import TaskTracker, TaskStatus
+
+
+def format_time(timestamp: float) -> str:
+    """Format timestamp for display."""
+    dt = datetime.fromtimestamp(timestamp)
+    return dt.strftime("%Y-%m-%d %H:%M:%S")
+
+
+def format_duration(seconds: float) -> str:
+    """Format duration for display."""
+    if seconds < 60:
+        return f"{seconds:.1f}s"
+    elif seconds < 3600:
+        return f"{seconds / 60:.1f}m"
+    else:
+        return f"{seconds / 3600:.1f}h"
+
+
+def status_icon(status: TaskStatus) -> str:
+    """Get icon for status."""
+    icons = {
+        TaskStatus.PENDING: "⏳",
+        TaskStatus.RUNNING: "🔄",
+        TaskStatus.COMPLETED: "✅",
+        TaskStatus.FAILED: "❌",
+        TaskStatus.CANCELLED: "⛔",
+    }
+    return icons.get(status, "?")
+
+
+def cmd_list(args: argparse.Namespace) -> int:
+    """List tasks."""
+    tracker = TaskTracker()
+
+    status_filter = None
+    if args.status:
+        try:
+            status_filter = TaskStatus(args.status)
+        except ValueError:
+            print(f"Error: Invalid status '{args.status}'", file=sys.stderr)
+            return 1
+
+    tasks = tracker.list_tasks(
+        status=status_filter,
+        provider=args.provider,
+        limit=args.limit,
+    )
+
+    if not tasks:
+        print("No tasks found.")
+        return 0
+
+    # Print header
+    print("=" * 80)
+    print(f"{'ID':<10} {'Provider':<10} {'Status':<12} {'Created':<20} {'Message':<25}")
+    print("-" * 80)
+
+    for task in tasks:
+        msg_preview = task.message[:22] + "..." if len(task.message) > 25 else task.message
+        msg_preview = msg_preview.replace("\n", " ")
+        print(
+            f"{task.id:<10} "
+            f"{task.provider:<10} "
+            f"{status_icon(task.status)} {task.status.value:<10} "
+            f"{format_time(task.created_at):<20} "
+            f"{msg_preview:<25}"
+        )
+
+    print("=" * 80)
+    print(f"Total: {len(tasks)} task(s)")
+
+    return 0
+
+
+def cmd_get(args: argparse.Namespace) -> int:
+    """Get task details."""
+    tracker = TaskTracker()
+    task = tracker.get_task(args.task_id)
+
+    if not task:
+        print(f"Error: Task '{args.task_id}' not found", file=sys.stderr)
+        return 1
+
+    print("=" * 60)
+    print("Task Details")
+    print("=" * 60)
+    print(f"ID:         {task.id}")
+    print(f"Provider:   {task.provider}")
+    print(f"Status:     {status_icon(task.status)} {task.status.value}")
+    print(f"Created:    {format_time(task.created_at)}")
+    print(f"Updated:    {format_time(task.updated_at)}")
+
+    duration = task.updated_at - task.created_at
+    print(f"Duration:   {format_duration(duration)}")
+
+    print("-" * 60)
+    print("Message:")
+    print(task.message)
+
+    if task.result:
+        print("-" * 60)
+        print("Result:")
+        print(task.result)
+
+    if task.error:
+        print("-" * 60)
+        print("Error:")
+        print(task.error)
+
+    print("=" * 60)
+    return 0
+
+
+def cmd_cancel(args: argparse.Namespace) -> int:
+    """Cancel a task."""
+    tracker = TaskTracker()
+
+    if tracker.cancel_task(args.task_id):
+        print(f"Task '{args.task_id}' cancelled.")
+        return 0
+    else:
+        print(f"Error: Could not cancel task '{args.task_id}' (not found or already completed)",
+              file=sys.stderr)
+        return 1
+
+
+def cmd_cleanup(args: argparse.Namespace) -> int:
+    """Cleanup old tasks."""
+    tracker = TaskTracker()
+    deleted = tracker.cleanup_old_tasks(max_age_hours=args.hours)
+    print(f"Deleted {deleted} task(s) older than {args.hours} hours.")
+    return 0
+
+
+def cmd_stats(args: argparse.Namespace) -> int:
+    """Show task statistics."""
+    tracker = TaskTracker()
+    stats = tracker.get_stats()
+
+    print("=" * 40)
+    print("Task Statistics")
+    print("=" * 40)
+
+    total = sum(stats.values())
+    for status, count in stats.items():
+        try:
+            icon = status_icon(TaskStatus(status))
+        except ValueError:
+            icon = "?"
+        print(f"{icon} {status:<12}: {count:>5}")
+
+    print("-" * 40)
+    print(f"{'Total':<14}: {total:>5}")
+    print("=" * 40)
+
+    return 0
+
+
+def main() -> int:
+    parser = argparse.ArgumentParser(
+        prog="ccb-tasks",
+        description="Task management CLI for CCB",
+    )
+
+    subparsers = parser.add_subparsers(dest="command", help="Commands")
+
+    # list command
+    list_parser = subparsers.add_parser("list", help="List tasks")
+    list_parser.add_argument(
+        "-s", "--status",
+        choices=["pending", "running", "completed", "failed", "cancelled"],
+        help="Filter by status",
+    )
+    list_parser.add_argument(
+        "-p", "--provider",
+        help="Filter by provider",
+    )
+    list_parser.add_argument(
+        "-n", "--limit",
+        type=int,
+        default=20,
+        help="Maximum number of tasks to show (default: 20)",
+    )
+
+    # get command
+    get_parser = subparsers.add_parser("get", help="Get task details")
+    get_parser.add_argument("task_id", help="Task ID")
+
+    # cancel command
+    cancel_parser = subparsers.add_parser("cancel", help="Cancel a task")
+    cancel_parser.add_argument("task_id", help="Task ID to cancel")
+
+    # cleanup command
+    cleanup_parser = subparsers.add_parser("cleanup", help="Cleanup old tasks")
+    cleanup_parser.add_argument(
+        "--hours",
+        type=int,
+        default=24,
+        help="Delete tasks older than this many hours (default: 24)",
+    )
+
+    # stats command
+    subparsers.add_parser("stats", help="Show task statistics")
+
+    args = parser.parse_args()
+
+    if args.command == "list":
+        return cmd_list(args)
+    elif args.command == "get":
+        return cmd_get(args)
+    elif args.command == "cancel":
+        return cmd_cancel(args)
+    elif args.command == "cleanup":
+        return cmd_cleanup(args)
+    elif args.command == "stats":
+        return cmd_stats(args)
+    else:
+        parser.print_help()
+        return 0
+
+
+if __name__ == "__main__":
+    sys.exit(main())

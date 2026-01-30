@@ -5034,8 +5034,8 @@ def main():
         args = parser.parse_args(argv[1:])
         return cmd_sidecar(args)
 
-    # Unified Router commands: ask, route, health
-    if argv and argv[0] in {"ask", "route", "health"}:
+    # Unified Router commands: ask, route, health, magic
+    if argv and argv[0] in {"ask", "route", "health", "magic"}:
         ccb_ask_bin = script_dir / "bin" / "ccb-ask"
         if argv[0] == "ask":
             # ccb ask <message> -> ccb-ask <message>
@@ -5046,6 +5046,21 @@ def main():
         elif argv[0] == "health":
             # ccb health -> ccb-ask --health
             return subprocess.run([sys.executable, str(ccb_ask_bin), "--health"]).returncode
+        elif argv[0] == "magic":
+            # ccb magic -> ccb-ask --magic
+            return subprocess.run([sys.executable, str(ccb_ask_bin), "--magic"]).returncode
+
+    # Task management commands
+    if argv and argv[0] == "tasks":
+        ccb_tasks_bin = script_dir / "bin" / "ccb-tasks"
+        # ccb tasks <subcommand> -> ccb-tasks <subcommand>
+        return subprocess.run([sys.executable, str(ccb_tasks_bin)] + argv[1:]).returncode
+
+    # Documentation lookup commands
+    if argv and argv[0] == "docs":
+        ccb_docs_bin = script_dir / "bin" / "ccb-docs"
+        # ccb docs <library> <query> -> ccb-docs <library> <query>
+        return subprocess.run([sys.executable, str(ccb_docs_bin)] + argv[1:]).returncode
 
     if argv and argv[0] in {"kill", "update", "version", "uninstall", "reinstall"}:
         parser = argparse.ArgumentParser(description="Claude AI unified launcher", add_help=True)
@@ -5080,7 +5095,7 @@ def main():
     start_parser = argparse.ArgumentParser(
         description="Claude AI unified launcher",
         add_help=True,
-        epilog="Other commands: ccb ask | ccb route | ccb health | ccb update | ccb version | ccb kill | ccb uninstall | ccb reinstall | ccb droid setup-delegation",
+        epilog="Other commands: ccb ask | ccb route | ccb health | ccb magic | ccb tasks | ccb docs | ccb update | ccb version | ccb kill | ccb uninstall | ccb reinstall | ccb droid setup-delegation",
     )
     start_parser.add_argument(
         "providers",
