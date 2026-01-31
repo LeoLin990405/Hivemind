@@ -450,6 +450,8 @@ def create_api(
         provider: Optional[str] = None,
         limit: int = Query(50, le=100),
         offset: int = Query(0, ge=0),
+        order_by: str = Query("created_at", description="Field to order by: created_at, updated_at, priority"),
+        order_desc: bool = Query(True, description="Order descending if true"),
     ) -> List[Dict[str, Any]]:
         """List requests with optional filtering."""
         status_enum = RequestStatus(status) if status else None
@@ -458,6 +460,8 @@ def create_api(
             provider=provider,
             limit=limit,
             offset=offset,
+            order_by=order_by,
+            order_desc=order_desc,
         )
         return [r.to_dict() for r in requests]
 
@@ -557,6 +561,34 @@ def create_api(
             "excess_removed": excess_removed,
             "total_removed": expired_removed + excess_removed,
         }
+
+    # ==================== Request Cleanup Endpoints ====================
+
+    @app.post("/api/requests/cleanup")
+    async def cleanup_requests(
+        max_age_hours: int = Query(24, description="Remove requests older than this many hours"),
+    ) -> Dict[str, Any]:
+        """Remove old requests and their responses."""
+        removed = store.cleanup_old_requests(max_age_hours)
+        return {
+            "removed": removed,
+            "max_age_hours": max_age_hours,
+        }
+
+    @app.delete("/api/requests/{request_id}")
+    async def delete_request(request_id: str) -> Dict[str, Any]:
+        """Delete a specific request and its response."""
+        # Check if request exists
+        request = store.get_request(request_id)
+        if not request:
+            raise HTTPException(status_code=404, detail="Request not found")
+
+        # Delete from database
+        with store._get_connection() as conn:
+            conn.execute("DELETE FROM responses WHERE request_id = ?", (request_id,))
+            conn.execute("DELETE FROM requests WHERE id = ?", (request_id,))
+
+        return {"deleted": True, "request_id": request_id}
 
     # ==================== Retry/Fallback Endpoints ====================
 

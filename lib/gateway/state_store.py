@@ -219,8 +219,19 @@ class StateStore:
         provider: Optional[str] = None,
         limit: int = 50,
         offset: int = 0,
+        order_by: str = "created_at",
+        order_desc: bool = True,
     ) -> List[GatewayRequest]:
-        """List requests with optional filtering."""
+        """List requests with optional filtering.
+
+        Args:
+            status: Filter by request status
+            provider: Filter by provider name
+            limit: Maximum number of results
+            offset: Number of results to skip
+            order_by: Field to order by (created_at, updated_at, priority)
+            order_desc: If True, order descending; if False, ascending
+        """
         query = "SELECT * FROM requests WHERE 1=1"
         params: List[Any] = []
 
@@ -232,7 +243,13 @@ class StateStore:
             query += " AND provider = ?"
             params.append(provider)
 
-        query += " ORDER BY priority DESC, created_at ASC LIMIT ? OFFSET ?"
+        # Validate order_by to prevent SQL injection
+        valid_order_fields = {"created_at", "updated_at", "priority"}
+        if order_by not in valid_order_fields:
+            order_by = "created_at"
+
+        order_dir = "DESC" if order_desc else "ASC"
+        query += f" ORDER BY {order_by} {order_dir} LIMIT ? OFFSET ?"
         params.extend([limit, offset])
 
         with self._get_connection() as conn:
