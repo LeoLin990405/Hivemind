@@ -471,6 +471,41 @@ class ParallelExecutor:
 
         return result
 
+    def get_available_providers(self) -> List[str]:
+        """Get list of available providers for parallel execution."""
+        return list(self.backends.keys())
+
+    def get_provider_groups(self) -> Dict[str, List[str]]:
+        """Get configured provider groups."""
+        from .gateway_config import DEFAULT_PROVIDER_GROUPS
+        return DEFAULT_PROVIDER_GROUPS.copy()
+
+
+def compare_responses(responses: List[str]) -> Dict[str, Any]:
+    """
+    Compare multiple responses for similarity analysis.
+
+    Args:
+        responses: List of response strings
+
+    Returns:
+        Dict with comparison metrics
+    """
+    if not responses:
+        return {"count": 0, "avg_length": 0, "length_variance": 0}
+
+    lengths = [len(r) for r in responses]
+    avg_length = sum(lengths) / len(lengths)
+    variance = sum((l - avg_length) ** 2 for l in lengths) / len(lengths)
+
+    return {
+        "count": len(responses),
+        "avg_length": avg_length,
+        "length_variance": variance,
+        "min_length": min(lengths),
+        "max_length": max(lengths),
+    }
+
 
 # Import GatewayRequest for type checking
 from .models import GatewayRequest

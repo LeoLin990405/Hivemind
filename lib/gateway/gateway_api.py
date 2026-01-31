@@ -509,6 +509,30 @@ def create_api(
             total_tokens_saved=stats.total_tokens_saved,
         )
 
+    @app.get("/api/cache/stats/detailed")
+    async def get_cache_stats_detailed() -> Dict[str, Any]:
+        """Get detailed cache statistics including per-provider breakdown."""
+        if not cache_manager:
+            raise HTTPException(status_code=400, detail="Cache not enabled")
+
+        stats = cache_manager.get_stats()
+        provider_stats = cache_manager.get_provider_stats()
+        top_entries = cache_manager.get_top_entries(10)
+
+        return {
+            "summary": stats.to_dict(),
+            "by_provider": provider_stats,
+            "top_entries": [
+                {
+                    "cache_key": e.cache_key,
+                    "provider": e.provider,
+                    "hit_count": e.hit_count,
+                    "response_preview": e.response[:100] if e.response else None,
+                }
+                for e in top_entries
+            ],
+        }
+
     @app.delete("/api/cache")
     async def clear_cache(
         provider: Optional[str] = Query(None, description="Clear cache for specific provider"),
@@ -522,12 +546,17 @@ def create_api(
 
     @app.post("/api/cache/cleanup")
     async def cleanup_cache() -> Dict[str, Any]:
-        """Remove expired cache entries."""
+        """Remove expired cache entries and enforce max entries limit."""
         if not cache_manager:
             raise HTTPException(status_code=400, detail="Cache not enabled")
 
-        removed = cache_manager.cleanup_expired()
-        return {"removed": removed}
+        expired_removed = cache_manager.cleanup_expired()
+        excess_removed = cache_manager.enforce_max_entries()
+        return {
+            "expired_removed": expired_removed,
+            "excess_removed": excess_removed,
+            "total_removed": expired_removed + excess_removed,
+        }
 
     # ==================== Retry/Fallback Endpoints ====================
 

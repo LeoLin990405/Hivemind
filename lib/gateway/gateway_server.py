@@ -545,23 +545,19 @@ class GatewayServer:
 
         app = self.create_app()
 
-        # Setup signal handlers
-        loop = asyncio.new_event_loop()
-        asyncio.set_event_loop(loop)
+        # Use lifespan context manager for startup/shutdown
+        from contextlib import asynccontextmanager
 
-        async def startup():
+        @asynccontextmanager
+        async def lifespan(app):
+            # Startup
             await self.start()
-
-        async def shutdown():
+            yield
+            # Shutdown
             await self.stop()
 
-        @app.on_event("startup")
-        async def on_startup():
-            await startup()
-
-        @app.on_event("shutdown")
-        async def on_shutdown():
-            await shutdown()
+        # Replace app's lifespan
+        app.router.lifespan_context = lifespan
 
         print(f"Starting CCB Gateway at http://{host}:{port}")
         print(f"API docs available at http://{host}:{port}/docs")

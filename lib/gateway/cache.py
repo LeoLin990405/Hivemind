@@ -436,3 +436,79 @@ class CacheManager:
             last_hit_at=row["last_hit_at"],
             metadata=json.loads(row["metadata"]) if row["metadata"] else None,
         )
+
+    def enforce_max_entries(self) -> int:
+        """
+        Remove oldest entries if cache exceeds max_entries limit.
+
+        Returns:
+            Number of entries removed
+        """
+        with self.store._get_connection() as conn:
+            cursor = conn.execute("SELECT COUNT(*) FROM response_cache")
+            count = cursor.fetchone()[0]
+
+            if count <= self.config.max_entries:
+                return 0
+
+            # Remove oldest entries (by created_at) to get under limit
+            excess = count - self.config.max_entries
+            cursor = conn.execute("""
+                DELETE FROM response_cache
+                WHERE cache_key IN (
+                    SELECT cache_key FROM response_cache
+                    ORDER BY created_at ASC
+                    LIMIT ?
+                )
+            """, (excess,))
+            return cursor.rowcount
+
+    def get_top_entries(self, limit: int = 10) -> List[CacheEntry]:
+        """
+        Get top cache entries by hit count.
+
+        Args:
+            limit: Maximum entries to return
+
+        Returns:
+            List of CacheEntry objects sorted by hit_count descending
+        """
+        now = time.time()
+        with self.store._get_connection() as conn:
+            cursor = conn.execute("""
+                SELECT * FROM response_cache
+                WHERE expires_at > ?
+                ORDER BY hit_count DESC
+                LIMIT ?
+            """, (now, limit))
+            return [self._row_to_entry(row) for row in cursor.fetchall()]
+
+    def get_provider_stats(self) -> Dict[str, Dict[str, Any]]:
+        """
+        Get cache statistics per provider.
+
+        Returns:
+            Dict of provider -> stats
+        """
+        now = time.time()
+        stats: Dict[str, Dict[str, Any]] = {}
+
+        with self.store._get_connection() as conn:
+            cursor = conn.execute("""
+                SELECT provider,
+                       COUNT(*) as entry_count,
+                       SUM(hit_count) as total_hits,
+                       AVG(hit_count) as avg_hits
+                FROM response_cache
+                WHERE expires_at > ?
+                GROUP BY provider
+            """, (now,))
+
+            for row in cursor.fetchall():
+                stats[row["provider"]] = {
+                    "entry_count": row["entry_count"],
+                    "total_hits": row["total_hits"] or 0,
+                    "avg_hits": row["avg_hits"] or 0.0,
+                }
+
+        return stats
