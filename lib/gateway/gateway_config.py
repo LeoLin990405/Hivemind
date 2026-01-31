@@ -223,12 +223,12 @@ class GatewayConfig:
             timeout_s=300.0,
         )
 
-        # Gemini (CLI) - use -p for non-interactive prompt mode
+        # Gemini (CLI) - use -p for non-interactive prompt mode with JSON output
         self.providers["gemini"] = ProviderConfig(
             name="gemini",
             backend_type=BackendType.CLI_EXEC,
             cli_command="gemini",
-            cli_args=["-p"],
+            cli_args=["-p", "-o", "json"],
             timeout_s=300.0,
         )
 

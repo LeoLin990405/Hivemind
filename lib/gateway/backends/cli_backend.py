@@ -63,8 +63,10 @@ def _open_auth_url(url: str) -> bool:
 
 def _open_auth_terminal(provider: str) -> bool:
     """Open a new terminal window for authentication."""
+    # Different providers have different auth commands
+    # Gemini uses interactive mode to trigger OAuth flow
     auth_commands = {
-        "gemini": "gemini auth login",
+        "gemini": "gemini -i 'Please authenticate'",  # Interactive mode triggers OAuth
         "claude": "claude auth login",
         "codex": "codex auth login",
     }
