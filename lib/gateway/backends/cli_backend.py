@@ -180,8 +180,23 @@ class CLIBackend(BaseBackend):
 
             # Try PTY mode first for CLIs that need terminal (like Gemini)
             # This allows us to capture auth URLs that are only shown in TTY mode
-            # Disabled by default as it doesn't work reliably
+            # Enable by default for Gemini since it requires TTY
             use_pty = os.environ.get("CCB_CLI_USE_PTY", "0").lower() in ("1", "true", "yes")
+
+            # For Gemini, use WezTerm execution since it requires real TTY
+            if self.config.name == "gemini":
+                debug = os.environ.get("CCB_DEBUG", "0").lower() in ("1", "true", "yes")
+                if debug:
+                    print(f"[CCB] Using WezTerm for Gemini, cmd: {cmd}")
+                result = await self._execute_with_wezterm(cmd, request.timeout_s or self.config.timeout_s)
+                if debug:
+                    print(f"[CCB] WezTerm result: {result}")
+                if result is not None:
+                    stdout, stderr, returncode = result
+                    latency_ms = (time.time() - start_time) * 1000
+                    return self._process_output(stdout, stderr, returncode, latency_ms)
+                if debug:
+                    print(f"[CCB] WezTerm returned None, falling back to subprocess")
 
             if use_pty:
                 result = await self._execute_with_pty(cmd, env, request.timeout_s or self.config.timeout_s)
@@ -236,6 +251,98 @@ class CLIBackend(BaseBackend):
                 str(e),
                 latency_ms=(time.time() - start_time) * 1000,
             )
+
+    async def _execute_with_wezterm(
+        self, cmd: List[str], timeout: float
+    ) -> Optional[tuple]:
+        """Execute command in WezTerm pane and capture output.
+
+        This is used for CLIs like Gemini that require a real TTY.
+        """
+        import uuid
+
+        wezterm_path = shutil.which("wezterm")
+        if not wezterm_path:
+            return None
+
+        # Create a temp file to capture output
+        output_file = f"/tmp/ccb_wezterm_{uuid.uuid4().hex[:8]}.txt"
+        debug = os.environ.get("CCB_DEBUG", "0").lower() in ("1", "true", "yes")
+
+        try:
+            # Build command that writes output to file
+            cmd_str = " ".join(f'"{c}"' if " " in c else c for c in cmd)
+            wrapper_cmd = f'{cmd_str} > "{output_file}" 2>&1; echo "CCB_EXIT_CODE:$?" >> "{output_file}"'
+
+            if debug:
+                print(f"[CCB WezTerm] Spawning: {wrapper_cmd}")
+
+            # Spawn in WezTerm and wait
+            spawn_result = subprocess.run(
+                [wezterm_path, "cli", "spawn", "--", "bash", "-c", wrapper_cmd],
+                capture_output=True,
+                text=True,
+                timeout=5,
+            )
+
+            if debug:
+                print(f"[CCB WezTerm] Spawn result: {spawn_result.returncode}, stdout: {spawn_result.stdout}, stderr: {spawn_result.stderr}")
+
+            if spawn_result.returncode != 0:
+                return None
+
+            # Get the pane ID from spawn output
+            pane_id = spawn_result.stdout.strip()
+
+            # Wait for command to complete by polling the output file
+            deadline = time.time() + timeout
+            while time.time() < deadline:
+                await asyncio.sleep(0.5)
+
+                # Check if output file exists and has exit code marker
+                if os.path.exists(output_file):
+                    try:
+                        with open(output_file, "r") as f:
+                            content = f.read()
+
+                        if debug:
+                            print(f"[CCB WezTerm] File content ({len(content)} chars): {content[:200]}...")
+
+                        # Look for exit code marker (may not have newline before it)
+                        import re
+                        match = re.search(r"CCB_EXIT_CODE:(\d+)", content)
+                        if match:
+                            exit_code = int(match.group(1))
+                            # Remove the exit code marker from output
+                            output = re.sub(r"CCB_EXIT_CODE:\d+\s*$", "", content)
+                            if debug:
+                                print(f"[CCB WezTerm] Success! Exit code: {exit_code}")
+                            return output.strip(), "", exit_code
+                    except Exception as e:
+                        if debug:
+                            print(f"[CCB WezTerm] Error reading file: {e}")
+
+            # Timeout - try to kill the pane
+            if debug:
+                print(f"[CCB WezTerm] Timeout, killing pane {pane_id}")
+            try:
+                subprocess.run(
+                    [wezterm_path, "cli", "kill-pane", "--pane-id", pane_id],
+                    capture_output=True,
+                    timeout=2,
+                )
+            except Exception:
+                pass
+
+            return None
+
+        finally:
+            # Clean up temp file
+            try:
+                if os.path.exists(output_file):
+                    os.remove(output_file)
+            except Exception:
+                pass
 
     async def _execute_with_pty(
         self, cmd: List[str], env: dict, timeout: float
@@ -305,6 +412,9 @@ class CLIBackend(BaseBackend):
                 await process.wait()
 
             output = "".join(output_parts)
+            # Debug: print captured output for troubleshooting
+            if os.environ.get("CCB_DEBUG", "0").lower() in ("1", "true", "yes"):
+                print(f"[CCB PTY] Captured output ({len(output)} chars): {output[:500]}")
             return output, "", process.returncode or 0
 
         except Exception as e:

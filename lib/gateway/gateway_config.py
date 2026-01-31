@@ -223,12 +223,14 @@ class GatewayConfig:
             timeout_s=300.0,
         )
 
-        # Gemini (CLI) - use -p for non-interactive prompt mode with JSON output
+        # Gemini (CLI) - requires TTY, use terminal backend or WezTerm execution
+        # Note: Gemini CLI uses OAuth authentication, not API key
+        # The -p flag requires the prompt to follow immediately, so we use positional args
         self.providers["gemini"] = ProviderConfig(
             name="gemini",
             backend_type=BackendType.CLI_EXEC,
             cli_command="gemini",
-            cli_args=["-p", "-o", "json"],
+            cli_args=["-o", "json"],  # Output format, prompt will be added as positional arg
             timeout_s=300.0,
         )
 

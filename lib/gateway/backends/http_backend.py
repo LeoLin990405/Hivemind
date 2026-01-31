@@ -64,9 +64,12 @@ class HTTPBackend(BaseBackend):
 
         try:
             # Determine API type and format request
-            if "anthropic" in (self.config.api_base_url or "").lower():
+            base_url = (self.config.api_base_url or "").lower()
+            if "anthropic" in base_url:
                 result = await self._execute_anthropic(request, api_key)
-            elif "deepseek" in (self.config.api_base_url or "").lower():
+            elif "generativelanguage.googleapis" in base_url or self.config.name == "gemini":
+                result = await self._execute_gemini(request, api_key)
+            elif "deepseek" in base_url:
                 result = await self._execute_openai_compatible(request, api_key)
             else:
                 result = await self._execute_openai_compatible(request, api_key)
@@ -137,6 +140,68 @@ class HTTPBackend(BaseBackend):
                 response=response_text,
                 tokens_used=tokens_used,
                 metadata={"model": data.get("model"), "stop_reason": data.get("stop_reason")},
+            )
+
+    async def _execute_gemini(
+        self,
+        request: GatewayRequest,
+        api_key: str,
+    ) -> BackendResult:
+        """Execute request using Google Gemini API format."""
+        import aiohttp
+
+        session = await self._get_session()
+        model = self.config.model or "gemini-2.0-flash"
+
+        # Gemini API endpoint format
+        base_url = self.config.api_base_url.rstrip("/")
+        url = f"{base_url}/models/{model}:generateContent?key={api_key}"
+
+        headers = {
+            "Content-Type": "application/json",
+        }
+
+        payload = {
+            "contents": [
+                {
+                    "parts": [
+                        {"text": request.message}
+                    ]
+                }
+            ],
+            "generationConfig": {
+                "maxOutputTokens": self.config.max_tokens,
+            },
+        }
+
+        async with session.post(url, json=payload, headers=headers) as resp:
+            if resp.status != 200:
+                error_text = await resp.text()
+                return BackendResult.fail(f"Gemini API error {resp.status}: {error_text}")
+
+            data = await resp.json()
+
+            # Extract response text from Gemini format
+            candidates = data.get("candidates", [])
+            if candidates:
+                content = candidates[0].get("content", {})
+                parts = content.get("parts", [])
+                text_parts = [part.get("text", "") for part in parts if "text" in part]
+                response_text = "".join(text_parts)
+            else:
+                response_text = ""
+
+            # Extract token usage
+            usage = data.get("usageMetadata", {})
+            tokens_used = usage.get("totalTokenCount", 0)
+
+            return BackendResult.ok(
+                response=response_text,
+                tokens_used=tokens_used,
+                metadata={
+                    "model": model,
+                    "finish_reason": candidates[0].get("finishReason") if candidates else None,
+                },
             )
 
     async def _execute_openai_compatible(
