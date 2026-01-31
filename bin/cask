@@ -1,6 +1,6 @@
 #!/usr/bin/env python3.13
 """
-cask - Send message to Codex and wait for reply (sync).
+cask - Send message to Codex via Gateway API.
 
 Designed to be used with Claude Code's run_in_background=true.
 If --output is provided, the reply is written atomically to that file and stdout stays empty.
@@ -23,21 +23,7 @@ from compat import read_stdin_text, setup_windows_encoding
 setup_windows_encoding()
 
 from cli_output import EXIT_ERROR, EXIT_OK, atomic_write_text
-from env_utils import env_bool
-from askd_client import (
-    state_file_from_env,
-    find_project_session_file,
-    has_active_session,
-    resolve_work_dir_with_registry,
-    try_daemon_request,
-    maybe_start_daemon,
-    wait_for_daemon_ready,
-    check_background_mode,
-    maybe_start_sidecar,
-    signal_sidecar_done,
-)
-from providers import CASK_CLIENT_SPEC
-from gateway_client import is_gateway_enabled, gateway_ask_codex
+from gateway_client import gateway_ask_codex
 
 
 SUPERVISOR_PROMPT = """## Executor Mode: codex+opencode
@@ -67,13 +53,6 @@ Guidelines:
 - Use oask for code execution if you prefer delegation
 - Return final results to Claude
 
-"""
-
-ASYNC_GUARDRAIL = """[CCB_ASYNC_SUBMITTED provider=codex]
-IMPORTANT: Task submitted to Codex. You MUST:
-1. Tell user "Codex processing..."
-2. END YOUR TURN IMMEDIATELY
-3. Do NOT wait, poll, check status, or use any more tools
 """
 
 
@@ -108,15 +87,13 @@ def _get_executor_from_roles() -> Tuple[Optional[str], bool]:
 
 
 def _usage() -> None:
-    print("Usage: cask [--sync] [--session-file FILE] [--timeout SECONDS] [--output FILE] <message>", file=sys.stderr)
+    print("Usage: cask [--timeout SECONDS] [--output FILE] <message>", file=sys.stderr)
 
 
-def _parse_args(argv: list[str]) -> Tuple[Optional[Path], float, str, bool, Optional[str], bool]:
+def _parse_args(argv: list[str]) -> Tuple[Optional[Path], float, str, bool]:
     output: Optional[Path] = None
     timeout: Optional[float] = None
     quiet = False
-    sync_mode = False
-    session_file: Optional[str] = None
     parts: list[str] = []
 
     it = iter(argv[1:])
@@ -126,15 +103,6 @@ def _parse_args(argv: list[str]) -> Tuple[Optional[Path], float, str, bool, Opti
             raise SystemExit(0)
         if token in ("-q", "--quiet"):
             quiet = True
-            continue
-        if token == "--sync":
-            sync_mode = True
-            continue
-        if token == "--session-file":
-            try:
-                session_file = next(it)
-            except StopIteration:
-                raise ValueError("--session-file requires a file path")
             continue
         if token in ("-o", "--output"):
             try:
@@ -155,15 +123,15 @@ def _parse_args(argv: list[str]) -> Tuple[Optional[Path], float, str, bool, Opti
     message = " ".join(parts).strip()
     if timeout is None:
         try:
-            timeout = float(os.environ.get("CCB_SYNC_TIMEOUT", "-1"))
+            timeout = float(os.environ.get("CCB_SYNC_TIMEOUT", "300"))
         except Exception:
-            timeout = -1.0
-    return output, timeout, message, quiet, session_file, sync_mode
+            timeout = 300.0
+    return output, timeout, message, quiet
 
 
 def main(argv: list[str]) -> int:
     try:
-        output_path, timeout, message, quiet, session_file, sync_mode = _parse_args(argv)
+        output_path, timeout, message, quiet = _parse_args(argv)
         if not message and not sys.stdin.isatty():
             message = read_stdin_text().strip()
         if not message:
@@ -177,64 +145,17 @@ def main(argv: list[str]) -> int:
         elif collaboration:
             message = COLLABORATOR_PROMPT + message
 
-        # Gateway mode: use Gateway API instead of daemon
-        if is_gateway_enabled():
-            reply, exit_code = gateway_ask_codex(message, timeout_s=timeout if timeout > 0 else 300.0, wait=True)
-            if reply:
-                if output_path:
-                    atomic_write_text(output_path, reply + "\n")
-                    return exit_code
-                sys.stdout.write(reply)
-                if not reply.endswith("\n"):
-                    sys.stdout.write("\n")
-            return exit_code
-
-        # Foreground execution is allowed; background-mode enforcement is handled by the caller (if any).
-        if executor == "codex+opencode":
-            message = SUPERVISOR_PROMPT + message
-        elif collaboration:
-            message = COLLABORATOR_PROMPT + message
-
-        work_dir, _ = resolve_work_dir_with_registry(
-            CASK_CLIENT_SPEC,
-            provider="codex",
-            cli_session_file=session_file,
-            env_session_file=os.environ.get("CCB_SESSION_FILE"),
-        )
-
-        sidecar_wait_file = maybe_start_sidecar(CASK_CLIENT_SPEC, work_dir, provider="codex", request_timeout_s=timeout)
-        try:
-            # Daemon-only: remove client-side serial lock mode.
-            state_file = state_file_from_env(CASK_CLIENT_SPEC.state_file_env)
-            daemon_result = try_daemon_request(CASK_CLIENT_SPEC, work_dir, message, timeout, quiet, state_file)
-            if daemon_result is None and maybe_start_daemon(CASK_CLIENT_SPEC, work_dir):
-                wait_for_daemon_ready(CASK_CLIENT_SPEC, timeout_s=min(2.0, max(0.2, float(timeout))), state_file=state_file)
-                daemon_result = try_daemon_request(CASK_CLIENT_SPEC, work_dir, message, timeout, quiet, state_file)
-            if daemon_result is not None:
-                reply, exit_code = daemon_result
-                # Inject guardrail prompt for Claude (skip in sync mode for Codex)
-                if not sync_mode:
-                    print(ASYNC_GUARDRAIL, file=sys.stderr, flush=True)
-                if output_path:
-                    atomic_write_text(output_path, reply + "\n")
-                    return exit_code
-                sys.stdout.write(reply)
-                if not reply.endswith("\n"):
-                    sys.stdout.write("\n")
+        # Use Gateway API
+        reply, exit_code = gateway_ask_codex(message, timeout_s=timeout if timeout > 0 else 300.0, wait=True)
+        if reply:
+            if output_path:
+                atomic_write_text(output_path, reply + "\n")
                 return exit_code
+            sys.stdout.write(reply)
+            if not reply.endswith("\n"):
+                sys.stdout.write("\n")
+        return exit_code
 
-            if not env_bool(CASK_CLIENT_SPEC.enabled_env, True):
-                print(f"[ERROR] {CASK_CLIENT_SPEC.enabled_env}=0: cask daemon mode disabled.", file=sys.stderr)
-                return EXIT_ERROR
-            if not has_active_session(CASK_CLIENT_SPEC, work_dir):
-                print("[ERROR] No active Codex session found for this directory.", file=sys.stderr)
-                print("Run `ccb codex` (or add codex to ccb.config) in this project first.", file=sys.stderr)
-                return EXIT_ERROR
-            print("[ERROR] cask daemon required but not available.", file=sys.stderr)
-            print("Start it with `caskd` (or enable autostart via CCB_CASKD_AUTOSTART=1).", file=sys.stderr)
-            return EXIT_ERROR
-        finally:
-            signal_sidecar_done(sidecar_wait_file)
     except KeyboardInterrupt:
         return 130
     except Exception as exc:
