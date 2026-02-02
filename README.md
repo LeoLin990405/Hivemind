@@ -184,6 +184,14 @@ Access the Web UI at `http://localhost:8765/` after starting the gateway.
 - Activity logs with WebSocket updates
 - **Provider speed indicators** (🚀/⚡/🐢)
 
+### Live Monitor (New)
+- **Real-time AI Output** - Watch AI responses as they stream in
+- **Grid View** - Monitor all providers simultaneously
+- **Focus View** - Full-screen single provider output
+- **Active Request Cards** - See processing requests with progress bars
+- **Color-coded Output** - Info (cyan), Error (red), Success (green), Thinking (amber)
+- **Auto-scroll** - Follow live output automatically
+
 ### Request Management
 - Pagination with configurable page size
 - Search and filter by provider, status, content
@@ -202,7 +210,7 @@ Access the Web UI at `http://localhost:8765/` after starting the gateway.
 ### Features
 - **Dark/Light Theme** - Toggle with localStorage persistence
 - **i18n Support** - English and Chinese localization
-- **Keyboard Shortcuts** - `1-6` tabs, `R` refresh, `T` test, `?` help
+- **Keyboard Shortcuts** - `1-7` tabs, `R` refresh, `T` test, `?` help
 - **Confirmation Dialogs** - Prevent accidental deletions
 - **Copy to Clipboard** - One-click copy for API keys
 
@@ -422,7 +430,14 @@ gemini
 
 ## 🔄 Recent Updates
 
-### v0.9.x - Provider Optimization (Latest)
+### v0.10.x - Live Monitor (Latest)
+- **Real-time AI Monitor** - Watch AI output as it streams
+- **Grid/Focus Views** - Multi-provider or single-provider monitoring
+- **Active Request Tracking** - Progress bars for processing requests
+- **Color-coded Output** - Visual distinction for info/error/success/thinking
+- **WebSocket Integration** - Real-time stream_chunk and thinking events
+
+### v0.9.x - Provider Optimization
 - **Provider Speed Tiers** - Fast/Medium/Slow classification
 - **Gemini OAuth Auto-Refresh** - Seamless token management
 - **Improved Fallback Chains** - Speed-aware fallback
