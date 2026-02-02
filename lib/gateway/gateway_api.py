@@ -352,7 +352,7 @@ def create_api(
     async def get_reply(
         request_id: str,
         wait: bool = Query(False, description="Wait for completion"),
-        timeout: float = Query(30.0, description="Wait timeout in seconds"),
+        timeout: float = Query(300.0, description="Wait timeout in seconds"),
     ) -> ReplyResponse:
         """
         Get the response for a request.

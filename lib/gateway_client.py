@@ -89,6 +89,10 @@ def gateway_ask(
             return "Error: Request timed out", 1
         elif status == "cancelled":
             return "Error: Request was cancelled", 1
+        elif status in ("processing", "queued", "retrying"):
+            # Request is still in progress - this means the wait timeout was reached
+            # but the backend is still working. Return a helpful message.
+            return f"Error: Request still {status} after {timeout_s}s wait. The backend may need more time. Use *pend command to check later.", 1
         else:
             return f"Error: Unexpected status: {status}", 1
 

@@ -1,0 +1,243 @@
+#!/usr/bin/env python3.13
+"""
+ccb-query - Query CCB Gateway database for request status and responses.
+
+Usage:
+    ccb-query status <request_id>     # Check status of a specific request
+    ccb-query get <request_id>        # Get response for a completed request
+    ccb-query list [--provider NAME] [--status STATUS] [--limit N]
+    ccb-query pending                 # List all pending/processing requests
+    ccb-query latest [--provider NAME] # Get latest completed response
+
+Designed for Claude Code to check async request completion.
+"""
+from __future__ import annotations
+
+import argparse
+import json
+import os
+import sys
+from pathlib import Path
+
+# Add lib to path
+script_dir = Path(__file__).resolve().parent
+lib_dir = script_dir.parent / "lib"
+sys.path.insert(0, str(lib_dir))
+
+
+def get_db_path() -> Path:
+    """Get the gateway database path."""
+    return Path.home() / ".ccb_config" / "gateway.db"
+
+
+def query_db(sql: str, params: tuple = ()) -> list:
+    """Execute a query and return results."""
+    import sqlite3
+
+    db_path = get_db_path()
+    if not db_path.exists():
+        print(f"Error: Database not found at {db_path}", file=sys.stderr)
+        sys.exit(1)
+
+    conn = sqlite3.connect(str(db_path), timeout=10.0)
+    conn.row_factory = sqlite3.Row
+    try:
+        cursor = conn.execute(sql, params)
+        return [dict(row) for row in cursor.fetchall()]
+    finally:
+        conn.close()
+
+
+def cmd_status(args) -> int:
+    """Check status of a specific request."""
+    results = query_db(
+        "SELECT id, provider, status, created_at, started_at, completed_at FROM requests WHERE id = ?",
+        (args.request_id,)
+    )
+
+    if not results:
+        print(f"Request not found: {args.request_id}")
+        return 1
+
+    req = results[0]
+    print(f"Request: {req['id']}")
+    print(f"Provider: {req['provider']}")
+    print(f"Status: {req['status']}")
+
+    if req['status'] == 'completed':
+        print("✓ Ready to retrieve with: ccb-query get " + req['id'])
+    elif req['status'] in ('queued', 'processing', 'retrying'):
+        print("⏳ Still processing...")
+    else:
+        print(f"⚠ Status: {req['status']}")
+
+    return 0
+
+
+def cmd_get(args) -> int:
+    """Get response for a completed request."""
+    # First check request status
+    req_results = query_db(
+        "SELECT status, provider FROM requests WHERE id = ?",
+        (args.request_id,)
+    )
+
+    if not req_results:
+        print(f"Request not found: {args.request_id}")
+        return 1
+
+    req = req_results[0]
+
+    if req['status'] not in ('completed', 'failed', 'timeout'):
+        print(f"Request still {req['status']}. Not ready yet.")
+        return 2
+
+    # Get response
+    resp_results = query_db(
+        "SELECT response, error, thinking, latency_ms FROM responses WHERE request_id = ?",
+        (args.request_id,)
+    )
+
+    if not resp_results:
+        print(f"No response found for request: {args.request_id}")
+        return 1
+
+    resp = resp_results[0]
+
+    if resp['error']:
+        print(f"Error: {resp['error']}")
+        return 1
+
+    if resp['response']:
+        print(resp['response'])
+
+    return 0
+
+
+def cmd_list(args) -> int:
+    """List requests with optional filtering."""
+    sql = "SELECT id, provider, status, created_at FROM requests WHERE 1=1"
+    params = []
+
+    if args.provider:
+        sql += " AND provider = ?"
+        params.append(args.provider)
+
+    if args.status:
+        sql += " AND status = ?"
+        params.append(args.status)
+
+    sql += " ORDER BY created_at DESC LIMIT ?"
+    params.append(args.limit or 10)
+
+    results = query_db(sql, tuple(params))
+
+    if not results:
+        print("No requests found.")
+        return 0
+
+    print(f"{'ID':<12} {'Provider':<12} {'Status':<12}")
+    print("-" * 40)
+    for req in results:
+        print(f"{req['id'][:10]:<12} {req['provider']:<12} {req['status']:<12}")
+
+    return 0
+
+
+def cmd_pending(args) -> int:
+    """List all pending/processing requests."""
+    results = query_db(
+        """SELECT id, provider, status, created_at
+           FROM requests
+           WHERE status IN ('queued', 'processing', 'retrying')
+           ORDER BY created_at DESC""",
+    )
+
+    if not results:
+        print("No pending requests.")
+        return 0
+
+    print(f"{'ID':<12} {'Provider':<12} {'Status':<12}")
+    print("-" * 40)
+    for req in results:
+        print(f"{req['id'][:10]:<12} {req['provider']:<12} {req['status']:<12}")
+
+    return 0
+
+
+def cmd_latest(args) -> int:
+    """Get latest completed response."""
+    sql = """
+        SELECT r.id, r.provider, r.status, resp.response, resp.error
+        FROM requests r
+        LEFT JOIN responses resp ON r.id = resp.request_id
+        WHERE r.status = 'completed'
+    """
+    params = []
+
+    if args.provider:
+        sql += " AND r.provider = ?"
+        params.append(args.provider)
+
+    sql += " ORDER BY r.completed_at DESC LIMIT 1"
+
+    results = query_db(sql, tuple(params))
+
+    if not results:
+        print("No completed requests found.")
+        return 1
+
+    resp = results[0]
+
+    if resp['error']:
+        print(f"Error: {resp['error']}")
+        return 1
+
+    if resp['response']:
+        # Print provider info as comment
+        print(f"# Provider: {resp['provider']}, Request: {resp['id']}")
+        print(resp['response'])
+
+    return 0
+
+
+def main() -> int:
+    parser = argparse.ArgumentParser(description="Query CCB Gateway database")
+    subparsers = parser.add_subparsers(dest="command", required=True)
+
+    # status command
+    status_parser = subparsers.add_parser("status", help="Check request status")
+    status_parser.add_argument("request_id", help="Request ID to check")
+
+    # get command
+    get_parser = subparsers.add_parser("get", help="Get response for request")
+    get_parser.add_argument("request_id", help="Request ID to get")
+
+    # list command
+    list_parser = subparsers.add_parser("list", help="List requests")
+    list_parser.add_argument("--provider", "-p", help="Filter by provider")
+    list_parser.add_argument("--status", "-s", help="Filter by status")
+    list_parser.add_argument("--limit", "-n", type=int, default=10, help="Limit results")
+
+    # pending command
+    subparsers.add_parser("pending", help="List pending requests")
+
+    # latest command
+    latest_parser = subparsers.add_parser("latest", help="Get latest completed response")
+    latest_parser.add_argument("--provider", "-p", help="Filter by provider")
+
+    args = parser.parse_args()
+
+    commands = {
+        "status": cmd_status,
+        "get": cmd_get,
+        "list": cmd_list,
+        "pending": cmd_pending,
+        "latest": cmd_latest,
+    }
+
+    return commands[args.command](args)
+
+
+if __name__ == "__main__":
+    sys.exit(main())

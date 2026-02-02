@@ -1,0 +1,100 @@
+#!/usr/bin/env python3.13
+"""
+ccb-submit - Submit request to CCB Gateway and return immediately with request_id.
+
+Usage:
+    ccb-submit <provider> <message>
+    ccb-submit codex "review this code"
+    echo "message" | ccb-submit codex
+
+Returns request_id immediately without waiting for response.
+Use ccb-query to check status and retrieve response.
+"""
+from __future__ import annotations
+
+import json
+import os
+import sys
+import urllib.request
+import urllib.error
+from pathlib import Path
+
+
+def get_gateway_url() -> str:
+    """Get the gateway URL from environment or default."""
+    return os.environ.get("CCB_GATEWAY_URL", "http://localhost:8765")
+
+
+def submit_request(provider: str, message: str, timeout_s: float = 600.0) -> tuple:
+    """
+    Submit a request to the gateway without waiting.
+
+    Returns:
+        Tuple of (request_id, error_message)
+    """
+    gateway_url = get_gateway_url()
+    ask_url = f"{gateway_url}/api/ask"
+
+    data = {
+        "message": message,
+        "provider": provider,
+        "timeout_s": timeout_s,
+        "priority": 50,
+    }
+
+    try:
+        req = urllib.request.Request(
+            ask_url,
+            data=json.dumps(data).encode(),
+            headers={"Content-Type": "application/json"},
+            method="POST",
+        )
+        with urllib.request.urlopen(req, timeout=10) as response:
+            result = json.loads(response.read().decode())
+
+        request_id = result.get("request_id")
+        if not request_id:
+            return None, "No request ID returned"
+
+        return request_id, None
+
+    except urllib.error.URLError as e:
+        return None, f"Cannot connect to gateway: {e}"
+    except Exception as e:
+        return None, str(e)
+
+
+def main() -> int:
+    if len(sys.argv) < 2:
+        print("Usage: ccb-submit <provider> [message]", file=sys.stderr)
+        print("       echo 'message' | ccb-submit <provider>", file=sys.stderr)
+        return 1
+
+    provider = sys.argv[1]
+
+    # Get message from args or stdin
+    if len(sys.argv) > 2:
+        message = " ".join(sys.argv[2:])
+    elif not sys.stdin.isatty():
+        message = sys.stdin.read().strip()
+    else:
+        print("Error: No message provided", file=sys.stderr)
+        return 1
+
+    if not message:
+        print("Error: Empty message", file=sys.stderr)
+        return 1
+
+    request_id, error = submit_request(provider, message)
+
+    if error:
+        print(f"Error: {error}", file=sys.stderr)
+        return 1
+
+    # Output just the request_id for easy parsing
+    print(request_id)
+    return 0
+
+
+if __name__ == "__main__":
+    sys.exit(main())
