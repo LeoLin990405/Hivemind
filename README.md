@@ -32,6 +32,10 @@
   <strong>English</strong> | <a href="README.zh-CN.md">简体中文</a>
 </p>
 
+<p align="center">
+  <img src="assets/demo/gateway-demo.gif" alt="CCB Gateway Demo" width="800">
+</p>
+
 ---
 
 ## Overview
