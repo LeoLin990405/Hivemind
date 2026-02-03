@@ -1,0 +1,341 @@
+#!/bin/bash
+# CCB CLI 统一执行脚本 (Gateway 模式)
+# 所有调用走 Gateway API，实现统一监控、缓存、重试
+# 用法: ccb-cli <provider> [model/mode] <prompt>
+
+set -e
+
+SCRIPTS_DIR="$HOME/.ccb_config/scripts"
+GATEWAY_URL="${CCB_GATEWAY_URL:-http://localhost:8765}"
+GATEWAY_TIMEOUT="${CCB_GATEWAY_TIMEOUT:-300}"
+AGENT=""
+
+# Colors for output
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+YELLOW='\033[1;33m'
+BLUE='\033[0;34m'
+PURPLE='\033[0;35m'
+NC='\033[0m' # No Color
+
+# Parse global options first
+POSITIONAL_ARGS=()
+while [[ $# -gt 0 ]]; do
+    case $1 in
+        -a|--agent)
+            AGENT="$2"
+            shift 2
+            ;;
+        -t|--timeout)
+            GATEWAY_TIMEOUT="$2"
+            shift 2
+            ;;
+        -h|--help|help)
+            POSITIONAL_ARGS+=("help")
+            shift
+            ;;
+        *)
+            POSITIONAL_ARGS+=("$1")
+            shift
+            ;;
+    esac
+done
+
+# Restore positional parameters
+set -- "${POSITIONAL_ARGS[@]}"
+
+PROVIDER="$1"
+shift 2>/dev/null || true
+
+show_help() {
+    cat << 'EOF'
+CCB CLI 统一执行脚本 (Gateway 模式)
+
+用法: ccb-cli <provider> [options] [model/mode] <prompt>
+
+所有调用强制走 Gateway API，实现：
+  - 统一监控 (Web UI: http://localhost:8765)
+  - 响应缓存
+  - 自动重试
+  - 数据持久化
+
+全局选项:
+  -a, --agent <role>    指定 Agent 角色 (如 sisyphus, oracle, librarian)
+  -t, --timeout <sec>   超时秒数 (默认: 300)
+
+Agent 角色:
+  sisyphus   🪨 持续改进、错误修复
+  oracle     🔮 预测、趋势分析
+  librarian  📚 文档、知识整理
+  explorer   🧭 探索、调研
+  frontend   🎨 前端开发
+  reviewer   🔍 代码审查
+  workflow   ⚙️ 工作流自动化
+  polyglot   🌐 多语言翻译
+  autonomous 🤖 自主决策
+
+Providers 和模型选项:
+  kimi [thinking|normal] <prompt>     - Kimi (默认 normal)
+  qwen <prompt>                       - Qwen (仅 coder-model)
+  deepseek [reasoner|chat] <prompt>   - DeepSeek (默认 reasoner)
+  iflow [thinking|normal] <prompt>    - iFlow GLM-4.7 (默认 normal)
+  opencode [model] <prompt>           - OpenCode 多模型
+  codex [model] <prompt>              - Codex OpenAI
+  gemini [model] <prompt>             - Gemini
+
+模型快捷方式:
+  deepseek reasoner  = deepseek-reasoner
+  deepseek chat      = deepseek-chat
+  codex o3/o4-mini/gpt-4o/...
+  gemini 3f/3p/2.5f/2.5p = gemini-3-flash-preview/...
+  opencode mm/kimi/ds = minimax/kimi-k2.5/deepseek
+
+环境变量:
+  CCB_GATEWAY_URL     - Gateway 地址 (默认: http://localhost:8765)
+  CCB_GATEWAY_TIMEOUT - 超时秒数 (默认: 300)
+
+示例:
+  ccb-cli kimi "你好"
+  ccb-cli kimi thinking "分析这个问题"
+  ccb-cli kimi -a sisyphus "修复这个 bug"
+  ccb-cli deepseek --agent oracle "预测市场趋势"
+  ccb-cli codex o4-mini -a reviewer "审查这段代码"
+  ccb-cli gemini 3f --agent frontend "React 组件"
+EOF
+}
+
+# Check if Gateway is running, auto-start if not
+check_gateway() {
+    if curl -s --connect-timeout 2 "${GATEWAY_URL}/api/health" >/dev/null 2>&1; then
+        return 0
+    fi
+
+    echo -e "${YELLOW}⚡ Gateway 未运行，正在启动...${NC}" >&2
+
+    # Start Gateway in background
+    cd ~/.local/share/codex-dual
+    nohup python3 -m lib.gateway.gateway_server --port 8765 > /tmp/ccb-gateway.log 2>&1 &
+    local gateway_pid=$!
+
+    # Wait for Gateway to start (max 5 seconds)
+    for i in {1..10}; do
+        sleep 0.5
+        if curl -s --connect-timeout 1 "${GATEWAY_URL}/api/health" >/dev/null 2>&1; then
+            echo -e "${GREEN}✓ Gateway 已启动 (PID: $gateway_pid)${NC}" >&2
+            return 0
+        fi
+    done
+
+    echo -e "${RED}✖ Gateway 启动失败${NC}" >&2
+    echo -e "请检查日志: ${BLUE}/tmp/ccb-gateway.log${NC}" >&2
+    echo -e "手动启动: ${BLUE}cd ~/.local/share/codex-dual && python3 -m lib.gateway.gateway_server --port 8765${NC}" >&2
+    exit 1
+}
+
+# Call Gateway API with wait=true
+call_gateway() {
+    local provider="$1"
+    local message="$2"
+    local timeout="${3:-$GATEWAY_TIMEOUT}"
+    local agent="${4:-}"
+
+    # Build JSON payload
+    local payload
+    if [[ -n "$agent" ]]; then
+        payload=$(jq -n \
+            --arg provider "$provider" \
+            --arg message "$message" \
+            --arg agent "$agent" \
+            --argjson timeout_s "$timeout" \
+            '{provider: $provider, message: $message, agent: $agent, timeout_s: $timeout_s}')
+        echo -e "${PURPLE}🎭 Agent: $agent${NC}" >&2
+    else
+        payload=$(jq -n \
+            --arg provider "$provider" \
+            --arg message "$message" \
+            --argjson timeout_s "$timeout" \
+            '{provider: $provider, message: $message, timeout_s: $timeout_s}')
+    fi
+
+    # Call Gateway API with wait=true
+    local response
+    response=$(curl -s -X POST "${GATEWAY_URL}/api/ask?wait=true&timeout=${timeout}" \
+        -H "Content-Type: application/json" \
+        -d "$payload" \
+        --max-time $((timeout + 10)))
+
+    local curl_exit=$?
+    if [[ $curl_exit -ne 0 ]]; then
+        echo -e "${RED}错误: Gateway 请求失败 (curl exit: $curl_exit)${NC}" >&2
+        exit 1
+    fi
+
+    # Parse response
+    local status
+    status=$(echo "$response" | jq -r '.status // "unknown"')
+
+    case "$status" in
+        completed)
+            # Extract and display response
+            local result
+            result=$(echo "$response" | jq -r '.response // empty')
+            if [[ -n "$result" ]]; then
+                echo "$result"
+            else
+                echo -e "${YELLOW}(空响应)${NC}" >&2
+            fi
+
+            # Show cache info if cached
+            local cached
+            cached=$(echo "$response" | jq -r '.cached // false')
+            if [[ "$cached" == "true" ]]; then
+                echo -e "${GREEN}(来自缓存)${NC}" >&2
+            fi
+            ;;
+        failed)
+            local error
+            error=$(echo "$response" | jq -r '.error // "Unknown error"')
+            echo -e "${RED}错误: $error${NC}" >&2
+            exit 1
+            ;;
+        timeout)
+            local request_id
+            request_id=$(echo "$response" | jq -r '.request_id // "unknown"')
+            echo -e "${YELLOW}请求超时 (${timeout}s)${NC}" >&2
+            echo -e "可稍后查询: ${BLUE}ccb-query get $request_id${NC}" >&2
+            exit 1
+            ;;
+        *)
+            echo -e "${RED}未知状态: $status${NC}" >&2
+            echo "$response" | jq . >&2
+            exit 1
+            ;;
+    esac
+}
+
+# Parse provider and model/mode, build message for Gateway
+parse_and_call() {
+    local provider="$1"
+    shift
+    local args=("$@")
+    local message=""
+    local model_info=""
+
+    case "$provider" in
+        kimi)
+            local mode="${args[0]:-normal}"
+            if [[ "$mode" == "thinking" || "$mode" == "normal" ]]; then
+                message="${args[*]:1}"
+                model_info="[mode=$mode]"
+            else
+                mode="normal"
+                message="${args[*]}"
+            fi
+            # Prepend mode info for Gateway backend to use
+            if [[ "$mode" == "thinking" ]]; then
+                message="[THINKING_MODE] $message"
+            fi
+            ;;
+        qwen)
+            message="${args[*]}"
+            ;;
+        deepseek)
+            local model="${args[0]:-reasoner}"
+            case "$model" in
+                reasoner|r) model="deepseek-reasoner"; message="${args[*]:1}" ;;
+                chat|c) model="deepseek-chat"; message="${args[*]:1}" ;;
+                *) model="deepseek-reasoner"; message="${args[*]}" ;;
+            esac
+            model_info="[model=$model]"
+            # Prepend model info for Gateway backend
+            message="[MODEL:$model] $message"
+            ;;
+        iflow)
+            local mode="${args[0]:-normal}"
+            if [[ "$mode" == "thinking" || "$mode" == "normal" ]]; then
+                message="${args[*]:1}"
+            else
+                mode="normal"
+                message="${args[*]}"
+            fi
+            if [[ "$mode" == "thinking" ]]; then
+                message="[THINKING_MODE] $message"
+            fi
+            ;;
+        opencode)
+            local model="${args[0]:-opencode/minimax-m2.1-free}"
+            case "$model" in
+                mm|minimax) model="opencode/minimax-m2.1-free"; message="${args[*]:1}" ;;
+                kimi|k) model="opencode/kimi-k2.5-free"; message="${args[*]:1}" ;;
+                ds|deepseek) model="deepseek/deepseek-reasoner"; message="${args[*]:1}" ;;
+                glm) model="opencode/glm-4.7-free"; message="${args[*]:1}" ;;
+                *)
+                    if [[ "$model" != opencode/* && "$model" != deepseek/* ]]; then
+                        model="opencode/minimax-m2.1-free"
+                        message="${args[*]}"
+                    else
+                        message="${args[*]:1}"
+                    fi
+                    ;;
+            esac
+            message="[MODEL:$model] $message"
+            ;;
+        codex)
+            local model="${args[0]:-o3}"
+            case "$model" in
+                o3|o4-mini|o3-mini|o1|o1-pro|gpt-5.2-codex|gpt-4.5|gpt-4.1|gpt-4o)
+                    message="${args[*]:1}" ;;
+                *)
+                    model="o3"
+                    message="${args[*]}" ;;
+            esac
+            message="[MODEL:$model] $message"
+            ;;
+        gemini)
+            local model="${args[0]:-gemini-3-flash-preview}"
+            case "$model" in
+                3f|3-flash) model="gemini-3-flash-preview"; message="${args[*]:1}" ;;
+                3p|3-pro) model="gemini-3-pro-preview"; message="${args[*]:1}" ;;
+                2.5f|2.5-flash) model="gemini-2.5-flash"; message="${args[*]:1}" ;;
+                2.5p|2.5-pro) model="gemini-2.5-pro"; message="${args[*]:1}" ;;
+                gemini-*) message="${args[*]:1}" ;;
+                *)
+                    model="gemini-3-flash-preview"
+                    message="${args[*]}" ;;
+            esac
+            message="[MODEL:$model] $message"
+            ;;
+        *)
+            echo -e "${RED}未知 provider: $provider${NC}" >&2
+            show_help
+            exit 1
+            ;;
+    esac
+
+    if [[ -z "$message" ]]; then
+        echo -e "${RED}错误: 需要提供 prompt${NC}" >&2
+        exit 1
+    fi
+
+    call_gateway "$provider" "$message" "$GATEWAY_TIMEOUT" "$AGENT"
+}
+
+# Main entry point
+case "$PROVIDER" in
+    help|-h|--help|"")
+        show_help
+        exit 0
+        ;;
+    *)
+        # Check if jq is available
+        if ! command -v jq &>/dev/null; then
+            echo -e "${RED}错误: 需要 jq 命令${NC}" >&2
+            echo "安装: brew install jq" >&2
+            exit 1
+        fi
+
+        # Gateway is required
+        check_gateway
+        parse_and_call "$PROVIDER" "$@"
+        ;;
+esac
