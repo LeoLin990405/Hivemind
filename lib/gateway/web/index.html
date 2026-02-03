@@ -690,6 +690,12 @@
                             <button @click="showNewDiscussionModal = true" class="btn-primary">
                                 <i class="fas fa-plus mr-2"></i>{{ t('newDiscussion') }}
                             </button>
+                            <button @click="showTemplateModal = true; fetchDiscussionTemplates();" class="btn-secondary bg-purple-500/10 border-purple-500/30 text-purple-400 hover:bg-purple-500/20">
+                                <i class="fas fa-magic mr-2"></i>Use Template
+                            </button>
+                            <button @click="exportDiscussionsJSON" class="btn-secondary" :title="'Export discussions to JSON'">
+                                <i class="fas fa-download mr-2"></i>Export
+                            </button>
                             <button @click="fetchDiscussions" class="btn-secondary">
                                 <i class="fas fa-sync-alt mr-2" :class="{'fa-spin': loading.discussions}"></i>{{ t('refreshDiscussions') }}
                             </button>
@@ -809,6 +815,20 @@
                                 <option value="">{{ t('allProviders') }}</option>
                                 <option v-for="p in status.providers" :key="p.name" :value="p.name">{{ p.name }}</option>
                             </select>
+                            <div class="relative">
+                                <button class="btn-secondary flex items-center" @click="showExportMenu = !showExportMenu">
+                                    <i class="fas fa-download mr-2"></i>Export
+                                    <i class="fas fa-chevron-down ml-2 text-xs"></i>
+                                </button>
+                                <div v-if="showExportMenu" class="absolute right-0 mt-2 w-40 bg-gray-800 border border-gray-700 rounded-lg shadow-xl z-10">
+                                    <button @click="exportRequestsCSV(); showExportMenu = false;" class="w-full text-left px-4 py-2 hover:bg-gray-700 rounded-t-lg flex items-center">
+                                        <i class="fas fa-file-csv mr-2 text-green-400"></i>CSV
+                                    </button>
+                                    <button @click="exportRequestsJSON(); showExportMenu = false;" class="w-full text-left px-4 py-2 hover:bg-gray-700 rounded-b-lg flex items-center">
+                                        <i class="fas fa-file-code mr-2 text-blue-400"></i>JSON
+                                    </button>
+                                </div>
+                            </div>
                             <button @click="fetchRequests" class="btn-primary"><i v-if="loading.requests" class="fas fa-spinner fa-spin mr-2"></i>{{ t('refresh') }}</button>
                         </div>
                     </div>
@@ -878,6 +898,75 @@
                                     <button @click="pagination.page++" :disabled="pagination.page >= totalPages" class="btn-secondary py-1 px-3 disabled:opacity-50"><i class="fas fa-chevron-right"></i></button>
                                 </div>
                             </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- B1: Cost Analysis Tab -->
+            <div v-show="activeTab === 'costs'" class="space-y-6">
+                <div class="glass-card p-6">
+                    <h2 class="text-lg font-semibold flex items-center mb-6">
+                        <i class="fas fa-dollar-sign text-emerald-400 mr-3"></i>Cost Analysis
+                    </h2>
+
+                    <!-- Cost Summary Cards -->
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
+                        <div class="glass-card p-4 border-l-4 border-emerald-500">
+                            <div class="text-sm text-gray-400 mb-1">Today</div>
+                            <div class="text-2xl font-bold text-emerald-400">${{ formatCost(costSummary.today?.total_cost || 0) }}</div>
+                            <div class="text-xs text-gray-500 mt-1">{{ (costSummary.today?.total_tokens || 0).toLocaleString() }} tokens</div>
+                        </div>
+                        <div class="glass-card p-4 border-l-4 border-cyan-500">
+                            <div class="text-sm text-gray-400 mb-1">This Week</div>
+                            <div class="text-2xl font-bold text-cyan-400">${{ formatCost(costSummary.week?.total_cost || 0) }}</div>
+                            <div class="text-xs text-gray-500 mt-1">{{ (costSummary.week?.total_tokens || 0).toLocaleString() }} tokens</div>
+                        </div>
+                        <div class="glass-card p-4 border-l-4 border-purple-500">
+                            <div class="text-sm text-gray-400 mb-1">This Month</div>
+                            <div class="text-2xl font-bold text-purple-400">${{ formatCost(costSummary.month?.total_cost || 0) }}</div>
+                            <div class="text-xs text-gray-500 mt-1">{{ (costSummary.month?.total_tokens || 0).toLocaleString() }} tokens</div>
+                        </div>
+                    </div>
+
+                    <!-- Cost Trend Chart -->
+                    <div class="glass-card p-4 mb-6">
+                        <h3 class="text-sm font-semibold text-gray-300 mb-4">Daily Cost Trend (Last 7 Days)</h3>
+                        <div style="height: 200px;">
+                            <canvas ref="costChart"></canvas>
+                        </div>
+                    </div>
+
+                    <!-- Provider Cost Breakdown -->
+                    <div class="glass-card p-4">
+                        <h3 class="text-sm font-semibold text-gray-300 mb-4">Cost by Provider</h3>
+                        <div class="overflow-x-auto">
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>Provider</th>
+                                        <th>Requests</th>
+                                        <th>Tokens</th>
+                                        <th>Cost</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr v-for="p in costByProvider" :key="p.provider">
+                                        <td>
+                                            <span class="flex items-center">
+                                                <span class="mr-2">{{ getProviderTierIcon(p.provider) }}</span>
+                                                <span class="font-medium capitalize">{{ p.provider }}</span>
+                                            </span>
+                                        </td>
+                                        <td>{{ p.requests }}</td>
+                                        <td>{{ p.total_tokens.toLocaleString() }}</td>
+                                        <td class="font-mono text-emerald-400">${{ p.total_cost.toFixed(4) }}</td>
+                                    </tr>
+                                    <tr v-if="costByProvider.length === 0">
+                                        <td colspan="4" class="text-center text-gray-500">No cost data available</td>
+                                    </tr>
+                                </tbody>
+                            </table>
                         </div>
                     </div>
                 </div>
@@ -1596,6 +1685,95 @@
             </div>
         </div>
 
+        <!-- B2: Discussion Template Selector Modal -->
+        <div v-if="showTemplateModal" class="fixed inset-0 modal-backdrop flex items-center justify-center z-50" @click.self="showTemplateModal = false; clearTemplateSelection();">
+            <div class="modal-content p-6 w-[600px] max-h-[80vh] overflow-auto fade-up">
+                <div class="flex justify-between items-center mb-6">
+                    <h3 class="text-lg font-semibold flex items-center">
+                        <i class="fas fa-magic text-purple-400 mr-3"></i>Start Discussion from Template
+                    </h3>
+                    <button @click="showTemplateModal = false; clearTemplateSelection();" class="text-gray-400 hover:text-white text-xl">&times;</button>
+                </div>
+
+                <div class="space-y-4">
+                    <!-- Template Selection -->
+                    <div>
+                        <label class="block text-sm text-gray-400 mb-2">Select Template</label>
+                        <select v-model="selectedDiscussionTemplate" @change="selectDiscussionTemplate(selectedDiscussionTemplate)"
+                                class="input-field w-full">
+                            <option value="">-- Choose a template --</option>
+                            <optgroup v-for="category in [...new Set(discussionTemplates.map(t => t.category || 'Other'))]" :key="category" :label="category">
+                                <option v-for="t in discussionTemplates.filter(tmpl => (tmpl.category || 'Other') === category)"
+                                        :key="t.id" :value="t.id">
+                                    {{ t.name }}
+                                </option>
+                            </optgroup>
+                        </select>
+                        <div v-if="selectedDiscussionTemplate" class="mt-2 p-3 bg-gray-800/50 rounded-lg border border-gray-700">
+                            <p class="text-sm text-gray-400">
+                                {{ discussionTemplates.find(t => t.id === selectedDiscussionTemplate)?.description }}
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- Template Variables -->
+                    <div v-if="Object.keys(templateVariables).length > 0" class="space-y-3">
+                        <label class="block text-sm text-gray-400 mb-2">Fill in Details</label>
+                        <div v-for="(value, key) in templateVariables" :key="key">
+                            <label class="block text-xs text-gray-500 mb-1 capitalize">{{ key.replace(/_/g, ' ') }}</label>
+                            <textarea v-model="templateVariables[key]"
+                                      class="input-field h-20 resize-none w-full"
+                                      :placeholder="`Enter ${key}...`"></textarea>
+                        </div>
+                    </div>
+
+                    <!-- Provider Selection -->
+                    <div v-if="selectedDiscussionTemplate">
+                        <label class="block text-sm text-gray-400 mb-2">Participating Providers</label>
+                        <div class="grid grid-cols-3 gap-2">
+                            <label v-for="p in availableDiscussionProviders" :key="p"
+                                   class="flex items-center space-x-2 p-2 rounded-lg border cursor-pointer transition-all"
+                                   :class="newDiscussionProviders.includes(p) ? 'border-purple-500 bg-purple-500/10' : 'border-gray-700 hover:border-gray-600'">
+                                <input type="checkbox" :value="p" v-model="newDiscussionProviders" class="w-4 h-4 rounded">
+                                <span class="text-sm">{{ getProviderTierIcon(p) }} {{ p }}</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Quick Mode -->
+                    <div v-if="selectedDiscussionTemplate" class="flex items-center space-x-4">
+                        <label class="flex items-center space-x-2 cursor-pointer">
+                            <input type="checkbox" v-model="newDiscussionQuickMode" class="w-4 h-4 rounded">
+                            <span class="text-sm text-gray-400">Quick Mode (2 rounds only)</span>
+                        </label>
+                    </div>
+
+                    <!-- Loading State -->
+                    <div v-if="loadingTemplates" class="text-center py-8">
+                        <i class="fas fa-spinner fa-spin text-3xl text-purple-400"></i>
+                        <p class="text-sm text-gray-400 mt-3">Loading templates...</p>
+                    </div>
+
+                    <!-- Empty State -->
+                    <div v-if="!loadingTemplates && discussionTemplates.length === 0" class="text-center py-8 text-gray-500">
+                        <i class="fas fa-folder-open text-4xl mb-3"></i>
+                        <p class="text-sm">No templates available</p>
+                    </div>
+                </div>
+
+                <div class="flex justify-end space-x-3 mt-6">
+                    <button @click="showTemplateModal = false; clearTemplateSelection();" class="btn-secondary">Cancel</button>
+                    <button @click="startDiscussionFromTemplate"
+                            :disabled="!selectedDiscussionTemplate || Object.values(templateVariables).some(v => !v) || newDiscussionProviders.length < 2 || startingDiscussion"
+                            :class="['btn-primary flex items-center space-x-2',
+                                     (!selectedDiscussionTemplate || Object.values(templateVariables).some(v => !v) || newDiscussionProviders.length < 2 || startingDiscussion) ? 'opacity-50 cursor-not-allowed' : '']">
+                        <i :class="startingDiscussion ? 'fas fa-spinner fa-spin' : 'fas fa-rocket'"></i>
+                        <span>{{ startingDiscussion ? 'Starting...' : 'Start Discussion' }}</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+
         <!-- Request Detail Modal -->
         <div v-if="selectedRequest" class="fixed inset-0 modal-backdrop flex items-center justify-center z-50" @click.self="selectedRequest = null">
             <div class="modal-content p-6 w-[600px] max-h-[80vh] overflow-auto fade-up">
@@ -1736,6 +1914,7 @@
                 const showShortcuts = ref(false);
                 const toasts = ref([]);
                 const showAlertSettings = ref(false);
+                const showExportMenu = ref(false);
 
                 // Theme state
                 const theme = ref(localStorage.getItem('ccb-theme') || 'dark');
@@ -1752,6 +1931,13 @@
                 const warmupRunning = ref(false);
                 const warmupMessage = ref('Hello! Please respond with a brief greeting to confirm you are ready.');
                 const warmupResults = ref([]);
+
+                // B1: Cost tracking state
+                const costSummary = ref({ today: {}, week: {}, month: {} });
+                const costByProvider = ref([]);
+                const costByDay = ref([]);
+                const costChart = ref(null);
+                let costChartInstance = null;
                 const defaultProviderList = ['claude', 'codex', 'gemini', 'opencode', 'iflow', 'kimi', 'qwen', 'deepseek'];
                 const warmupProviders = ref(defaultProviderList.map(name => ({ name, selected: true, status: null })));
 
@@ -1765,6 +1951,13 @@
                 const newDiscussionQuickMode = ref(false);
                 const startingDiscussion = ref(false);
                 const availableDiscussionProviders = ['kimi', 'qwen', 'deepseek', 'iflow', 'codex', 'gemini'];
+
+                // B2: Discussion templates state
+                const discussionTemplates = ref([]);
+                const selectedDiscussionTemplate = ref('');
+                const templateVariables = ref({});
+                const showTemplateModal = ref(false);
+                const loadingTemplates = ref(false);
 
                 // Cost tracking state
                 const tokenPricing = {
@@ -2035,10 +2228,11 @@
                     { id: 'monitor', name: 'Monitor', icon: '<i class="fas fa-desktop"></i>', shortcut: '2' },
                     { id: 'discussions', name: 'Discussions', icon: '<i class="fas fa-comments"></i>', shortcut: '3' },
                     { id: 'requests', name: 'Requests', icon: '<i class="fas fa-list"></i>', shortcut: '4' },
-                    { id: 'test', name: 'Test', icon: '<i class="fas fa-flask"></i>', shortcut: '5' },
-                    { id: 'compare', name: 'Compare', icon: '<i class="fas fa-balance-scale"></i>', shortcut: '6' },
-                    { id: 'keys', name: 'API Keys', icon: '<i class="fas fa-key"></i>', shortcut: '7' },
-                    { id: 'config', name: 'Config', icon: '<i class="fas fa-cog"></i>', shortcut: '8' },
+                    { id: 'costs', name: 'Costs', icon: '<i class="fas fa-dollar-sign"></i>', shortcut: '5' },
+                    { id: 'test', name: 'Test', icon: '<i class="fas fa-flask"></i>', shortcut: '6' },
+                    { id: 'compare', name: 'Compare', icon: '<i class="fas fa-balance-scale"></i>', shortcut: '7' },
+                    { id: 'keys', name: 'API Keys', icon: '<i class="fas fa-key"></i>', shortcut: '8' },
+                    { id: 'config', name: 'Config', icon: '<i class="fas fa-cog"></i>', shortcut: '9' },
                 ];
 
                 // Computed
@@ -2161,6 +2355,11 @@
                 let ws = null;
                 let refreshInterval = null;
 
+                // A2: WebSocket message batching - prevent UI lag from high-frequency events
+                const wsMessageQueue = [];
+                let wsFlushTimer = null;
+                const WS_BATCH_DELAY = 50; // milliseconds
+
                 const connectWebSocket = () => {
                     const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
                     ws = new WebSocket(`${protocol}//${window.location.host}/api/ws`);
@@ -2183,8 +2382,27 @@
 
                     ws.onmessage = (event) => {
                         const data = JSON.parse(event.data);
-                        handleWebSocketEvent(data);
+                        // Queue message for batch processing
+                        wsMessageQueue.push(data);
+
+                        // Debounce: accumulate messages for WS_BATCH_DELAY ms
+                        if (wsFlushTimer) clearTimeout(wsFlushTimer);
+                        wsFlushTimer = setTimeout(() => {
+                            flushMessageQueue();
+                            wsFlushTimer = null;
+                        }, WS_BATCH_DELAY);
                     };
+                };
+
+                const flushMessageQueue = () => {
+                    // Process all queued messages in a single batch
+                    const batch = [...wsMessageQueue];
+                    wsMessageQueue.length = 0;
+
+                    // Process each message
+                    batch.forEach(data => {
+                        handleWebSocketEvent(data);
+                    });
                 };
 
                 const handleWebSocketEvent = (event) => {
@@ -2503,6 +2721,167 @@
                     }
                 };
 
+                // B2: Discussion template management
+                const fetchDiscussionTemplates = async () => {
+                    loadingTemplates.value = true;
+                    try {
+                        const res = await fetch('/api/discussion/templates?include_builtin=true');
+                        discussionTemplates.value = await res.json();
+                    } catch (e) {
+                        console.error('Failed to fetch discussion templates:', e);
+                        showToast('error', 'Failed to load templates');
+                    } finally {
+                        loadingTemplates.value = false;
+                    }
+                };
+
+                const selectDiscussionTemplate = (templateId) => {
+                    selectedDiscussionTemplate.value = templateId;
+                    const template = discussionTemplates.value.find(t => t.id === templateId);
+                    if (template) {
+                        // Parse variables from topic_template (e.g., {subject}, {context})
+                        const matches = template.topic_template.match(/\{(\w+)\}/g);
+                        if (matches) {
+                            const vars = {};
+                            matches.forEach(match => {
+                                const key = match.slice(1, -1); // Remove { }
+                                vars[key] = '';
+                            });
+                            templateVariables.value = vars;
+                        } else {
+                            templateVariables.value = {};
+                        }
+                        // Pre-fill providers if template has defaults
+                        if (template.default_providers && template.default_providers.length > 0) {
+                            newDiscussionProviders.value = template.default_providers;
+                        }
+                    }
+                };
+
+                const startDiscussionFromTemplate = async () => {
+                    if (!selectedDiscussionTemplate.value) {
+                        showToast('error', 'Please select a template');
+                        return;
+                    }
+
+                    const template = discussionTemplates.value.find(t => t.id === selectedDiscussionTemplate.value);
+                    if (!template) return;
+
+                    // Validate required variables
+                    const missingVars = Object.entries(templateVariables.value).filter(([k, v]) => !v);
+                    if (missingVars.length > 0) {
+                        showToast('error', `Please fill in: ${missingVars.map(([k]) => k).join(', ')}`);
+                        return;
+                    }
+
+                    startingDiscussion.value = true;
+                    try {
+                        const res = await fetch(`/api/discussion/templates/${selectedDiscussionTemplate.value}/use`, {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({
+                                variables: templateVariables.value,
+                                providers: newDiscussionProviders.value.length > 0 ? newDiscussionProviders.value : null,
+                                config: newDiscussionQuickMode.value ? { max_rounds: 2 } : null
+                            })
+                        });
+
+                        if (res.ok) {
+                            showToast('success', 'Discussion started from template');
+                            showTemplateModal.value = false;
+                            selectedDiscussionTemplate.value = '';
+                            templateVariables.value = {};
+                            await fetchDiscussions();
+                        } else {
+                            const error = await res.json();
+                            showToast('error', error.detail || 'Failed to start discussion');
+                        }
+                    } catch (e) {
+                        console.error('Failed to start discussion from template:', e);
+                        showToast('error', 'Failed to start discussion');
+                    } finally {
+                        startingDiscussion.value = false;
+                    }
+                };
+
+                const clearTemplateSelection = () => {
+                    selectedDiscussionTemplate.value = '';
+                    templateVariables.value = {};
+                };
+
+                // B1: Cost tracking API calls
+                const fetchCostSummary = async () => {
+                    try {
+                        const res = await fetch('/api/costs/summary?days=30');
+                        costSummary.value = await res.json();
+                    } catch (e) {
+                        console.error('Failed to fetch cost summary:', e);
+                    }
+                };
+
+                const fetchCostByProvider = async () => {
+                    try {
+                        const res = await fetch('/api/costs/by-provider?days=30');
+                        costByProvider.value = await res.json();
+                    } catch (e) {
+                        console.error('Failed to fetch cost by provider:', e);
+                    }
+                };
+
+                const fetchCostByDay = async () => {
+                    try {
+                        const res = await fetch('/api/costs/by-day?days=7');
+                        const data = await res.json();
+                        costByDay.value = data;
+                        updateCostChart();
+                    } catch (e) {
+                        console.error('Failed to fetch cost by day:', e);
+                    }
+                };
+
+                const updateCostChart = () => {
+                    if (!costChart.value || costByDay.value.length === 0) return;
+
+                    const labels = costByDay.value.map(d => d.date);
+                    const costs = costByDay.value.map(d => d.total_cost);
+
+                    if (costChartInstance) {
+                        costChartInstance.data.labels = labels;
+                        costChartInstance.data.datasets[0].data = costs;
+                        costChartInstance.update();
+                    } else {
+                        costChartInstance = new Chart(costChart.value, {
+                            type: 'line',
+                            data: {
+                                labels: labels,
+                                datasets: [{
+                                    label: 'Daily Cost (USD)',
+                                    data: costs,
+                                    borderColor: 'rgb(99, 102, 241)',
+                                    backgroundColor: 'rgba(99, 102, 241, 0.1)',
+                                    tension: 0.4,
+                                    fill: true
+                                }]
+                            },
+                            options: {
+                                responsive: true,
+                                maintainAspectRatio: false,
+                                plugins: {
+                                    legend: { display: false }
+                                },
+                                scales: {
+                                    y: {
+                                        beginAtZero: true,
+                                        ticks: {
+                                            callback: (value) => '$' + value.toFixed(4)
+                                        }
+                                    }
+                                }
+                            }
+                        });
+                    }
+                };
+
                 const selectDiscussion = async (disc) => {
                     selectedDiscussion.value = disc;
                     try {
@@ -2785,6 +3164,54 @@
                 };
 
                 // New features: Export, Benchmark, Shortcuts
+                // B4: Enhanced data export functions
+                const downloadFile = (content, filename, mimeType) => {
+                    const blob = new Blob([content], { type: mimeType });
+                    const url = URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = filename;
+                    a.click();
+                    URL.revokeObjectURL(url);
+                };
+
+                const convertToCSV = (data, fields) => {
+                    if (data.length === 0) return '';
+
+                    const headers = fields.join(',');
+                    const rows = data.map(item => {
+                        return fields.map(field => {
+                            let value = item[field];
+                            if (typeof value === 'object') value = JSON.stringify(value);
+                            if (typeof value === 'string' && value.includes(',')) {
+                                value = `"${value.replace(/"/g, '""')}"`;
+                            }
+                            return value || '';
+                        }).join(',');
+                    });
+
+                    return [headers, ...rows].join('\n');
+                };
+
+                const exportRequestsCSV = () => {
+                    const fields = ['id', 'provider', 'status', 'created_at', 'latency_ms', 'cached', 'message'];
+                    const csv = convertToCSV(filteredRequests.value, fields);
+                    downloadFile(csv, `ccb-requests-${new Date().toISOString().slice(0,10)}.csv`, 'text/csv');
+                    showToast('success', 'Requests exported to CSV');
+                };
+
+                const exportRequestsJSON = () => {
+                    const json = JSON.stringify(filteredRequests.value, null, 2);
+                    downloadFile(json, `ccb-requests-${new Date().toISOString().slice(0,10)}.json`, 'application/json');
+                    showToast('success', 'Requests exported to JSON');
+                };
+
+                const exportDiscussionsJSON = () => {
+                    const json = JSON.stringify(discussions.value, null, 2);
+                    downloadFile(json, `ccb-discussions-${new Date().toISOString().slice(0,10)}.json`, 'application/json');
+                    showToast('success', 'Discussions exported to JSON');
+                };
+
                 const exportData = () => {
                     const data = {
                         exportedAt: new Date().toISOString(),
@@ -3170,12 +3597,23 @@
                     liveRequests.value = [];
                 };
 
+                // A1: Monitor output limit - prevent memory overflow
+                const MAX_MONITOR_LINES = 1000;
+
                 const addMonitorOutput = (provider, text, type = 'default') => {
                     if (!monitorStreams.value[provider]) {
                         monitorStreams.value[provider] = { output: [], active: false, requestId: null, hasNewOutput: false };
                     }
-                    monitorStreams.value[provider].output.push({ text, type, timestamp: Date.now() });
-                    monitorStreams.value[provider].hasNewOutput = true;
+
+                    const stream = monitorStreams.value[provider];
+                    stream.output.push({ text, type, timestamp: Date.now() });
+
+                    // Circular buffer: remove oldest lines when exceeding limit
+                    if (stream.output.length > MAX_MONITOR_LINES) {
+                        stream.output.splice(0, stream.output.length - MAX_MONITOR_LINES);
+                    }
+
+                    stream.hasNewOutput = true;
 
                     // Auto-scroll if enabled
                     if (monitorAutoScroll.value) {
@@ -3239,13 +3677,14 @@
                     return `${(ms / 1000).toFixed(2)}s`;
                 };
 
-                // Provider speed tiers
+                // Provider speed tiers (A3: Added qoder)
                 const providerSpeedTiers = {
                     kimi: { tier: 'fast', icon: '🚀', label: 'Fast', color: 'emerald' },
                     qwen: { tier: 'fast', icon: '🚀', label: 'Fast', color: 'emerald' },
                     deepseek: { tier: 'medium', icon: '⚡', label: 'Medium', color: 'amber' },
                     iflow: { tier: 'medium', icon: '⚡', label: 'Medium', color: 'amber' },
                     opencode: { tier: 'medium', icon: '⚡', label: 'Medium', color: 'amber' },
+                    qoder: { tier: 'medium', icon: '🤖', label: 'Medium', color: 'purple' },
                     codex: { tier: 'slow', icon: '🐢', label: 'Slow', color: 'rose' },
                     gemini: { tier: 'slow', icon: '🐢', label: 'Slow', color: 'rose' },
                 };
@@ -3255,12 +3694,15 @@
                 const getProviderTierLabel = (name) => getProviderTier(name).label;
                 const getProviderTierClass = (name) => {
                     const tier = getProviderTier(name);
-                    return {
-                        fast: 'bg-emerald-500/20 text-emerald-400 border-emerald-500/30',
-                        medium: 'bg-amber-500/20 text-amber-400 border-amber-500/30',
-                        slow: 'bg-rose-500/20 text-rose-400 border-rose-500/30',
-                        unknown: 'bg-gray-500/20 text-gray-400 border-gray-500/30'
-                    }[tier.tier] || 'bg-gray-500/20 text-gray-400 border-gray-500/30';
+                    // A3: Provider-specific colors (qoder gets purple)
+                    const colorMap = {
+                        emerald: 'bg-emerald-500/20 text-emerald-400 border-emerald-500/30',
+                        amber: 'bg-amber-500/20 text-amber-400 border-amber-500/30',
+                        rose: 'bg-rose-500/20 text-rose-400 border-rose-500/30',
+                        purple: 'bg-purple-500/20 text-purple-400 border-purple-500/30',
+                        gray: 'bg-gray-500/20 text-gray-400 border-gray-500/30'
+                    };
+                    return colorMap[tier.color] || colorMap.gray;
                 };
 
                 const formatTime = (timestamp) => {
@@ -3335,6 +3777,9 @@
                     fetchDiscussions();
                     fetchApiKeys();
                     fetchConfigs();
+                    fetchCostSummary();
+                    fetchCostByProvider();
+                    fetchCostByDay();
                     connectWebSocket();
                     nextTick(() => {
                         initCharts();
@@ -3344,6 +3789,12 @@
                         fetchStatus();
                         fetchDiscussions();
                         updateRadarChart();
+                        // Refresh cost data every 5 seconds
+                        if (activeTab.value === 'costs') {
+                            fetchCostSummary();
+                            fetchCostByProvider();
+                            fetchCostByDay();
+                        }
                     }, 5000);
                     document.addEventListener('keydown', handleKeydown);
                 });
@@ -3355,6 +3806,7 @@
                     if (statusChartInstance) statusChartInstance.destroy();
                     if (radarChartInstance) radarChartInstance.destroy();
                     if (timelineChartInstance) timelineChartInstance.destroy();
+                    if (costChartInstance) costChartInstance.destroy();
                     document.removeEventListener('keydown', handleKeydown);
                 });
 
@@ -3392,9 +3844,17 @@
                     fetchDiscussions, selectDiscussion, startNewDiscussion,
                     getMessagesForRound, getRoundLabel, getRoundIcon,
                     getDiscussionStatusClass, getDiscussionStatusIcon,
+                    // B2: Discussion templates
+                    discussionTemplates, selectedDiscussionTemplate, templateVariables, showTemplateModal, loadingTemplates,
+                    fetchDiscussionTemplates, selectDiscussionTemplate, startDiscussionFromTemplate, clearTemplateSelection,
+                    // B1: Cost tracking
+                    costSummary, costByProvider, costByDay, costChart,
+                    fetchCostSummary, fetchCostByProvider, fetchCostByDay, formatCost,
                     // Original functions
                     fetchRequests, createKey, toggleKey, deleteKey, cancelRequest, viewRequest,
                     sendTestRequest, exportData, toggleFullscreen, showShortcuts, toasts, showToast,
+                    // B4: Export functions
+                    showExportMenu, exportRequestsCSV, exportRequestsJSON, exportDiscussionsJSON,
                     timelineRange, benchmarkMessage, benchmarkRunning, benchmarkResults, runBenchmark,
                     formatDuration, formatPercent, formatLatency, formatTime, formatFeatureName,
                     getStatusClass, getStatusBadgeClass, getRequestStatusClass, getStatusDotClass, getLogClass, getAgentIcon, getScoreColor,
