@@ -121,7 +121,7 @@
 
 ## ✨ 功能特性
 
-### 🧠 自动记忆系统 (v0.18)
+### 🧠 自动记忆系统 (v2.0 - v0.19)
 
 **零配置记忆** - 每次对话自动记录，相关上下文自动注入。
 
@@ -142,12 +142,35 @@
 </details>
 
 <details>
-<summary><b>记忆后端</b></summary>
+<summary><b>记忆后端 (v2.0 架构)</b></summary>
 
-- 💾 **SQLite 存储** - 所有对话存储在 `~/.ccb/ccb_memory.db`
-- 🔎 **全文搜索** - FTS5 支持中文
-- ☁️ **云端同步** - Google Drive 备份（每小时自动同步）
-- 📊 **分析统计** - 追踪每个 AI 擅长的任务类型
+**会话导向设计：**
+- 📂 **Sessions** - 将对话组织为会话
+- 💬 **Messages** - 结构化消息（user/assistant/system）
+- 🔗 **Context Tracking** - 记录注入的上下文
+- 👥 **Multi-user** - 支持用户隔离
+- 📊 **Analytics** - 自动 Provider 统计
+
+**存储：**
+- 💾 **SQLite 数据库** - 所有数据在 `~/.ccb/ccb_memory.db`
+- 🔎 **FTS5 搜索** - 全文搜索，支持中文
+- 🗜️ **压缩存储** - 旧会话 GZIP 归档
+- ☁️ **云端同步** - Google Drive 备份（每小时）
+
+**性能：**
+- ⚡ 对话写入 <10ms
+- 🔍 搜索延迟 <25ms (FTS5)
+- 📈 高效扩展到 10万+ 消息
+
+**架构：**
+```
+sessions (会话)
+  └─> messages (消息)
+       ├─> context_injections (上下文注入)
+       └─> skills_usage (技能使用)
+```
+
+详见 [V1 vs V2 对比](lib/memory/V1_VS_V2.md)
 
 </details>
 
