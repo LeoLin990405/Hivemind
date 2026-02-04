@@ -14,7 +14,7 @@ import sys
 project_root = Path(__file__).parent.parent.parent
 sys.path.insert(0, str(project_root))
 
-from lib.memory.memory_lite import CCBLightMemory
+from lib.memory.memory_v2 import CCBLightMemory
 from lib.memory.registry import CCBRegistry
 from lib.skills.skills_discovery import SkillsDiscoveryService
 from .system_context import SystemContextBuilder
