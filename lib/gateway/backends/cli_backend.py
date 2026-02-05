@@ -182,9 +182,28 @@ class CLIBackend(BaseBackend):
             self._cli_path = cmd
             return self._cli_path
 
-        # Search in PATH
+        # Search in PATH first
         self._cli_path = shutil.which(cmd)
-        return self._cli_path
+        if self._cli_path:
+            return self._cli_path
+
+        # Search in common user bin directories (may not be in PATH for background processes)
+        home = os.path.expanduser("~")
+        common_paths = [
+            os.path.join(home, ".local", "bin"),
+            os.path.join(home, ".npm-global", "bin"),
+            os.path.join(home, "bin"),
+            "/opt/homebrew/bin",
+            "/usr/local/bin",
+            os.path.join(home, ".qoder", "bin", "qodercli"),
+        ]
+        for path in common_paths:
+            full_path = os.path.join(path, cmd)
+            if os.path.isfile(full_path) and os.access(full_path, os.X_OK):
+                self._cli_path = full_path
+                return self._cli_path
+
+        return None
 
     def _build_command(self, message: str) -> List[str]:
         """Build the command line arguments."""

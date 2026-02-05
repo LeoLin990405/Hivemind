@@ -716,7 +716,7 @@
                     <div class="stat-card p-4">
                         <div class="flex items-center justify-between">
                             <div>
-                                <div class="text-sm text-gray-400 mb-1">Search Accuracy</div>
+                                <div class="text-sm text-gray-400 mb-1">{{ t('searchAccuracy') }}</div>
                                 <div class="text-2xl font-semibold text-white">~80%</div>
                             </div>
                             <div class="w-10 h-10 bg-cyan-500/20 rounded-lg flex items-center justify-center">
@@ -729,7 +729,7 @@
                 <!-- Memory Search -->
                 <div class="glass-card p-6">
                     <div class="mb-4">
-                        <label class="block text-sm font-medium text-gray-400 mb-2">Search Conversations</label>
+                        <label class="block text-sm font-medium text-gray-400 mb-2">{{ t('searchConversations') }}</label>
                         <div class="flex gap-2">
                             <input v-model="memorySearchQuery" @keyup.enter="searchMemory" type="text"
                                    placeholder="Search messages..."
@@ -793,8 +793,8 @@
 
                     <div v-else class="text-center py-12 text-gray-500">
                         <i class="fas fa-brain text-5xl mb-4"></i>
-                        <p class="text-lg">No sessions found</p>
-                        <p class="text-sm mt-2">Start a conversation to create memory sessions</p>
+                        <p class="text-lg">{{ t('noSessionsFound') }}</p>
+                        <p class="text-sm mt-2">{{ t('startConversationHint') }}</p>
                     </div>
                 </div>
 
@@ -834,7 +834,7 @@
                     <div class="stat-card p-4">
                         <div class="flex items-center justify-between">
                             <div>
-                                <div class="text-sm text-gray-400 mb-1">Total Skills</div>
+                                <div class="text-sm text-gray-400 mb-1">{{ t('totalSkills') }}</div>
                                 <div class="text-2xl font-semibold text-white">{{ skillsStats.total_skills || 0 }}</div>
                             </div>
                             <div class="w-10 h-10 bg-indigo-500/20 rounded-lg flex items-center justify-center">
@@ -845,7 +845,7 @@
                     <div class="stat-card p-4">
                         <div class="flex items-center justify-between">
                             <div>
-                                <div class="text-sm text-gray-400 mb-1">Installed</div>
+                                <div class="text-sm text-gray-400 mb-1">{{ t('installed') }}</div>
                                 <div class="text-2xl font-semibold text-white">{{ skillsStats.installed_skills || 0 }}</div>
                             </div>
                             <div class="w-10 h-10 bg-emerald-500/20 rounded-lg flex items-center justify-center">
@@ -856,7 +856,7 @@
                     <div class="stat-card p-4">
                         <div class="flex items-center justify-between">
                             <div>
-                                <div class="text-sm text-gray-400 mb-1">Total Uses</div>
+                                <div class="text-sm text-gray-400 mb-1">{{ t('totalUses') }}</div>
                                 <div class="text-2xl font-semibold text-white">{{ skillsStats.total_usage || 0 }}</div>
                             </div>
                             <div class="w-10 h-10 bg-purple-500/20 rounded-lg flex items-center justify-center">
@@ -940,8 +940,8 @@
 
                     <div v-else class="text-center py-12 text-gray-500">
                         <i class="fas fa-tools text-5xl mb-4"></i>
-                        <p class="text-lg">No skills used yet</p>
-                        <p class="text-sm mt-2">Start using skills to see statistics</p>
+                        <p class="text-lg">{{ t('noSkillsUsed') }}</p>
+                        <p class="text-sm mt-2">{{ t('startUsingSkillsHint') }}</p>
                     </div>
                 </div>
             </div>
@@ -1233,7 +1233,7 @@
                                         <td class="font-mono text-emerald-400">${{ (p.total_cost_usd || 0).toFixed(4) }}</td>
                                     </tr>
                                     <tr v-if="costByProvider.length === 0">
-                                        <td colspan="4" class="text-center text-gray-500">No cost data available</td>
+                                        <td colspan="4" class="text-center text-gray-500">{{ t('noCostData') }}</td>
                                     </tr>
                                 </tbody>
                             </table>
@@ -2220,7 +2220,7 @@
                 const costByDay = ref([]);
                 const costChart = ref(null);
                 let costChartInstance = null;
-                const defaultProviderList = ['qoder', 'codex', 'gemini', 'opencode', 'iflow', 'kimi', 'qwen', 'deepseek', 'claude'];
+                const defaultProviderList = ['qoder', 'codex', 'gemini', 'opencode', 'iflow', 'kimi', 'qwen', 'deepseek'];
                 const warmupProviders = ref(defaultProviderList.map(name => ({ name, selected: true, status: null })));
 
                 // Discussion state
@@ -2257,7 +2257,17 @@
                         // Header
                         connected: 'Connected', disconnected: 'Disconnected', uptime: 'Uptime', switchLang: 'Switch Language',
                         // Tabs
-                        dashboard: 'Dashboard', requests: 'Requests', test: 'Test', compare: 'Compare', keys: 'API Keys', config: 'Config',
+                        dashboard: 'Dashboard', monitor: 'Monitor', memory: 'Memory', skills: 'Skills',
+                        discussions: 'Discussions', requests: 'Requests', costs: 'Costs',
+                        test: 'Test', compare: 'Compare', keys: 'API Keys', config: 'Config',
+                        // Skills tab
+                        totalSkills: 'Total Skills', installed: 'Installed', searchSkills: 'Search skills...',
+                        totalUses: 'Total Uses',
+                        // Memory tab
+                        searchAccuracy: 'Search Accuracy', searchConversations: 'Search Conversations',
+                        noSessionsFound: 'No sessions found', startConversationHint: 'Start a conversation to create memory sessions',
+                        noSkillsUsed: 'No skills used yet', startUsingSkillsHint: 'Start using skills to see statistics',
+                        noCostData: 'No cost data available',
                         // Dashboard cards
                         totalRequests: 'Total Requests', allTime: 'All time', active: 'Active', processingNow: 'Processing now',
                         queue: 'Queue', waiting: 'Waiting', cacheHit: 'Cache Hit', hits: 'hits', providers: 'Providers', healthy: 'Healthy',
@@ -2381,7 +2391,17 @@
                         // Header
                         connected: '已连接', disconnected: '已断开', uptime: '运行时间', switchLang: '切换语言',
                         // Tabs
-                        dashboard: '仪表板', requests: '请求', test: '测试', compare: '对比', keys: 'API 密钥', config: '配置',
+                        dashboard: '仪表板', monitor: '监控', memory: '记忆', skills: '技能',
+                        discussions: '讨论', requests: '请求', costs: '费用',
+                        test: '测试', compare: '对比', keys: 'API 密钥', config: '配置',
+                        // Skills tab
+                        totalSkills: '总技能数', installed: '已安装', searchSkills: '搜索技能...',
+                        totalUses: '总使用次数',
+                        // Memory tab
+                        searchAccuracy: '搜索准确率', searchConversations: '搜索对话',
+                        noSessionsFound: '暂无会话', startConversationHint: '开始对话以创建记忆会话',
+                        noSkillsUsed: '暂无已使用技能', startUsingSkillsHint: '开始使用技能以查看统计',
+                        noCostData: '暂无费用数据',
                         // Dashboard cards
                         totalRequests: '总请求数', allTime: '累计', active: '活跃', processingNow: '正在处理',
                         queue: '队列', waiting: '等待中', cacheHit: '缓存命中', hits: '次', providers: '提供者', healthy: '健康',
@@ -3704,12 +3724,18 @@
                     warmupProviders.value.forEach(p => p.status = p.selected ? 'pending' : null);
 
                     // Run warmup for each selected provider in parallel
+                    // Use wait=true with longer timeout for slow providers
                     const warmupPromises = selectedProviders.map(async (provider) => {
                         provider.status = 'running';
                         const startTime = performance.now();
 
+                        // Determine timeout based on provider speed tier
+                        const slowProviders = ['codex', 'gemini', 'claude', 'deepseek', 'iflow'];
+                        const timeout = slowProviders.includes(provider.name) ? 180 : 60;
+
                         try {
-                            const res = await fetch('/api/ask', {
+                            // Use synchronous wait mode for more reliable results
+                            const res = await fetch(`/api/ask?wait=true&timeout=${timeout}`, {
                                 method: 'POST',
                                 headers: { 'Content-Type': 'application/json' },
                                 body: JSON.stringify({
@@ -3719,9 +3745,32 @@
                             });
                             const data = await res.json();
 
-                            if (data.request_id) {
-                                // Poll for result
+                            if (data.status === 'completed' && data.response) {
+                                provider.status = 'success';
+                                return {
+                                    provider: provider.name,
+                                    success: true,
+                                    latency: data.latency_ms || (performance.now() - startTime),
+                                    response: data.response
+                                };
+                            } else if (data.status === 'failed' || data.error) {
+                                provider.status = 'failed';
+                                return {
+                                    provider: provider.name,
+                                    success: false,
+                                    error: data.error || 'Failed'
+                                };
+                            } else if (data.status === 'timeout') {
+                                provider.status = 'failed';
+                                return {
+                                    provider: provider.name,
+                                    success: false,
+                                    error: 'Timeout'
+                                };
+                            } else if (data.request_id) {
+                                // Fallback: poll for result if wait didn't work
                                 let attempts = 0;
+                                const maxAttempts = Math.ceil(timeout / 2); // Poll every 2 seconds
                                 const pollResult = () => new Promise((resolve) => {
                                     const check = async () => {
                                         attempts++;
@@ -3744,10 +3793,10 @@
                                         } catch (e) {
                                             // Continue polling
                                         }
-                                        if (attempts < 60) setTimeout(check, 1000);
+                                        if (attempts < maxAttempts) setTimeout(check, 2000);
                                         else resolve({ success: false, error: 'Timeout' });
                                     };
-                                    setTimeout(check, 500);
+                                    setTimeout(check, 1000);
                                 });
 
                                 const result = await pollResult();
@@ -3755,7 +3804,7 @@
                                 return { provider: provider.name, ...result };
                             } else {
                                 provider.status = 'failed';
-                                return { provider: provider.name, success: false, error: data.detail || 'No request ID' };
+                                return { provider: provider.name, success: false, error: data.detail || 'Unknown error' };
                             }
                         } catch (e) {
                             provider.status = 'failed';
