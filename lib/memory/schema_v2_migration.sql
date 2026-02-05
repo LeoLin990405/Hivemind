@@ -1,10 +1,70 @@
--- CCB Memory System v2.0 - Schema Migration
--- Adds heuristic retrieval support: Importance, Recency, Access Tracking
+-- CCB Memory System v2.2 - Schema Migration
+-- Database-based Dual System + Heuristic Retrieval
 -- Migration date: 2026-02-05
 -- Note: SQLite does not support datetime() as default value
 
 -- ============================================================================
--- 1. Memory Importance Table - 重要性评分表
+-- 1. Session Archives Table (System 1 Output)
+-- Previously: ~/.ccb/context_archive/*.md
+-- ============================================================================
+CREATE TABLE IF NOT EXISTS session_archives (
+    archive_id TEXT PRIMARY KEY,
+    session_id TEXT NOT NULL,
+    user_id TEXT DEFAULT 'default',
+    project_path TEXT,
+    git_branch TEXT,
+    model TEXT,
+    start_time TEXT,
+    end_time TEXT,
+    duration_minutes INTEGER,
+    message_count INTEGER DEFAULT 0,
+    tool_call_count INTEGER DEFAULT 0,
+    task_summary TEXT,
+    key_messages TEXT,      -- JSON array of {role, content, timestamp}
+    tool_usage TEXT,        -- JSON object {tool_name: count}
+    file_changes TEXT,      -- JSON array of {path, action}
+    learnings TEXT,         -- JSON array of strings
+    metadata TEXT,          -- JSON object for extensibility
+    created_at TEXT,
+    UNIQUE(session_id)
+);
+
+CREATE INDEX IF NOT EXISTS idx_session_archives_created ON session_archives(created_at DESC);
+CREATE INDEX IF NOT EXISTS idx_session_archives_project ON session_archives(project_path);
+CREATE INDEX IF NOT EXISTS idx_session_archives_user ON session_archives(user_id);
+
+-- ============================================================================
+-- 2. Consolidated Memories Table (System 2 Output)
+-- Previously: ~/.ccb/memories/*.md and *.json
+-- ============================================================================
+CREATE TABLE IF NOT EXISTS consolidated_memories (
+    memory_id TEXT PRIMARY KEY,
+    user_id TEXT DEFAULT 'default',
+    date TEXT NOT NULL,
+    time_range_hours INTEGER,
+    sessions_processed INTEGER DEFAULT 0,
+    models_used TEXT,               -- JSON array
+    project_progress TEXT,          -- JSON object
+    tool_usage_total TEXT,          -- JSON object
+    files_touched TEXT,             -- JSON object
+    all_learnings TEXT,             -- JSON array
+    causal_chains TEXT,             -- JSON array
+    cross_session_insights TEXT,    -- JSON array
+    llm_enhanced INTEGER DEFAULT 0,
+    llm_learnings TEXT,             -- JSON array
+    llm_preferences TEXT,           -- JSON array
+    llm_patterns TEXT,              -- JSON array
+    llm_summary TEXT,
+    metadata TEXT,                  -- JSON object
+    created_at TEXT,
+    UNIQUE(date, user_id)
+);
+
+CREATE INDEX IF NOT EXISTS idx_consolidated_date ON consolidated_memories(date DESC);
+CREATE INDEX IF NOT EXISTS idx_consolidated_user ON consolidated_memories(user_id);
+
+-- ============================================================================
+-- 3. Memory Importance Table - 重要性评分表 (Heuristic Retrieval)
 -- ============================================================================
 CREATE TABLE IF NOT EXISTS memory_importance (
     memory_id TEXT PRIMARY KEY,                 -- UUID of message or observation

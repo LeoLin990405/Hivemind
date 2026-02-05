@@ -7,6 +7,7 @@ This is the "slow, deep thinking" part of the dual-system memory architecture.
 
 Phase 3 Enhancement: LLM-powered insight extraction
 v2.0 Enhancement: Heuristic memory management (merge, abstract, forget, decay)
+v2.1 Enhancement: Database-based storage (no more Markdown files)
 """
 
 import asyncio
@@ -15,6 +16,7 @@ import math
 import re
 import sqlite3
 import sys
+import uuid
 from collections import defaultdict
 from datetime import datetime, timedelta
 from pathlib import Path
@@ -29,86 +31,48 @@ except ImportError:
 
 
 class SessionArchive:
-    """Represents a parsed context archive (Markdown file)."""
+    """Represents a parsed session archive from database."""
 
-    def __init__(self, path: Path):
-        self.path = path
-        self.session_id = ""
-        self.project_path = ""
-        self.timestamp = ""
-        self.duration = ""
-        self.model = ""
-        self.task_summary = ""
-        self.key_messages: List[Dict[str, str]] = []
-        self.tool_calls: Dict[str, int] = {}
-        self.file_changes: List[Dict[str, str]] = []
-        self.learnings: List[str] = []
+    def __init__(self, data: Dict[str, Any]):
+        """Initialize from database row dictionary."""
+        self.archive_id = data.get('archive_id', '')
+        self.session_id = data.get('session_id', '')
+        self.project_path = data.get('project_path', '')
+        self.timestamp = data.get('start_time', '')
+        self.duration = str(data.get('duration_minutes', 0)) + ' 分钟'
+        self.model = data.get('model', '')
+        self.task_summary = data.get('task_summary', '')
+        self.message_count = data.get('message_count', 0)
+        self.tool_call_count = data.get('tool_call_count', 0)
 
-        self._parse()
+        # Parse JSON fields
+        self.key_messages = data.get('key_messages', [])
+        if isinstance(self.key_messages, str):
+            try:
+                self.key_messages = json.loads(self.key_messages)
+            except json.JSONDecodeError:
+                self.key_messages = []
 
-    def _parse(self):
-        """Parse the markdown archive file."""
-        content = self.path.read_text(encoding='utf-8')
-        lines = content.split('\n')
+        self.tool_calls = data.get('tool_usage', {})
+        if isinstance(self.tool_calls, str):
+            try:
+                self.tool_calls = json.loads(self.tool_calls)
+            except json.JSONDecodeError:
+                self.tool_calls = {}
 
-        current_section = None
+        self.file_changes = data.get('file_changes', [])
+        if isinstance(self.file_changes, str):
+            try:
+                self.file_changes = json.loads(self.file_changes)
+            except json.JSONDecodeError:
+                self.file_changes = []
 
-        for i, line in enumerate(lines):
-            line_stripped = line.strip()
-
-            # Extract session ID from title
-            if line_stripped.startswith('# Session:'):
-                self.session_id = line_stripped.split(':')[-1].strip()
-                continue
-
-            # Detect sections
-            if line_stripped.startswith('## '):
-                current_section = line_stripped[3:].strip().lower()
-                continue
-
-            # Parse metadata
-            if current_section == 'metadata':
-                if '项目路径' in line:
-                    match = re.search(r'`(.+?)`', line)
-                    if match:
-                        self.project_path = match.group(1)
-                elif '时间' in line:
-                    match = re.search(r'\*\*时间\*\*:\s*(.+)', line)
-                    if match:
-                        self.timestamp = match.group(1)
-                elif '时长' in line:
-                    match = re.search(r'\*\*时长\*\*:\s*(.+)', line)
-                    if match:
-                        self.duration = match.group(1)
-                elif '模型' in line:
-                    match = re.search(r'\*\*模型\*\*:\s*(.+)', line)
-                    if match:
-                        self.model = match.group(1)
-
-            # Parse task summary
-            elif current_section == '任务摘要':
-                if line_stripped and not line_stripped.startswith('#'):
-                    self.task_summary = line_stripped
-
-            # Parse tool calls
-            elif current_section == '工具调用':
-                match = re.match(r'-\s+\*\*(.+?)\*\*:\s*(\d+)', line_stripped)
-                if match:
-                    self.tool_calls[match.group(1)] = int(match.group(2))
-
-            # Parse file changes
-            elif current_section == '文件变更':
-                match = re.search(r'`(.+?)`\s*\((\w+)\)', line_stripped)
-                if match:
-                    self.file_changes.append({
-                        'path': match.group(1),
-                        'action': match.group(2)
-                    })
-
-            # Parse learnings
-            elif current_section == '学到的知识':
-                if line_stripped.startswith('- '):
-                    self.learnings.append(line_stripped[2:])
+        self.learnings = data.get('learnings', [])
+        if isinstance(self.learnings, str):
+            try:
+                self.learnings = json.loads(self.learnings)
+            except json.JSONDecodeError:
+                self.learnings = []
 
 
 class NightlyConsolidator:
@@ -119,6 +83,8 @@ class NightlyConsolidator:
     - Abstract: Generate summaries from memory groups
     - Forget: Clean up low-importance, old memories
     - Decay: Apply time-based importance decay
+
+    v2.1 Enhancement: Database-based storage (no more Markdown files)
     """
 
     # Gateway API URL for LLM calls
@@ -132,19 +98,63 @@ class NightlyConsolidator:
 
     def __init__(
         self,
-        archive_dir: Optional[Path] = None,
-        memory_dir: Optional[Path] = None,
+        archive_dir: Optional[Path] = None,  # Kept for backward compatibility
+        memory_dir: Optional[Path] = None,   # Kept for backward compatibility
         llm_provider: str = None,
         db_path: Optional[Path] = None
     ):
+        # Keep these for backward compatibility
         self.archive_dir = archive_dir or Path.home() / ".ccb" / "context_archive"
         self.memory_dir = memory_dir or Path.home() / ".ccb" / "memories"
         self.memory_dir.mkdir(parents=True, exist_ok=True)
+
         self.llm_provider = llm_provider or self.DEFAULT_LLM_PROVIDER
         self.db_path = db_path or self.DB_PATH
 
         # v2.0: Load heuristic config
         self.config = self._load_heuristic_config()
+
+        # Ensure database tables exist
+        self._init_db()
+
+    def _init_db(self):
+        """Ensure consolidation tables exist."""
+        conn = sqlite3.connect(self.db_path)
+        cursor = conn.cursor()
+
+        # Consolidated memories table (System 2 output)
+        cursor.execute("""
+            CREATE TABLE IF NOT EXISTS consolidated_memories (
+                memory_id TEXT PRIMARY KEY,
+                user_id TEXT DEFAULT 'default',
+                date TEXT NOT NULL,
+                time_range_hours INTEGER,
+                sessions_processed INTEGER DEFAULT 0,
+                models_used TEXT,           -- JSON array
+                project_progress TEXT,      -- JSON object
+                tool_usage_total TEXT,      -- JSON object
+                files_touched TEXT,         -- JSON object
+                all_learnings TEXT,         -- JSON array
+                causal_chains TEXT,         -- JSON array
+                cross_session_insights TEXT,-- JSON array
+                llm_enhanced INTEGER DEFAULT 0,
+                llm_learnings TEXT,         -- JSON array
+                llm_preferences TEXT,       -- JSON array
+                llm_patterns TEXT,          -- JSON array
+                llm_summary TEXT,
+                metadata TEXT,              -- JSON object
+                created_at TEXT DEFAULT CURRENT_TIMESTAMP,
+                UNIQUE(date, user_id)
+            )
+        """)
+
+        cursor.execute("""
+            CREATE INDEX IF NOT EXISTS idx_consolidated_date
+            ON consolidated_memories(date DESC)
+        """)
+
+        conn.commit()
+        conn.close()
 
     async def consolidate_with_llm(self, hours: int = 24) -> Dict[str, Any]:
         """
@@ -396,21 +406,20 @@ Learnings: {'; '.join(s.learnings[:3])}
         """
         Consolidate recent session archives into structured memory.
 
+        v2.1: Saves to database instead of JSON/Markdown files.
+
         Args:
             hours: How many hours back to look for sessions
 
         Returns:
             Consolidated memory dictionary
         """
-        # Collect recent archives
+        # Collect recent archives from database
         cutoff = datetime.now() - timedelta(hours=hours)
-        archives = self._collect_archives(cutoff)
+        sessions = self._collect_archives(cutoff)
 
-        if not archives:
+        if not sessions:
             return {"status": "no_sessions", "message": "No sessions found in the specified time range"}
-
-        # Parse all archives
-        sessions = [SessionArchive(path) for path in archives]
 
         # Build consolidated memory
         memory = {
@@ -427,24 +436,40 @@ Learnings: {'; '.join(s.learnings[:3])}
             "cross_session_insights": self._extract_insights(sessions),
         }
 
-        # Save memory
-        self._save_memory(memory)
+        # Save to database
+        self._save_memory_to_db(memory)
 
         return memory
 
-    def _collect_archives(self, cutoff: datetime) -> List[Path]:
-        """Collect archive files modified after cutoff time."""
-        if not self.archive_dir.exists():
+    def _collect_archives(self, cutoff: datetime) -> List[SessionArchive]:
+        """Collect session archives from DATABASE after cutoff time.
+
+        v2.1: Now reads from database instead of Markdown files.
+        """
+        conn = sqlite3.connect(self.db_path)
+        cursor = conn.cursor()
+
+        try:
+            cursor.execute("""
+                SELECT * FROM session_archives
+                WHERE created_at >= ?
+                ORDER BY created_at ASC
+            """, (cutoff.isoformat(),))
+
+            columns = [desc[0] for desc in cursor.description]
+            archives = []
+
+            for row in cursor.fetchall():
+                data = dict(zip(columns, row))
+                archives.append(SessionArchive(data))
+
+            return archives
+
+        except sqlite3.OperationalError as e:
+            print(f"[Consolidator] Database error: {e}")
             return []
-
-        archives = []
-        for path in self.archive_dir.glob("*.md"):
-            if path.stat().st_mtime > cutoff.timestamp():
-                archives.append(path)
-
-        # Sort by modification time
-        archives.sort(key=lambda p: p.stat().st_mtime)
-        return archives
+        finally:
+            conn.close()
 
     def _summarize_projects(self, sessions: List[SessionArchive]) -> Dict[str, Any]:
         """Group and summarize sessions by project."""
@@ -500,8 +525,14 @@ Learnings: {'; '.join(s.learnings[:3])}
 
         for session in sessions:
             for fc in session.file_changes:
-                path = fc["path"]
-                action = fc["action"]
+                # Handle both dict and object formats
+                if isinstance(fc, dict):
+                    path = fc.get("path", "")
+                    action = fc.get("action", "read")
+                else:
+                    path = getattr(fc, 'path', str(fc))
+                    action = getattr(fc, 'action', 'read')
+
                 files[path]["sessions"].add(session.session_id)
                 if action in ("modified", "write", "edit"):
                     files[path]["modified"] += 1
@@ -518,6 +549,64 @@ Learnings: {'; '.join(s.learnings[:3])}
             }
 
         return result
+
+    def _save_memory_to_db(self, memory: Dict[str, Any]):
+        """Save consolidated memory to database."""
+        conn = sqlite3.connect(self.db_path)
+        cursor = conn.cursor()
+
+        try:
+            memory_id = str(uuid.uuid4())
+            now = datetime.now().isoformat()
+
+            cursor.execute("""
+                INSERT OR REPLACE INTO consolidated_memories (
+                    memory_id, user_id, date, time_range_hours, sessions_processed,
+                    models_used, project_progress, tool_usage_total, files_touched,
+                    all_learnings, causal_chains, cross_session_insights,
+                    llm_enhanced, llm_learnings, llm_preferences, llm_patterns, llm_summary,
+                    metadata, created_at
+                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            """, (
+                memory_id,
+                'default',
+                memory.get('date'),
+                memory.get('time_range_hours'),
+                memory.get('sessions_processed'),
+                json.dumps(memory.get('models_used', []), ensure_ascii=False),
+                json.dumps(memory.get('project_progress', {}), ensure_ascii=False),
+                json.dumps(memory.get('tool_usage_total', {}), ensure_ascii=False),
+                json.dumps(memory.get('files_touched', {}), ensure_ascii=False),
+                json.dumps(memory.get('all_learnings', []), ensure_ascii=False),
+                json.dumps(memory.get('causal_chains', []), ensure_ascii=False),
+                json.dumps(memory.get('cross_session_insights', []), ensure_ascii=False),
+                1 if memory.get('llm_enhanced') else 0,
+                json.dumps(memory.get('llm_learnings', []), ensure_ascii=False),
+                json.dumps(memory.get('llm_preferences', []), ensure_ascii=False),
+                json.dumps(memory.get('llm_patterns', []), ensure_ascii=False),
+                memory.get('llm_summary', ''),
+                json.dumps({
+                    'generated_at': memory.get('generated_at'),
+                    'llm_error': memory.get('llm_error')
+                }, ensure_ascii=False),
+                now
+            ))
+
+            conn.commit()
+            print(f"✓ Saved consolidated memory to database: {memory['date']}")
+
+        except Exception as e:
+            print(f"[Consolidator] Error saving to database: {e}")
+            conn.rollback()
+        finally:
+            conn.close()
+
+    def _save_memory(self, memory: Dict[str, Any]):
+        """Save memory - now delegates to database method.
+
+        Kept for backward compatibility.
+        """
+        self._save_memory_to_db(memory)
 
     def _collect_learnings(self, sessions: List[SessionArchive]) -> List[str]:
         """Collect and deduplicate all learnings."""
@@ -579,10 +668,108 @@ Learnings: {'; '.join(s.learnings[:3])}
 
         for session in sessions:
             for fc in session.file_changes:
-                file_sessions[fc["path"]].add(session.session_id)
+                # Handle both dict and object formats
+                if isinstance(fc, dict):
+                    path = fc.get("path", "")
+                else:
+                    path = getattr(fc, 'path', str(fc))
+                file_sessions[path].add(session.session_id)
 
         # Return files touched by more than one session
         return {f for f, s in file_sessions.items() if len(s) > 1}
+
+    def get_consolidated_memories(
+        self,
+        days: int = 30,
+        limit: int = 50
+    ) -> List[Dict[str, Any]]:
+        """Get consolidated memories from database.
+
+        Args:
+            days: How many days back to look
+            limit: Maximum results
+
+        Returns:
+            List of consolidated memory dictionaries
+        """
+        conn = sqlite3.connect(self.db_path)
+        cursor = conn.cursor()
+
+        try:
+            cursor.execute("""
+                SELECT * FROM consolidated_memories
+                WHERE created_at >= datetime('now', ?)
+                ORDER BY date DESC
+                LIMIT ?
+            """, (f'-{days} days', limit))
+
+            columns = [desc[0] for desc in cursor.description]
+            results = []
+
+            for row in cursor.fetchall():
+                result = dict(zip(columns, row))
+                # Parse JSON fields
+                json_fields = [
+                    'models_used', 'project_progress', 'tool_usage_total',
+                    'files_touched', 'all_learnings', 'causal_chains',
+                    'cross_session_insights', 'llm_learnings', 'llm_preferences',
+                    'llm_patterns', 'metadata'
+                ]
+                for field in json_fields:
+                    if result.get(field):
+                        try:
+                            result[field] = json.loads(result[field])
+                        except json.JSONDecodeError:
+                            pass
+                results.append(result)
+
+            return results
+
+        except sqlite3.OperationalError:
+            return []
+        finally:
+            conn.close()
+
+    def search_consolidated(self, query: str, limit: int = 20) -> List[Dict[str, Any]]:
+        """Search consolidated memories.
+
+        Args:
+            query: Search query
+            limit: Maximum results
+
+        Returns:
+            List of matching memories
+        """
+        conn = sqlite3.connect(self.db_path)
+        cursor = conn.cursor()
+
+        try:
+            cursor.execute("""
+                SELECT * FROM consolidated_memories
+                WHERE all_learnings LIKE ? OR llm_summary LIKE ?
+                ORDER BY date DESC
+                LIMIT ?
+            """, (f'%{query}%', f'%{query}%', limit))
+
+            columns = [desc[0] for desc in cursor.description]
+            results = []
+
+            for row in cursor.fetchall():
+                result = dict(zip(columns, row))
+                for field in ['all_learnings', 'project_progress', 'cross_session_insights']:
+                    if result.get(field):
+                        try:
+                            result[field] = json.loads(result[field])
+                        except json.JSONDecodeError:
+                            pass
+                results.append(result)
+
+            return results
+
+        except sqlite3.OperationalError:
+            return []
+        finally:
+            conn.close()
 
     def _extract_insights(self, sessions: List[SessionArchive]) -> List[Dict]:
         """
@@ -653,81 +840,7 @@ Learnings: {'; '.join(s.learnings[:3])}
 
         return path
 
-    def _save_memory(self, memory: Dict[str, Any]):
-        """Save memory to JSON and optionally Markdown."""
-        date_str = memory["date"]
-
-        # Save JSON
-        json_path = self.memory_dir / f"{date_str}.json"
-        with open(json_path, 'w', encoding='utf-8') as f:
-            json.dump(memory, f, ensure_ascii=False, indent=2)
-
-        # Save human-readable Markdown
-        md_path = self.memory_dir / f"{date_str}.md"
-        md_content = self._generate_markdown(memory)
-        md_path.write_text(md_content, encoding='utf-8')
-
-        print(f"✓ Saved memory: {json_path}")
-        print(f"✓ Saved summary: {md_path}")
-
-    def _generate_markdown(self, memory: Dict[str, Any]) -> str:
-        """Generate human-readable Markdown from memory."""
-        lines = []
-
-        lines.append(f"# Daily Memory: {memory['date']}")
-        lines.append("")
-
-        # Overview
-        lines.append("## 概览")
-        lines.append(f"- **处理会话数**: {memory['sessions_processed']}")
-        lines.append(f"- **时间范围**: 最近 {memory['time_range_hours']} 小时")
-        lines.append(f"- **使用的模型**: {', '.join(memory['models_used'])}")
-        lines.append("")
-
-        # Project Progress
-        if memory.get('project_progress'):
-            lines.append("## 项目进展")
-            for proj, data in memory['project_progress'].items():
-                lines.append(f"\n### {proj}")
-                if data.get('tasks'):
-                    lines.append("**任务:**")
-                    for task in data['tasks'][:5]:
-                        lines.append(f"- {task}")
-                if data.get('files_modified'):
-                    lines.append(f"\n**修改的文件**: {len(data['files_modified'])} 个")
-                if data.get('learnings'):
-                    lines.append("**学到的知识:**")
-                    for l in data['learnings'][:3]:
-                        lines.append(f"- {l}")
-            lines.append("")
-
-        # Tool Usage
-        if memory.get('tool_usage_total'):
-            lines.append("## 工具使用统计")
-            for tool, count in list(memory['tool_usage_total'].items())[:10]:
-                lines.append(f"- **{tool}**: {count}次")
-            lines.append("")
-
-        # Insights
-        if memory.get('cross_session_insights'):
-            lines.append("## 跨会话洞察")
-            for insight in memory['cross_session_insights']:
-                confidence = int(insight['confidence'] * 100)
-                lines.append(f"- {insight['pattern']} (置信度: {confidence}%)")
-            lines.append("")
-
-        # All Learnings
-        if memory.get('all_learnings'):
-            lines.append("## 所有学到的知识")
-            for learning in memory['all_learnings']:
-                lines.append(f"- {learning}")
-            lines.append("")
-
-        # Footer
-        lines.append("---")
-        lines.append(f"*Generated at {memory['generated_at']}*")
-
-        return "\n".join(lines)
+    # Old _save_memory is replaced by _save_memory_to_db above
 
     # ========================================================================
     # v2.0: Heuristic Memory Management

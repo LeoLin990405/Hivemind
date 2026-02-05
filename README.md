@@ -364,7 +364,29 @@ ccb-mem inject 2026-02-05
 
 ### 🧠 Dual-System Memory (v0.22)
 
-**Human-like memory architecture** - Fast automatic capture combined with deep overnight processing, now with **heuristic retrieval**.
+**Human-like memory architecture** - Fast automatic capture combined with deep overnight processing, now with **heuristic retrieval** and **database storage**.
+
+<details>
+<summary><b>Database-Based Storage (NEW in v0.22)</b></summary>
+
+**All memory data is now stored in SQLite database** instead of Markdown files:
+
+```
+~/.ccb/ccb_memory.db
+├── session_archives     # System 1 output (was context_archive/*.md)
+├── consolidated_memories # System 2 output (was memories/*.md)
+├── memory_importance    # Heuristic scores
+├── memory_access_log    # Access tracking
+└── consolidation_log    # System 2 audit trail
+```
+
+**Benefits:**
+- ⚡ Faster queries with SQL indexes
+- 🔍 Full-text search support
+- 🔄 Better data integrity
+- 📊 Structured analytics
+
+</details>
 
 <details>
 <summary><b>Heuristic Retrieval (NEW in v0.22)</b></summary>
@@ -905,15 +927,14 @@ final_score = α × Relevance + β × Importance + γ × Recency
 
 ```
 ~/.ccb/
-├── context_archive/          # System 1 output
-│   ├── session_abc_2026-02-05.md
-│   ├── session_def_2026-02-05.md
-│   └── ...
-├── memories/                  # System 2 output
-│   ├── 2026-02-04_consolidated.md
-│   ├── 2026-02-05_consolidated.md
-│   └── ...
-└── ccb_memory.db             # SQLite for Gateway middleware
+├── ccb_memory.db             # SQLite database (ALL memory data)
+│   ├── session_archives      # System 1: Session context
+│   ├── consolidated_memories # System 2: Daily summaries
+│   ├── memory_importance     # Heuristic: Importance scores
+│   ├── memory_access_log     # Heuristic: Access tracking
+│   └── consolidation_log     # System 2: Audit trail
+├── heuristic_config.json     # Retrieval weights config
+└── streams/                  # Async streaming output
 ```
 
 ### Configuration

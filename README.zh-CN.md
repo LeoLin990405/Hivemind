@@ -296,7 +296,29 @@ ccb-mem inject 2026-02-05
 
 ### 🧠 双系统记忆 (v0.22)
 
-**仿人类记忆架构** - 快速自动捕获与深度夜间处理相结合，现已支持**启发式检索**。
+**仿人类记忆架构** - 快速自动捕获与深度夜间处理相结合，现已支持**启发式检索**和**数据库存储**。
+
+<details>
+<summary><b>数据库存储（v0.22 新增）</b></summary>
+
+**所有记忆数据现在存储在 SQLite 数据库中**，不再使用 Markdown 文件：
+
+```
+~/.ccb/ccb_memory.db
+├── session_archives     # System 1 输出（原 context_archive/*.md）
+├── consolidated_memories # System 2 输出（原 memories/*.md）
+├── memory_importance    # 启发式评分
+├── memory_access_log    # 访问追踪
+└── consolidation_log    # System 2 审计日志
+```
+
+**优势：**
+- ⚡ SQL 索引加速查询
+- 🔍 全文搜索支持
+- 🔄 更好的数据完整性
+- 📊 结构化分析
+
+</details>
 
 <details>
 <summary><b>启发式检索（v0.22 新增）</b></summary>
@@ -837,15 +859,14 @@ final_score = α × 相关性 + β × 重要性 + γ × 时效性
 
 ```
 ~/.ccb/
-├── context_archive/          # System 1 输出
-│   ├── session_abc_2026-02-05.md
-│   ├── session_def_2026-02-05.md
-│   └── ...
-├── memories/                  # System 2 输出
-│   ├── 2026-02-04_consolidated.md
-│   ├── 2026-02-05_consolidated.md
-│   └── ...
-└── ccb_memory.db             # Gateway 中间件的 SQLite
+├── ccb_memory.db             # SQLite 数据库（所有记忆数据）
+│   ├── session_archives      # System 1: 会话上下文
+│   ├── consolidated_memories # System 2: 每日摘要
+│   ├── memory_importance     # 启发式: 重要性评分
+│   ├── memory_access_log     # 启发式: 访问追踪
+│   └── consolidation_log     # System 2: 审计日志
+├── heuristic_config.json     # 检索权重配置
+└── streams/                  # 异步流式输出
 ```
 
 ### 配置
