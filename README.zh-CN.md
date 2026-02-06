@@ -8,7 +8,7 @@
 [![License](https://img.shields.io/github/license/LeoLin990405/ai-router-ccb?color=blue)](LICENSE)
 [![Python](https://img.shields.io/badge/Python-3.9+-3776AB?logo=python&logoColor=white)](https://www.python.org)
 [![FastAPI](https://img.shields.io/badge/FastAPI-009688?logo=fastapi&logoColor=white)](https://fastapi.tiangolo.com)
-[![Version](https://img.shields.io/badge/version-0.23--alpha-brightgreen)](https://github.com/LeoLin990405/ai-router-ccb/releases)
+[![Version](https://img.shields.io/badge/version-0.23.1--alpha-brightgreen)](https://github.com/LeoLin990405/ai-router-ccb/releases)
 
 **Claude 通过统一的 Gateway API 编排 9 个 AI Provider，LLM 驱动的记忆系统和实时监控**
 
@@ -25,6 +25,7 @@
 ## 📖 目录
 
 - [概述](#-概述)
+- [v0.23.1 新特性](#-v0231-新特性)
 - [v0.23 新特性](#-v023-新特性)
 - [为什么选择 CCB Gateway](#-为什么选择-ccb-gateway)
 - [功能特性](#-功能特性)
@@ -83,6 +84,47 @@
                            │ ⚡ 30s  │ │ ⚡ 42s  │ │ ⚡ 20s  │
                            └─────────┘ └─────────┘ └─────────┘
 ```
+
+---
+
+## 🆕 v0.23.1 新特性
+
+### 🔌 Gemini CLI 双路径集成 ⭐
+
+**灵活的集成策略** - 根据使用场景选择原生 CLI 或 Gateway 自动化模式：
+
+| 使用模式 | 命令 | 适用场景 |
+|----------|------|----------|
+| **原生 CLI** | `gemini` | 交互式日常使用，完整功能 |
+| **Gateway 模式** | `ccb-cli gemini 3f "问题"` | 自动化、脚本、CCB 系统 |
+
+**核心优势：**
+- 🔓 **保留原生体验** - Gemini CLI 完整功能不受影响
+- 🚀 **避免认证跳转** - Gateway 使用 API Key，无 OAuth 循环
+- 🎯 **场景化选择** - 根据任务选择最佳方式
+- 🔄 **无缝集成** - CCB 系统自动通过 Gateway 路由
+
+**原生 CLI（交互式）：**
+```bash
+gemini                    # 交互模式，支持认证
+gemini "快速提问"          # 单次查询
+```
+
+**Gateway 模式（自动化）：**
+```bash
+ccb-cli gemini 3f "问题"      # Gemini 3 Flash
+ccb-cli gemini 3p "问题"      # Gemini 3 Pro
+ccb-cli gemini 2.5f "问题"    # Gemini 2.5 Flash
+```
+
+**配置方式：**
+- **API Key 模式**（推荐用于自动化）：在 `~/.zshrc` 配置反向代理 API
+- **OAuth 模式**（原生 CLI）：标准浏览器认证
+- **快速切换**：使用 `~/.gemini/switch-to-*.sh` 脚本
+
+**相关文档：**
+- 📖 [Gemini CLI 集成指南](docs/GEMINI_CLI_INTEGRATION_GUIDE.md) - 完整设置说明
+- 📖 [Gemini 认证配置](docs/GEMINI_AUTH_SETUP.md) - 认证方式配置
 
 ---
 
@@ -1026,6 +1068,8 @@ final_score = α × 相关性 + β × 重要性 + γ × 时效性
 
 ### 核心文档
 
+- **[Gemini CLI 集成指南](docs/GEMINI_CLI_INTEGRATION_GUIDE.md)** - 双路径设置（v0.23.1）
+- **[Gemini 认证配置](docs/GEMINI_AUTH_SETUP.md)** - OAuth 和 API Key 配置（v0.23.1）
 - **[记忆系统架构](lib/memory/INTEGRATION_DESIGN.md)** - 完整设计
 - **[数据库结构](lib/memory/DATABASE_STRUCTURE.md)** - Schema 和查询
 - **[云端同步指南](lib/memory/SYNC_QUICKSTART.md)** - Google Drive 设置
@@ -1053,7 +1097,24 @@ final_score = α × 相关性 + β × 重要性 + γ × 时效性
 
 ## 🗺️ 开发路线
 
-### v0.22（当前）- 启发式记忆 ✅
+### v0.23.1（当前）- Gemini CLI 集成 ✅
+
+- [x] **双路径集成** - 原生 CLI + Gateway 自动化模式
+- [x] **灵活认证** - OAuth（原生）和 API Key（Gateway）支持
+- [x] **智能切换** - 快速脚本在认证模式间切换
+- [x] **完善文档** - 完整的集成和认证设置指南
+- [x] **无破坏性变更** - 保留原生 CLI 完整功能
+
+### v0.23（上个版本）- LLM 驱动的记忆 ✅
+
+- [x] **LLM 关键词提取** - Ollama + qwen2.5:7b 语义理解
+- [x] **中文支持** - 准确的 CJK 语言关键词提取
+- [x] **健壮降级** - Ollama 不可用时自动降级到正则
+- [x] **FTS5 优化** - 三元组分词器优化中文全文搜索
+- [x] **记忆集成** - LLM 关键词 + 启发式检索 = 95%+ 准确率
+- [x] **性能优化** - 1-2秒本地推理，最小延迟开销
+
+### v0.22（更早版本）- 启发式记忆 ✅
 
 - [x] **启发式检索** - 基于 Stanford Generative Agents 的 αR + βI + γT 评分
 - [x] **重要性追踪** - 用户评分和 LLM 评估的重要性分数

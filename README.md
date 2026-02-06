@@ -8,7 +8,7 @@
 [![License](https://img.shields.io/github/license/LeoLin990405/ai-router-ccb?color=blue)](LICENSE)
 [![Python](https://img.shields.io/badge/Python-3.9+-3776AB?logo=python&logoColor=white)](https://www.python.org)
 [![FastAPI](https://img.shields.io/badge/FastAPI-009688?logo=fastapi&logoColor=white)](https://fastapi.tiangolo.com)
-[![Version](https://img.shields.io/badge/version-0.23--alpha-brightgreen)](https://github.com/LeoLin990405/ai-router-ccb/releases)
+[![Version](https://img.shields.io/badge/version-0.23.1--alpha-brightgreen)](https://github.com/LeoLin990405/ai-router-ccb/releases)
 
 **Claude orchestrates 9 AI providers through unified Gateway API with LLM-powered memory and real-time monitoring**
 
@@ -25,6 +25,7 @@
 ## 📖 Table of Contents
 
 - [Overview](#-overview)
+- [What's New in v0.23.1](#-whats-new-in-v0231)
 - [What's New in v0.23](#-whats-new-in-v023)
 - [Why CCB Gateway?](#-why-ccb-gateway)
 - [Features](#-features)
@@ -83,6 +84,47 @@
                            │ ⚡ 30s  │ │ ⚡ 42s  │ │ ⚡ 20s  │
                            └─────────┘ └─────────┘ └─────────┘
 ```
+
+---
+
+## 🆕 What's New in v0.23.1
+
+### 🔌 Gemini CLI Dual-Path Integration ⭐
+
+**Flexible integration strategy** - Choose between native CLI or Gateway-based automation:
+
+| Usage Mode | Command | When to Use |
+|------------|---------|-------------|
+| **Native CLI** | `gemini` | Interactive daily use, full features |
+| **Gateway Mode** | `ccb-cli gemini 3f "query"` | Automation, scripts, CCB system |
+
+**Key Benefits:**
+- 🔓 **Preserve Native Experience** - Full Gemini CLI functionality intact
+- 🚀 **Avoid Auth Redirects** - Gateway uses API Key, no OAuth loops
+- 🎯 **Task-Based Selection** - Pick the best approach for each scenario
+- 🔄 **Seamless Integration** - CCB system auto-routes through Gateway
+
+**Native CLI (Interactive):**
+```bash
+gemini                    # Interactive mode with authentication
+gemini "Quick question"   # Single-shot query
+```
+
+**Gateway Mode (Automation):**
+```bash
+ccb-cli gemini 3f "question"      # Gemini 3 Flash
+ccb-cli gemini 3p "question"      # Gemini 3 Pro
+ccb-cli gemini 2.5f "question"    # Gemini 2.5 Flash
+```
+
+**Configuration:**
+- **API Key Mode** (Recommended for automation): Configure in `~/.zshrc` with reverse proxy API
+- **OAuth Mode** (For native CLI): Standard browser authentication
+- **Quick Switch**: Use `~/.gemini/switch-to-*.sh` scripts
+
+**Documentation:**
+- 📖 [Gemini CLI Integration Guide](docs/GEMINI_CLI_INTEGRATION_GUIDE.md) - Complete setup instructions
+- 📖 [Gemini Auth Setup](docs/GEMINI_AUTH_SETUP.md) - Authentication configuration
 
 ---
 
@@ -1158,6 +1200,8 @@ Smart skills discovery powered by Vercel Skills CLI.
 
 ### Core Documentation
 
+- **[Gemini CLI Integration Guide](docs/GEMINI_CLI_INTEGRATION_GUIDE.md)** - Dual-path setup (v0.23.1)
+- **[Gemini Auth Setup](docs/GEMINI_AUTH_SETUP.md)** - OAuth and API Key configuration (v0.23.1)
 - **[Memory System Architecture](lib/memory/INTEGRATION_DESIGN.md)** - Full design
 - **[Database Structure](lib/memory/DATABASE_STRUCTURE.md)** - Schema and queries
 - **[Cloud Sync Guide](lib/memory/SYNC_QUICKSTART.md)** - Google Drive setup
@@ -1185,7 +1229,15 @@ Smart skills discovery powered by Vercel Skills CLI.
 
 ## 🗺️ Roadmap
 
-### v0.23 (Current) - LLM-Powered Memory ✅
+### v0.23.1 (Current) - Gemini CLI Integration ✅
+
+- [x] **Dual-Path Integration** - Native CLI + Gateway automation modes
+- [x] **Flexible Authentication** - OAuth (native) and API Key (Gateway) support
+- [x] **Smart Switching** - Quick scripts to toggle between auth modes
+- [x] **Documentation** - Complete integration and auth setup guides
+- [x] **No Breaking Changes** - Preserve full native CLI functionality
+
+### v0.23 (Previous) - LLM-Powered Memory ✅
 
 - [x] **LLM Keyword Extraction** - Ollama + qwen2.5:7b semantic understanding
 - [x] **Chinese Text Support** - Accurate keyword extraction for CJK languages
