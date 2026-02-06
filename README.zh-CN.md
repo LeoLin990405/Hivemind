@@ -642,6 +642,66 @@ ccb-skills stats
 
 ---
 
+### 🎯 ccb-unified 技能 - Subagent 集成
+
+**统一 CCB + Claude Code Subagent 平台** - 全面的分布式 AI 协作技能，结合 CCB Gateway 和 Claude Code 的 Subagent 系统。
+
+**仓库：** [ccb-unified](~/.claude/skills/ccb-unified/)
+
+```bash
+# 安装技能
+cd ~/.claude/skills
+# 技能已在本地可用：~/.claude/skills/ccb-unified
+
+# 可用子技能（共 9 个）：
+# async    - 异步调用避免阻塞
+# parallel - 多 AI 并行对比
+# research - 深度研究（Explore Subagent + CCB）
+# workflow - 工作流自动化（Bash Subagent + CCB）
+# memory   - 记忆系统操作
+# benchmark - 性能基准测试
+# discussion - 多 AI 协作讨论
+# stem     - STEM 学术建模（8-AI）
+# macro    - A 股宏观研究（8-AI）
+```
+
+**核心特性：**
+- 🤖 **Subagent 集成** - 结合 CCB 与 Claude Code 的 Task 工具（Explore、Bash、通用代理）
+- ⚡ **异步优先** - 所有调用使用 `ccb-submit`（异步）避免阻塞 Claude 主会话
+- 🔀 **并行执行** - 同时提交多个 Provider 请求
+- 🔍 **深度研究** - Explore Subagent → 多 AI 分析 → Claude 整合
+- 🔄 **工作流自动化** - 预定义工作流（代码审查、测试分析、部署检查、文档生成、安全重构）
+- 🧠 **记忆操作** - 双系统记忆管理与启发式检索
+- 📊 **基准测试** - 跨 9 个 Provider 的性能测试
+- 🗣️ **讨论模式** - 多 AI 协作问题解决（快速 3-AI 或完整 7-AI 模式）
+- 🔬 **STEM 研究** - 8 模型架构用于学术研究笔记（约 10-15 分钟）
+- 💰 **宏观研究** - 8-AI 团队执行 200 次网络搜索进行 A 股市场分析
+
+**使用示例：**
+```bash
+# 通过 Claude 的 CLAUDE.md 触发器使用
+用户："ccb unified async"  # 触发 async 子技能
+用户："distributed ai research"  # 触发 research 子技能
+用户："multi ai collaboration"  # 触发 parallel 或 discussion 子技能
+
+# 子技能根据任务上下文自动调用
+```
+
+**与 CCB Gateway 集成：**
+- 所有调用通过 Gateway API 路由（http://localhost:8765）
+- 统一监控和日志
+- 智能路由和缓存
+- 重试和降级机制
+
+**替换/整合：**
+- 原 `ccb` 技能 → 核心功能
+- `ask` 技能 → 直接调用
+- `all-plan` 技能 → Discussion 子技能
+- `stem-modeling` 技能 → STEM 子技能
+- `macro-research-ccb` 技能 → Macro 子技能
+
+---
+
 ### 🤝 多 AI 讨论
 
 **协作式问题解决** - 多个 AI 讨论并达成共识：

@@ -710,6 +710,66 @@ ccb-skills stats
 
 ---
 
+### 🎯 ccb-unified Skill - Subagent Integration
+
+**Unified CCB + Claude Code Subagent Platform** - Comprehensive skill for distributed AI collaboration combining CCB Gateway with Claude Code's Subagent system.
+
+**Repository:** [ccb-unified](~/.claude/skills/ccb-unified/)
+
+```bash
+# Install the skill
+cd ~/.claude/skills
+# Skill is already available locally at ~/.claude/skills/ccb-unified
+
+# Available sub-skills (9 total):
+# async    - Async invocation to avoid blocking
+# parallel - Multi-AI parallel comparison
+# research - Deep research (Explore Subagent + CCB)
+# workflow - Workflow automation (Bash Subagent + CCB)
+# memory   - Memory system operations
+# benchmark - Performance benchmarking
+# discussion - Multi-AI collaborative discussion
+# stem     - STEM academic modeling (8-AI)
+# macro    - Macro research for A-share markets (8-AI)
+```
+
+**Key Features:**
+- 🤖 **Subagent Integration** - Combines CCB with Claude Code's Task tool (Explore, Bash, General-purpose agents)
+- ⚡ **Async-First** - All calls use `ccb-submit` (async) to avoid blocking Claude's main session
+- 🔀 **Parallel Execution** - Submit multiple Provider requests simultaneously
+- 🔍 **Deep Research** - Explore Subagent → Multiple AI analysis → Claude integration
+- 🔄 **Workflow Automation** - Predefined workflows (code-review, test-analyze, deploy-check, doc-generate, refactor-safe)
+- 🧠 **Memory Operations** - Dual-system memory management with heuristic retrieval
+- 📊 **Benchmarking** - Performance testing across all 9 providers
+- 🗣️ **Discussion** - Multi-AI collaborative problem-solving (quick 3-AI or full 7-AI modes)
+- 🔬 **STEM Research** - 8-model architecture for academic research notes (~10-15 min)
+- 💰 **Macro Research** - 8-AI team with 200 web searches for A-share market analysis
+
+**Usage Example:**
+```bash
+# Use via Claude's CLAUDE.md triggers
+User: "ccb unified async"  # Triggers async sub-skill
+User: "distributed ai research"  # Triggers research sub-skill
+User: "multi ai collaboration"  # Triggers parallel or discussion sub-skill
+
+# Sub-skills are automatically invoked based on task context
+```
+
+**Integration with CCB Gateway:**
+- All calls route through Gateway API (http://localhost:8765)
+- Unified monitoring and logging
+- Smart routing and caching
+- Retry and fallback mechanisms
+
+**Replaces/Integrates:**
+- Original `ccb` skill → Core functionality
+- `ask` skill → Direct invocation
+- `all-plan` skill → Discussion sub-skill
+- `stem-modeling` skill → STEM sub-skill
+- `macro-research-ccb` skill → Macro sub-skill
+
+---
+
 ### 🤝 Multi-AI Discussion
 
 **Collaborative problem-solving** - Multiple AIs discuss and reach consensus:
