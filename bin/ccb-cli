@@ -135,9 +135,9 @@ check_gateway() {
 
     echo -e "${YELLOW}⚡ Gateway 未运行，正在启动...${NC}" >&2
 
-    # Start Gateway in background
+    # Start Gateway in background using wrapper script (ensures env vars are loaded)
     cd ~/.local/share/codex-dual
-    nohup python3 -m lib.gateway.gateway_server --port 8765 > /tmp/ccb-gateway.log 2>&1 &
+    nohup bash bin/ccb-gateway-start.sh > /tmp/ccb-gateway.log 2>&1 &
     local gateway_pid=$!
 
     # Wait for Gateway to start (max 5 seconds)

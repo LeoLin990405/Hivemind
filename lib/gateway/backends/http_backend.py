@@ -34,12 +34,21 @@ class HTTPBackend(BaseBackend):
         self._api_key: Optional[str] = None
 
     def _get_api_key(self) -> Optional[str]:
-        """Get API key from environment."""
+        """Get API key from environment or direct value."""
         if self._api_key:
             return self._api_key
 
         if self.config.api_key_env:
-            self._api_key = os.environ.get(self.config.api_key_env)
+            # First try as environment variable name
+            env_value = os.environ.get(self.config.api_key_env)
+            if env_value:
+                self._api_key = env_value
+            # If not found in env and looks like a direct key (starts with sk-), use it directly
+            elif self.config.api_key_env.startswith(('sk-', 'sess-', 'key-', 'api-')):
+                self._api_key = self.config.api_key_env
+            # Otherwise try environment variable lookup
+            else:
+                self._api_key = env_value  # None if not found
         return self._api_key
 
     async def _get_session(self):
