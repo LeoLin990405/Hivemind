@@ -224,6 +224,13 @@ class CLIBackend(BaseBackend):
 
         return cmd
 
+    def _resolve_cwd(self) -> Optional[str]:
+        """Resolve configured working directory for CLI execution."""
+        if not self.config.cli_cwd:
+            return None
+        cwd = os.path.expanduser(os.path.expandvars(self.config.cli_cwd))
+        return cwd or None
+
     async def execute(self, request: GatewayRequest) -> BackendResult:
         """Execute request via CLI subprocess with streaming output."""
         start_time = time.time()
@@ -250,6 +257,7 @@ class CLIBackend(BaseBackend):
                 await self._ensure_gemini_token()
 
             cmd = self._build_command(request.message)
+            print(f"[DEBUG CLIBackend] Provider={self.config.name}, Full Command: {cmd}")
             stream.status(f"Executing: {' '.join(cmd[:2])}...")
 
             # Set up environment for non-interactive execution
@@ -257,6 +265,10 @@ class CLIBackend(BaseBackend):
             env["TERM"] = "dumb"
             env["NO_COLOR"] = "1"
             env["CI"] = "1"  # Many CLIs detect CI mode and disable interactivity
+            cwd = self._resolve_cwd()
+            if cwd and not os.path.isdir(cwd):
+                stream.status(f"Configured cwd not found: {cwd}, using default")
+                cwd = None
 
             # Try PTY mode first for CLIs that need terminal (like Gemini)
             # This allows us to capture auth URLs that are only shown in TTY mode
@@ -272,7 +284,7 @@ class CLIBackend(BaseBackend):
                 if debug:
                     print(f"[CCB] Using WezTerm for Gemini, cmd: {cmd}")
                 stream.status("Using WezTerm mode for Gemini...")
-                result = await self._execute_with_wezterm(cmd, request.timeout_s or self.config.timeout_s)
+                result = await self._execute_with_wezterm(cmd, request.timeout_s or self.config.timeout_s, cwd)
                 if debug:
                     print(f"[CCB] WezTerm result: {result}")
                 if result is not None:
@@ -293,7 +305,7 @@ class CLIBackend(BaseBackend):
 
             if use_pty:
                 stream.status("Using PTY mode...")
-                result = await self._execute_with_pty(cmd, env, request.timeout_s or self.config.timeout_s)
+                result = await self._execute_with_pty(cmd, env, request.timeout_s or self.config.timeout_s, cwd)
                 if result is not None:
                     stdout, stderr, returncode = result
                     latency_ms = (time.time() - start_time) * 1000
@@ -310,7 +322,7 @@ class CLIBackend(BaseBackend):
 
             # Fallback to regular subprocess with streaming
             stream.status("Starting subprocess...")
-            result = await self._execute_with_streaming(cmd, env, request.timeout_s or self.config.timeout_s, stream)
+            result = await self._execute_with_streaming(cmd, env, request.timeout_s or self.config.timeout_s, stream, cwd)
 
             if result is not None:
                 stdout, stderr, returncode = result
@@ -333,6 +345,7 @@ class CLIBackend(BaseBackend):
                 stderr=asyncio.subprocess.PIPE,
                 stdin=asyncio.subprocess.DEVNULL,
                 env=env,
+                cwd=cwd,
             )
 
             try:
@@ -391,7 +404,7 @@ class CLIBackend(BaseBackend):
             )
 
     async def _execute_with_streaming(
-        self, cmd: List[str], env: dict, timeout: float, stream: StreamOutput
+        self, cmd: List[str], env: dict, timeout: float, stream: StreamOutput, cwd: Optional[str]
     ) -> Optional[tuple]:
         """Execute command with real-time streaming output."""
         try:
@@ -401,6 +414,7 @@ class CLIBackend(BaseBackend):
                 stderr=asyncio.subprocess.PIPE,
                 stdin=asyncio.subprocess.DEVNULL,
                 env=env,
+                cwd=cwd,
             )
 
             stdout_parts = []
@@ -457,7 +471,7 @@ class CLIBackend(BaseBackend):
             return None
 
     async def _execute_with_wezterm(
-        self, cmd: List[str], timeout: float
+        self, cmd: List[str], timeout: float, cwd: Optional[str]
     ) -> Optional[tuple]:
         """Execute command in WezTerm pane and capture output.
 
@@ -476,7 +490,10 @@ class CLIBackend(BaseBackend):
         try:
             # Build command that writes output to file
             cmd_str = " ".join(f'"{c}"' if " " in c else c for c in cmd)
-            wrapper_cmd = f'{cmd_str} > "{output_file}" 2>&1; echo "CCB_EXIT_CODE:$?" >> "{output_file}"'
+            if cwd:
+                wrapper_cmd = f'cd "{cwd}" && {cmd_str} > "{output_file}" 2>&1; echo "CCB_EXIT_CODE:$?" >> "{output_file}"'
+            else:
+                wrapper_cmd = f'{cmd_str} > "{output_file}" 2>&1; echo "CCB_EXIT_CODE:$?" >> "{output_file}"'
 
             if debug:
                 print(f"[CCB WezTerm] Spawning: {wrapper_cmd}")
@@ -549,7 +566,7 @@ class CLIBackend(BaseBackend):
                 pass
 
     async def _execute_with_pty(
-        self, cmd: List[str], env: dict, timeout: float
+        self, cmd: List[str], env: dict, timeout: float, cwd: Optional[str]
     ) -> Optional[tuple]:
         """Execute command with PTY to capture output from TTY-dependent CLIs."""
         import pty
@@ -566,6 +583,7 @@ class CLIBackend(BaseBackend):
                 stderr=slave_fd,
                 stdin=asyncio.subprocess.DEVNULL,
                 env=env,
+                cwd=cwd,
             )
 
             os.close(slave_fd)
@@ -702,7 +720,23 @@ class CLIBackend(BaseBackend):
 
         # No valid output - check return code for error
         if returncode != 0:
-            error_msg = stderr if stderr else f"CLI exited with code {returncode}"
+            def _snip(text: str, limit: int = 1200) -> str:
+                text = text.strip()
+                if len(text) <= limit:
+                    return text
+                return text[-limit:]
+
+            detail_parts = []
+            if stderr:
+                detail_parts.append(f"stderr:\n{_snip(stderr)}")
+            if stdout and (not stderr or _snip(stdout) != _snip(stderr)):
+                detail_parts.append(f"stdout:\n{_snip(stdout)}")
+
+            detail = "\n\n".join(p for p in detail_parts if p).strip()
+            if detail:
+                error_msg = f"CLI exited with code {returncode}\n{detail}"
+            else:
+                error_msg = f"CLI exited with code {returncode}"
             return BackendResult.fail(error_msg, latency_ms=latency_ms)
 
         # Empty output but success exit code

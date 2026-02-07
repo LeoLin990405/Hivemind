@@ -412,6 +412,7 @@ parse_and_call() {
         exit 1
     fi
 
+    echo -e "${YELLOW}[DEBUG] provider=$provider, message=$message${NC}" >&2
     call_gateway "$provider" "$message" "$GATEWAY_TIMEOUT" "$AGENT"
 }
 

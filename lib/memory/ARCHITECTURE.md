@@ -205,9 +205,89 @@ Recommendation: "建议使用 ccb-cli codex o3"
 - Top skills used
 - Provider performance
 
+## Ollama 智能路由 (Keyword Extraction)
+
+### Overview
+Memory Middleware 使用 Ollama 进行语义关键词提取，采用**本地/云端双模式智能路由**确保高可用性。
+
+### 路由策略
+```
+┌─────────────────────────────────────────────────────┐
+│              Keyword Extraction Flow                │
+├─────────────────────────────────────────────────────┤
+│                                                     │
+│  User Query: "帮我写一个 Python 爬虫脚本"            │
+│       │                                             │
+│       ▼                                             │
+│  ┌─────────────────────────────────────┐           │
+│  │ 1️⃣ 本地模型 (qwen2.5:7b)             │           │
+│  │    • 超时: 3 秒                       │           │
+│  │    • 优势: 快速 (~0.5s), 无网络依赖   │           │
+│  └──────────────┬──────────────────────┘           │
+│                 │                                   │
+│        成功 ────┴──── 超时/失败                      │
+│         │                  │                        │
+│         ▼                  ▼                        │
+│   返回关键词    ┌─────────────────────────────┐    │
+│   ["Python",   │ 2️⃣ 云端模型                   │    │
+│    "爬虫",     │    (deepseek-v3.1:671b-cloud)│    │
+│    "脚本"]     │    • 超时: 10 秒              │    │
+│                │    • 优势: 671B 参数, 更强理解│    │
+│                └──────────────┬──────────────┘    │
+│                               │                    │
+│                      成功 ────┴──── 失败          │
+│                       │              │             │
+│                       ▼              ▼             │
+│                 返回关键词    3️⃣ 正则回退方案      │
+│                              (无 LLM 依赖)         │
+│                                                     │
+└─────────────────────────────────────────────────────┘
+```
+
+### 模型配置
+| 模型 | 参数 | 位置 | 超时 | 典型延迟 | 适用场景 |
+|------|------|------|------|---------|---------|
+| `qwen2.5:7b` | 7.6B | 本地 (4.7GB) | 6s | 0.5s (热) / 5s (冷) | 常规任务 |
+| `deepseek-v3.1:671b-cloud` | 671B | 云端 (ollama.com) | 10s | 1.5-3s | 复杂语义 |
+| 正则提取 | - | 本地代码 | - | <10ms | 兜底方案 |
+
+### 触发条件
+- **使用本地模型**: 默认首选，Ollama 服务运行中
+- **切换云端模型**: 本地超时 (>3s) 或返回空结果
+- **使用正则回退**: Ollama 服务未运行 / 云端也失败
+
+### 日志示例
+```bash
+# 本地成功
+[MemoryMiddleware] LLM extracted (local:qwen2.5:7b): ['Python', '爬虫', '脚本']
+
+# 本地超时，云端成功
+[MemoryMiddleware] Ollama timeout (3s) for local:qwen2.5:7b
+[MemoryMiddleware] LLM extracted (cloud:deepseek-v3.1:671b-cloud): ['Python', '爬虫', '脚本']
+
+# 全部失败，正则回退
+[MemoryMiddleware] Ollama timeout (3s) for local:qwen2.5:7b
+[MemoryMiddleware] Ollama timeout (10s) for cloud:deepseek-v3.1:671b-cloud
+[MemoryMiddleware] LLM extraction failed, fallback to regex
+[MemoryMiddleware] Extracted keywords: ['python', '爬虫脚本']
+```
+
+### 代码位置
+- **实现**: `lib/gateway/middleware/memory_middleware.py:_extract_keywords_with_llm()`
+- **配置**: 硬编码在方法内（可扩展为配置文件）
+
+### 扩展建议
+1. **增加更多云端模型**: 如 `llama3.3:70b-cloud`, `mistral:latest-cloud`
+2. **动态调整超时**: 根据历史响应时间自动调整
+3. **模型预热**: Gateway 启动时预加载本地模型
+4. **成本统计**: 云端调用次数追踪
+
+---
+
 ## Future Enhancements
 
 1. **Cross-session Learning**: Identify patterns across sessions
 2. **Skill Recommendations**: Auto-suggest relevant skills
 3. **Provider Routing**: Auto-select best AI based on history
 4. **Export**: Obsidian, Markdown, JSON exports
+5. **Ollama Model Pool**: 动态管理多个本地/云端模型

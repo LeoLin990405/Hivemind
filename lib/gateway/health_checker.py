@@ -116,6 +116,7 @@ class HealthChecker:
 
         self._providers: Dict[str, ProviderHealth] = {}
         self._backends: Dict[str, Any] = {}
+        self._provider_timeouts: Dict[str, float] = {}
         self._running = False
         self._task: Optional[asyncio.Task] = None
         self._on_status_change: Optional[Callable[[str, ProviderStatus, ProviderStatus], Awaitable[None]]] = None
@@ -124,6 +125,11 @@ class HealthChecker:
         """Register a provider for health checking."""
         self._providers[provider] = ProviderHealth(provider=provider)
         self._backends[provider] = backend
+
+    def set_provider_timeout(self, provider: str, timeout_s: float) -> None:
+        """Set per-provider health check timeout."""
+        if timeout_s > 0:
+            self._provider_timeouts[provider] = float(timeout_s)
 
     def unregister_provider(self, provider: str) -> None:
         """Unregister a provider from health checking."""
@@ -178,10 +184,11 @@ class HealthChecker:
         old_status = health.status
 
         # Create a simple test request
+        timeout_s = self._provider_timeouts.get(provider, self.check_timeout_s)
         test_request = GatewayRequest.create(
             provider=provider,
             message="ping",
-            timeout_s=self.check_timeout_s,
+            timeout_s=timeout_s,
             metadata={"health_check": True},
         )
 
@@ -189,7 +196,7 @@ class HealthChecker:
         try:
             result = await asyncio.wait_for(
                 backend.execute(test_request),
-                timeout=self.check_timeout_s,
+                timeout=timeout_s,
             )
 
             latency_ms = (time.time() - start_time) * 1000

@@ -141,7 +141,7 @@ def gateway_ask_codex(message: str, timeout_s: float = 300.0, wait: bool = True)
     return gateway_ask(message, provider="codex", timeout_s=timeout_s, wait=wait)
 
 
-def gateway_ask_gemini(message: str, timeout_s: float = 300.0, wait: bool = True) -> Tuple[Optional[str], int]:
+def gateway_ask_gemini(message: str, timeout_s: float = 600.0, wait: bool = True) -> Tuple[Optional[str], int]:
     """Send request to Gemini via gateway."""
     return gateway_ask(message, provider="gemini", timeout_s=timeout_s, wait=wait)
 

@@ -15,6 +15,7 @@ from __future__ import annotations
 
 import sys
 import argparse
+import time
 from pathlib import Path
 from datetime import datetime
 from typing import Optional
@@ -41,6 +42,20 @@ def format_size(bytes_size: int) -> str:
         return f"{bytes_size / (1024 * 1024):.1f} MB"
 
 
+def format_duration(seconds: Optional[float]) -> str:
+    """Format duration in a human-readable format."""
+    if seconds is None:
+        return "N/A"
+    seconds = max(0, int(seconds))
+    hours, remainder = divmod(seconds, 3600)
+    minutes, secs = divmod(remainder, 60)
+    if hours > 0:
+        return f"{hours}h {minutes}m"
+    if minutes > 0:
+        return f"{minutes}m {secs}s"
+    return f"{secs}s"
+
+
 def cmd_stats(args: argparse.Namespace) -> int:
     """Show cache statistics."""
     cache = ResponseCache()
@@ -49,15 +64,22 @@ def cmd_stats(args: argparse.Namespace) -> int:
     print("=" * 50)
     print("Response Cache Statistics")
     print("=" * 50)
-    print(f"Total Entries:    {stats.total_entries}")
-    print(f"Cache Size:       {format_size(stats.size_bytes)}")
+    total_entries = stats.total_entries + stats.expired_entries
+    print(f"Total Entries:    {total_entries} (valid {stats.total_entries}, expired {stats.expired_entries})")
+    print(f"Cache Size:       {format_size(stats.size_bytes)} (valid) / {format_size(stats.total_size_bytes)} (total)")
     print(f"Total Hits:       {stats.total_hits}")
     print(f"Total Misses:     {stats.total_misses}")
     print(f"Hit Rate:         {stats.hit_rate*100:.1f}%")
+    print(f"Default TTL:      {int(cache.default_ttl_s)}s")
     if stats.oldest_entry:
         print(f"Oldest Entry:     {format_timestamp(stats.oldest_entry)}")
     if stats.newest_entry:
         print(f"Newest Entry:     {format_timestamp(stats.newest_entry)}")
+    if stats.next_expiration:
+        remaining = stats.next_expiration - time.time()
+        print(f"Next Expiration:  {format_timestamp(stats.next_expiration)} ({format_duration(remaining)})")
+    if stats.avg_ttl_remaining_s is not None:
+        print(f"Avg TTL Left:     {format_duration(stats.avg_ttl_remaining_s)}")
     print("=" * 50)
     return 0
 

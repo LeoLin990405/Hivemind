@@ -2,8 +2,6 @@
 # CCB CLI 登录状态检查脚本
 # 检查所有 AI CLI 的认证状态
 
-set -e
-
 RED='\033[0;31m'
 GREEN='\033[0;32m'
 YELLOW='\033[1;33m'

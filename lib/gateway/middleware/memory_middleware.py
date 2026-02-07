@@ -171,8 +171,10 @@ class MemoryMiddleware:
                 print(f"[MemoryMiddleware] Search error: {e}")
 
         # 3. 推荐最佳 Provider（如果启用）
+        print(f"[MemoryMiddleware] Provider before recommendation: {provider}")
         recommendation_config = self.config.get("recommendation", {})
         if recommendation_config.get("enabled", True) and provider in ["auto", None]:
+            print(f"[MemoryMiddleware] Entering recommendation logic (provider={provider})")
             try:
                 recommendations = self.registry.recommend_provider(keywords)
                 if recommendations:
@@ -182,6 +184,7 @@ class MemoryMiddleware:
                     print(f"[MemoryMiddleware] Recommended: {recommended_provider} ({reason})")
 
                     if recommendation_config.get("auto_switch_provider", False):
+                        print(f"[MemoryMiddleware] Auto-switching provider: {provider} -> {recommended_provider}")
                         request["provider"] = recommended_provider
                         request["_recommendation"] = {
                             "provider": recommended_provider,
@@ -318,7 +321,14 @@ class MemoryMiddleware:
             return self._extract_keywords_regex(text)
 
     def _extract_keywords_with_llm(self, text: str) -> List[str]:
-        """使用本地 LLM (Ollama + qwen2.5:7b) 提取关键词"""
+        """
+        使用 Ollama 智能路由提取关键词
+
+        路由策略：
+        1. 首选本地 qwen2.5:7b（快速，无网络依赖）
+        2. 本地超时/失败 → 自动切换云端 deepseek-v3.1:671b-cloud
+        3. 云端失败 → 回退到正则提取
+        """
         import requests
         import re
 
@@ -337,52 +347,74 @@ class MemoryMiddleware:
 
 关键词："""
 
-        try:
-            # 调用 Ollama API
-            response = requests.post(
-                'http://localhost:11434/api/generate',
-                json={
-                    'model': 'qwen2.5:7b',
-                    'prompt': prompt,
-                    'stream': False,
-                    'options': {
-                        'temperature': 0.3,  # 低温度保证稳定输出
-                        'num_predict': 50    # 限制生成长度
-                    }
-                },
-                timeout=5  # 5秒超时
-            )
+        # 模型路由配置
+        models = [
+            {
+                'name': 'qwen2.5:7b',
+                'timeout': 6,      # 本地模型 6 秒超时（冷启动 ~5s，热调用 <1s）
+                'location': 'local'
+            },
+            {
+                'name': 'deepseek-v3.1:671b-cloud',
+                'timeout': 10,     # 云端模型 10 秒超时
+                'location': 'cloud'
+            }
+        ]
 
-            if response.status_code == 200:
-                result = response.json()
-                keywords_str = result.get('response', '').strip()
+        last_error = None
+        for model_config in models:
+            model_name = model_config['name']
+            timeout = model_config['timeout']
+            location = model_config['location']
 
-                # 解析关键词（支持中英文逗号分隔）
-                keywords = []
-                # 分割：支持中文逗号和英文逗号
-                raw_keywords = re.split(r'[,，、]', keywords_str)
+            try:
+                response = requests.post(
+                    'http://localhost:11434/api/generate',
+                    json={
+                        'model': model_name,
+                        'prompt': prompt,
+                        'stream': False,
+                        'options': {
+                            'temperature': 0.3,
+                            'num_predict': 50
+                        }
+                    },
+                    timeout=timeout
+                )
 
-                for kw in raw_keywords:
-                    # 清理：去除编号、空格、标点
-                    cleaned_kw = re.sub(r'^[\d\.\s、]+', '', kw.strip())
-                    cleaned_kw = re.sub(r'[。！？,.!?、]+$', '', cleaned_kw)
+                if response.status_code == 200:
+                    result = response.json()
+                    keywords_str = result.get('response', '').strip()
 
-                    if cleaned_kw and len(cleaned_kw) >= 2:
-                        keywords.append(cleaned_kw)
+                    # 解析关键词
+                    keywords = []
+                    raw_keywords = re.split(r'[,，、]', keywords_str)
 
-                if keywords:
-                    print(f"[MemoryMiddleware] LLM extracted: {keywords}")
-                    return keywords[:5]  # 最多返回5个
+                    for kw in raw_keywords:
+                        cleaned_kw = re.sub(r'^[\d\.\s、]+', '', kw.strip())
+                        cleaned_kw = re.sub(r'[。！？,.!?、]+$', '', cleaned_kw)
+                        if cleaned_kw and len(cleaned_kw) >= 2:
+                            keywords.append(cleaned_kw)
 
-        except requests.exceptions.Timeout:
-            print(f"[MemoryMiddleware] Ollama timeout (5s)")
-        except requests.exceptions.ConnectionError:
-            print(f"[MemoryMiddleware] Ollama not running on localhost:11434")
-        except Exception as e:
-            print(f"[MemoryMiddleware] Ollama API error: {e}")
+                    if keywords:
+                        print(f"[MemoryMiddleware] LLM extracted ({location}:{model_name}): {keywords}")
+                        return keywords[:5]
 
-        # 如果 LLM 失败，抛出异常让上层回退
-        raise Exception("LLM extraction failed")
+            except requests.exceptions.Timeout:
+                print(f"[MemoryMiddleware] Ollama timeout ({timeout}s) for {location}:{model_name}")
+                last_error = f"timeout:{model_name}"
+                continue  # 尝试下一个模型
+            except requests.exceptions.ConnectionError:
+                print(f"[MemoryMiddleware] Ollama not running on localhost:11434")
+                last_error = "connection_error"
+                break  # Ollama 服务未运行，直接退出
+            except Exception as e:
+                print(f"[MemoryMiddleware] Ollama API error ({model_name}): {e}")
+                last_error = str(e)
+                continue  # 尝试下一个模型
+
+        # 所有模型都失败
+        raise Exception(f"LLM extraction failed, fallback to regex")
 
     def _extract_keywords_regex(self, text: str) -> List[str]:
         """正则提取关键词（回退方案）"""

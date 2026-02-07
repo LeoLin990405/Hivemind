@@ -73,13 +73,13 @@ def main(argv: list[str]) -> int:
 
     if timeout is None:
         try:
-            timeout = float(os.environ.get("CCB_SYNC_TIMEOUT", "300"))
+            timeout = float(os.environ.get("CCB_SYNC_TIMEOUT", "600"))
         except Exception:
-            timeout = 300.0
+            timeout = 600.0
 
     try:
         # Use Gateway API
-        reply, exit_code = gateway_ask_gemini(message, timeout_s=timeout if timeout > 0 else 300.0, wait=True)
+        reply, exit_code = gateway_ask_gemini(message, timeout_s=timeout if timeout > 0 else 600.0, wait=True)
         if reply:
             if output_path:
                 atomic_write_text(output_path, reply + "\n")

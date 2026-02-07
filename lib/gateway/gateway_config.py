@@ -52,6 +52,7 @@ class ProviderConfig:
     api_key_env: Optional[str] = None
     cli_command: Optional[str] = None
     cli_args: List[str] = field(default_factory=list)
+    cli_cwd: Optional[str] = None
     fifo_path: Optional[str] = None
     terminal_pane_id: Optional[str] = None
     # Model config
@@ -319,6 +320,7 @@ class GatewayConfig:
             api_key_env=data.get("api_key_env"),
             cli_command=data.get("cli_command"),
             cli_args=data.get("cli_args", []),
+            cli_cwd=data.get("cli_cwd"),
             fifo_path=data.get("fifo_path"),
             terminal_pane_id=data.get("terminal_pane_id"),
             model=data.get("model"),
@@ -375,15 +377,15 @@ class GatewayConfig:
             timeout_s=300.0,
         )
 
-        # Gemini (CLI) - requires TTY, use terminal backend or WezTerm execution
+        # Gemini (CLI) - uses -p for non-interactive mode, -y for auto-approve
         # Note: Gemini CLI uses OAuth authentication, not API key
-        # The -p flag requires the prompt to follow immediately, so we use positional args
+        # The -p flag runs in headless mode with the given prompt
         self.providers["gemini"] = ProviderConfig(
             name="gemini",
             backend_type=BackendType.CLI_EXEC,
             cli_command="gemini",
-            cli_args=["-o", "json"],  # Output format, prompt will be added as positional arg
-            timeout_s=300.0,
+            cli_args=["-p"],  # -p for non-interactive prompt mode, message appended after
+            timeout_s=600.0,
         )
 
         # OpenCode (CLI) - use 'run --format json' for non-interactive mode
@@ -395,11 +397,11 @@ class GatewayConfig:
             timeout_s=120.0,
         )
 
-        # iFlow (CLI) - use '-p' for non-interactive prompt mode
+        # iFlow (CLI) - use 'iask' command with '-p' for non-interactive prompt mode
         self.providers["iflow"] = ProviderConfig(
             name="iflow",
             backend_type=BackendType.CLI_EXEC,
-            cli_command="iflow",
+            cli_command="iask",
             cli_args=["-p"],
             timeout_s=300.0,
         )

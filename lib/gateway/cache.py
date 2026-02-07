@@ -95,6 +95,13 @@ class CacheStats:
     total_entries: int = 0
     expired_entries: int = 0
     total_tokens_saved: int = 0
+    size_bytes: int = 0
+    valid_entries: int = 0
+    valid_size_bytes: int = 0
+    oldest_entry: Optional[float] = None
+    newest_entry: Optional[float] = None
+    next_expiration: Optional[float] = None
+    avg_ttl_remaining_s: Optional[float] = None
 
     @property
     def hit_rate(self) -> float:
@@ -111,6 +118,13 @@ class CacheStats:
             "total_entries": self.total_entries,
             "expired_entries": self.expired_entries,
             "total_tokens_saved": self.total_tokens_saved,
+            "size_bytes": self.size_bytes,
+            "valid_entries": self.valid_entries,
+            "valid_size_bytes": self.valid_size_bytes,
+            "oldest_entry": self.oldest_entry,
+            "newest_entry": self.newest_entry,
+            "next_expiration": self.next_expiration,
+            "avg_ttl_remaining_s": self.avg_ttl_remaining_s,
         }
 
 
@@ -374,16 +388,30 @@ class CacheManager:
         """
         now = time.time()
         with self.store._get_connection() as conn:
-            # Total entries
-            cursor = conn.execute("SELECT COUNT(*) FROM response_cache")
-            self._stats.total_entries = cursor.fetchone()[0]
+            cursor = conn.execute("""
+                SELECT
+                    COUNT(*) as total_count,
+                    SUM(CASE WHEN expires_at > ? THEN 1 ELSE 0 END) as valid_count,
+                    SUM(CASE WHEN expires_at <= ? THEN 1 ELSE 0 END) as expired_count,
+                    COALESCE(SUM(LENGTH(response)), 0) as total_size,
+                    COALESCE(SUM(CASE WHEN expires_at > ? THEN LENGTH(response) ELSE 0 END), 0) as valid_size,
+                    MIN(created_at) as oldest,
+                    MAX(created_at) as newest,
+                    MIN(CASE WHEN expires_at > ? THEN expires_at END) as next_expiration,
+                    AVG(CASE WHEN expires_at > ? THEN (expires_at - ?) END) as avg_ttl_remaining
+                FROM response_cache
+            """, (now, now, now, now, now, now))
+            row = cursor.fetchone()
 
-            # Expired entries
-            cursor = conn.execute(
-                "SELECT COUNT(*) FROM response_cache WHERE expires_at < ?",
-                (now,)
-            )
-            self._stats.expired_entries = cursor.fetchone()[0]
+            self._stats.total_entries = row["total_count"] or 0
+            self._stats.valid_entries = row["valid_count"] or 0
+            self._stats.expired_entries = row["expired_count"] or 0
+            self._stats.size_bytes = row["total_size"] or 0
+            self._stats.valid_size_bytes = row["valid_size"] or 0
+            self._stats.oldest_entry = row["oldest"]
+            self._stats.newest_entry = row["newest"]
+            self._stats.next_expiration = row["next_expiration"]
+            self._stats.avg_ttl_remaining_s = row["avg_ttl_remaining"]
 
         return self._stats
 

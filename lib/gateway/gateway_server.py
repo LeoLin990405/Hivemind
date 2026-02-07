@@ -226,15 +226,48 @@ class GatewayServer:
         # Health Checker
         if HEALTH_CHECKER_AVAILABLE:
             try:
-                self.health_checker = HealthChecker(
-                    check_interval_s=30.0,
-                    failure_threshold=3,
-                    recovery_threshold=2,
-                )
-                # Register all backends
-                for name, backend in self.backends.items():
-                    self.health_checker.register_provider(name, backend)
-                print("[GatewayServer] Health Checker initialized successfully")
+                health_cfg = self.config.health_check or {}
+                enabled = health_cfg.get("enabled", True)
+                if enabled is False:
+                    self.health_checker = None
+                    print("[GatewayServer] Health Checker disabled by config")
+                else:
+                    def _num(value, default):
+                        try:
+                            return type(default)(value)
+                        except Exception:
+                            return default
+
+                    check_interval_s = _num(health_cfg.get("interval_s", 30.0), 30.0)
+                    failure_threshold = _num(health_cfg.get("failure_threshold", 3), 3)
+                    recovery_threshold = _num(health_cfg.get("recovery_threshold", 2), 2)
+                    check_timeout_s = _num(health_cfg.get("timeout_s", 15.0), 15.0)
+
+                    self.health_checker = HealthChecker(
+                        check_interval_s=check_interval_s,
+                        failure_threshold=failure_threshold,
+                        recovery_threshold=recovery_threshold,
+                        check_timeout_s=check_timeout_s,
+                    )
+
+                    provider_overrides = health_cfg.get("provider_overrides", {})
+                    if not isinstance(provider_overrides, dict):
+                        provider_overrides = {}
+
+                    # Register all backends with overrides
+                    for name, backend in self.backends.items():
+                        override = provider_overrides.get(name, {})
+                        if isinstance(override, dict):
+                            if override.get("enabled") is False:
+                                continue
+                            if "timeout_s" in override:
+                                try:
+                                    self.health_checker.set_provider_timeout(name, float(override["timeout_s"]))
+                                except Exception:
+                                    pass
+                        self.health_checker.register_provider(name, backend)
+
+                    print("[GatewayServer] Health Checker initialized successfully")
             except Exception as e:
                 print(f"[GatewayServer] Failed to initialize Health Checker: {e}")
                 self.health_checker = None
@@ -304,6 +337,10 @@ class GatewayServer:
         Called by the async queue processor.
         Handles retry, fallback, caching, and parallel execution.
         """
+        if request.metadata is None:
+            request.metadata = {}
+        request.metadata.setdefault("original_message", request.message)
+
         # Check if this is a parallel request
         is_parallel = request.metadata and request.metadata.get("parallel", False)
 
@@ -459,11 +496,18 @@ class GatewayServer:
 
             # Cache the selected response
             if self.cache_manager and result.selected_provider:
+                cache_message = request.message
+                if request.metadata:
+                    cache_message = request.metadata.get("original_message", request.message)
+                print(f"[DEBUG Cache] Saving to cache: provider={result.selected_provider}, message_hash={hash(cache_message)}")
                 self.cache_manager.put(
                     result.selected_provider,
-                    request.message,
+                    cache_message,
                     result.selected_response,
                 )
+                print(f"[DEBUG Cache] ✅ Saved to cache")
+            else:
+                print(f"[DEBUG Cache] NOT saving: cache_manager={self.cache_manager is not None}, provider={result.selected_provider}")
         else:
             self.store.update_request_status(request.id, RequestStatus.FAILED)
             self.store.save_response(GatewayResponse(
@@ -550,9 +594,12 @@ class GatewayServer:
 
         # Cache the response
         if self.cache_manager and result.response:
+            cache_message = request.message
+            if request.metadata:
+                cache_message = request.metadata.get("original_message", request.message)
             self.cache_manager.put(
                 provider,
-                request.message,
+                cache_message,
                 result.response,
                 tokens_used=result.tokens_used,
             )

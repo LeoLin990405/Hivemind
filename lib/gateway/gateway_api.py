@@ -110,6 +110,29 @@ if HAS_FASTAPI:
         total_entries: int
         expired_entries: int
         total_tokens_saved: int
+        size_bytes: Optional[int] = None
+        valid_entries: Optional[int] = None
+        valid_size_bytes: Optional[int] = None
+        oldest_entry: Optional[float] = None
+        newest_entry: Optional[float] = None
+        next_expiration: Optional[float] = None
+        avg_ttl_remaining_s: Optional[float] = None
+
+    class BatchAskRequest(BaseModel):
+        """Request body for batch ask operation."""
+        requests: List[AskRequest] = Field(..., min_length=1, max_length=50, description="List of requests to submit")
+
+    class BatchCancelRequest(BaseModel):
+        """Request body for batch cancel operation."""
+        request_ids: List[str] = Field(..., min_length=1, max_length=100, description="List of request IDs to cancel")
+
+    class BatchStatusRequest(BaseModel):
+        """Request body for batch status query."""
+        request_ids: List[str] = Field(..., min_length=1, max_length=100, description="List of request IDs to query")
+
+    class BatchReplyRequest(BaseModel):
+        """Request body for batch reply query."""
+        request_ids: List[str] = Field(..., min_length=1, max_length=100, description="List of request IDs to fetch replies")
 
     class ParallelResponse(BaseModel):
         """Response body for parallel query results."""
@@ -394,15 +417,19 @@ def create_api(
         """
         # Determine provider(s)
         provider_spec = request.provider
+        print(f"[DEBUG GatewayAPI] Received provider_spec: {provider_spec}, message: {request.message[:50] if len(request.message) > 50 else request.message}")
         if not provider_spec:
             if router_func:
                 decision = router_func(request.message)
                 provider_spec = decision.provider
+                print(f"[DEBUG GatewayAPI] Router决策: {provider_spec}")
             else:
                 provider_spec = config.default_provider
+                print(f"[DEBUG GatewayAPI] 使用默认provider: {provider_spec}")
 
         # Parse provider specification
         providers, is_parallel = parse_provider_spec(provider_spec)
+        print(f"[DEBUG GatewayAPI] Parsed providers: {providers}, is_parallel: {is_parallel}")
 
         if not providers:
             raise HTTPException(
@@ -410,16 +437,26 @@ def create_api(
                 detail=f"Unknown provider or group: {provider_spec}",
             )
 
+        # Enforce provider minimum timeout (single-provider only)
+        effective_timeout_s = request.timeout_s
+        if not is_parallel:
+            pconfig = config.providers.get(providers[0])
+            if pconfig and pconfig.timeout_s and effective_timeout_s < pconfig.timeout_s:
+                effective_timeout_s = pconfig.timeout_s
+
         # Check cache first (only for single provider, non-parallel)
+        print(f"[DEBUG Cache] is_parallel={is_parallel}, cache_manager={cache_manager is not None}, enabled={config.cache.enabled if hasattr(config, 'cache') else 'N/A'}, bypass={request.cache_bypass}")
         if not is_parallel and cache_manager and config.cache.enabled and not request.cache_bypass:
             cached = cache_manager.get(providers[0], request.message)
+            print(f"[DEBUG Cache] Checking cache for provider={providers[0]}, message_hash={hash(request.message)}, cached={cached is not None}")
             if cached:
+                print(f"[DEBUG Cache] ✅ Cache HIT! Returning cached response")
                 # Return cached response immediately
                 gw_request = GatewayRequest.create(
                     provider=providers[0],
                     message=request.message,
                     priority=request.priority,
-                    timeout_s=request.timeout_s,
+                    timeout_s=effective_timeout_s,
                     metadata={"cached": True, "cache_key": cached.cache_key},
                 )
                 # Save to store for consistency
@@ -469,8 +506,9 @@ def create_api(
             provider=providers[0] if not is_parallel else provider_spec,
             message=request.message,
             priority=request.priority,
-            timeout_s=request.timeout_s,
+            timeout_s=effective_timeout_s,
             metadata={
+                "original_message": request.message,
                 "parallel": is_parallel,
                 "providers": providers if is_parallel else None,
                 "aggregation_strategy": request.aggregation_strategy,
@@ -521,6 +559,7 @@ def create_api(
                         "response": response.response if response else None,
                         "error": response.error if response else None,
                         "latency_ms": response.latency_ms if response else None,
+                        "retry_info": response.metadata.get("retry_info") if response and response.metadata else None,
                         "thinking": response.thinking if response else None,
                         "raw_output": response.raw_output if response else None,
                     }
@@ -1306,6 +1345,13 @@ def create_api(
             total_entries=stats.total_entries,
             expired_entries=stats.expired_entries,
             total_tokens_saved=stats.total_tokens_saved,
+            size_bytes=stats.size_bytes,
+            valid_entries=stats.valid_entries,
+            valid_size_bytes=stats.valid_size_bytes,
+            oldest_entry=stats.oldest_entry,
+            newest_entry=stats.newest_entry,
+            next_expiration=stats.next_expiration,
+            avg_ttl_remaining_s=stats.avg_ttl_remaining_s,
         )
 
     @app.get("/api/cache/stats/detailed")
@@ -3202,19 +3248,6 @@ def create_api(
 
     # ==================== Batch Operations Endpoints ====================
 
-    if HAS_FASTAPI:
-        class BatchAskRequest(BaseModel):
-            """Request body for batch ask operation."""
-            requests: List[AskRequest] = Field(..., min_length=1, max_length=50, description="List of requests to submit")
-
-        class BatchCancelRequest(BaseModel):
-            """Request body for batch cancel operation."""
-            request_ids: List[str] = Field(..., min_length=1, max_length=100, description="List of request IDs to cancel")
-
-        class BatchStatusRequest(BaseModel):
-            """Request body for batch status query."""
-            request_ids: List[str] = Field(..., min_length=1, max_length=100, description="List of request IDs to query")
-
     @app.post("/api/batch/ask")
     async def batch_ask(batch_request: "BatchAskRequest") -> Dict[str, Any]:
         """
@@ -3357,6 +3390,61 @@ def create_api(
                 "response": response.response if response else None,
                 "error": response.error if response else None,
                 "latency_ms": response.latency_ms if response else None,
+                "created_at": request.created_at,
+                "completed_at": request.completed_at,
+            })
+
+        found_count = sum(1 for r in results if r["found"])
+        completed_count = sum(
+            1 for r in results
+            if r["found"] and r["status"] in ("completed", "failed", "timeout")
+        )
+
+        return {
+            "found": found_count,
+            "not_found": len(results) - found_count,
+            "completed": completed_count,
+            "pending": found_count - completed_count,
+            "total": len(results),
+            "results": results,
+        }
+
+    @app.post("/api/batch/reply")
+    async def batch_reply(batch_request: "BatchReplyRequest") -> Dict[str, Any]:
+        """
+        Fetch replies for multiple requests in a single API call.
+
+        Similar to /api/reply but accepts multiple request IDs.
+        """
+        results = []
+
+        for request_id in batch_request.request_ids:
+            request = store.get_request(request_id)
+
+            if not request:
+                results.append({
+                    "request_id": request_id,
+                    "found": False,
+                    "status": None,
+                    "response": None,
+                    "error": "Request not found",
+                })
+                continue
+
+            response = store.get_response(request_id)
+
+            results.append({
+                "request_id": request_id,
+                "found": True,
+                "status": request.status.value,
+                "provider": request.provider,
+                "response": response.response if response else None,
+                "error": response.error if response else None,
+                "latency_ms": response.latency_ms if response else None,
+                "cached": response.metadata.get("cached", False) if response and response.metadata else False,
+                "retry_info": response.metadata.get("retry_info") if response and response.metadata else None,
+                "thinking": response.thinking if response else None,
+                "raw_output": response.raw_output if response else None,
                 "created_at": request.created_at,
                 "completed_at": request.completed_at,
             })

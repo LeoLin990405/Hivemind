@@ -67,9 +67,12 @@ class HTTPBackend(BaseBackend):
         start_time = time.time()
 
         api_key = self._get_api_key()
+        print(f"[DEBUG HTTPBackend] Provider={self.config.name}, api_key_env={self.config.api_key_env}, has_key={bool(api_key)}")
         if not api_key:
+            error_msg = f"API key not found in environment variable: {self.config.api_key_env}"
+            print(f"[DEBUG HTTPBackend] {error_msg}")
             return BackendResult.fail(
-                f"API key not found in environment variable: {self.config.api_key_env}",
+                error_msg,
                 latency_ms=(time.time() - start_time) * 1000,
             )
 

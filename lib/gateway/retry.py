@@ -26,6 +26,10 @@ class ErrorType(Enum):
     NON_RETRYABLE_PERMANENT = "non_retryable_permanent"  # Permanent failures
 
 
+# Rate limit handling defaults
+GEMINI_RATE_LIMIT_MIN_TIMEOUT_S = 600.0
+
+
 # Default fallback chains for providers
 DEFAULT_FALLBACK_CHAINS: Dict[str, List[str]] = {
     "claude": ["deepseek", "gemini"],
@@ -240,6 +244,11 @@ class RetryExecutor:
         self.backends = backends
         self.available_providers = available_providers or list(backends.keys())
 
+    def _ensure_min_timeout(self, request: "GatewayRequest", min_timeout_s: float) -> None:
+        """Ensure request timeout is at least min_timeout_s."""
+        if request.timeout_s < min_timeout_s:
+            request.timeout_s = min_timeout_s
+
     async def execute_with_retry(
         self,
         request: "GatewayRequest",
@@ -274,23 +283,28 @@ class RetryExecutor:
 
         while True:
             # Execute with current provider
+            print(f"[DEBUG RetryExecutor] Executing provider={request.provider}, fallback_index={state.fallback_index}")
             result = await self._execute_with_retries(request, state, execute_func)
+            print(f"[DEBUG RetryExecutor] Provider {request.provider} result: success={result.success}, error={result.error[:100] if result.error else 'None'}")
 
             if result.success:
                 return result, state
 
             # Check if we should try fallback
             if not self.config.fallback_enabled:
+                print(f"[DEBUG RetryExecutor] Fallback disabled, returning failure")
                 return result, state
 
             # Try next fallback
             state.fallback_index += 1
             if state.fallback_index >= len(fallbacks):
                 # No more fallbacks
+                print(f"[DEBUG RetryExecutor] No more fallbacks available (tried {state.fallback_index} fallbacks)")
                 return result, state
 
             # Switch to fallback provider
             next_provider = fallbacks[state.fallback_index]
+            print(f"[DEBUG RetryExecutor] Switching to fallback provider: {next_provider}")
             state.current_provider = next_provider
             request.provider = next_provider
             state.attempt = 0  # Reset attempt counter for new provider
@@ -338,6 +352,8 @@ class RetryExecutor:
             # For rate limits, use longer delay
             if error_type == ErrorType.RETRYABLE_RATE_LIMIT:
                 delay = max(delay, 5.0)  # At least 5 seconds for rate limits
+                if request.provider == "gemini":
+                    self._ensure_min_timeout(request, GEMINI_RATE_LIMIT_MIN_TIMEOUT_S)
 
             await asyncio.sleep(delay)
 

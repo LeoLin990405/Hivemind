@@ -37,6 +37,10 @@ class CacheStats:
     size_bytes: int
     oldest_entry: Optional[float]
     newest_entry: Optional[float]
+    expired_entries: int = 0
+    total_size_bytes: int = 0
+    next_expiration: Optional[float] = None
+    avg_ttl_remaining_s: Optional[float] = None
 
 
 class ResponseCache:
@@ -275,16 +279,20 @@ class ResponseCache:
             CacheStats object
         """
         with self._get_connection() as conn:
-            # Get entry count and size
+            # Get entry count and size (valid + expired)
+            now = time.time()
             cursor = conn.execute("""
                 SELECT
-                    COUNT(*) as count,
-                    COALESCE(SUM(LENGTH(response)), 0) as size,
-                    MIN(created_at) as oldest,
-                    MAX(created_at) as newest
+                    SUM(CASE WHEN expires_at > ? THEN 1 ELSE 0 END) as valid_count,
+                    SUM(CASE WHEN expires_at <= ? THEN 1 ELSE 0 END) as expired_count,
+                    COALESCE(SUM(CASE WHEN expires_at > ? THEN LENGTH(response) ELSE 0 END), 0) as valid_size,
+                    COALESCE(SUM(LENGTH(response)), 0) as total_size,
+                    MIN(CASE WHEN expires_at > ? THEN created_at END) as oldest,
+                    MAX(CASE WHEN expires_at > ? THEN created_at END) as newest,
+                    MIN(CASE WHEN expires_at > ? THEN expires_at END) as next_expiration,
+                    AVG(CASE WHEN expires_at > ? THEN (expires_at - ?) END) as avg_ttl_remaining
                 FROM response_cache
-                WHERE expires_at > ?
-            """, (time.time(),))
+            """, (now, now, now, now, now, now, now, now))
             row = cursor.fetchone()
 
             # Get persistent stats
@@ -298,13 +306,17 @@ class ResponseCache:
             total = total_hits + total_misses
 
             return CacheStats(
-                total_entries=row["count"],
+                total_entries=row["valid_count"] or 0,
                 total_hits=total_hits,
                 total_misses=total_misses,
                 hit_rate=total_hits / total if total > 0 else 0.0,
-                size_bytes=row["size"],
+                size_bytes=row["valid_size"] or 0,
                 oldest_entry=row["oldest"],
                 newest_entry=row["newest"],
+                expired_entries=row["expired_count"] or 0,
+                total_size_bytes=row["total_size"] or 0,
+                next_expiration=row["next_expiration"],
+                avg_ttl_remaining_s=row["avg_ttl_remaining"],
             )
 
     def list_entries(
