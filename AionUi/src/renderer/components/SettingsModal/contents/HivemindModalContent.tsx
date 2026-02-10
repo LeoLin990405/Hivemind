@@ -9,6 +9,7 @@ import { Button, Card, Form, Input, InputNumber, Message, Select, Space, Switch,
 import { ConfigStorage } from '@/common/storage';
 import { DEFAULT_HIVEMIND_CONFIG, HIVEMIND_PROVIDER_OPTIONS, type HivemindConfig } from '@/agent/hivemind/types';
 import { useHivemindStatus } from '@/renderer/hooks/useHivemindStatus';
+import RateLimitControl from './RateLimitControl';
 import { useTranslation } from 'react-i18next';
 
 const HivemindModalContent: React.FC = () => {
@@ -210,6 +211,13 @@ const HivemindModalContent: React.FC = () => {
           </div>
         </Card>
       )}
+
+      <Card>
+        <Typography.Title heading={6} style={{ margin: '0 0 12px 0' }}>
+          {t('hivemind.settings.rateLimit', { defaultValue: 'Rate Limiting' })}
+        </Typography.Title>
+        <RateLimitControl gatewayUrl={config.gatewayUrl} />
+      </Card>
     </div>
   );
 };

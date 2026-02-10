@@ -191,6 +191,7 @@ Hivemind integrates [AionUI](https://github.com/Aion-Community/AionUI) as a desk
 - **Streaming responses** — Real-time SSE output through the Hivemind Gateway
 - **Provider badges** — Speed tiers (🚀 Fast / ⚡ Medium / 🐢 Slow) with live latency
 - **Gateway settings** — Configure Gateway URL, default provider, and streaming toggle
+- **Gateway monitor** — Built-in dashboard, cache, tasks, and rate-limit controls in AionUi
 - **Full AionUI capabilities** — Multi-agent conversations, image generation, file management
 
 ### Quick Start
@@ -203,6 +204,8 @@ npm run build      # Production build
 ```
 
 AionUI defaults to `http://localhost:8765`. Ensure Gateway is running first:
+
+Open **Monitor** from the left sidebar to view gateway metrics.
 
 ```bash
 python3 -m lib.gateway.gateway_server --port 8765

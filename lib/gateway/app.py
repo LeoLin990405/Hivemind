@@ -25,6 +25,7 @@ from .routes import discussion as discussion_routes
 from .routes import export as export_routes
 from .routes import health as health_routes
 from .routes import memory as memory_routes
+from .routes import monitor as monitor_routes
 from .routes import runtime as runtime_routes
 from .routes import shared_knowledge as shared_knowledge_routes
 from .routes import skills as skills_routes
@@ -125,6 +126,7 @@ def create_app(
     _include_router_if_available(app, discussion_routes.router, tags=["discussion"])
     _include_router_if_available(app, core_routes.router, tags=["core"])
     _include_router_if_available(app, memory_routes.router, tags=["memory"])
+    _include_router_if_available(app, monitor_routes.router, tags=["monitor"])
     _include_router_if_available(app, runtime_routes.router, tags=["runtime"])
     _include_router_if_available(app, websocket_routes.router, tags=["websocket"])
     _include_router_if_available(app, web_routes.router, tags=["web"])

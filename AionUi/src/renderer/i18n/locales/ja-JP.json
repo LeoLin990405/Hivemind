@@ -1111,17 +1111,78 @@
       "uptime": "Uptime",
       "requests": "Requests",
       "active": "Active",
-    "enabledProviders": "Enabled providers",
-    "gatewayUnreachable": "Hivemind Gateway is not reachable. Please start it at http://localhost:8765",
-    "providerStatus": "Provider Status"
-  },
+      "enabledProviders": "Enabled providers",
+      "gatewayUnreachable": "Hivemind Gateway is not reachable. Please start it at http://localhost:8765",
+      "providerStatus": "Provider Status",
+      "rateLimit": "Rate Limiting",
+      "rateLimitLoading": "Loading rate limit status...",
+      "rateLimitUnavailable": "Rate limiter is unavailable.",
+      "rateLimitError": "Failed to load rate limit status",
+      "rateLimitReset": "Reset",
+      "rateLimitResetSuccess": "{{provider}} rate limit reset",
+      "rateLimitResetError": "Failed to reset {{provider}} rate limit"
+    },
     "status": {
       "reconnecting": "Reconnecting to Gateway...",
       "reconnectFailed": "Gateway disconnected. Retrying..."
     },
     "tokens": "{{count}} tokens",
-  "cached": "cached",
-  "thinking": "Thinking",
-  "quotaSwitched": "{{from}} のクォータ超過のため {{to}} に切り替えました"
-}
+    "cached": "cached",
+    "thinking": "Thinking",
+    "quotaSwitched": "{{from}} のクォータ超過のため {{to}} に切り替えました"
+  },
+  "monitor": {
+    "title": "Monitor",
+    "nav": {
+      "dashboard": "Dashboard",
+      "cache": "Cache",
+      "tasks": "Tasks"
+    },
+    "dashboard": {
+      "title": "Overview",
+      "refresh": "Refresh",
+      "retry": "Retry",
+      "error": "Failed to load monitoring data",
+      "totalRequests": "Total Requests",
+      "overallSuccessRate": "Success Rate",
+      "cacheEntries": "Cache Entries",
+      "cacheHitRate": "Cache Hit Rate",
+      "providerPerformance": "Provider Performance",
+      "provider": "Provider",
+      "requests": "Requests",
+      "successRate": "Success Rate",
+      "avgLatency": "Avg Latency",
+      "errors": "Errors"
+    },
+    "cache": {
+      "title": "Cache Management",
+      "refresh": "Refresh",
+      "clear": "Clear Cache",
+      "clearConfirmTitle": "Clear Cache?",
+      "clearConfirmContent": "This will clear all cached responses. Are you sure?",
+      "clearSuccess": "Cache cleared successfully",
+      "clearError": "Failed to clear cache",
+      "totalEntries": "Total Entries",
+      "hitRate": "Hit Rate",
+      "totalHits": "Total Hits",
+      "totalMisses": "Total Misses",
+      "description": "Cache Information",
+      "descriptionContent": "The cache stores responses from AI providers to reduce latency and API costs. A higher hit rate indicates better cache efficiency.",
+      "disabled": "Cache is currently disabled in Gateway config."
+    },
+    "tasks": {
+      "title": "Task Queue",
+      "refresh": "Refresh",
+      "all": "All",
+      "pending": "Pending",
+      "completed": "Completed",
+      "failed": "Failed",
+      "id": "Task ID",
+      "status": "Status",
+      "provider": "Provider",
+      "createdAt": "Created At",
+      "completedAt": "Completed At",
+      "error": "Error"
+    }
+  }
 }

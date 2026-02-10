@@ -6,6 +6,7 @@ import WorkspaceGroupedHistory from './pages/conversation/WorkspaceGroupedHistor
 import SettingsSider from './pages/settings/SettingsSider';
 import { iconColors } from './theme/colors';
 import { Tooltip } from '@arco-design/web-react';
+import { IconDashboard } from '@arco-design/web-react/icon';
 import { usePreviewContext } from './pages/conversation/preview';
 
 interface SiderProps {
@@ -21,6 +22,7 @@ const Sider: React.FC<SiderProps> = ({ onSessionClick, collapsed = false }) => {
   const navigate = useNavigate();
   const { closePreview } = usePreviewContext();
   const isSettings = pathname.startsWith('/settings');
+  const isMonitor = pathname.startsWith('/monitor');
   const lastNonSettingsPathRef = useRef('/guid');
 
   useEffect(() => {
@@ -40,6 +42,22 @@ const Sider: React.FC<SiderProps> = ({ onSessionClick, collapsed = false }) => {
         console.error('Navigation failed:', error);
       });
     }
+    if (onSessionClick) {
+      onSessionClick();
+    }
+  };
+
+  const handleMonitorClick = () => {
+    if (isMonitor) {
+      Promise.resolve(navigate('/guid')).catch((error) => {
+        console.error('Navigation failed:', error);
+      });
+    } else {
+      Promise.resolve(navigate('/monitor')).catch((error) => {
+        console.error('Navigation failed:', error);
+      });
+    }
+
     if (onSessionClick) {
       onSessionClick();
     }
@@ -74,6 +92,16 @@ const Sider: React.FC<SiderProps> = ({ onSessionClick, collapsed = false }) => {
           </div>
         )}
       </div>
+      {/* Footer - monitor button */}
+      <div className='shrink-0'>
+        <Tooltip disabled={!collapsed} content={t('monitor.title', { defaultValue: 'Monitor' })} position='right'>
+          <div onClick={handleMonitorClick} className='flex items-center justify-start gap-10px px-12px py-8px hover:bg-hover rd-0.5rem mb-8px cursor-pointer'>
+            <IconDashboard className='flex text-22px' />
+            <span className='collapsed-hidden text-t-primary'>{t('monitor.title', { defaultValue: 'Monitor' })}</span>
+          </div>
+        </Tooltip>
+      </div>
+
       {/* Footer - settings button */}
       <div className='shrink-0 sider-footer'>
         <Tooltip disabled={!collapsed} content={isSettings ? t('common.back') : t('common.settings')} position='right'>

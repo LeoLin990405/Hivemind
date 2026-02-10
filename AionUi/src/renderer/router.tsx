@@ -16,6 +16,10 @@ import WebuiSettings from './pages/settings/WebuiSettings';
 import HivemindSettings from './pages/settings/HivemindSettings';
 import LoginPage from './pages/login';
 import ComponentsShowcase from './pages/test/ComponentsShowcase';
+import MonitorLayout from './pages/monitor/MonitorLayout';
+import Dashboard from './pages/monitor/Dashboard';
+import CacheManager from './pages/monitor/CacheManager';
+import TaskQueue from './pages/monitor/TaskQueue';
 
 const ProtectedLayout: React.FC<{ layout: React.ReactElement }> = ({ layout }) => {
   const { status } = useAuth();
@@ -42,6 +46,13 @@ const PanelRoute: React.FC<{ layout: React.ReactElement }> = ({ layout }) => {
           <Route index element={<Navigate to='/guid' replace />} />
           <Route path='/guid' element={<Guid />} />
           <Route path='/conversation/:id' element={<Conversation />} />
+
+          <Route path='/monitor' element={<MonitorLayout />}>
+            <Route index element={<Dashboard />} />
+            <Route path='stats' element={<Dashboard />} />
+            <Route path='cache' element={<CacheManager />} />
+            <Route path='tasks' element={<TaskQueue />} />
+          </Route>
           <Route path='/settings/gemini' element={<GeminiSettings />} />
           <Route path='/settings/model' element={<ModeSettings />} />
           <Route path='/settings/agent' element={<AgentSettings />} />

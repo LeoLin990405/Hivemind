@@ -11,6 +11,7 @@ from . import health
 from . import health_ops
 from . import memory
 from . import memory_advanced
+from . import monitor
 from . import runtime
 from . import runtime_management
 from . import shared_knowledge
@@ -32,6 +33,7 @@ __all__ = [
     "health_ops",
     "memory",
     "memory_advanced",
+    "monitor",
     "runtime",
     "runtime_management",
     "shared_knowledge",

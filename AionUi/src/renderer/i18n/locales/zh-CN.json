@@ -1306,18 +1306,78 @@
       "uptime": "运行时间",
       "requests": "请求数",
       "active": "活跃",
-    "enabledProviders": "已启用 Provider",
-    "gatewayUnreachable": "Hivemind 网关不可达，请在 http://localhost:8765 启动",
-    "providerStatus": "Provider 状态"
-  },
+      "enabledProviders": "已启用 Provider",
+      "gatewayUnreachable": "Hivemind 网关不可达，请在 http://localhost:8765 启动",
+      "providerStatus": "Provider 状态",
+      "rateLimit": "限流控制",
+      "rateLimitLoading": "正在加载限流状态...",
+      "rateLimitUnavailable": "限流器不可用。",
+      "rateLimitError": "加载限流状态失败",
+      "rateLimitReset": "重置",
+      "rateLimitResetSuccess": "{{provider}} 限流已重置",
+      "rateLimitResetError": "重置 {{provider}} 限流失败"
+    },
     "status": {
       "reconnecting": "正在重新连接网关...",
       "reconnectFailed": "网关已断开，正在重试..."
     },
     "tokens": "{{count}} tokens",
     "cached": "已缓存",
-  "thinking": "思考中"
-  ,
-  "quotaSwitched": "{{from}} 配额已用尽，已切换到 {{to}}"
-}
+    "thinking": "思考中",
+    "quotaSwitched": "{{from}} 配额已用尽，已切换到 {{to}}"
+  },
+  "monitor": {
+    "title": "监控",
+    "nav": {
+      "dashboard": "总览",
+      "cache": "缓存",
+      "tasks": "任务"
+    },
+    "dashboard": {
+      "title": "总览",
+      "refresh": "刷新",
+      "retry": "重试",
+      "error": "加载监控数据失败",
+      "totalRequests": "总请求数",
+      "overallSuccessRate": "成功率",
+      "cacheEntries": "缓存条目",
+      "cacheHitRate": "缓存命中率",
+      "providerPerformance": "Provider 性能",
+      "provider": "Provider",
+      "requests": "请求数",
+      "successRate": "成功率",
+      "avgLatency": "平均延迟",
+      "errors": "错误数"
+    },
+    "cache": {
+      "title": "缓存管理",
+      "refresh": "刷新",
+      "clear": "清除缓存",
+      "clearConfirmTitle": "清除缓存？",
+      "clearConfirmContent": "这将清除所有缓存响应，确定继续吗？",
+      "clearSuccess": "缓存已清除",
+      "clearError": "清除缓存失败",
+      "totalEntries": "总条目数",
+      "hitRate": "命中率",
+      "totalHits": "命中次数",
+      "totalMisses": "未命中次数",
+      "description": "缓存信息",
+      "descriptionContent": "缓存会存储 AI Provider 的响应，降低延迟与成本。更高命中率代表更高缓存效率。",
+      "disabled": "Gateway 当前已关闭缓存。"
+    },
+    "tasks": {
+      "title": "任务队列",
+      "refresh": "刷新",
+      "all": "全部",
+      "pending": "进行中",
+      "completed": "已完成",
+      "failed": "失败",
+      "id": "任务 ID",
+      "status": "状态",
+      "provider": "Provider",
+      "createdAt": "创建时间",
+      "completedAt": "完成时间",
+      "error": "错误"
+    }
+  }
 }
