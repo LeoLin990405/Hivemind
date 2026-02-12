@@ -43,8 +43,8 @@ export type AcpBackendAll =
   | 'gemini' // Google Gemini ACP
   | 'qwen' // Qwen Code ACP
   | 'iflow' // iFlow CLI ACP
+  | 'ollama' // Ollama local API
   | 'codex' // OpenAI Codex MCP
-  | 'droid' // Factory Droid CLI (ACP via `droid exec --output-format acp`)
   | 'goose' // Block's Goose CLI
   | 'auggie' // Augment Code CLI
   | 'kimi' // Kimi CLI (Moonshot)
@@ -315,6 +315,14 @@ export const ACP_BACKENDS_ALL: Record<AcpBackendAll, AcpBackendConfig> = {
     enabled: true,
     supportsStreaming: false,
   },
+  ollama: {
+    id: 'ollama',
+    name: 'Ollama',
+    cliCommand: 'ollama',
+    authRequired: false,
+    enabled: true,
+    supportsStreaming: true,
+  },
   codex: {
     id: 'codex',
     name: 'Codex ',
@@ -358,16 +366,6 @@ export const ACP_BACKENDS_ALL: Record<AcpBackendAll, AcpBackendConfig> = {
     enabled: true, // ✅ OpenCode CLI，使用 `opencode acp` 启动
     supportsStreaming: false,
     acpArgs: ['acp'], // opencode 使用 acp 子命令
-  },
-  droid: {
-    id: 'droid',
-    name: 'Factory Droid',
-    cliCommand: 'droid',
-    // Droid uses FACTORY_API_KEY from environment, not an interactive auth flow.
-    authRequired: false,
-    enabled: true, // ✅ Factory docs: `droid exec --output-format acp` (JetBrains/Zed ACP integration)
-    supportsStreaming: false,
-    acpArgs: ['exec', '--output-format', 'acp'],
   },
   copilot: {
     id: 'copilot',

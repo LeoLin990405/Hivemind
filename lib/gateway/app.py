@@ -24,6 +24,7 @@ from .routes import core as core_routes
 from .routes import discussion as discussion_routes
 from .routes import export as export_routes
 from .routes import health as health_routes
+from .routes import knowledge_v2 as knowledge_v2_routes
 from .routes import memory as memory_routes
 from .routes import monitor as monitor_routes
 from .routes import runtime as runtime_routes
@@ -118,6 +119,9 @@ def create_app(
     knowledge_router = get_knowledge_api_router()
     if knowledge_router is not None:
         app.include_router(knowledge_router)
+
+    # Knowledge Hub v2.1 routes
+    _include_router_if_available(app, knowledge_v2_routes.router, tags=["knowledge-v2"])
 
     _include_router_if_available(app, batch_routes.router, prefix="/api/batch", tags=["batch"])
     _include_router_if_available(app, admin_routes.router, prefix="/api/admin", tags=["admin"])

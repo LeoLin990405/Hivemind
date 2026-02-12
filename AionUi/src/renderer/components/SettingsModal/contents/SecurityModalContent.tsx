@@ -39,7 +39,7 @@ const EXCLUDED_ACP_BACKENDS: AcpBackendAll[] = ['gemini', 'custom'];
 const YOLO_SUPPORTED_BACKENDS: AcpBackendAll[] = ['claude', 'qwen', 'goose', 'codex'];
 
 // ACP backends without permission system (auto-approve by default, no config needed)
-const YOLO_NOT_NEEDED_BACKENDS: AcpBackendAll[] = ['droid', 'kimi', 'openclaw-gateway'];
+const YOLO_NOT_NEEDED_BACKENDS: AcpBackendAll[] = ['kimi', 'openclaw-gateway', 'ollama'];
 
 // ACP backends that do not support yoloMode (with specific reasons)
 const YOLO_NOT_SUPPORTED_BACKENDS: Record<string, string> = {

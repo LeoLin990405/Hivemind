@@ -53,10 +53,10 @@ const AGENT_NAMES: Partial<Record<AcpBackendAll, string>> = {
   gemini: 'Gemini',
   qwen: 'Qwen Code',
   iflow: 'iFlow',
-  droid: 'Droid',
   goose: 'Goose',
   auggie: 'Auggie',
   kimi: 'Kimi',
+  ollama: 'Ollama',
 };
 
 /**

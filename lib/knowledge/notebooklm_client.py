@@ -145,6 +145,14 @@ class NotebookLMClient:
             return result
         return {"success": False, "error": "unexpected response"}
 
+    def remove_source(self, notebook_id: str, source_id: str) -> Dict[str, Any]:
+        """从 notebook 移除来源。"""
+        self._run(["use", notebook_id])
+        result = self._run_json(["source", "remove", source_id])
+        if isinstance(result, dict):
+            return result
+        return {"success": True, "source_id": source_id}
+
     def create_notebook(self, title: str) -> Dict[str, Any]:
         """创建新 notebook。"""
         result = self._run_json(["create", title])

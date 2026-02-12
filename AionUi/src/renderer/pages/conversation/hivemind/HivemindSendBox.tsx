@@ -22,6 +22,7 @@ import { getSendBoxDraftHook, type FileOrFolderItem } from '@/renderer/hooks/use
 import { useAddOrUpdateMessage } from '@/renderer/messages/hooks';
 import { usePreviewContext } from '@/renderer/pages/conversation/preview';
 import { allSupportedExts, type FileMetadata } from '@/renderer/services/FileService';
+import { DesignTokens } from '@/renderer/design-system';
 import { iconColors } from '@/renderer/theme/colors';
 import { emitter, useAddEventListener } from '@/renderer/utils/emitter';
 import { buildDisplayMessage, collectSelectedFiles } from '@/renderer/utils/messageFiles';
@@ -233,7 +234,7 @@ const HivemindSendBox: React.FC<{ conversation_id: string; gatewayUrl?: string }
 
   const resolveFallbackProvider = useCallback(
     (currentProvider: string | null): string | null => {
-      const priority = ['kimi', 'qwen', 'deepseek', 'iflow', 'opencode', 'claude', 'codex', 'gemini'];
+      const priority = ['kimi', 'qwen', 'deepseek', 'iflow', 'ollama', 'opencode', 'claude', 'codex', 'gemini'];
       const candidates = providersRef.current
         .filter((provider) => provider.enabled !== false)
         .filter((provider) => provider.status !== 'offline' && provider.status !== 'unavailable')
@@ -661,7 +662,11 @@ const HivemindSendBox: React.FC<{ conversation_id: string; gatewayUrl?: string }
       <Select
         size='mini'
         value={selectedProvider ?? ''}
-        style={{ width: 168 }}
+        style={{
+          width: 180,
+          borderRadius: DesignTokens.radius.md,
+          transition: DesignTokens.transitions.fast,
+        }}
         disabled={running || aiProcessing || !gatewayConnected}
         onChange={(value) => {
           const normalized = typeof value === 'string' ? value : '';

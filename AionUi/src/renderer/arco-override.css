@@ -38,7 +38,7 @@
 
 .arco-collapse {
   border: none;
-  border-radius: 8px;
+  border-radius: 10px;
   .arco-collapse-item-header {
     border-bottom: none;
   }
@@ -90,7 +90,7 @@ body[arco-theme='dark'] .arco-tag-checked.arco-tag-gray {
 /* AionUi Modal wrapper styles */
 .aionui-modal .arco-modal-content {
   background: var(--bg-1) !important;
-  border-radius: 12px !important;
+  border-radius: 14px !important;
 }
 
 .aionui-modal-header {
@@ -103,7 +103,7 @@ body[arco-theme='dark'] .arco-tag-checked.arco-tag-gray {
 .aionui-modal-title {
   font-size: 18px;
   font-weight: 500;
-  color: var(--text-t-primary);
+  color: var(--text-primary);
   margin: 0;
 }
 
@@ -113,7 +113,7 @@ body[arco-theme='dark'] .arco-tag-checked.arco-tag-gray {
   display: flex;
   align-items: center;
   justify-content: center;
-  border-radius: 8px;
+  border-radius: 10px;
   transition: background-color 0.2s;
   cursor: pointer;
   border: none;
@@ -205,4 +205,31 @@ body[arco-theme='dark'] .arco-message-error {
     height: 2px;
     background: var(--color-primary);
   }
+}
+
+/* Unified modern radius/shadow system */
+.arco-btn {
+  border-radius: 6px !important;
+}
+
+.arco-card {
+  border-radius: 10px !important;
+  box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.08) !important;
+}
+
+.arco-modal {
+  border-radius: 14px !important;
+}
+
+.arco-input,
+.arco-input-inner-wrapper,
+.arco-textarea,
+.arco-select-view,
+.arco-picker,
+.arco-input-number,
+.arco-cascader-view,
+.arco-tree-select-view,
+.arco-auto-complete-view,
+.arco-mentions-view {
+  border-radius: 6px !important;
 }

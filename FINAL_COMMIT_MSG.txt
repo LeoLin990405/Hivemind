@@ -1,0 +1,75 @@
+feat(monitor): deprecate original WebUI, complete AionUi replacement
+
+Replace standalone web_server.py with integrated AionUi monitoring.
+
+## What Changed
+
+**Deprecated Files** (moved to `deprecated/`):
+- lib/web_server.py → deprecated/web_server.py.deprecated
+- lib/web_server_template.py → deprecated/web_server_template.py.deprecated
+- Added deprecation notice: deprecated/README.md
+
+**Backend** (Gateway monitoring API):
+- Add 6 monitoring endpoints in lib/gateway/routes/monitor.py
+- Integrate route registration in lib/gateway/app.py
+- Export monitor routes in routes/__init__.py
+
+**Frontend** (AionUi monitor pages):
+- Add GatewayMonitorService (98 lines)
+- Add useGatewayStats hook (68 lines)
+- Add 4 monitor pages (407 lines):
+  * Dashboard: overview + provider performance
+  * CacheManager: cache stats + clear functionality
+  * TaskQueue: task list + status filtering
+  * MonitorLayout: navigation + layout
+- Add RateLimitControl component (113 lines)
+- Integrate /monitor routing and sidebar
+- Add i18n keys (6 locales)
+
+**Documentation**:
+- Add MIGRATION_TO_AIONUI.md
+- Add AIONUI_VS_WEBUI_COMPARISON.md (detailed analysis)
+- Add WEBUI_REPLACEMENT_STATUS.md (verification status)
+- Update README.md with monitoring instructions
+
+## Why Deprecate?
+
+| Metric | Original WebUI | AionUi Monitor |
+|--------|----------------|----------------|
+| Feature Coverage | 8 features | 8 features (100%) |
+| UI Framework | HTML templates | React + Arco Design |
+| Languages | English only | 6 languages |
+| Platform | Web only | Desktop + WebUI |
+| Integration | Standalone | Unified with chat |
+
+## Migration
+
+**Old way** (deprecated):
+```bash
+python3 lib/web_server.py --port 8080
+```
+
+**New way**:
+```bash
+cd AionUi && npm start
+# Navigate to /monitor page
+```
+
+See: `docs/MIGRATION_TO_AIONUI.md` for details.
+
+## Emergency Rollback
+
+Original files preserved in `deprecated/` directory.
+Not recommended - files are unmaintained.
+
+## Next Steps
+
+1. Restart Gateway to load new routes:
+   ```bash
+   pkill -f gateway_server
+   python3 -m lib.gateway.gateway_server --port 8765
+   ```
+
+2. Start AionUi and verify `/monitor` page
+
+Total changes: ~1,100 lines across backend, frontend, and docs.

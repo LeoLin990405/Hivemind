@@ -217,7 +217,8 @@ export class AcpAgent {
             await this.connection.setSessionMode(sessionMode);
           } catch (error) {
             const errorMessage = error instanceof Error ? error.message : String(error);
-            throw new Error(`[ACP] Failed to enable ${this.extra.backend} YOLO mode (${sessionMode}): ${errorMessage}`);
+            const backendName = this.extra.backend.charAt(0).toUpperCase() + this.extra.backend.slice(1);
+            throw new Error(`[ACP] Failed to enable ${backendName} YOLO mode (${sessionMode}): ${errorMessage}`);
           }
         }
       }

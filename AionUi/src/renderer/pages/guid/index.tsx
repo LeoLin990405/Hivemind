@@ -13,7 +13,6 @@ import coworkSvg from '@/renderer/assets/cowork.svg';
 import AuggieLogo from '@/renderer/assets/logos/auggie.svg';
 import ClaudeLogo from '@/renderer/assets/logos/claude.svg';
 import CodexLogo from '@/renderer/assets/logos/codex.svg';
-import DroidLogo from '@/renderer/assets/logos/droid.svg';
 import GeminiLogo from '@/renderer/assets/logos/gemini.svg';
 import GitHubLogo from '@/renderer/assets/logos/github.svg';
 import GooseLogo from '@/renderer/assets/logos/goose.svg';
@@ -175,7 +174,6 @@ const AGENT_LOGO_MAP: Partial<Record<AcpBackend, string>> = {
   gemini: GeminiLogo,
   qwen: QwenLogo,
   codex: CodexLogo,
-  droid: DroidLogo,
   iflow: IflowLogo,
   goose: GooseLogo,
   auggie: AuggieLogo,
@@ -190,6 +188,36 @@ const CUSTOM_AVATAR_IMAGE_MAP: Record<string, string> = {
   '🛠️': coworkSvg,
 };
 const HIVEMIND_AGENT_KEY = 'hivemind';
+const DIRECT_AGENT_KEYS = ['iflow', 'ollama'] as const;
+
+type DirectAgentKey = (typeof DIRECT_AGENT_KEYS)[number];
+
+const DIRECT_AGENT_OPTIONS: Array<{
+  key: DirectAgentKey;
+  label: string;
+  tokens: string[];
+  emoji?: string;
+  logo?: string;
+}> = [
+  { key: 'iflow', label: 'iFlow', tokens: ['iflow', 'workflow'], logo: IflowLogo },
+  { key: 'ollama', label: 'Ollama', tokens: ['ollama', 'local', 'llm'], emoji: '🦙' },
+];
+
+const HIVEMIND_AGENT_OPTIONS: Array<{
+  key: typeof HIVEMIND_AGENT_KEY;
+  label: string;
+  tokens: string[];
+  emoji?: string;
+  logo?: string;
+}> = [{ key: HIVEMIND_AGENT_KEY, label: 'HiveMind', tokens: ['hivemind', 'hive', 'gateway'], emoji: '🐝' }];
+
+const isHivemindAgentKey = (key: string): key is typeof HIVEMIND_AGENT_KEY => {
+  return key === HIVEMIND_AGENT_KEY;
+};
+
+const isDirectAgentKey = (key: string): key is DirectAgentKey => {
+  return DIRECT_AGENT_KEYS.includes(key as DirectAgentKey);
+};
 
 const Guid: React.FC = () => {
   const { t, i18n } = useTranslation();
@@ -320,11 +348,20 @@ const Guid: React.FC = () => {
         };
       }
     }
+
+    if (isDirectAgentKey(key)) {
+      const directOption = DIRECT_AGENT_OPTIONS.find((item) => item.key === key);
+      return {
+        backend: key,
+        name: directOption?.label || key,
+      };
+    }
+
     return availableAgents?.find((a) => a.backend === key);
   };
 
   // 获取选中的后端类型（向后兼容）/ Get the selected backend type (for backward compatibility)
-  const selectedAgent = selectedAgentKey.startsWith('custom:') ? 'custom' : selectedAgentKey === HIVEMIND_AGENT_KEY ? HIVEMIND_AGENT_KEY : (selectedAgentKey as AcpBackend);
+  const selectedAgent = selectedAgentKey.startsWith('custom:') ? 'custom' : isHivemindAgentKey(selectedAgentKey) ? HIVEMIND_AGENT_KEY : (selectedAgentKey as AcpBackend);
   const selectedAgentInfo = useMemo(() => findAgentByKey(selectedAgentKey), [selectedAgentKey, availableAgents, customAgents]);
   const isPresetAgent = Boolean(selectedAgentInfo?.isPreset);
   const [isPlusDropdownOpen, setIsPlusDropdownOpen] = useState(false);
@@ -457,13 +494,32 @@ const Guid: React.FC = () => {
       };
     });
 
-    options.push({
-      key: HIVEMIND_AGENT_KEY,
-      label: 'Hivemind',
-      tokens: new Set(['hivemind', 'hive', 'gateway']),
-      avatar: '🐝',
-      avatarImage: undefined,
-      logo: undefined,
+    const existingKeys = new Set(options.map((option) => option.key));
+
+    DIRECT_AGENT_OPTIONS.forEach((option) => {
+      if (existingKeys.has(option.key)) return;
+      options.push({
+        key: option.key,
+        label: option.label,
+        tokens: new Set(option.tokens),
+        avatar: option.emoji,
+        avatarImage: undefined,
+        logo: option.logo,
+      });
+      existingKeys.add(option.key);
+    });
+
+    HIVEMIND_AGENT_OPTIONS.forEach((option) => {
+      if (existingKeys.has(option.key)) return;
+      options.push({
+        key: option.key,
+        label: option.label,
+        tokens: new Set(option.tokens),
+        avatar: option.emoji,
+        avatarImage: undefined,
+        logo: option.logo,
+      });
+      existingKeys.add(option.key);
     });
 
     return options;
@@ -564,8 +620,8 @@ const Guid: React.FC = () => {
           return;
         }
 
-        if (savedAgentKey === HIVEMIND_AGENT_KEY) {
-          _setSelectedAgentKey(HIVEMIND_AGENT_KEY);
+        if (isHivemindAgentKey(savedAgentKey) || isDirectAgentKey(savedAgentKey)) {
+          _setSelectedAgentKey(savedAgentKey);
           return;
         }
 
@@ -1100,11 +1156,11 @@ const Guid: React.FC = () => {
         throw error;
       }
       return;
-    } else if (selectedAgentKey === HIVEMIND_AGENT_KEY) {
+    } else if (isHivemindAgentKey(selectedAgentKey)) {
       try {
         const placeholderModel = currentModel || {
           id: 'hivemind-placeholder',
-          name: 'Hivemind',
+          name: 'HiveMind',
           useModel: 'default',
           platform: 'custom' as const,
           baseUrl: '',
@@ -1125,7 +1181,7 @@ const Guid: React.FC = () => {
         });
 
         if (!conversation || !conversation.id) {
-          alert('Failed to create Hivemind conversation. Please ensure the Hivemind Gateway is running.');
+          alert('Failed to create HiveMind conversation. Please ensure the HiveMind Gateway is running.');
           return;
         }
 
@@ -1140,14 +1196,13 @@ const Guid: React.FC = () => {
         const initialMessage = {
           input,
           files: files.length > 0 ? files : undefined,
-          provider: null as string | null,
         };
         sessionStorage.setItem(`hivemind_initial_message_${conversation.id}`, JSON.stringify(initialMessage));
 
         await navigate(`/conversation/${conversation.id}`);
       } catch (error: unknown) {
         const errorMessage = error instanceof Error ? error.message : String(error);
-        alert(`Failed to create Hivemind conversation: ${errorMessage}`);
+        alert(`Failed to create HiveMind conversation: ${errorMessage}`);
         throw error;
       }
       return;
@@ -1470,39 +1525,92 @@ const Guid: React.FC = () => {
                       </React.Fragment>
                     );
                   })}
-                {(availableAgents || []).some((agent) => agent.backend !== 'custom') && <div className='text-16px lh-1 p-2px select-none opacity-30'>|</div>}
-                <div
-                  className={`group flex items-center cursor-pointer whitespace-nowrap overflow-hidden ${selectedAgentKey === HIVEMIND_AGENT_KEY ? 'opacity-100 px-12px py-8px rd-20px mx-2px' : 'opacity-60 p-4px hover:opacity-100'}`}
-                  style={
-                    selectedAgentKey === HIVEMIND_AGENT_KEY
-                      ? {
-                          transition: 'opacity 0.5s cubic-bezier(0.2, 0.8, 0.3, 1)',
-                          backgroundColor: 'var(--fill-0)',
-                        }
-                      : { transition: 'opacity 0.5s cubic-bezier(0.2, 0.8, 0.3, 1)' }
-                  }
-                  onClick={() => {
-                    setSelectedAgentKey(HIVEMIND_AGENT_KEY);
-                    setMentionOpen(false);
-                    setMentionQuery(null);
-                    setMentionSelectorOpen(false);
-                    setMentionActiveIndex(0);
-                  }}
-                >
-                  <span style={{ fontSize: 18, lineHeight: '20px', flexShrink: 0 }}>🐝</span>
-                  <span
-                    className={`font-medium text-14px ${selectedAgentKey === HIVEMIND_AGENT_KEY ? 'font-semibold ml-4px' : 'max-w-0 opacity-0 overflow-hidden group-hover:max-w-100px group-hover:opacity-100 group-hover:ml-8px'}`}
-                    style={{
-                      color: 'var(--text-primary)',
-                      transition:
-                        selectedAgentKey === HIVEMIND_AGENT_KEY
-                          ? 'color 0.5s cubic-bezier(0.2, 0.8, 0.3, 1), font-weight 0.5s cubic-bezier(0.2, 0.8, 0.3, 1)'
-                          : 'max-width 0.6s cubic-bezier(0.2, 0.8, 0.3, 1), opacity 0.5s cubic-bezier(0.2, 0.8, 0.3, 1) 0.05s, margin 0.6s cubic-bezier(0.2, 0.8, 0.3, 1)',
-                    }}
-                  >
-                    Hivemind
-                  </span>
-                </div>
+                {(() => {
+                  const visibleDirectOptions = DIRECT_AGENT_OPTIONS.filter((option) => !(availableAgents || []).some((agent) => getAgentKey(agent) === option.key));
+                  const hasNormalAgents = (availableAgents || []).some((agent) => agent.backend !== 'custom');
+                  const hasDirectAgents = visibleDirectOptions.length > 0;
+
+                  return (
+                    <>
+                      {hasNormalAgents && hasDirectAgents && <div className='text-16px lh-1 p-2px select-none opacity-30'>|</div>}
+                      {visibleDirectOptions.map((option, index) => {
+                        const isSelected = selectedAgentKey === option.key;
+                        return (
+                          <React.Fragment key={option.key}>
+                            {index > 0 && <div className='text-16px lh-1 p-2px select-none opacity-30'>|</div>}
+                            <div
+                              className={`group flex items-center cursor-pointer whitespace-nowrap overflow-hidden ${isSelected ? 'opacity-100 px-12px py-8px rd-20px mx-2px' : 'opacity-60 p-4px hover:opacity-100'}`}
+                              style={
+                                isSelected
+                                  ? {
+                                      transition: 'opacity 0.5s cubic-bezier(0.2, 0.8, 0.3, 1)',
+                                      backgroundColor: 'var(--fill-0)',
+                                    }
+                                  : { transition: 'opacity 0.5s cubic-bezier(0.2, 0.8, 0.3, 1)' }
+                              }
+                              onClick={() => {
+                                setSelectedAgentKey(option.key);
+                                setMentionOpen(false);
+                                setMentionQuery(null);
+                                setMentionSelectorOpen(false);
+                                setMentionActiveIndex(0);
+                              }}
+                            >
+                              {option.logo ? <img src={option.logo} alt={`${option.label} logo`} width={20} height={20} style={{ objectFit: 'contain', flexShrink: 0 }} /> : <span style={{ fontSize: 18, lineHeight: '20px', flexShrink: 0 }}>{option.emoji}</span>}
+                              <span
+                                className={`font-medium text-14px ${isSelected ? 'font-semibold ml-4px' : 'max-w-0 opacity-0 overflow-hidden group-hover:max-w-100px group-hover:opacity-100 group-hover:ml-8px'}`}
+                                style={{
+                                  color: 'var(--text-primary)',
+                                  transition: isSelected ? 'color 0.5s cubic-bezier(0.2, 0.8, 0.3, 1), font-weight 0.5s cubic-bezier(0.2, 0.8, 0.3, 1)' : 'max-width 0.6s cubic-bezier(0.2, 0.8, 0.3, 1), opacity 0.5s cubic-bezier(0.2, 0.8, 0.3, 1) 0.05s, margin 0.6s cubic-bezier(0.2, 0.8, 0.3, 1)',
+                                }}
+                              >
+                                {option.label}
+                              </span>
+                            </div>
+                          </React.Fragment>
+                        );
+                      })}
+                      {(hasNormalAgents || hasDirectAgents) && <div className='text-16px lh-1 p-2px select-none opacity-30'>|</div>}
+                      {HIVEMIND_AGENT_OPTIONS.map((option, index) => {
+                        const isSelected = selectedAgentKey === option.key;
+                        return (
+                          <React.Fragment key={option.key}>
+                            {index > 0 && <div className='text-16px lh-1 p-2px select-none opacity-30'>|</div>}
+                            <div
+                              className={`group flex items-center cursor-pointer whitespace-nowrap overflow-hidden ${isSelected ? 'opacity-100 px-12px py-8px rd-20px mx-2px' : 'opacity-60 p-4px hover:opacity-100'}`}
+                              style={
+                                isSelected
+                                  ? {
+                                      transition: 'opacity 0.5s cubic-bezier(0.2, 0.8, 0.3, 1)',
+                                      backgroundColor: 'var(--fill-0)',
+                                    }
+                                  : { transition: 'opacity 0.5s cubic-bezier(0.2, 0.8, 0.3, 1)' }
+                              }
+                              onClick={() => {
+                                setSelectedAgentKey(option.key);
+                                setMentionOpen(false);
+                                setMentionQuery(null);
+                                setMentionSelectorOpen(false);
+                                setMentionActiveIndex(0);
+                              }}
+                            >
+                              {option.logo ? <img src={option.logo} alt={`${option.label} logo`} width={20} height={20} style={{ objectFit: 'contain', flexShrink: 0 }} /> : <span style={{ fontSize: 18, lineHeight: '20px', flexShrink: 0 }}>{option.emoji}</span>}
+                              <span
+                                className={`font-medium text-14px ${isSelected ? 'font-semibold ml-4px' : 'max-w-0 opacity-0 overflow-hidden group-hover:max-w-100px group-hover:opacity-100 group-hover:ml-8px'}`}
+                                style={{
+                                  color: 'var(--text-primary)',
+                                  transition: isSelected ? 'color 0.5s cubic-bezier(0.2, 0.8, 0.3, 1), font-weight 0.5s cubic-bezier(0.2, 0.8, 0.3, 1)' : 'max-width 0.6s cubic-bezier(0.2, 0.8, 0.3, 1), opacity 0.5s cubic-bezier(0.2, 0.8, 0.3, 1) 0.05s, margin 0.6s cubic-bezier(0.2, 0.8, 0.3, 1)',
+                                }}
+                              >
+                                {option.label}
+                              </span>
+                            </div>
+                          </React.Fragment>
+                        );
+                      })}
+                    </>
+                  );
+                })()}
               </div>
             </div>
           )}

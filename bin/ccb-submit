@@ -1,4 +1,4 @@
-#!/usr/bin/env python3.13
+#!/usr/bin/env python3
 """
 ccb-submit - Submit request to CCB Gateway and return immediately with request_id.
 

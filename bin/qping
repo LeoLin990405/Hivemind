@@ -7,13 +7,12 @@ import sys
 import os
 from pathlib import Path
 
-# Add the lib directory to the path
+# Add the project root to the path so 'lib' is available as a package
 script_dir = Path(__file__).resolve().parent.parent
-lib_dir = script_dir / "lib"
-sys.path.insert(0, str(lib_dir))
+sys.path.insert(0, str(script_dir))
 
 try:
-    from qwen_comm import QwenCommunicator
+    from lib.qwen_comm import QwenCommunicator
     comm = QwenCommunicator()
     success, message = comm.ping(display=False)
     print(message)

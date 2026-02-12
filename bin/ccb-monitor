@@ -1,4 +1,4 @@
-#!/usr/bin/env python3.13
+#!/usr/bin/env python3
 """
 ccb-monitor - Real-time monitor for CCB Gateway activity.
 

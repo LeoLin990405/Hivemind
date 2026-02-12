@@ -45,6 +45,9 @@ class AcpAgentManager extends BaseAgentManager<AcpAgentManagerData, AcpPermissio
   // Track current message for cron detection (accumulated from streaming chunks)
   private currentMsgId: string | null = null;
   private currentMsgContent: string = '';
+  private ollamaAbortController: AbortController | null = null;
+  private ollamaModel: string | null = null;
+  private ollamaBaseUrl: string | null = null;
 
   constructor(data: AcpAgentManagerData) {
     super('acp', data);
@@ -106,6 +109,21 @@ class AcpAgentManager extends BaseAgentManager<AcpAgentManagerData, AcpPermissio
         // backend === 'custom' but no customAgentId - this is an invalid state
         // 自定义后端但缺少 customAgentId - 这是无效状态
         console.warn('[AcpAgentManager] Custom backend specified but customAgentId is missing');
+      }
+
+      if (data.backend === 'ollama') {
+        this.agent = {
+          start: async () => ({ success: true, msg: 'ollama ready' }),
+          sendMessage: async (payload: { content: string; files?: string[]; msg_id?: string }) => this.sendOllamaMessage(payload),
+          stop: async () => {
+            this.ollamaAbortController?.abort();
+            this.ollamaAbortController = null;
+            cronBusyGuard.setProcessing(this.conversation_id, false);
+            return { success: true };
+          },
+          confirmMessage: async () => ({ success: true }),
+        } as unknown as AcpAgent;
+        return this.agent;
       }
 
       this.agent = new AcpAgent({
@@ -231,6 +249,231 @@ class AcpAgentManager extends BaseAgentManager<AcpAgentManagerData, AcpPermissio
     return this.bootstrap;
   }
 
+  private emitOllamaMessage(message: IResponseMessage): void {
+    if (message.type === 'content' || message.type === 'error' || message.type === 'user_content' || message.type === 'agent_status') {
+      const transformed = transformMessage(message);
+      if (transformed) {
+        addOrUpdateMessage(this.conversation_id, transformed, 'ollama');
+      }
+    }
+
+    ipcBridge.acpConversation.responseStream.emit(message);
+  }
+
+  private parseOllamaStreamChunk(line: string): { content: string; done: boolean } | null {
+    const trimmed = line.trim();
+    if (!trimmed) return null;
+
+    const payload = JSON.parse(trimmed) as {
+      done?: boolean;
+      error?: string;
+      message?: { content?: string };
+      response?: string;
+    };
+
+    if (payload.error) {
+      throw new Error(payload.error);
+    }
+
+    const content =
+      (typeof payload.message?.content === 'string' && payload.message.content) ||
+      (typeof payload.response === 'string' && payload.response) ||
+      '';
+
+    return {
+      content,
+      done: Boolean(payload.done),
+    };
+  }
+
+  private async resolveOllamaBaseUrl(): Promise<string> {
+    if (this.ollamaBaseUrl) {
+      return this.ollamaBaseUrl;
+    }
+
+    const config = (await ProcessConfig.get('acp.config')) as Record<string, { baseUrl?: string }> | undefined;
+    const configuredBaseUrl = config?.ollama?.baseUrl;
+    const envBaseUrl = process.env.AIONUI_OLLAMA_BASE_URL || process.env.OLLAMA_BASE_URL;
+    this.ollamaBaseUrl = (configuredBaseUrl || envBaseUrl || 'http://127.0.0.1:11434').replace(/\/+$/, '');
+    return this.ollamaBaseUrl;
+  }
+
+  private async resolveOllamaModel(baseUrl: string): Promise<string> {
+    if (this.ollamaModel) {
+      return this.ollamaModel;
+    }
+
+    const envModel = process.env.AIONUI_OLLAMA_MODEL || process.env.OLLAMA_MODEL;
+    if (envModel && envModel.trim()) {
+      this.ollamaModel = envModel.trim();
+      return this.ollamaModel;
+    }
+
+    try {
+      const response = await fetch(`${baseUrl}/api/tags`, { method: 'GET' });
+      if (response.ok) {
+        const payload = (await response.json()) as { models?: Array<{ name?: string }> };
+        const modelName = payload.models?.find((model) => typeof model.name === 'string' && model.name.trim())?.name?.trim();
+        if (modelName) {
+          this.ollamaModel = modelName;
+          return this.ollamaModel;
+        }
+      }
+    } catch {
+      // Ignore detection failures and fallback to default model.
+    }
+
+    this.ollamaModel = 'llama3.1';
+    return this.ollamaModel;
+  }
+
+  private buildOllamaChatHistory(): Array<{ role: 'user' | 'assistant'; content: string }> {
+    try {
+      const db = getDatabase();
+      const history = db.getConversationMessages(this.conversation_id, 0, 200).data || [];
+      return history
+        .filter((message) => message.type === 'text')
+        .sort((left, right) => left.createdAt - right.createdAt)
+        .map((message) => {
+          const content = extractTextFromMessage(message as unknown as TMessage).trim();
+          if (!content) {
+            return null;
+          }
+          return {
+            role: message.position === 'right' ? ('user' as const) : ('assistant' as const),
+            content,
+          };
+        })
+        .filter((item): item is { role: 'user' | 'assistant'; content: string } => item !== null);
+    } catch {
+      return [];
+    }
+  }
+
+  private async sendOllamaMessage(data: { content: string; files?: string[]; msg_id?: string }): Promise<{
+    success: boolean;
+    msg?: string;
+    message?: string;
+  }> {
+    const conversationId = this.conversation_id;
+    const assistantMsgId = uuid();
+    const baseUrl = await this.resolveOllamaBaseUrl();
+    const model = await this.resolveOllamaModel(baseUrl);
+    const messages = this.buildOllamaChatHistory();
+
+    this.emitOllamaMessage({
+      type: 'start',
+      conversation_id: conversationId,
+      msg_id: assistantMsgId,
+      data: '',
+    });
+
+    const controller = new AbortController();
+    this.ollamaAbortController = controller;
+
+    try {
+      const response = await fetch(`${baseUrl}/api/chat`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          model,
+          messages,
+          stream: true,
+        }),
+        signal: controller.signal,
+      });
+
+      if (!response.ok) {
+        const body = await response.text().catch(() => response.statusText);
+        throw new Error(`Ollama request failed: ${response.status} ${body || response.statusText}`);
+      }
+
+      const reader = response.body?.getReader();
+      if (!reader) {
+        throw new Error('Ollama response has no stream body');
+      }
+
+      const decoder = new TextDecoder();
+      let buffer = '';
+      let fullContent = '';
+      let done = false;
+
+      while (!done) {
+        const { value, done: streamDone } = await reader.read();
+        if (streamDone) {
+          break;
+        }
+
+        buffer += decoder.decode(value, { stream: true });
+        const lines = buffer.split('\n');
+        buffer = lines.pop() || '';
+
+        for (const line of lines) {
+          const parsed = this.parseOllamaStreamChunk(line);
+          if (!parsed) {
+            continue;
+          }
+
+          if (parsed.content) {
+            fullContent += parsed.content;
+            this.emitOllamaMessage({
+              type: 'content',
+              conversation_id: conversationId,
+              msg_id: assistantMsgId,
+              data: fullContent,
+            });
+          }
+
+          if (parsed.done) {
+            done = true;
+            break;
+          }
+        }
+      }
+
+      if (buffer.trim()) {
+        const parsed = this.parseOllamaStreamChunk(buffer);
+        if (parsed?.content) {
+          fullContent += parsed.content;
+          this.emitOllamaMessage({
+            type: 'content',
+            conversation_id: conversationId,
+            msg_id: assistantMsgId,
+            data: fullContent,
+          });
+        }
+      }
+
+      this.emitOllamaMessage({
+        type: 'finish',
+        conversation_id: conversationId,
+        msg_id: assistantMsgId,
+        data: '',
+      });
+
+      cronBusyGuard.setProcessing(this.conversation_id, false);
+      return { success: true };
+    } catch (error) {
+      if (error instanceof Error && error.name === 'AbortError') {
+        this.emitOllamaMessage({
+          type: 'finish',
+          conversation_id: conversationId,
+          msg_id: assistantMsgId,
+          data: '',
+        });
+        cronBusyGuard.setProcessing(this.conversation_id, false);
+        return { success: true, msg: 'stopped' };
+      }
+      throw error;
+    } finally {
+      if (this.ollamaAbortController === controller) {
+        this.ollamaAbortController = null;
+      }
+    }
+  }
+
   async sendMessage(data: { content: string; files?: string[]; msg_id?: string }): Promise<{
     success: boolean;
     msg?: string;
@@ -313,6 +556,10 @@ class AcpAgentManager extends BaseAgentManager<AcpAgentManagerData, AcpPermissio
   }
 
   async confirm(id: string, callId: string, data: AcpPermissionOption) {
+    if (this.options.backend === 'ollama') {
+      return;
+    }
+
     super.confirm(id, callId, data);
     await this.bootstrap;
     void this.agent.confirmMessage({

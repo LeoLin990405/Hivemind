@@ -6,6 +6,7 @@
 
 import AionModal from '@/renderer/components/base/AionModal';
 import AionScrollArea from '@/renderer/components/base/AionScrollArea';
+import { DesignTokens } from '@/renderer/design-system';
 import { iconColors } from '@/renderer/theme/colors';
 import { isElectronDesktop } from '@/renderer/utils/platform';
 import { Tabs } from '@arco-design/web-react';
@@ -271,6 +272,10 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ visible, onCancel, defaul
               'bg-aou-2 text-t-primary': activeTab === item.key,
               'text-t-secondary hover:bg-fill-1': activeTab !== item.key,
             })}
+            style={{
+              borderRadius: DesignTokens.radius.md,
+              transition: DesignTokens.transitions.fast,
+            }}
             onClick={() => setActiveTab(item.key)}
           >
             <span className='mr-12px text-16px line-height-[10px]'>{item.icon}</span>
@@ -292,7 +297,9 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ visible, onCancel, defaul
           width: isMobile ? `clamp(var(--app-min-width, 360px), 100vw, ${MODAL_WIDTH.mobile}px)` : `clamp(var(--app-min-width, 360px), 100vw, ${MODAL_WIDTH.desktop}px)`,
           minWidth: 'var(--app-min-width, 360px)',
           maxHeight: isMobile ? MODAL_HEIGHT.mobile : undefined,
-          borderRadius: '16px',
+          borderRadius: DesignTokens.radius.xl,
+          boxShadow: DesignTokens.shadows.lg,
+          transition: DesignTokens.transitions.base,
         }}
         contentStyle={{ padding: isMobile ? '16px' : '24px 24px 32px' }}
         title={t('settings.title')}

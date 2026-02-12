@@ -20,6 +20,7 @@ import MonitorLayout from './pages/monitor/MonitorLayout';
 import Dashboard from './pages/monitor/Dashboard';
 import CacheManager from './pages/monitor/CacheManager';
 import TaskQueue from './pages/monitor/TaskQueue';
+import KnowledgeHub from './pages/knowledge';
 
 const ProtectedLayout: React.FC<{ layout: React.ReactElement }> = ({ layout }) => {
   const { status } = useAuth();
@@ -53,6 +54,7 @@ const PanelRoute: React.FC<{ layout: React.ReactElement }> = ({ layout }) => {
             <Route path='cache' element={<CacheManager />} />
             <Route path='tasks' element={<TaskQueue />} />
           </Route>
+          <Route path='/knowledge' element={<KnowledgeHub />} />
           <Route path='/settings/gemini' element={<GeminiSettings />} />
           <Route path='/settings/model' element={<ModeSettings />} />
           <Route path='/settings/agent' element={<AgentSettings />} />

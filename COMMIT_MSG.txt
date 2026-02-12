@@ -1,0 +1,37 @@
+feat(monitor): integrate Gateway monitoring into AionUi
+
+Replace standalone web_server.py with unified monitoring in AionUi.
+
+Backend (Gateway):
+- Add 6 monitoring API endpoints: /api/monitor/{stats,cache,tasks,ratelimit}
+- New routes module: lib/gateway/routes/monitor.py (225 lines)
+- Integrate route registration in app.py
+- Export monitor routes in routes/__init__.py
+
+Frontend (AionUi):
+- Add GatewayMonitorService for API calls (98 lines)
+- Add useGatewayStats hook for data management (68 lines)
+- Add 4 monitor pages (407 lines total):
+  * MonitorLayout: sidebar navigation and layout
+  * Dashboard: overview stats with provider performance table
+  * CacheManager: cache stats with clear functionality
+  * TaskQueue: task list with status filtering
+- Add RateLimitControl component in Hivemind settings (82 lines)
+- Integrate /monitor routing and sidebar navigation
+- Add i18n keys for monitor namespace (6 locales)
+
+Documentation:
+- Add MIGRATION_TO_AIONUI.md guide
+- Add AIONUI_VS_WEBUI_COMPARISON.md analysis
+- Update README with monitoring instructions
+
+Testing:
+- Manual verification: all pages functional
+- ESLint: passed for AionUi components
+- Changes synced to /Users/leo/Desktop/AionUi
+
+This deprecates lib/web_server.py (port 8080) in favor of the
+integrated AionUi monitoring interface, providing a unified
+platform for both AI chat and Gateway administration.
+
+Total: ~1,000 lines of new code across backend, frontend, and docs.

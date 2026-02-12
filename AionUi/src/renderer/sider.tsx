@@ -6,7 +6,7 @@ import WorkspaceGroupedHistory from './pages/conversation/WorkspaceGroupedHistor
 import SettingsSider from './pages/settings/SettingsSider';
 import { iconColors } from './theme/colors';
 import { Tooltip } from '@arco-design/web-react';
-import { IconDashboard } from '@arco-design/web-react/icon';
+import { IconDashboard, IconBook } from '@arco-design/web-react/icon';
 import { usePreviewContext } from './pages/conversation/preview';
 
 interface SiderProps {
@@ -23,6 +23,7 @@ const Sider: React.FC<SiderProps> = ({ onSessionClick, collapsed = false }) => {
   const { closePreview } = usePreviewContext();
   const isSettings = pathname.startsWith('/settings');
   const isMonitor = pathname.startsWith('/monitor');
+  const isKnowledge = pathname.startsWith('/knowledge');
   const lastNonSettingsPathRef = useRef('/guid');
 
   useEffect(() => {
@@ -62,6 +63,22 @@ const Sider: React.FC<SiderProps> = ({ onSessionClick, collapsed = false }) => {
       onSessionClick();
     }
   };
+
+  const handleKnowledgeClick = () => {
+    if (isKnowledge) {
+      Promise.resolve(navigate('/guid')).catch((error) => {
+        console.error('Navigation failed:', error);
+      });
+    } else {
+      Promise.resolve(navigate('/knowledge')).catch((error) => {
+        console.error('Navigation failed:', error);
+      });
+    }
+
+    if (onSessionClick) {
+      onSessionClick();
+    }
+  };
   return (
     <div className='size-full flex flex-col'>
       {/* Main content area */}
@@ -91,6 +108,15 @@ const Sider: React.FC<SiderProps> = ({ onSessionClick, collapsed = false }) => {
             <WorkspaceGroupedHistory collapsed={collapsed} onSessionClick={onSessionClick}></WorkspaceGroupedHistory>
           </div>
         )}
+      </div>
+      {/* Footer - Knowledge Hub button */}
+      <div className='shrink-0'>
+        <Tooltip disabled={!collapsed} content={t('knowledge.title', { defaultValue: 'Knowledge Hub' })} position='right'>
+          <div onClick={handleKnowledgeClick} className='flex items-center justify-start gap-10px px-12px py-8px hover:bg-hover rd-0.5rem mb-8px cursor-pointer'>
+            <IconBook className='flex text-22px' />
+            <span className='collapsed-hidden text-t-primary'>{t('knowledge.title', { defaultValue: 'Knowledge Hub' })}</span>
+          </div>
+        </Tooltip>
       </div>
       {/* Footer - monitor button */}
       <div className='shrink-0'>

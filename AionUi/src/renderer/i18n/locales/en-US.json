@@ -72,8 +72,8 @@
     "errorTitle": "Update failed"
   },
   "login": {
-    "pageTitle": "Hivemind - Sign In",
-    "brand": "Hivemind",
+    "pageTitle": "HiveMind - Sign In",
+    "brand": "HiveMind",
     "subtitle": "Welcome back, please sign in to your account",
     "username": "Username",
     "usernamePlaceholder": "Enter your username",
@@ -220,7 +220,7 @@
       "clearWorkspace": "Remove folder",
       "openFolder": "Open Folder",
       "none": "None",
-      "quickActionsTitle": "What can Hivemind do?",
+      "quickActionsTitle": "What can HiveMind do?",
       "quickActionFeedback": "Got feedback or suggestions?",
       "quickActionStar": "Like us? Give us a star!"
     },
@@ -521,7 +521,7 @@
     "yoloNotSupportedIflow": "Not verified, may require manual confirmation",
     "yoloNotSupportedUnknown": "Not verified, may require manual confirmation",
     "channels": "Channels",
-    "webui.description": "Use Hivemind as your \"24/7 Remote Assistant\" - arrange tasks from any remote device, anytime, anywhere.",
+    "webui.description": "Use HiveMind as your \"24/7 Remote Assistant\" - arrange tasks from any remote device, anytime, anywhere.",
     "webui.steps": "Step 1. Turn on WebUI; Step 2. Copy the access URL; Step 3. Open in remote browser",
     "webui.configuration": "WebUI Configuration",
     "webui.enable": "Enable WebUI",
@@ -584,7 +584,7 @@
     "webui.passwordHint": "Password is shown in console on first startup. Use \"Change Password\" to reset",
     "webui.checkConsoleForPassword": "Check application console for initial password",
     "webui.browserNotSupported": "WebUI settings not available in browser",
-    "webui.browserNotSupportedDesc": "For security reasons, WebUI settings can only be managed in the desktop application. Please open the settings panel in Hivemind desktop app to configure.",
+    "webui.browserNotSupportedDesc": "For security reasons, WebUI settings can only be managed in the desktop application. Please open the settings panel in HiveMind desktop app to configure.",
     "webui.passwordHidden": "******",
     "webui.passwordOnlyFirstTime": "Password is only shown on first startup and will be hidden afterwards",
     "webui.resetPasswordWarning": "Please keep the reset password safe!",
@@ -637,13 +637,13 @@
     "assistant.step4": "Once approved, you can start chatting with Gemini through Telegram!",
     "channels.title": "Channels",
     "channels.telegramTitle": "Telegram",
-    "channels.telegramDesc": "Chat with Hivemind assistant via Telegram",
+    "channels.telegramDesc": "Chat with HiveMind assistant via Telegram",
     "channels.slackTitle": "Slack",
-    "channels.slackDesc": "Chat with Hivemind assistant via Slack",
+    "channels.slackDesc": "Chat with HiveMind assistant via Slack",
     "channels.discordTitle": "Discord",
-    "channels.discordDesc": "Chat with Hivemind assistant via Discord",
+    "channels.discordDesc": "Chat with HiveMind assistant via Discord",
     "channels.larkTitle": "Lark",
-    "channels.larkDesc": "Chat with Hivemind assistant via Lark",
+    "channels.larkDesc": "Chat with HiveMind assistant via Lark",
     "channels.comingSoon": "Coming Soon",
     "channels.comingSoonDesc": "Support for {{channel}} is coming soon",
     "channels.notConfigured": "Not configured",
@@ -680,7 +680,7 @@
     "mcpImportSuccess": "Import successful",
     "mcpImportFailed": "Import failed",
     "mcpJsonInvalid": "Invalid JSON format",
-    "mcpImportDescription": "Hivemind will automatically retrieve the MCP installed in your CLI Agent and import it with one click",
+    "mcpImportDescription": "HiveMind will automatically retrieve the MCP installed in your CLI Agent and import it with one click",
     "mcpStepSelectAgent": "Select Agent",
     "mcpStepFetchTools": "Fetch mcp",
     "mcpStepImportSuccess": "Import Success",
@@ -1278,15 +1278,15 @@
     }
   },
   "hivemind": {
-    "placeholder": "Send a message to Hivemind...",
+    "placeholder": "Send a message to HiveMind...",
     "processing": "Processing...",
     "providerLabel": "Provider",
     "autoRoute": "Auto (smart routing)",
-    "autoRouteDescription": "Auto routing enabled. Hivemind will select the best provider for each request.",
+    "autoRouteDescription": "Auto routing enabled. HiveMind will select the best provider for each request.",
     "routeMismatch": "Requested: {{requested}} · Routed to: {{actual}}",
     "routeConfirmed": "Provider: {{provider}}",
     "settings": {
-      "title": "Hivemind Gateway",
+      "title": "HiveMind Gateway",
       "gatewayUrl": "Gateway URL",
       "defaultProvider": "Default Provider",
       "timeout": "Timeout (seconds)",
@@ -1300,14 +1300,14 @@
       "disconnected": "Disconnected",
       "refresh": "Refresh",
       "save": "Save",
-      "saveSuccess": "Hivemind settings saved",
-      "saveFailed": "Failed to save Hivemind settings",
+      "saveSuccess": "HiveMind settings saved",
+      "saveFailed": "Failed to save HiveMind settings",
       "loadFailed": "Failed to load hivemind config",
       "uptime": "Uptime",
       "requests": "Requests",
       "active": "Active",
       "enabledProviders": "Enabled providers",
-      "gatewayUnreachable": "Hivemind Gateway is not reachable. Please start it at http://localhost:8765",
+      "gatewayUnreachable": "HiveMind Gateway is not reachable. Please start it at http://localhost:8765",
       "providerStatus": "Provider Status",
       "rateLimit": "Rate Limiting",
       "rateLimitLoading": "Loading rate limit status...",
@@ -1325,6 +1325,43 @@
     "cached": "cached",
     "thinking": "Thinking",
     "quotaSwitched": "{{from}} quota exceeded, switched to {{to}}"
+  },
+  "knowledge": {
+    "title": "Knowledge Hub",
+    "subtitle": "NotebookLM + Obsidian + PDF Auto-Pipeline",
+    "upload": "Upload PDF",
+    "refresh": "Refresh",
+    "notebooks": "Notebooks",
+    "status": {
+      "obsidianCli": "Obsidian CLI",
+      "manager": "NotebookLM Manager",
+      "totalNotebooks": "Total Notebooks",
+      "vaultPath": "Vault Path",
+      "available": "Available",
+      "unavailable": "Unavailable",
+      "ready": "Ready",
+      "notReady": "Not Ready"
+    },
+    "notebook": {
+      "sources": " sources",
+      "audio": "Audio",
+      "view": "View"
+    },
+    "tabs": {
+      "notebooks": "Notebooks",
+      "upload": "Upload PDF",
+      "settings": "Settings"
+    },
+    "upload_area": {
+      "title": "Drag and drop PDF files here to upload",
+      "description": "Auto-create Notebook + Generate Artifacts + Sync to Obsidian"
+    },
+    "empty": "No Notebooks",
+    "messages": {
+      "uploadSuccess": "PDF processed successfully! Notebook ID:",
+      "uploadFailed": "Upload failed:",
+      "fetchError": "Failed to fetch data"
+    }
   },
   "monitor": {
     "title": "Monitor",

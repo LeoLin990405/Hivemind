@@ -25,7 +25,6 @@ import OpenCodeLogo from '@/renderer/assets/logos/opencode.svg';
 import GeminiLogo from '@/renderer/assets/logos/gemini.svg';
 import QwenLogo from '@/renderer/assets/logos/qwen.svg';
 import IflowLogo from '@/renderer/assets/logos/iflow.svg';
-import DroidLogo from '@/renderer/assets/logos/droid.svg';
 import GooseLogo from '@/renderer/assets/logos/goose.svg';
 import AuggieLogo from '@/renderer/assets/logos/auggie.svg';
 import KimiLogo from '@/renderer/assets/logos/kimi.svg';
@@ -37,7 +36,6 @@ const AGENT_LOGOS: Partial<Record<AcpBackendAll, string>> = {
   gemini: GeminiLogo,
   qwen: QwenLogo,
   iflow: IflowLogo,
-  droid: DroidLogo,
   goose: GooseLogo,
   auggie: AuggieLogo,
   kimi: KimiLogo,

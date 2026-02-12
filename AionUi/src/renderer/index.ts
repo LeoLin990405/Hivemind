@@ -27,10 +27,12 @@ import zhTW from '@arco-design/web-react/es/locale/zh-TW'; // 中文（繁体）
 import koKR from '@arco-design/web-react/es/locale/ko-KR'; // 韩文
 import { useTranslation } from 'react-i18next';
 import 'uno.css';
+import './theme/global.css';
 import './arco-override.css';
 import './i18n';
 import './styles/themes/index.css';
 import HOC from './utils/HOC';
+import { arcoThemeConfig } from './theme/arco-theme';
 const root = createRoot(document.getElementById('root'));
 
 // Patch Korean locale with missing properties from English locale
@@ -69,7 +71,7 @@ const Config: React.FC<PropsWithChildren> = ({ children }) => {
   } = useTranslation();
   const arcoLocale = arcoLocales[language] ?? enUS;
 
-  return React.createElement(ConfigProvider, { theme: { primaryColor: '#4E5969' }, locale: arcoLocale }, children);
+  return React.createElement(ConfigProvider, { theme: arcoThemeConfig, locale: arcoLocale }, children);
 };
 
 const App = HOC.Wrapper(Config)(Main);

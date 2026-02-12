@@ -69,6 +69,43 @@ export function initAcpConversationBridge(): void {
     const agents = acpDetector.getDetectedAgents();
     const agent = agents.find((a) => a.backend === backend);
 
+    // Ollama uses direct HTTP API, no ACP CLI health check needed
+    if (backend === 'ollama') {
+      const baseUrl = (process.env.AIONUI_OLLAMA_BASE_URL || process.env.OLLAMA_BASE_URL || 'http://127.0.0.1:11434').replace(/\/+$/, '');
+      const controller = new AbortController();
+      const timer = setTimeout(() => controller.abort(), 5000);
+
+      try {
+        const response = await fetch(`${baseUrl}/api/tags`, {
+          method: 'GET',
+          signal: controller.signal,
+        });
+
+        if (!response.ok) {
+          return {
+            success: false,
+            msg: `ollama health check failed: ${response.status} ${response.statusText}`,
+            data: { available: false, error: response.statusText },
+          };
+        }
+
+        const latency = Date.now() - startTime;
+        return {
+          success: true,
+          data: { available: true, latency },
+        };
+      } catch (error) {
+        const errorMsg = error instanceof Error ? error.message : String(error);
+        return {
+          success: false,
+          msg: `ollama health check failed: ${errorMsg}`,
+          data: { available: false, error: errorMsg },
+        };
+      } finally {
+        clearTimeout(timer);
+      }
+    }
+
     // Skip CLI check for claude (uses npx) and codex (has its own detection)
     if (!agent?.cliPath && backend !== 'claude' && backend !== 'codex') {
       return {

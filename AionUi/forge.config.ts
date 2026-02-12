@@ -66,7 +66,7 @@ const resolveLoggerPort = (devPort: number, devPortOverridden: boolean): number 
 const { port: devServerPort, overridden: isDevPortOverridden } = resolveDevServerPort();
 const loggerPort = resolveLoggerPort(devServerPort, isDevPortOverridden);
 
-const apkName = 'Hivemind_' + packageJson.version + '_' + (process.env.arch || process.arch);
+const apkName = 'HiveMind_' + packageJson.version + '_' + (process.env.arch || process.arch);
 const skipNativeRebuild = process.env.FORGE_SKIP_NATIVE_REBUILD === 'true';
 
 // Use target arch from build script, not host arch
@@ -85,16 +85,16 @@ module.exports = {
     asar: {
       unpack: '**/node_modules/{node-pty,better-sqlite3,@mapbox,detect-libc,prebuild-install,node-gyp-build,bindings,web-tree-sitter,tree-sitter-bash}/**/*',
     }, // Enable asar with native modules and their dependencies unpacking
-    executableName: 'Hivemind',
+    executableName: 'HiveMind',
     out: path.resolve(__dirname, 'out'),
-    tmpdir: path.resolve(__dirname, '../Hivemind-tmp'),
+    tmpdir: path.resolve(__dirname, '../HiveMind-tmp'),
     extraResource: [path.resolve(__dirname, 'public')],
     win32metadata: {
-      CompanyName: 'Hivemind',
-      FileDescription: '蜂巢 - Hivemind Gateway 桌面客户端',
-      OriginalFilename: 'Hivemind.exe',
-      ProductName: '蜂巢',
-      InternalName: 'Hivemind',
+      CompanyName: 'HiveMind',
+      FileDescription: 'HiveMind Gateway 桌面客户端',
+      OriginalFilename: 'HiveMind.exe',
+      ProductName: 'HiveMind',
+      InternalName: 'HiveMind',
       FileVersion: packageJson.version,
       ProductVersion: packageJson.version,
     },
@@ -125,8 +125,8 @@ module.exports = {
       ? [
           new MakerSquirrel(
             {
-              name: 'Hivemind', // 必须与 package.json 的 name 一致
-              authors: 'Hivemind', // 任意名称
+              name: 'HiveMind', // 必须与 package.json 的 name 一致
+              authors: 'HiveMind', // 任意名称
               setupExe: apkName + '.exe',
               // 禁用自动更新
               remoteReleases: '',
@@ -148,10 +148,10 @@ module.exports = {
     // Windows MSI installer (WiX) - alternative to Squirrel
     new MakerWix(
       {
-        name: 'Hivemind',
-        description: '蜂巢 - Hivemind Gateway 桌面客户端',
-        exe: 'Hivemind',
-        manufacturer: 'Hivemind',
+        name: 'HiveMind',
+        description: 'HiveMind Gateway 桌面客户端',
+        exe: 'HiveMind',
+        manufacturer: 'HiveMind',
         version: packageJson.version,
         ui: {
           chooseDirectory: true,
@@ -191,7 +191,7 @@ module.exports = {
       platforms: ['linux'],
       config: {
         options: {
-          maintainer: 'Hivemind',
+          maintainer: 'HiveMind',
           description: packageJson.description,
         },
       },

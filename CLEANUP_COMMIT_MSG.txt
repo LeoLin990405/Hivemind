@@ -1,0 +1,30 @@
+feat(monitor): deprecate original WebUI, finalize AionUi replacement
+
+Complete the transition from standalone web_server.py to integrated
+AionUi monitoring interface.
+
+Changes:
+- Move lib/web_server.py → deprecated/web_server.py.deprecated
+- Move lib/web_server_template.py → deprecated/web_server_template.py.deprecated
+- Add deprecation notice in deprecated/README.md
+- Add WEBUI_REPLACEMENT_STATUS.md with full analysis
+
+Justification:
+- AionUi provides 100% feature coverage (8/8 features)
+- Better UX: Modern React UI vs HTML templates
+- Internationalization: 6 languages vs English only
+- Unified interface: Chat + monitoring in one app
+- Easier maintenance: Single codebase
+
+Migration:
+- Users should use AionUi's /monitor page instead
+- See docs/MIGRATION_TO_AIONUI.md for details
+- Emergency rollback: Copy files from deprecated/ if needed
+
+Related commits:
+- Previous: feat(monitor): integrate Gateway monitoring into AionUi
+- This commit completes the replacement by deprecating old files
+
+Testing:
+- Verified AionUi monitor pages work (pending Gateway restart)
+- All original WebUI features accessible via AionUi

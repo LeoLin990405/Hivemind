@@ -69,8 +69,8 @@
     "errorTitle": "更新失败"
   },
   "login": {
-    "pageTitle": "蜂巢 - 登录",
-    "brand": "蜂巢",
+    "pageTitle": "HiveMind - 登录",
+    "brand": "HiveMind",
     "subtitle": "欢迎回来，请登录您的账户",
     "username": "用户名",
     "usernamePlaceholder": "请输入用户名",
@@ -217,7 +217,7 @@
       "clearWorkspace": "移除已选文件夹",
       "openFolder": "打开文件夹",
       "none": "无",
-      "quickActionsTitle": "蜂巢 能做什么？",
+      "quickActionsTitle": "HiveMind 能做什么？",
       "quickActionFeedback": "想吐槽或提建议?",
       "quickActionStar": "喜欢我们？点个星吧"
     },
@@ -519,7 +519,7 @@
     "yoloNotSupportedIflow": "未验证，可能需要手动确认",
     "yoloNotSupportedUnknown": "未验证，可能需要手动确认",
     "channels": "频道",
-    "webui.description": "把 蜂巢 当作“7*24小时的远程助手”，,随时随地用远程设备安排任务。",
+    "webui.description": "把 HiveMind 当作“7*24小时的远程助手”，,随时随地用远程设备安排任务。",
     "webui.steps": "步骤 1. 打开 WebUI 开关;  步骤 2. 复制访问地址;  步骤 3.远程浏览器打开",
     "webui.configuration": "WebUI 配置",
     "webui.enable": "启用 WebUI",
@@ -582,7 +582,7 @@
     "webui.passwordHint": "首次启动时密码会显示在控制台，如需重置请使用「修改密码」功能",
     "webui.checkConsoleForPassword": "请查看应用控制台获取初始密码",
     "webui.browserNotSupported": "浏览器端无法访问 WebUI 设置",
-    "webui.browserNotSupportedDesc": "出于安全考虑，WebUI 设置只能在桌面应用中管理。请在 蜂巢 桌面应用中打开设置面板进行配置。",
+    "webui.browserNotSupportedDesc": "出于安全考虑，WebUI 设置只能在桌面应用中管理。请在 HiveMind 桌面应用中打开设置面板进行配置。",
     "webui.passwordHidden": "******",
     "webui.passwordOnlyFirstTime": "密码仅在首次启动时显示，之后将被隐藏",
     "webui.resetPasswordWarning": "请保管好重置之后的密码！",
@@ -635,13 +635,13 @@
     "assistant.step4": "授权成功后，你可以通过 Telegram 与 Gemini 聊天！",
     "channels.title": "渠道配置",
     "channels.telegramTitle": "Telegram",
-    "channels.telegramDesc": "通过 Telegram 与 蜂巢 助手对话",
+    "channels.telegramDesc": "通过 Telegram 与 HiveMind 助手对话",
     "channels.slackTitle": "Slack",
-    "channels.slackDesc": "通过 Slack 与 蜂巢 助手对话",
+    "channels.slackDesc": "通过 Slack 与 HiveMind 助手对话",
     "channels.discordTitle": "Discord",
-    "channels.discordDesc": "通过 Discord 与 蜂巢 助手对话",
+    "channels.discordDesc": "通过 Discord 与 HiveMind 助手对话",
     "channels.larkTitle": "Lark",
-    "channels.larkDesc": "通过 Lark 与 蜂巢 助手对话",
+    "channels.larkDesc": "通过 Lark 与 HiveMind 助手对话",
     "channels.comingSoon": "即将上线",
     "channels.comingSoonDesc": "即将支持通过 {{channel}} 与助手直接对话",
     "channels.notConfigured": "未配置",
@@ -693,7 +693,7 @@
     "mcpImportSuccess": "导入成功",
     "mcpImportFailed": "导入失败",
     "mcpJsonInvalid": "无效的 JSON 格式",
-    "mcpImportDescription": "蜂巢会自动获取的您在CLI Agent中已安装的MCP，并一键导入",
+    "mcpImportDescription": "HiveMind会自动获取的您在CLI Agent中已安装的MCP，并一键导入",
     "mcpStepSelectAgent": "选择Agent",
     "mcpStepFetchTools": "获取mcp",
     "mcpStepImportSuccess": "导入成功",
@@ -1279,15 +1279,15 @@
     }
   },
   "hivemind": {
-    "placeholder": "向 Hivemind 发送消息...",
+    "placeholder": "向 HiveMind 发送消息...",
     "processing": "处理中...",
     "providerLabel": "提供方",
     "autoRoute": "自动（智能路由）",
-    "autoRouteDescription": "已启用自动路由。Hivemind 将为每个请求选择最佳提供方。",
+    "autoRouteDescription": "已启用自动路由。HiveMind 将为每个请求选择最佳提供方。",
     "routeMismatch": "请求: {{requested}} · 路由到: {{actual}}",
     "routeConfirmed": "提供方：{{provider}}",
     "settings": {
-      "title": "Hivemind 网关",
+      "title": "HiveMind 网关",
       "gatewayUrl": "网关地址",
       "gatewayUrlPlaceholder": "http://localhost:8765",
       "defaultProvider": "默认提供方",
@@ -1302,14 +1302,14 @@
       "disconnected": "未连接",
       "refresh": "刷新",
       "save": "保存",
-      "saveSuccess": "Hivemind 设置已保存",
-      "saveFailed": "保存 Hivemind 设置失败",
-      "loadFailed": "加载 Hivemind 配置失败",
+      "saveSuccess": "HiveMind 设置已保存",
+      "saveFailed": "保存 HiveMind 设置失败",
+      "loadFailed": "加载 HiveMind 配置失败",
       "uptime": "运行时间",
       "requests": "请求数",
       "active": "活跃",
       "enabledProviders": "已启用提供方",
-      "gatewayUnreachable": "Hivemind 网关不可达，请在 http://localhost:8765 启动",
+      "gatewayUnreachable": "HiveMind 网关不可达，请在 http://localhost:8765 启动",
       "providerStatus": "提供方状态",
       "rateLimit": "限流控制",
       "rateLimitLoading": "正在加载限流状态...",
@@ -1327,6 +1327,60 @@
     "cached": "已缓存",
     "thinking": "思考中",
     "quotaSwitched": "{{from}} 配额已用尽，已切换到 {{to}}"
+  },
+  "providers": {
+    "iflow": {
+      "name": "iFlow",
+      "description": "工作流自动化 AI",
+      "thinking": "思考链模式",
+      "normal": "普通模式"
+    },
+    "ollama": {
+      "name": "Ollama",
+      "description": "本地大语言模型",
+      "offline": "离线可用",
+      "local": "本地运行",
+      "privacy": "隐私保护",
+      "noModels": "未检测到模型，请先运行 ollama pull <model-name>",
+      "connectionError": "无法连接到 Ollama (localhost:11434)"
+    }
+  },
+  "knowledge": {
+    "title": "知识中心",
+    "subtitle": "NotebookLM + Obsidian + PDF 全自动处理",
+    "upload": "上传 PDF",
+    "refresh": "刷新",
+    "notebooks": "Notebooks",
+    "status": {
+      "obsidianCli": "Obsidian CLI",
+      "manager": "NotebookLM Manager",
+      "totalNotebooks": "总 Notebooks",
+      "vaultPath": "Vault 路径",
+      "available": "可用",
+      "unavailable": "不可用",
+      "ready": "就绪",
+      "notReady": "未就绪"
+    },
+    "notebook": {
+      "sources": "个来源",
+      "audio": "Audio",
+      "view": "查看"
+    },
+    "tabs": {
+      "notebooks": "Notebooks",
+      "upload": "上传 PDF",
+      "settings": "设置"
+    },
+    "upload_area": {
+      "title": "拖拽 PDF 文件到此处上传",
+      "description": "自动创建 Notebook + 生成 Artifacts + 同步 Obsidian"
+    },
+    "empty": "暂无 Notebooks",
+    "messages": {
+      "uploadSuccess": "PDF 处理成功！Notebook ID:",
+      "uploadFailed": "上传失败:",
+      "fetchError": "获取数据失败"
+    }
   },
   "monitor": {
     "title": "监控",

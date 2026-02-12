@@ -1,19 +1,20 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<svg width="800" height="800" viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg">
-  <!-- AionUI Logo - 黑色背景版本 -->
-  
-  <!-- 黑色圆角背景 -->
-  <rect width="80" height="80" rx="12" fill="black"/>
-  
-  <!-- 简单白色边框 -->
-  <rect width="80" height="80" rx="12" fill="none" stroke="white" stroke-width="1"/>
-  
-  <!-- 上方的"^"代表A - 白色填充 -->
-  <path d="M40 20 Q38 22 25 40 Q23 42 26 42 L30 42 Q32 40 40 30 Q48 40 50 42 L54 42 Q57 42 55 40 Q42 22 40 20" fill="white"/>
-  
-  <!-- 中间的"."代表i - 白色圆点 -->
-  <circle cx="40" cy="46" r="3" fill="white"/>
-  
-  <!-- 下方的弧线代表UI - 白色弧线 -->
-  <path d="M18 50 Q40 70 62 50" stroke="white" stroke-width="3.5" fill="none" stroke-linecap="round"/>
-</svg> 
+<svg width="800" height="800" viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="512" height="512" rx="96" fill="#020617"/>
+  <rect x="2" y="2" width="508" height="508" rx="94" stroke="#0ea5e9" stroke-opacity="0.35" stroke-width="4"/>
+
+  <g opacity="0.45" stroke="#38bdf8" stroke-width="10" stroke-linecap="round">
+    <line x1="168" y1="176" x2="256" y2="224"/>
+    <line x1="344" y1="176" x2="256" y2="224"/>
+    <line x1="392" y1="272" x2="304" y2="320"/>
+    <line x1="256" y1="416" x2="304" y2="320"/>
+    <line x1="208" y1="320" x2="256" y2="224"/>
+  </g>
+
+  <path d="M256 160L326 200V280L256 320L186 280V200L256 160Z" fill="#0ea5e9"/>
+  <path d="M168 112L220 142V202L168 232L116 202V142L168 112Z" fill="#38bdf8"/>
+  <path d="M344 112L396 142V202L344 232L292 202V142L344 112Z" fill="#7dd3fc"/>
+  <path d="M392 224L444 254V314L392 344L340 314V254L392 224Z" fill="#bae6fd"/>
+  <path d="M304 336L356 366V426L304 456L252 426V366L304 336Z" fill="#e0f2fe"/>
+  <path d="M208 224L260 254V314L208 344L156 314V254L208 224Z" fill="#7dd3fc"/>
+</svg>

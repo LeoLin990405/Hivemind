@@ -9,6 +9,7 @@ import { Alert, Button, Card, Space, Spin, Statistic, Table } from '@arco-design
 import { IconRefresh } from '@arco-design/web-react/icon';
 import { useTranslation } from 'react-i18next';
 import { useGatewayStats } from '@/renderer/hooks/useGatewayStats';
+import { DesignTokens } from '@/renderer/design-system';
 
 const Dashboard: React.FC = () => {
   const { t } = useTranslation();
@@ -53,7 +54,7 @@ const Dashboard: React.FC = () => {
       title: t('monitor.dashboard.successRate', { defaultValue: 'Success Rate' }),
       dataIndex: 'success_rate',
       key: 'success_rate',
-      render: (val: number) => <span className={val > 0.9 ? 'text-green-600' : 'text-red-600'}>{(val * 100).toFixed(1)}%</span>,
+      render: (val: number) => <span style={{ color: val > 0.9 ? DesignTokens.colors.success : DesignTokens.colors.error }}>{(val * 100).toFixed(1)}%</span>,
     },
     {
       title: t('monitor.dashboard.avgLatency', { defaultValue: 'Avg Latency' }),
@@ -65,12 +66,17 @@ const Dashboard: React.FC = () => {
       title: t('monitor.dashboard.errors', { defaultValue: 'Errors' }),
       dataIndex: 'errors',
       key: 'errors',
-      render: (val: number) => <span className={val > 0 ? 'text-red-600' : ''}>{val.toLocaleString()}</span>,
+      render: (val: number) => <span style={{ color: val > 0 ? DesignTokens.colors.error : undefined }}>{val.toLocaleString()}</span>,
     },
   ];
 
   return (
-    <div className='space-y-16px'>
+    <div
+      className='space-y-16px'
+      style={{
+        transition: DesignTokens.transitions.base,
+      }}
+    >
       <div className='flex items-center justify-between mb-16px'>
         <h1 className='text-20px font-600'>{t('monitor.dashboard.title', { defaultValue: 'Overview' })}</h1>
         <Space>
@@ -92,7 +98,7 @@ const Dashboard: React.FC = () => {
             suffix='%'
             countUp
             styleValue={{
-              color: (stats?.overall_success_rate || 0) > 0.9 ? '#00b42a' : '#f53f3f',
+              color: (stats?.overall_success_rate || 0) > 0.9 ? DesignTokens.colors.success : DesignTokens.colors.error,
             }}
           />
         </Card>
@@ -107,7 +113,7 @@ const Dashboard: React.FC = () => {
             suffix='%'
             countUp
             styleValue={{
-              color: (cacheStats?.hit_rate || 0) > 0.7 ? '#00b42a' : '#ff7d00',
+              color: (cacheStats?.hit_rate || 0) > 0.7 ? DesignTokens.colors.success : DesignTokens.colors.warning,
             }}
           />
         </Card>

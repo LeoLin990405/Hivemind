@@ -9,6 +9,7 @@ import { Button, Card, Select, Space, Table, Tag } from '@arco-design/web-react'
 import { IconRefresh } from '@arco-design/web-react/icon';
 import { useTranslation } from 'react-i18next';
 import { gatewayMonitorService, type Task } from '@/renderer/services/GatewayMonitorService';
+import { DesignTokens } from '@/renderer/design-system';
 
 const TaskQueue: React.FC = () => {
   const { t } = useTranslation();
@@ -61,7 +62,11 @@ const TaskQueue: React.FC = () => {
           completed: 'green',
           failed: 'red',
         } as const;
-        return <Tag color={colorMap[val as keyof typeof colorMap] || 'gray'}>{val}</Tag>;
+        return (
+          <Tag color={colorMap[val as keyof typeof colorMap] || 'gray'} style={{ borderRadius: DesignTokens.radius.full }}>
+            {val}
+          </Tag>
+        );
       },
     },
     {
@@ -88,12 +93,17 @@ const TaskQueue: React.FC = () => {
       title: t('monitor.tasks.error', { defaultValue: 'Error' }),
       dataIndex: 'error',
       key: 'error',
-      render: (val?: string | null) => (val ? <span className='text-red-600'>{val}</span> : '-'),
+      render: (val?: string | null) => (val ? <span style={{ color: DesignTokens.colors.error }}>{val}</span> : '-'),
     },
   ];
 
   return (
-    <div className='space-y-16px'>
+    <div
+      className='space-y-16px'
+      style={{
+        transition: DesignTokens.transitions.base,
+      }}
+    >
       <div className='flex items-center justify-between mb-16px'>
         <h1 className='text-20px font-600'>{t('monitor.tasks.title', { defaultValue: 'Task Queue' })}</h1>
         <Space>

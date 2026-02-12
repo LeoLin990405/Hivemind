@@ -1,4 +1,4 @@
-#!/usr/bin/env python3.13
+#!/usr/bin/env python3
 """
 ccb-wait - Wait for multiple requests to complete, then fetch replies.
 

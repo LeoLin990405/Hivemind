@@ -5,7 +5,7 @@
  */
 
 import './utils/configureChromium';
-import { app, BrowserWindow, nativeImage, screen } from 'electron';
+import { app, BrowserWindow, clipboard, Notification, nativeImage, screen } from 'electron';
 import fixPath from 'fix-path';
 import * as fs from 'fs';
 import * as path from 'path';
@@ -156,6 +156,11 @@ const parseBooleanEnv = (value?: string): boolean | null => {
   return null;
 };
 
+const isGeminiOauthUrl = (url: string): boolean => {
+  const normalized = url.toLowerCase();
+  return normalized.includes('accounts.google.com') || normalized.includes('oauth');
+};
+
 const resolveRemoteAccess = (config: WebUIUserConfig): boolean => {
   const envRemote = parseBooleanEnv(process.env.AIONUI_ALLOW_REMOTE || process.env.AIONUI_REMOTE);
   const hostHint = process.env.AIONUI_HOST?.trim();
@@ -217,6 +222,21 @@ const createWindow = (): void => {
     },
   });
 
+  mainWindow.webContents.setWindowOpenHandler(({ url }) => {
+    if (isGeminiOauthUrl(url)) {
+      clipboard.writeText(url);
+      if (Notification.isSupported()) {
+        new Notification({
+          title: 'Gemini 授权',
+          body: '检测到授权链接，已复制到剪贴板，请手动在浏览器打开。',
+          silent: true,
+        }).show();
+      }
+      return { action: 'deny' };
+    }
+    return { action: 'allow' };
+  });
+
   initMainAdapterWithWindow(mainWindow);
   setupApplicationMenu();
   void applyZoomToWindow(mainWindow);
@@ -230,7 +250,8 @@ const createWindow = (): void => {
   // 只在开发环境自动打开 DevTools / Only auto-open DevTools in development
   // 使用 app.isPackaged 判断更可靠，打包后的应用不会自动打开 DevTools
   // Using app.isPackaged is more reliable, packaged apps won't auto-open DevTools
-  if (!app.isPackaged) {
+  const shouldAutoOpenDevTools = !app.isPackaged && (hasSwitch('devtools') || parseBooleanEnv(process.env.AIONUI_AUTO_OPEN_DEVTOOLS) === true);
+  if (shouldAutoOpenDevTools) {
     mainWindow.webContents.openDevTools();
   }
 };

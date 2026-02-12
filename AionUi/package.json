@@ -1,8 +1,8 @@
 {
-  "name": "Hivemind",
-  "productName": "蜂巢",
+  "name": "HiveMind",
+  "productName": "HiveMind",
   "version": "1.8.5",
-  "description": "Hivemind Gateway 桌面客户端 - 统一的多 AI 聊天界面和监控仪表盘",
+  "description": "HiveMind Gateway 桌面客户端 - 统一的多 AI 聊天界面和监控仪表盘",
   "main": ".webpack/main",
   "scripts": {
     "start": "node scripts/start-forge.js",
@@ -38,7 +38,7 @@
   },
   "keywords": [],
   "author": {
-    "name": "Hivemind",
+    "name": "HiveMind",
     "email": "service@hivemind.com"
   },
   "license": "Apache-2.0",

@@ -10,6 +10,7 @@ import { IconDelete, IconRefresh } from '@arco-design/web-react/icon';
 import { useTranslation } from 'react-i18next';
 import { useGatewayStats } from '@/renderer/hooks/useGatewayStats';
 import { gatewayMonitorService } from '@/renderer/services/GatewayMonitorService';
+import { DesignTokens } from '@/renderer/design-system';
 
 const CacheManager: React.FC = () => {
   const { t } = useTranslation();
@@ -45,7 +46,12 @@ const CacheManager: React.FC = () => {
   };
 
   return (
-    <div className='space-y-16px'>
+    <div
+      className='space-y-16px'
+      style={{
+        transition: DesignTokens.transitions.base,
+      }}
+    >
       <div className='flex items-center justify-between mb-16px'>
         <h1 className='text-20px font-600'>{t('monitor.cache.title', { defaultValue: 'Cache Management' })}</h1>
         <Space>
@@ -70,7 +76,7 @@ const CacheManager: React.FC = () => {
             suffix='%'
             countUp
             styleValue={{
-              color: (cacheStats?.hit_rate || 0) > 0.7 ? '#00b42a' : '#ff7d00',
+              color: (cacheStats?.hit_rate || 0) > 0.7 ? DesignTokens.colors.success : DesignTokens.colors.warning,
             }}
           />
         </Card>

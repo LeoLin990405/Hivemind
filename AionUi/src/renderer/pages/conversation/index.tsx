@@ -1,4 +1,5 @@
 import { ipcBridge } from '@/common';
+import { DesignTokens } from '@/renderer/design-system';
 import { Spin } from '@arco-design/web-react';
 import React, { useEffect, useRef } from 'react';
 import { useParams } from 'react-router-dom';
@@ -38,7 +39,17 @@ const ChatConversationIndex: React.FC = () => {
   }, [data, openTab]);
 
   if (isLoading) return <Spin loading></Spin>;
-  return <ChatConversation conversation={data}></ChatConversation>;
+  return (
+    <div
+      style={{
+        padding: DesignTokens.spacing.md,
+        borderRadius: DesignTokens.radius.lg,
+        transition: DesignTokens.transitions.base,
+      }}
+    >
+      <ChatConversation conversation={data}></ChatConversation>
+    </div>
+  );
 };
 
 export default ChatConversationIndex;

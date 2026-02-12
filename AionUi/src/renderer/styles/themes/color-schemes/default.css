@@ -1,140 +1,172 @@
-/* Default Color Scheme - AOU Purple Theme */
+/* Default Color Scheme - Sky Blue Theme */
 
 /* Light Mode */
 :root,
 [data-color-scheme='default'] {
-  /* AOU Brand Colors - Light Mode */
-  --aou-1: #eff0f6;
-  --aou-2: #e5e7f0;
-  --aou-3: #d1d5e5;
-  --aou-4: #b5bcd6;
-  --aou-5: #97a0c5;
-  --aou-6: #7583b2;
-  --aou-7: #596590;
-  --aou-8: #3f4868;
-  --aou-9: #262c41;
-  --aou-10: #0d101c;
+  /* Sky Blue palette (light -> dark) */
+  --aou-1: #f0f9ff;
+  --aou-2: #e0f2fe;
+  --aou-3: #bae6fd;
+  --aou-4: #7dd3fc;
+  --aou-5: #38bdf8;
+  --aou-6: #0ea5e9;
+  --aou-7: #0284c7;
+  --aou-8: #0369a1;
+  --aou-9: #075985;
+  --aou-10: #0c4a6e;
 
-  /* Background Colors - Light Mode */
-  --bg-base: #ffffff; /* bg-0 - 主背景 */
-  --bg-1: #f7f8fa; /* 次级背景 */
-  --bg-2: #f2f3f5; /* 三级背景 */
-  --bg-3: #e5e6eb; /* 边框/分隔 */
-  --bg-4: #c9cdd4;
-  --bg-5: #adb4c1;
-  --bg-6: #86909c; /* 禁用/次要文字 */
-  --bg-8: #4e5969;
-  --bg-9: #1d2129;
-  --bg-10: #0c0e12;
+  /* Compatibility aliases */
+  --aou-6-brand: var(--aou-6);
+  --aou-8-selected: var(--aou-8);
 
-  /* Interactive State Colors - Light Mode */
-  --bg-hover: #f3f4f6; /* 悬停背景 - 在 bg-1 和 bg-2 之间 */
-  --bg-active: #e5e6eb; /* 激活/按下背景 */
+  /* Primary steps */
+  --primary-1: #f0f9ff;
+  --primary-2: #e0f2fe;
+  --primary-3: #bae6fd;
+  --primary-4: #7dd3fc;
+  --primary-5: #38bdf8;
+  --primary-6: #0ea5e9;
+  --primary-7: #0284c7;
+  --primary-8: #0369a1;
+  --primary-9: #075985;
+  --primary-10: #0c4a6e;
 
-  /* Text Colors - Light Mode */
-  --text-primary: #1d2129; /* 主要文字 */
-  --text-secondary: #86909c; /* 次要文字 */
-  --text-disabled: #c9cdd4; /* 禁用文字 */
+  /* Background Colors */
+  --bg-base: #ffffff;
+  --bg-1: #f8fafc;
+  --bg-2: #f1f5f9;
+  --bg-3: #e2e8f0;
+  --bg-4: #cbd5e1;
+  --bg-5: #94a3b8;
+  --bg-6: #64748b;
+  --bg-8: #334155;
+  --bg-9: #1e293b;
+  --bg-10: #0f172a;
 
-  /* Semantic Colors - Light Mode */
-  --primary: #165dff;
-  --success: #00b42a;
-  --warning: #ff7d00;
-  --danger: #f53f3f;
-  --info: #165dff;
+  /* Interactive State Colors */
+  --bg-hover: #f1f5f9;
+  --bg-active: #e2e8f0;
 
-  /* Border Colors - Light Mode */
-  --border-base: #e5e6eb; /* 基础边框 */
-  --border-light: #f2f3f5; /* 浅色边框 */
+  /* Text Colors */
+  --text-primary: #0f172a;
+  --text-secondary: #64748b;
+  --text-disabled: #cbd5e1;
 
-  /* Brand Colors - Light Mode */
-  --brand: #7583b2; /* 品牌色 */
-  --brand-light: #eff0f6; /* 品牌浅色背景 */
-  --brand-hover: #b5bcd6; /* 品牌色悬停 */
+  /* Semantic Colors */
+  --primary: #0ea5e9;
+  --success: #10b981;
+  --warning: #f59e0b;
+  --danger: #ef4444;
+  --info: #3b82f6;
 
-  /* Message & UI Component Colors - Light Mode */
-  --message-user-bg: #e9efff; /* 用户消息背景（浅蓝） */
-  --message-tips-bg: #f0f4ff; /* 提示信息背景（浅蓝） */
-  --workspace-btn-bg: #eff0f1; /* 工作区按钮背景 */
+  /* Border Colors */
+  --border-base: #e2e8f0;
+  --border-light: #f1f5f9;
 
-  /* Special Colors - Light Mode */
-  --fill: #f7f8fa; /* 填充色 */
-  --inverse: #ffffff; /* 反色（黑白切换）*/
+  /* Brand Colors */
+  --brand: #0ea5e9;
+  --brand-light: #e0f2fe;
+  --brand-hover: #0284c7;
 
-  /* Custom Colors - Light Mode */
-  --dialog-fill-0: #ffffff; /* 对话框填充色 */
-  --text-0: #000000; /* 纯黑文字色 */
-  --text-white: #ffffff; /* 纯白文字色 */
-  --fill-0: #ffffff; /* 填充色 0 */
-  --fill-white-to-black: #ffffff; /* 白到黑填充色 */
-  --border-special: var(--bg-3); /* 特殊边框色 */
+  /* Message & UI Component Colors */
+  --message-user-bg: #e0f2fe;
+  --message-tips-bg: #f0f9ff;
+  --workspace-btn-bg: #f1f5f9;
+
+  /* Special Colors */
+  --fill: #f8fafc;
+  --inverse: #ffffff;
+
+  /* Custom Colors */
+  --dialog-fill-0: #ffffff;
+  --text-0: #000000;
+  --text-white: #ffffff;
+  --fill-0: #ffffff;
+  --fill-white-to-black: #ffffff;
+  --border-special: var(--bg-3);
 }
 
 /* Dark Mode */
 [data-color-scheme='default'][data-theme='dark'] {
-  /* AOU Brand Colors - Dark Mode */
-  --aou-1: #2a2a2a;
-  --aou-2: #3d4150;
-  --aou-3: #525a77;
-  --aou-4: #6a749b;
-  --aou-5: #838fba;
-  --aou-6: #a1aacb;
-  --aou-7: #b5bcd6;
-  --aou-8: #d1d5e5;
-  --aou-9: #e5e7f0;
-  --aou-10: #eff0f6;
+  /* Sky Blue palette for dark mode (deep -> light) */
+  --aou-1: #0c4a6e;
+  --aou-2: #075985;
+  --aou-3: #0369a1;
+  --aou-4: #0284c7;
+  --aou-5: #0ea5e9;
+  --aou-6: #38bdf8;
+  --aou-7: #7dd3fc;
+  --aou-8: #bae6fd;
+  --aou-9: #e0f2fe;
+  --aou-10: #f0f9ff;
 
-  /* Background Colors - Dark Mode */
-  --bg-base: #0e0e0e; /* 主背景 */
-  --bg-1: #1a1a1a; /* 次级背景 */
-  --bg-2: #262626; /* 三级背景 */
-  --bg-3: #333333; /* 边框/分隔 */
-  --bg-4: #404040;
-  --bg-5: #4d4d4d;
-  --bg-6: #5a5a5a; /* 禁用/次要文字 */
-  --bg-8: #737373;
-  --bg-9: #a6a6a6;
-  --bg-10: #d9d9d9;
+  /* Compatibility aliases */
+  --aou-6-brand: var(--aou-6);
+  --aou-8-selected: var(--aou-8);
 
-  /* Interactive State Colors - Dark Mode */
-  --bg-hover: #1f1f1f; /* 悬停背景 */
-  --bg-active: #2d2d2d; /* 激活/按下背景 */
+  /* Primary steps */
+  --primary-1: #0c4a6e;
+  --primary-2: #075985;
+  --primary-3: #0369a1;
+  --primary-4: #0284c7;
+  --primary-5: #0ea5e9;
+  --primary-6: #38bdf8;
+  --primary-7: #7dd3fc;
+  --primary-8: #bae6fd;
+  --primary-9: #e0f2fe;
+  --primary-10: #f0f9ff;
 
-  /* Text Colors - Dark Mode */
-  --text-primary: #e5e5e5; /* 主要文字 */
-  --text-secondary: #a6a6a6; /* 次要文字 */
-  --text-disabled: #737373; /* 禁用文字 */
+  /* Background Colors */
+  --bg-base: #0f172a;
+  --bg-1: #1e293b;
+  --bg-2: #334155;
+  --bg-3: #475569;
+  --bg-4: #64748b;
+  --bg-5: #94a3b8;
+  --bg-6: #cbd5e1;
+  --bg-8: #e2e8f0;
+  --bg-9: #f1f5f9;
+  --bg-10: #f8fafc;
 
-  /* Semantic Colors - Dark Mode */
-  --primary: #4d9fff;
-  --success: #23c343;
-  --warning: #ff9a2e;
-  --danger: #f76560;
-  --info: #4d9fff;
+  /* Interactive State Colors */
+  --bg-hover: #334155;
+  --bg-active: #475569;
 
-  /* Border Colors - Dark Mode */
-  --border-base: #333333; /* 基础边框 */
-  --border-light: #262626; /* 浅色边框 */
+  /* Text Colors */
+  --text-primary: #f1f5f9;
+  --text-secondary: #94a3b8;
+  --text-disabled: #475569;
 
-  /* Brand Colors - Dark Mode */
-  --brand: #a1aacb; /* 品牌色 */
-  --brand-light: #3d4150; /* 品牌深色背景 */
-  --brand-hover: #6a749b; /* 品牌色悬停 */
+  /* Semantic Colors */
+  --primary: #38bdf8;
+  --success: #34d399;
+  --warning: #fbbf24;
+  --danger: #f87171;
+  --info: #60a5fa;
 
-  /* Message & UI Component Colors - Dark Mode */
-  --message-user-bg: #1e2a3a; /* 用户消息背景（深蓝灰） */
-  --message-tips-bg: #1a2333; /* 提示信息背景（深蓝灰） */
-  --workspace-btn-bg: #1f1f1f; /* 工作区按钮背景 */
+  /* Border Colors */
+  --border-base: #334155;
+  --border-light: #1e293b;
 
-  /* Special Colors - Dark Mode */
-  --fill: #1a1a1a; /* 填充色 */
-  --inverse: #ffffff; /* 反色（黑白切换）*/
+  /* Brand Colors */
+  --brand: #38bdf8;
+  --brand-light: #0c4a6e;
+  --brand-hover: #7dd3fc;
 
-  /* Custom Colors - Dark Mode */
-  --dialog-fill-0: #333333; /* 对话框填充色 */
-  --text-0: #ffffff; /* 纯黑文字色（暗色模式下为白色） */
-  --text-white: #ffffff; /* 纯白文字色 */
-  --fill-0: rgba(255, 255, 255, 0.08); /* 填充色 0 - 暗色模式下为半透明白色 */
-  --fill-white-to-black: #000000; /* 白到黑填充色（暗色模式下为黑色） */
-  --border-special: #60677e; /* 特殊边框色 */
+  /* Message & UI Component Colors */
+  --message-user-bg: #0f2740;
+  --message-tips-bg: #15263a;
+  --workspace-btn-bg: #1e293b;
+
+  /* Special Colors */
+  --fill: #1e293b;
+  --inverse: #ffffff;
+
+  /* Custom Colors */
+  --dialog-fill-0: #334155;
+  --text-0: #ffffff;
+  --text-white: #ffffff;
+  --fill-0: rgba(255, 255, 255, 0.08);
+  --fill-white-to-black: #000000;
+  --border-special: #475569;
 }
