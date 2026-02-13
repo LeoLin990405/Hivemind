@@ -7,6 +7,7 @@ from .router import KnowledgeRouter
 from .notebooklm_manager import NotebookLMManager
 from .audio_overview_workflow import AudioOverviewWorkflow
 from .deep_research_workflow import DeepResearchWorkflow
+from .smart_router import SmartNotebookRouter
 from .source_manager import NotebookLMSourceManager
 from .shared_knowledge import SharedKnowledgeService
 
@@ -19,6 +20,7 @@ __all__ = [
     "NotebookLMManager",
     "AudioOverviewWorkflow",
     "DeepResearchWorkflow",
+    "SmartNotebookRouter",
     "NotebookLMSourceManager",
 ]
 
