@@ -621,6 +621,65 @@ export class AionUIDatabase {
   }
 
   /**
+   * Search messages by content across all conversations
+   * @param query - Search query string
+   * @param userId - Optional user ID filter
+   * @param page - Page number for pagination
+   * @param pageSize - Number of results per page
+   * @returns Paginated search results
+   */
+  searchMessages(query: string, userId?: string, page = 0, pageSize = 100): IPaginatedResult<TMessage> {
+    try {
+      const searchPattern = `%${query}%`;
+      const params: any[] = [searchPattern];
+
+      // Build query with optional user filter
+      let whereClause = 'WHERE m.content LIKE ?';
+      if (userId) {
+        whereClause += ' AND c.user_id = ?';
+        params.push(userId);
+      }
+
+      // Get total count
+      const countQuery = `
+        SELECT COUNT(*) as count
+        FROM messages m
+        JOIN conversations c ON m.conversation_id = c.id
+        ${whereClause}
+      `;
+      const countResult = this.db.prepare(countQuery).get(...params) as { count: number };
+
+      // Get paginated results
+      const searchQuery = `
+        SELECT m.*
+        FROM messages m
+        JOIN conversations c ON m.conversation_id = c.id
+        ${whereClause}
+        ORDER BY m.created_at DESC
+        LIMIT ? OFFSET ?
+      `;
+      const rows = this.db.prepare(searchQuery).all(...params, pageSize, page * pageSize) as IMessageRow[];
+
+      return {
+        data: rows.map(rowToMessage),
+        total: countResult.count,
+        page,
+        pageSize,
+        hasMore: (page + 1) * pageSize < countResult.count,
+      };
+    } catch (error: any) {
+      console.error('[Database] Search messages error:', error);
+      return {
+        data: [],
+        total: 0,
+        page,
+        pageSize,
+        hasMore: false,
+      };
+    }
+  }
+
+  /**
    * Update a message in the database
    * @param messageId - Message ID to update
    * @param message - Updated message data

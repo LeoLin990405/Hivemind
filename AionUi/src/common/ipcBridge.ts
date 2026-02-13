@@ -219,6 +219,77 @@ export const hivemindConversation = {
 export const database = {
   getConversationMessages: bridge.buildProvider<import('@/common/chatLib').TMessage[], { conversation_id: string; page?: number; pageSize?: number }>('database.get-conversation-messages'),
   getUserConversations: bridge.buildProvider<import('@/common/storage').TChatConversation[], { page?: number; pageSize?: number }>('database.get-user-conversations'),
+  searchMessages: bridge.buildProvider<import('@/common/chatLib').TMessage[], { query: string; page?: number; pageSize?: number }>('database.search-messages'),
+};
+
+// Obsidian CLI operations
+export const obsidian = {
+  open: bridge.buildProvider<{ success: boolean; error?: string }, { vault: string; path: string }>('obsidian.open'),
+  searchContent: bridge.buildProvider<{ success: boolean; results: Array<{ path: string }>; error?: string }, { vault: string; query: string; limit?: number }>('obsidian.search-content'),
+  move: bridge.buildProvider<{ success: boolean; error?: string }, { vault: string; oldPath: string; newPath: string }>('obsidian.move'),
+  daily: bridge.buildProvider<{ success: boolean; error?: string }, { vault: string; append?: string }>('obsidian.daily'),
+  setFrontmatter: bridge.buildProvider<{ success: boolean; error?: string }, { vault: string; path: string; key: string; value: string }>('obsidian.set-frontmatter'),
+};
+
+export interface IObsidianDailySyncStatus {
+  enabled: boolean;
+  running: boolean;
+  schedule: string;
+  nextRunAt?: number;
+  lastRunAt?: number;
+  lastSuccessAt?: number;
+  lastError?: string;
+  vault: string;
+}
+
+export interface IObsidianDailySyncRunResult {
+  success: boolean;
+  appended: boolean;
+  vault: string;
+  date: string;
+  summary?: string;
+  error?: string;
+}
+
+export const obsidianDailySync = {
+  status: bridge.buildProvider<IObsidianDailySyncStatus, void>('obsidian.daily-sync.status'),
+  runNow: bridge.buildProvider<IObsidianDailySyncRunResult, void>('obsidian.daily-sync.run-now'),
+};
+
+export interface INotebookLMAutomationStatus {
+  available: boolean;
+  installed: boolean;
+  initialized: boolean;
+  authenticated: boolean;
+  headless: boolean;
+  currentUrl?: string;
+  lastError?: string;
+}
+
+export interface INotebookLMAutomationAuthResult {
+  success: boolean;
+  authenticated: boolean;
+  url?: string;
+  requiresInteractive?: boolean;
+  message?: string;
+  error?: string;
+}
+
+export interface INotebookLMAutomationQueryResult {
+  success: boolean;
+  answer?: string;
+  notebookId?: string;
+  references: Array<{ title?: string; url?: string }>;
+  requiresInteractive?: boolean;
+  url?: string;
+  error?: string;
+}
+
+export const notebooklmAutomation = {
+  status: bridge.buildProvider<INotebookLMAutomationStatus, void>('notebooklm.automation.status'),
+  ensureAuth: bridge.buildProvider<INotebookLMAutomationAuthResult, { interactive?: boolean; timeoutMs?: number }>('notebooklm.automation.ensure-auth'),
+  openNotebook: bridge.buildProvider<INotebookLMAutomationAuthResult, { notebookId?: string; interactive?: boolean }>('notebooklm.automation.open-notebook'),
+  query: bridge.buildProvider<INotebookLMAutomationQueryResult, { question: string; notebookId?: string; interactive?: boolean }>('notebooklm.automation.query'),
 };
 
 export const previewHistory = {

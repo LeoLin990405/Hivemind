@@ -64,4 +64,17 @@ export function initDatabaseBridge(): void {
       return [];
     }
   });
+
+  // Search messages across all conversations
+  ipcBridge.database.searchMessages.provider(async ({ query, page = 0, pageSize = 100 }) => {
+    try {
+      const db = getDatabase();
+      // User ID filtering could be added here if needed
+      const result = db.searchMessages(query, undefined, page, pageSize);
+      return result.data || [];
+    } catch (error) {
+      console.error('[DatabaseBridge] Error searching messages:', error);
+      return [];
+    }
+  });
 }
