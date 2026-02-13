@@ -75,6 +75,66 @@ _AionUi 内置 Gemini CLI，下载即用，无需额外安装；如果你已经�
 
 ---
 
+### 📚 **Knowledge Hub - 智能知识管理中心**
+
+_集成 Obsidian、NotebookLM，打造个人知识图谱_
+
+- **Obsidian 自动同步**
+  - 每日 23:00 自动将对话摘要同步到 Obsidian vault
+  - 生成格式化的 Markdown 日记，包含会话统计和对话摘要
+  - 支持手动触发同步
+  - 可配置 vault 路径和环境变量
+
+- **NotebookLM 集成**
+  - 通过浏览器自动化（Playwright）实现一键文档上传
+  - Google 账号认证，会话状态持久化
+  - 向知识库提问，自动提取 AI 生成的答案
+  - 支持无头模式和交互模式
+
+- **知识图谱可视化**
+  - 自动生成知识节点关联图
+  - 基于 D3.js 的交互式可视化
+
+- **时间线视图**
+  - 按时间轴展示知识演进过程
+  - 追踪学习路径和研究进展
+
+<p align="center">
+  <img src="./resources/knowledge-hub-demo.png" alt="Knowledge Hub 演示" width="800">
+</p>
+
+> 💡 **使用场景**：个人知识库管理、研究笔记整理、学习路径追踪、文档深度分析
+
+---
+
+### 🧠 **Memory Hub - 对话记忆中心**
+
+_跨会话上下文记忆，AI 助手真正理解你_
+
+- **会话记忆管理**
+  - 自动记录所有对话上下文
+  - 按日期分组（今天、昨天、上周、更早）
+  - 显示消息数量和更新时间
+  - 一键导出对话到 Obsidian
+
+- **智能检索**
+  - 全文搜索历史对话
+  - 快速定位关键信息
+  - 按消息类型和时间筛选
+
+- **上下文关联**
+  - 显示当前会话的上下文统计
+  - Token 计数和消息数追踪
+  - 跨会话智能关联，提供连贯体验
+
+<p align="center">
+  <img src="./resources/memory-hub-demo.png" alt="Memory Hub 演示" width="800">
+</p>
+
+> 💡 **核心价值**：让 AI 助手记住你的习惯、偏好和历史对话，实现真正的个性化体验
+
+---
+
 ### 🌐 **随时随地访问你的AionUi**
 
 _你的 7×24 小时 AI 助手 - 从任何设备、任何地方访问 AionUi！出差、在家、办公室，随时随地通过 WebUI 或多种聊天平台使用你的 AI 工具_
@@ -283,6 +343,40 @@ A: 支持 Gemini、OpenAI、Claude、Qwen 等主流模型，以及 Ollama、LM S
 <details>
 <summary><strong>Q: 数据安全吗？</strong></summary>
 A: 所有对话数据存储在本地 SQLite 数据库，不会上传到任何服务器。
+</details>
+
+<details>
+<summary><strong>Q: Knowledge Hub 需要额外配置吗？</strong></summary>
+
+**A:**
+
+**Obsidian 集成**：
+- 需要先安装 `obsidian-cli`（命令行工具）
+- 在设置中配置 Obsidian Vault 路径
+- 可通过环境变量 `HIVEMIND_OBSIDIAN_VAULT` 自定义 vault 名称
+- Daily Sync 默认在 23:00 运行，也可手动触发
+
+**NotebookLM 集成**：
+- 首次使用需要 Google 账号授权
+- 会打开浏览器进行交互式登录（超时 5 分钟）
+- 认证状态会保存在本地，后续无需重复登录
+- 支持查询多个 notebooks
+
+两者都是**可选功能**，不影响其他模块使用。
+</details>
+
+<details>
+<summary><strong>Q: Memory Hub 的数据存储在哪里？</strong></summary>
+
+**A:**
+
+所有对话记忆存储在本地 SQLite 数据库中：
+- 位置：`~/Library/Application Support/AionUi/aionui.db`（macOS）
+- 包含完整的对话历史、消息内容和上下文
+- 可通过 Memory Hub 导出到 Obsidian 进行长期归档
+- 数据仅存储在本地，不会上传到云端
+
+**隐私保护**：HiveMind 不会收集或上传你的对话数据。
 </details>
 
 ---

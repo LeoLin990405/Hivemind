@@ -76,6 +76,66 @@ _AionUi comes with built-in Gemini CLI, ready to use out of the box with no addi
 
 ---
 
+### 📚 **Knowledge Hub - Intelligent Knowledge Management**
+
+_Integrate Obsidian and NotebookLM to build your personal knowledge graph_
+
+- **Obsidian Auto Sync**
+  - Daily automatic synchronization at 23:00 to Obsidian vault
+  - Generate formatted Markdown daily notes with conversation summaries
+  - Support manual trigger
+  - Configurable vault path and environment variables
+
+- **NotebookLM Integration**
+  - One-click document upload via Playwright browser automation
+  - Google account authentication with session persistence
+  - Query knowledge bases and auto-extract AI-generated answers
+  - Support both headless and interactive modes
+
+- **Knowledge Graph Visualization**
+  - Automatically generate knowledge node relationship graphs
+  - Interactive visualization based on D3.js
+
+- **Timeline View**
+  - Display knowledge evolution over time
+  - Track learning paths and research progress
+
+<p align="center">
+  <img src="./resources/knowledge-hub-demo.png" alt="Knowledge Hub Demo" width="800">
+</p>
+
+> 💡 **Use Cases**: Personal knowledge base management, research note organization, learning path tracking, document deep analysis
+
+---
+
+### 🧠 **Memory Hub - Conversation Memory Center**
+
+_Cross-session context memory - AI assistants that truly understand you_
+
+- **Session Memory Management**
+  - Automatically record all conversation contexts
+  - Group by date (Today, Yesterday, Last Week, Older)
+  - Display message counts and update times
+  - One-click export conversations to Obsidian
+
+- **Smart Retrieval**
+  - Full-text search across conversation history
+  - Quickly locate key information
+  - Filter by message type and timestamp
+
+- **Context Association**
+  - Display active session context statistics
+  - Token counting and message tracking
+  - Intelligent association between sessions for coherent experience
+
+<p align="center">
+  <img src="./resources/memory-hub-demo.png" alt="Memory Hub Demo" width="800">
+</p>
+
+> 💡 **Core Value**: Let AI assistants remember your habits, preferences, and conversation history for truly personalized experience
+
+---
+
 ### 🌐 **Access Your AionUi Anywhere**
 
 _Your 7×24 hour AI assistant - Access AionUi from any device, anywhere! On business trips, at home, in the office, use your AI tools anytime, anywhere through WebUI or various chat platforms_
@@ -288,6 +348,40 @@ You can also run multiple AI Agents simultaneously (such as Gemini CLI, Claude C
 <details>
 <summary><strong>Q: Is my data secure?</strong></summary>
 A: All conversation data is stored in a local SQLite database and will not be uploaded to any server.
+</details>
+
+<details>
+<summary><strong>Q: Does Knowledge Hub require additional configuration?</strong></summary>
+
+**A:**
+
+**Obsidian Integration**:
+- Install `obsidian-cli` (command-line tool) first
+- Configure Obsidian Vault path in settings
+- Customize vault name via `HIVEMIND_OBSIDIAN_VAULT` environment variable
+- Daily Sync runs at 23:00 by default, can also be triggered manually
+
+**NotebookLM Integration**:
+- First use requires Google account authorization
+- Opens browser for interactive login (5-minute timeout)
+- Authentication state persists locally, no repeated logins needed
+- Support querying multiple notebooks
+
+Both features are **optional** and don't affect other modules.
+</details>
+
+<details>
+<summary><strong>Q: Where is Memory Hub data stored?</strong></summary>
+
+**A:**
+
+All conversation memory is stored in a local SQLite database:
+- Location: `~/Library/Application Support/AionUi/aionui.db` (macOS)
+- Contains complete conversation history, message content, and context
+- Can be exported to Obsidian via Memory Hub for long-term archiving
+- Data is stored locally only, never uploaded to cloud
+
+**Privacy Protection**: HiveMind does not collect or upload your conversation data.
 </details>
 
 ---
