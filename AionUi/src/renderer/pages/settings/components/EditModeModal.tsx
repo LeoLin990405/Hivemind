@@ -1,9 +1,9 @@
 import type { IProvider } from '@/common/storage';
-import ModalHOC from '@/renderer/utils/ModalHOC';
-import { Form, Input } from '@arco-design/web-react';
-import React, { useEffect, useMemo } from 'react';
+import ModalHOC from '@/renderer/components/base/ModalHOC';
+import { Input } from '@/renderer/components/ui/input';
+import { Label } from '@/renderer/components/ui/label';
+import React, { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import AionModal from '@/renderer/components/base/AionModal';
 import { LinkCloud } from '@icon-park/react';
 
 // Provider Logo imports
@@ -98,10 +98,20 @@ const ProviderLogo: React.FC<{ logo: string | null; name: string; size?: number 
   return <LinkCloud theme='outline' size={size} className='text-t-secondary flex shrink-0' />;
 };
 
-const EditModeModal = ModalHOC<{ data?: IProvider; onChange(data: IProvider): void }>(({ modalProps, modalCtrl, ...props }) => {
+interface EditModeModalProps {
+  visible: boolean;
+  data?: IProvider;
+  onChange(data: IProvider): void;
+  onCancel(): void;
+}
+
+const EditModeModal: React.FC<EditModeModalProps> = ({ visible, data, onChange, onCancel }) => {
   const { t } = useTranslation();
-  const { data } = props;
-  const [form] = Form.useForm();
+  
+  // Form state
+  const [name, setName] = useState('');
+  const [baseUrl, setBaseUrl] = useState('');
+  const [apiKey, setApiKey] = useState('');
 
   // 获取供应商 Logo / Get provider logo
   const providerLogo = useMemo(() => {
@@ -110,54 +120,112 @@ const EditModeModal = ModalHOC<{ data?: IProvider; onChange(data: IProvider): vo
 
   useEffect(() => {
     if (data) {
-      form.setFieldsValue(data);
+      setName(data.name || '');
+      setBaseUrl(data.baseUrl || '');
+      setApiKey(data.apiKey || '');
     }
-  }, [data]);
+  }, [data, visible]);
+
+  const handleSubmit = () => {
+    if (!name || !apiKey) return;
+    onChange({ ...(data || {}), name, baseUrl, apiKey });
+  };
+
+  if (!visible) return null;
+
+  const isBaseUrlRequired = data?.platform !== 'gemini' && data?.platform !== 'gemini-vertex-ai';
 
   return (
-    <AionModal
-      visible={modalProps.visible}
-      onCancel={modalCtrl.close}
-      header={{ title: t('settings.editModel'), showClose: true }}
-      style={{ minHeight: '400px', maxHeight: '90vh', borderRadius: 16 }}
-      contentStyle={{ background: 'var(--bg-1)', borderRadius: 16, padding: '20px 24px 16px', overflow: 'auto' }}
-      onOk={async () => {
-        const values = await form.validate();
-        props.onChange({ ...(data || {}), ...values });
-        modalCtrl.close();
-      }}
-      okText={t('common.save')}
-      cancelText={t('common.cancel')}
-    >
-      <div className='py-20px'>
-        <Form form={form} layout='vertical'>
-          {/* 模型供应商名称（可编辑，带 Logo）/ Model Provider name (editable, with Logo) */}
-          <Form.Item
-            label={
-              <div className='flex items-center gap-6px'>
-                <ProviderLogo logo={providerLogo} name={data?.name || ''} size={16} />
-                <span>{t('settings.modelProvider')}</span>
-              </div>
-            }
-            field='name'
-            required
-            rules={[{ required: true }]}
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
+      <div className="bg-background rounded-lg shadow-lg w-full max-w-md max-h-[90vh] overflow-auto">
+        <div className="flex items-center justify-between p-4 border-b">
+          <h2 className="text-lg font-semibold">{t('settings.editModel')}</h2>
+          <button 
+            onClick={onCancel}
+            className="text-muted-foreground hover:text-foreground"
           >
-            <Input placeholder={t('settings.modelProvider')} />
-          </Form.Item>
+            ✕
+          </button>
+        </div>
+        
+        <div className="p-6 space-y-4">
+          {/* 模型供应商名称（可编辑，带 Logo）/ Model Provider name (editable, with Logo) */}
+          <div className="space-y-2">
+            <Label className="flex items-center gap-1.5">
+              <ProviderLogo logo={providerLogo} name={data?.name || ''} size={16} />
+              <span>{t('settings.modelProvider')}</span>
+              <span className="text-destructive">*</span>
+            </Label>
+            <Input 
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              placeholder={t('settings.modelProvider')}
+              required
+            />
+          </div>
 
-          {/* Base URL - 仅 Gemini 平台显示（用于自定义代理）/ Base URL - only for Gemini platform (for custom proxy) */}
-          <Form.Item label={t('settings.baseUrl')} required={data?.platform !== 'gemini' && data?.platform !== 'gemini-vertex-ai'} rules={[{ required: data?.platform !== 'gemini' && data?.platform !== 'gemini-vertex-ai' }]} field={'baseUrl'} disabled>
-            <Input></Input>
-          </Form.Item>
+          {/* Base URL */}
+          <div className="space-y-2">
+            <Label>
+              {t('settings.baseUrl')}
+              {isBaseUrlRequired && <span className="text-destructive ml-0.5">*</span>}
+            </Label>
+            <Input 
+              value={baseUrl}
+              onChange={(e) => setBaseUrl(e.target.value)}
+              disabled={data?.platform === 'gemini' || data?.platform === 'gemini-vertex-ai'}
+              required={isBaseUrlRequired}
+            />
+          </div>
 
-          <Form.Item label={t('settings.apiKey')} required rules={[{ required: true }]} field={'apiKey'} extra={<div className='text-11px text-t-secondary mt-2'>💡 {t('settings.multiApiKeyEditTip')}</div>}>
-            <Input.TextArea rows={4} placeholder={t('settings.apiKeyPlaceholder')} />
-          </Form.Item>
-        </Form>
+          {/* API Key */}
+          <div className="space-y-2">
+            <Label>
+              {t('settings.apiKey')}
+              <span className="text-destructive ml-0.5">*</span>
+            </Label>
+            <textarea
+              value={apiKey}
+              onChange={(e) => setApiKey(e.target.value)}
+              placeholder={t('settings.apiKeyPlaceholder')}
+              rows={4}
+              className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+              required
+            />
+            <p className="text-xs text-muted-foreground">💡 {t('settings.multiApiKeyEditTip')}</p>
+          </div>
+        </div>
+
+        <div className="flex justify-end gap-2 p-4 border-t">
+          <button
+            onClick={onCancel}
+            className="px-4 py-2 rounded-md border hover:bg-accent"
+          >
+            {t('common.cancel')}
+          </button>
+          <button
+            onClick={handleSubmit}
+            disabled={!name || !apiKey}
+            className="px-4 py-2 rounded-md bg-primary text-primary-foreground hover:bg-primary/90 disabled:opacity-50"
+          >
+            {t('common.save')}
+          </button>
+        </div>
       </div>
-    </AionModal>
+    </div>
+  );
+};
+
+// 使用 ModalHOC 包装
+const EditModeModalWithHOC = ModalHOC<{ data?: IProvider; onChange(data: IProvider): void }>(({ modalProps, modalCtrl, ...props }) => {
+  return (
+    <EditModeModal
+      visible={modalProps.visible}
+      data={props.data}
+      onChange={props.onChange}
+      onCancel={modalCtrl.close}
+    />
   );
 });
 
-export default EditModeModal;
+export default EditModeModalWithHOC;
