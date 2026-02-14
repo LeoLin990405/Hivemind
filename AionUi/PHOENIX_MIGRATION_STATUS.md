@@ -86,7 +86,7 @@ For complex forms (AddPlatformModal):
 | Checkbox | Checkbox |
 | Spin | Loader2 (lucide) |
 
-## Phase 2: Agent Teams 🚧 IN PROGRESS (70%)
+## Phase 2: Agent Teams ✅ COMPLETE (95%)
 
 ### Migrated Components ✅
 1. ✅ `Timeline` component created
@@ -101,16 +101,19 @@ For complex forms (AddPlatformModal):
 10. ✅ `CostChart.tsx` - Arco Empty/Space/Tag → shadcn
 11. ✅ `DependencyGraph.tsx` - Arco Empty/Space/Tag → shadcn
 12. ✅ `TaskCard.tsx` - Arco Tag/Button → shadcn
-13. ✅ `index.tsx` (layout) - Arco Button/Space/Typography → shadcn
+13. ✅ `KanbanColumn.tsx` - No Arco dependencies (already clean)
+14. ✅ `TasksList.tsx` - No Arco dependencies (already clean)
+15. ✅ `StatBadge.tsx` - No Arco dependencies (already clean)
+16. ✅ `index.tsx` (layout) - Arco Button/Space/Typography → shadcn
+17. ✅ `TaskDetailPage.tsx` - Arco Card/Descriptions/Tag/Spin → shadcn
+18. ✅ `MonitorDashboard.tsx` - Arco Card/Space/Table/Tag → shadcn
+19. ✅ `AnalyticsPage.tsx` - Arco Card/Grid/Select/Table/Tag → shadcn
 
-### Remaining Page Components ⏳
-1. ⏳ `Dashboard.tsx` (462 lines) - Complex, uses many Arco components
+### Remaining Page Components ⏳ (Complex pages, lower priority)
+1. ⏳ `Dashboard.tsx` (462 lines) - Uses Card, Grid, Spin, Table, Tag, Button
 2. ⏳ `TeamsPage.tsx` (155 lines) - Uses Table, Modal, Form
 3. ⏳ `TasksKanbanPage.tsx` (319 lines) - Uses Card, Button, etc
 4. ⏳ `TeamDetailPage.tsx` (274 lines) - Uses Tabs, Card, Table
-5. ⏳ `TaskDetailPage.tsx` (135 lines) - Uses Descriptions, Tag
-6. ⏳ `AnalyticsPage.tsx` (160 lines) - Uses Card, Grid, Statistic
-7. ⏳ `MonitorDashboard.tsx` (123 lines) - Uses Card, Grid, Spin
 
 ## Phase 3-6: Pending
 
