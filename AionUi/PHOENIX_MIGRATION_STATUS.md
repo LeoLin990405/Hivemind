@@ -135,17 +135,39 @@ For complex forms (AddPlatformModal):
 7. ✅ `knowledge/DataviewQuery.tsx` - Arco Button/Card/Input/Message/Space/Table → shadcn
 8. ✅ `knowledge/index.tsx` - Arco Badge/Button/Card/Empty/Input/List/Message/Space/Spin/Tabs/Tag/Typography/Upload → shadcn
 
-## Phase 4-6: Pending
+## Phase 4: Conversation 🚧 85% COMPLETE
 
-- Phase 4: Conversation (18 files)
+### Migrated Files ✅
+1. ✅ `MessageAgentStatus.tsx` - Badge, Typography
+2. ✅ `MessagePlan.tsx` - Badge, Icon
+3. ✅ `MessageToolGroupSummary.tsx` - Badge, Icon
+4. ✅ `MessageToolCall.tsx` - Alert
+5. ✅ `MessagetText.tsx` - Alert, Tooltip
+6. ✅ `acp/MessageAcpPermission.tsx` - Button, Card, Radio, Typography
+7. ✅ `acp/MessageAcpToolCall.tsx` - Card, Tag
+8. ✅ `codex/ToolCallComponent/BaseToolCallDisplay.tsx` - Card, Tag
+9. ✅ `codex/ToolCallComponent/ExecCommandDisplay.tsx` - Tag
+10. ✅ `codex/ToolCallComponent/GenericDisplay.tsx` - Card, Tag
+11. ✅ `codex/ToolCallComponent/McpToolDisplay.tsx` - Tag
+12. ✅ `codex/ToolCallComponent/PatchDisplay.tsx` - Tag
+13. ✅ `ContextUsageIndicator.tsx` - Popover → shadcn Tooltip
+14. ✅ `Markdown.tsx` - Message
+
+### Remaining Files ⏳ (Complex components requiring more work)
+1. ⏳ `MessageToolGroup.tsx` (500 lines) - Alert, Button, Image, Message, Radio, Tag, Tooltip
+2. ⏳ `MessageList.tsx` (207 lines) - Image.PreviewGroup
+3. ⏳ `sendbox.tsx` (350 lines) - Button, Input, Message, Tag (uses Message.useMessage hook)
+
+## Phase 5-6: Pending
+
 - Phase 5: Monitor/Cron (8 files)
 - Phase 6: Cleanup & Optimization
 
 ## Statistics
 
-- **Total Commits**: 14
-- **Files Modified**: 70+
-- **Lines Changed**: +6,500, -1,500
+- **Total Commits**: 17
+- **Files Modified**: 75+
+- **Lines Changed**: +8,000, -2,000
 - **UI Components**: 24 (added Avatar)
 - **Test Files**: 5
 
@@ -154,7 +176,7 @@ For complex forms (AddPlatformModal):
 - Phase 1: ✅ 100% (Settings Pages - 9 files)
 - Phase 2: ✅ 100% (Agent Teams - 23 files)
 - Phase 3: ✅ 100% (Knowledge/Memory - 8 files)
-- Phase 4: ⏳ 0% (Conversation - 18 files)
+- Phase 4: 🚧 85% (Conversation - 14/17 files, 3 complex files remaining)
 - Phase 5: ⏳ 0% (Monitor/Cron - 8 files)
 - Phase 6: ⏳ 0% (Cleanup & Optimization)
 
