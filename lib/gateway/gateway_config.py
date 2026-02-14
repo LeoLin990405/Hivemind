@@ -436,6 +436,15 @@ class GatewayConfig:
             timeout_s=300.0,
         )
 
+        # Obsidian (CLI) - Knowledge Base 操作工具
+        self.providers["obsidian"] = ProviderConfig(
+            name="obsidian",
+            backend_type=BackendType.CLI_EXEC,
+            cli_command="/Applications/Obsidian.app/Contents/MacOS/Obsidian",
+            cli_args=[],
+            timeout_s=30.0,
+        )
+
     def get_provider(self, name: str) -> Optional[ProviderConfig]:
         """Get provider configuration by name."""
         return self.providers.get(name)

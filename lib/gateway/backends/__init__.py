@@ -10,6 +10,7 @@ Provides different backend types for communicating with AI providers:
 from .base_backend import BaseBackend, BackendResult
 from .http import HTTPBackend
 from .cli import CLIBackend, InteractiveCLIBackend
+from .obsidian_backend import ObsidianBackend
 
 __all__ = [
     "BaseBackend",
@@ -17,4 +18,5 @@ __all__ = [
     "HTTPBackend",
     "CLIBackend",
     "InteractiveCLIBackend",
+    "ObsidianBackend",
 ]

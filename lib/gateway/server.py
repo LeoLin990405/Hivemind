@@ -26,7 +26,7 @@ from .models import (
 from .state_store import StateStore
 from .request_queue import RequestQueue, AsyncRequestQueue
 from .gateway_config import GatewayConfig
-from .backends import BaseBackend, HTTPBackend, CLIBackend
+from .backends import BaseBackend, HTTPBackend, CLIBackend, ObsidianBackend
 from .backends.base_backend import BackendResult
 from .server_requests import (
     process_request as process_request_impl,
@@ -180,7 +180,10 @@ class GatewayServer:
                 if pconfig.backend_type == BackendType.HTTP_API:
                     self.backends[name] = HTTPBackend(pconfig)
                 elif pconfig.backend_type == BackendType.CLI_EXEC:
-                    self.backends[name] = CLIBackend(pconfig)
+                    if name == "obsidian":
+                        self.backends[name] = ObsidianBackend(pconfig)
+                    else:
+                        self.backends[name] = CLIBackend(pconfig)
                 # FIFO and Terminal backends can be added later
             except (RuntimeError, ValueError, TypeError, KeyError, AttributeError, OSError):
                 logger.exception("Failed to initialize backend for %s", name)

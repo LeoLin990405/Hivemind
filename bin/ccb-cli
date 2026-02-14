@@ -104,6 +104,7 @@ Providers 和模型选项:
   gemini [model] <prompt>             - Gemini
   qoder <prompt>                      - Qoder 代码助手
   claude <prompt>                     - Claude (另一个 Claude 实例)
+  obsidian <command|prompt>           - Obsidian CLI (知识库操作)
 
 模型快捷方式:
   deepseek reasoner  = deepseek-reasoner
@@ -404,6 +405,19 @@ parse_and_call() {
         claude)
             # Claude: call another Claude instance via Gateway
             message="${args[*]}"
+            ;;
+        obsidian)
+            # Obsidian CLI: supports two modes
+            # 1) Direct command mode: ccb-cli obsidian "files total"
+            # 2) Natural language mode: ccb-cli obsidian "列出所有文件"
+            message="${args[*]}"
+
+            # Detect direct Obsidian CLI command keywords
+            if [[ "$message" =~ ^(create|files|search|append|daily|daily:|folders|file|delete|aliases|backlinks|history|bookmarks|bookmark|commands|help|base:|bases) ]]; then
+                message="[OBSIDIAN_CMD] $message"
+            else
+                message="[OBSIDIAN_NL] $message"
+            fi
             ;;
         antigravity)
             # Antigravity Tools: local proxy
