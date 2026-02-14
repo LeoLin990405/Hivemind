@@ -136,6 +136,49 @@ _Cross-session context memory - AI assistants that truly understand you_
 
 ---
 
+### 🤖 **Agent Teams - Multi-AI Collaboration Platform**
+
+_Orchestrate teams of AI agents to handle complex, multi-step tasks collaboratively_
+
+- **Team Management**
+  - Create teams with custom allocation strategies (round_robin, load_balance, skill_based, priority_based, random)
+  - Real-time team status monitoring and performance analytics
+  - Configurable max teammates and task routing rules
+
+- **Task Workflow**
+  - Drag-and-drop Kanban board for visual task management
+  - Task dependency resolution and blocking detection
+  - Multiple status tracking (pending, in_progress, completed, failed, cancelled)
+  - Priority-based task execution (1-10 scale)
+
+- **Real-time Updates**
+  - Live task progress monitoring via IPC events
+  - Instant team and teammate status synchronization
+  - Message broadcasting across team members
+
+- **Cost Analytics**
+  - Track token usage (input/output) per task
+  - Real-time cost calculation in USD
+  - Per-team and per-task cost breakdown with charts
+
+- **Dependency Graph**
+  - Visualize task relationships and dependencies
+  - Automatic detection of circular dependencies
+  - Interactive graph navigation with D3.js
+
+- **Provider Integration**
+  - Support 6+ AI providers (Claude, Gemini, Kimi, Qwen, DeepSeek, CCB)
+  - Intelligent model selection and routing
+  - Fallback strategies for failed tasks
+
+<p align="center">
+  <img src="./resources/agent-teams-demo.png" alt="Agent Teams Demo" width="800">
+</p>
+
+> 💡 **Use Cases**: Complex software development projects, multi-step research tasks, collaborative content creation, automated workflows with dependencies
+
+---
+
 ### 🌐 **Access Your AionUi Anywhere**
 
 _Your 7×24 hour AI assistant - Access AionUi from any device, anywhere! On business trips, at home, in the office, use your AI tools anytime, anywhere through WebUI or various chat platforms_
