@@ -5,7 +5,7 @@
  */
 
 import type { CodexToolCallUpdate } from '@/common/chatLib';
-import { Tag } from '@arco-design/web-react';
+import { Badge } from '@/renderer/components/ui/badge';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import BaseToolCallDisplay from './BaseToolCallDisplay';
@@ -52,9 +52,9 @@ const McpToolDisplay: React.FC<{ content: McpToolUpdate }> = ({ content }) => {
           <div className='text-xs text-t-secondary mb-1'>{t('tools.labels.tool_details')}</div>
           <div className='bg-1 p-2 rounded text-sm border border-b-base'>
             <div className='flex items-center gap-2'>
-              <Tag size='small' color='blue'>
+              <Badge variant='outline'>
                 {t('tools.labels.tool')}
-              </Tag>
+              </Badge>
               <span className='font-mono text-xs text-t-primary'>{toolDetails.toolName}</span>
             </div>
             {toolDetails.arguments && (

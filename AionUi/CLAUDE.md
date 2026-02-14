@@ -4,7 +4,7 @@
 
 **AionUi** is a unified AI agent graphical interface that transforms command-line AI agents into a modern, efficient chat interface. It supports multiple CLI AI tools including Gemini CLI, Claude Code, CodeX, Qwen Code, and more.
 
-- **Version**: 1.9.0
+- **Version**: 1.11.0
 - **License**: Apache-2.0
 - **Platform**: Cross-platform (macOS, Windows, Linux)
 
@@ -183,6 +183,19 @@ This is a strict rule. Violating this will pollute the git history.
 - Based on `croner` library
 - `CronService`: Task scheduling engine
 - `CronBusyGuard`: Prevents concurrent execution
+
+
+### Skills Manager Subsystem (v1.11.0)
+
+- **Database**: `skills`, `ai_tools`, `skill_tool_mapping` (migration v15)
+- **Main Services**: `SkillsService`, `AIToolDetector`, `SymlinkManager`, `SyncService`
+- **IPC Bridges**: `skillsBridge`, `toolsBridge`, `syncBridge`
+- **Renderer Routes**: `/skills`, `/skills/new`, `/skills/:skillId`
+- **Core Behavior**:
+  - Tool detection updates `detected` + `last_detected_at`
+  - Sync creates symlinks from HiveMind skills root to each tool skills directory
+  - Disabling mapping now removes existing symlink immediately to avoid stale sync state
+
 
 ## Supported AI Agents
 

@@ -6,11 +6,11 @@
 
 import type { IMessageAcpPermission } from '@/common/chatLib';
 import { conversation } from '@/common/ipcBridge';
-import { Button, Card, Radio, Typography } from '@arco-design/web-react';
+import { Button } from '@/renderer/components/ui/button';
+import { Card, CardContent } from '@/renderer/components/ui/card';
+import { RadioGroup, RadioGroupItem } from '@/renderer/components/ui/radio-group';
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-
-const { Text } = Typography;
 
 interface MessageAcpPermissionProps {
   message: IMessageAcpPermission;
@@ -84,39 +84,40 @@ const MessageAcpPermission: React.FC<MessageAcpPermissionProps> = React.memo(({ 
   }
 
   return (
-    <Card className='mb-4' bordered={false} style={{ background: 'var(--bg-1)' }}>
-      <div className='space-y-4'>
+    <Card className='mb-4' style={{ background: 'var(--bg-1)' }}>
+      <CardContent className="space-y-4 pt-4">
         {/* Header with icon and title */}
         <div className='flex items-center space-x-2'>
           <span className='text-2xl'>{icon}</span>
-          <Text className='block'>{title}</Text>
+          <span className="block">{title}</span>
         </div>
         {(toolCall.rawInput?.command || toolCall.title) && (
           <div>
-            <Text className='text-xs text-t-secondary mb-1'>{t('messages.command')}</Text>
+            <div className='text-xs text-t-secondary mb-1'>{t('messages.command')}</div>
             <code className='text-xs bg-1 p-2 rounded block text-t-primary break-all'>{toolCall.rawInput?.command || toolCall.title}</code>
           </div>
         )}
         {!hasResponded && (
           <>
             <div className='mt-10px'>{t('messages.chooseAction')}</div>
-            <Radio.Group direction='vertical' size='mini' value={selected} onChange={setSelected}>
+            <RadioGroup value={selected || ''} onValueChange={setSelected} className="flex flex-col gap-2">
               {options && options.length > 0 ? (
                 options.map((option, index) => {
                   const optionName = option?.name || `${t('messages.option')} ${index + 1}`;
                   const optionId = option?.optionId || `option_${index}`;
                   return (
-                    <Radio key={optionId} value={optionId}>
-                      {optionName}
-                    </Radio>
+                    <div key={optionId} className="flex items-center space-x-2">
+                      <RadioGroupItem value={optionId} id={optionId} />
+                      <label htmlFor={optionId} className="text-sm cursor-pointer">{optionName}</label>
+                    </div>
                   );
                 })
               ) : (
-                <Text type='secondary'>{t('messages.noOptionsAvailable')}</Text>
+                <span className="text-sm text-muted-foreground">{t('messages.noOptionsAvailable')}</span>
               )}
-            </Radio.Group>
+            </RadioGroup>
             <div className='flex justify-start pl-20px'>
-              <Button type='primary' size='mini' disabled={!selected || isResponding} onClick={handleConfirm}>
+              <Button size='sm' disabled={!selected || isResponding} onClick={handleConfirm}>
                 {isResponding ? t('messages.processing') : t('messages.confirm')}
               </Button>
             </div>
@@ -125,12 +126,12 @@ const MessageAcpPermission: React.FC<MessageAcpPermissionProps> = React.memo(({ 
 
         {hasResponded && (
           <div className='mt-10px p-2 rounded-md border' style={{ backgroundColor: 'var(--color-success-light-1)', borderColor: 'rgb(var(--success-3))' }}>
-            <Text className='text-sm' style={{ color: 'rgb(var(--success-6))' }}>
+            <span className='text-sm' style={{ color: 'rgb(var(--success-6))' }}>
               ✓ {t('messages.responseSentSuccessfully')}
-            </Text>
+            </span>
           </div>
         )}
-      </div>
+      </CardContent>
     </Card>
   );
 });

@@ -1487,4 +1487,15 @@
     "monitor": "Monitor",
     "analytics": "Analytics"
   }
+  ,"skills": {
+    "title": "Skills",
+    "subtitle": "Manage and sync reusable skills across AI tools.",
+    "newSkill": "New Skill",
+    "syncAll": "Sync All",
+    "detectTools": "Detect Tools",
+    "tools": "Tools",
+    "editor": "Skill Editor",
+    "enableForTools": "Enable for Tools"
+  }
+
 }

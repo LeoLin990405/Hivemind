@@ -5,8 +5,8 @@
  */
 
 import { ipcBridge } from '@/common';
+import type { ISkill, ISkillDetail, ISkillToolMappingView } from '@/common/ipcBridge';
 import { skillsService, syncService } from '@process/services/skills';
-import type { ISkillDetail, ISkillToolMappingView, ISkill } from '@/common/ipcBridge';
 
 const ok = <T>(data?: T) => ({ success: true, data });
 const fail = (msg: string) => ({ success: false, msg });
@@ -59,7 +59,7 @@ export function initSkillsBridge(): void {
       const tools = syncService.listTools();
       const enabledTools = new Set(params.enabled_tools || []);
       for (const tool of tools) {
-        syncService.setMappingEnabled(skill.id, tool.id, enabledTools.has(tool.id));
+        await syncService.setMappingEnabled(skill.id, tool.id, enabledTools.has(tool.id));
       }
 
       const detail: ISkillDetail = {
@@ -86,7 +86,7 @@ export function initSkillsBridge(): void {
         const tools = syncService.listTools();
         const enabledTools = new Set(updates.enabled_tools);
         for (const tool of tools) {
-          syncService.setMappingEnabled(skill.id, tool.id, enabledTools.has(tool.id));
+          await syncService.setMappingEnabled(skill.id, tool.id, enabledTools.has(tool.id));
         }
       }
 

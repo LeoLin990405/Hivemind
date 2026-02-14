@@ -5,8 +5,8 @@
  */
 
 import { ipcBridge } from '@/common';
-import { syncService } from '@process/services/skills';
 import type { ISkillToolMappingView } from '@/common/ipcBridge';
+import { syncService } from '@process/services/skills';
 
 const ok = <T>(data?: T) => ({ success: true, data });
 const fail = (msg: string) => ({ success: false, msg });
@@ -58,7 +58,7 @@ export function initSyncBridge(): void {
 
   ipcBridge.sync.setMappingEnabled.provider(async ({ skill_id, tool_id, enabled }) => {
     try {
-      syncService.setMappingEnabled(skill_id, tool_id, enabled);
+      await syncService.setMappingEnabled(skill_id, tool_id, enabled);
       return ok({ success: true });
     } catch (error) {
       return fail(error instanceof Error ? error.message : String(error));

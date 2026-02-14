@@ -5,7 +5,7 @@
  */
 
 import type { CodexToolCallUpdate } from '@/common/chatLib';
-import { Tag } from '@arco-design/web-react';
+import { Badge } from '@/renderer/components/ui/badge';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import BaseToolCallDisplay from './BaseToolCallDisplay';
@@ -38,9 +38,9 @@ const ExecCommandDisplay: React.FC<{ content: ExecCommandUpdate }> = ({ content 
     const tags = [];
     if (subtype === 'exec_command_end' && 'exit_code' in data && data.exit_code !== undefined) {
       tags.push(
-        <Tag key='exit-code' color={data.exit_code === 0 ? 'green' : 'red'}>
+        <Badge key='exit-code' variant={data.exit_code === 0 ? 'default' : 'destructive'}>
           {t('tools.labels.exit_code', { code: data.exit_code })}
-        </Tag>
+        </Badge>
       );
     }
     if (subtype === 'exec_command_end' && 'duration' in data && data.duration) {
@@ -49,9 +49,9 @@ const ExecCommandDisplay: React.FC<{ content: ExecCommandUpdate }> = ({ content 
       const formattedDuration = totalSeconds < 1 ? `${Math.round(totalSeconds * 1000)}ms` : `${totalSeconds.toFixed(2)}s`;
 
       tags.push(
-        <Tag key='duration' color='blue'>
+        <Badge key='duration' variant='outline'>
           {t('tools.labels.duration', { seconds: formattedDuration })}
-        </Tag>
+        </Badge>
       );
     }
     return tags.length > 0 ? <>{tags}</> : null;

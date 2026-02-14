@@ -1,4 +1,4 @@
-import { ArrowCircleLeft, Plus, SettingTwo } from '@icon-park/react';
+import { ArrowCircleLeft, Plus, SettingTwo, Toolkit } from '@icon-park/react';
 import React, { useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useLocation, useNavigate } from 'react-router-dom';
@@ -26,6 +26,7 @@ const Sider: React.FC<SiderProps> = ({ onSessionClick, collapsed = false }) => {
   const isKnowledge = pathname.startsWith('/knowledge');
   const isMemory = pathname.startsWith('/memory');
   const isAgentTeams = pathname.startsWith('/agent-teams');
+  const isSkills = pathname.startsWith('/skills');
   const lastNonSettingsPathRef = useRef('/guid');
 
   useEffect(() => {
@@ -99,6 +100,23 @@ const Sider: React.FC<SiderProps> = ({ onSessionClick, collapsed = false }) => {
     }
   };
 
+
+
+  const handleSkillsClick = () => {
+    if (isSkills) {
+      Promise.resolve(navigate('/guid')).catch((error) => {
+        console.error('Navigation failed:', error);
+      });
+    } else {
+      Promise.resolve(navigate('/skills')).catch((error) => {
+        console.error('Navigation failed:', error);
+      });
+    }
+
+    if (onSessionClick) {
+      onSessionClick();
+    }
+  };
   const handleMemoryClick = () => {
     if (isMemory) {
       Promise.resolve(navigate('/guid')).catch((error) => {
@@ -168,6 +186,17 @@ const Sider: React.FC<SiderProps> = ({ onSessionClick, collapsed = false }) => {
           <div onClick={handleMonitorClick} className='flex items-center justify-start gap-10px px-12px py-8px hover:bg-hover rd-0.5rem mb-8px cursor-pointer'>
             <IconDashboard className='flex text-22px' />
             <span className='collapsed-hidden text-t-primary'>{t('monitor.title', { defaultValue: 'Monitor' })}</span>
+          </div>
+        </Tooltip>
+      </div>
+
+
+      {/* Footer - Skills button */}
+      <div className='shrink-0'>
+        <Tooltip disabled={!collapsed} content={t('skills.title', { defaultValue: 'Skills' })} position='right'>
+          <div onClick={handleSkillsClick} className='flex items-center justify-start gap-10px px-12px py-8px hover:bg-hover rd-0.5rem mb-8px cursor-pointer'>
+            <Toolkit className='flex' theme='outline' size='22' fill={iconColors.primary} />
+            <span className='collapsed-hidden text-t-primary'>{t('skills.title', { defaultValue: 'Skills' })}</span>
           </div>
         </Tooltip>
       </div>

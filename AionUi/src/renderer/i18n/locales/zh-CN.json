@@ -1506,4 +1506,15 @@
     "monitor": "监控",
     "analytics": "分析"
   }
+  ,"skills": {
+    "title": "技能管理",
+    "subtitle": "统一管理并同步到多个 AI 工具。",
+    "newSkill": "新建技能",
+    "syncAll": "全部同步",
+    "detectTools": "检测工具",
+    "tools": "工具",
+    "editor": "技能编辑器",
+    "enableForTools": "启用到工具"
+  }
+
 }

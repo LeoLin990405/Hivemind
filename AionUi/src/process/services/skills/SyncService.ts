@@ -48,11 +48,29 @@ export class SyncService {
       .run(createId(), skillId, toolId, now, now);
   }
 
-  setMappingEnabled(skillId: string, toolId: string, enabled: boolean): void {
+  async setMappingEnabled(skillId: string, toolId: string, enabled: boolean): Promise<void> {
     this.ensureMapping(skillId, toolId);
+
+    if (!enabled) {
+      const existing = this.db
+        .prepare('SELECT symlink_path FROM skill_tool_mapping WHERE skill_id = ? AND tool_id = ?')
+        .get(skillId, toolId) as { symlink_path?: string } | undefined;
+
+      if (existing?.symlink_path) {
+        await this.symlinkManager.removeSymlink(existing.symlink_path);
+      }
+
+      this.db
+        .prepare(
+          'UPDATE skill_tool_mapping SET enabled = 0, synced = 0, symlink_path = NULL, sync_error = NULL, updated_at = ? WHERE skill_id = ? AND tool_id = ?'
+        )
+        .run(Date.now(), skillId, toolId);
+      return;
+    }
+
     this.db
-      .prepare('UPDATE skill_tool_mapping SET enabled = ?, updated_at = ? WHERE skill_id = ? AND tool_id = ?')
-      .run(enabled ? 1 : 0, Date.now(), skillId, toolId);
+      .prepare('UPDATE skill_tool_mapping SET enabled = 1, updated_at = ? WHERE skill_id = ? AND tool_id = ?')
+      .run(Date.now(), skillId, toolId);
   }
 
   async executeAll(): Promise<ISyncResult[]> {
@@ -169,8 +187,6 @@ export class SyncService {
       .run(Date.now(), skillId, toolId);
   }
 
-
-
   getMappingsForSkill(skillId: string): Array<{ tool_id: string; enabled: number; synced: number; symlink_path: string | null; sync_error: string | null }> {
     const rows = this.db
       .prepare(
@@ -185,6 +201,7 @@ export class SyncService {
 
     return rows;
   }
+
   status(): { totalSkills: number; syncedSkills: number; errors: number } {
     const totalSkills = (this.db.prepare('SELECT COUNT(*) as cnt FROM skills').get() as any).cnt as number;
     const syncedSkills = (this.db.prepare('SELECT COUNT(*) as cnt FROM skill_tool_mapping WHERE synced = 1').get() as any).cnt as number;

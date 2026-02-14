@@ -30,6 +30,8 @@ import TasksKanbanPage from './pages/agentTeams/TasksKanbanPage';
 import TaskDetailPage from './pages/agentTeams/TaskDetailPage';
 import AgentTeamsMonitorDashboard from './pages/agentTeams/MonitorDashboard';
 import AgentTeamsAnalyticsPage from './pages/agentTeams/AnalyticsPage';
+import SkillsPage from './pages/skills';
+import SkillEditor from './pages/skills/SkillEditor';
 
 const ProtectedLayout: React.FC<{ layout: React.ReactElement }> = ({ layout }) => {
   const { status } = useAuth();
@@ -76,6 +78,10 @@ const PanelRoute: React.FC<{ layout: React.ReactElement }> = ({ layout }) => {
             <Route path='monitor' element={<AgentTeamsMonitorDashboard />} />
             <Route path='analytics' element={<AgentTeamsAnalyticsPage />} />
           </Route>
+
+          <Route path='/skills' element={<SkillsPage />} />
+          <Route path='/skills/new' element={<SkillEditor />} />
+          <Route path='/skills/:skillId' element={<SkillEditor />} />
           <Route path='/settings/gemini' element={<GeminiSettings />} />
           <Route path='/settings/model' element={<ModeSettings />} />
           <Route path='/settings/agent' element={<AgentSettings />} />

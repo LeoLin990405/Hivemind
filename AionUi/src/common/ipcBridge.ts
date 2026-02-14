@@ -413,7 +413,7 @@ export interface IAgentTeamExecutionResult {
   started: number;
   completed: number;
   failed: number;
-
+}
 
 // ==================
 // Skills Manager Types
@@ -468,8 +468,6 @@ export interface ISkillToolMappingView {
   symlink_path: string | null;
   sync_error: string | null;
 }
-}
-
 
 export const agentTeams = {
   createTeam: bridge.buildProvider<IBridgeResponse<IAgentTeam>, { name: string; description?: string; max_teammates?: number; task_allocation_strategy?: AgentAllocationStrategy; metadata?: Record<string, unknown> }>('agent-teams.create-team'),

@@ -7,7 +7,7 @@
 import type { IMessageText } from '@/common/chatLib';
 import { AIONUI_FILES_MARKER } from '@/common/constants';
 import { iconColors } from '@/renderer/theme/colors';
-import { Alert, Tooltip } from '@arco-design/web-react';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/renderer/components/ui/tooltip';
 import { Copy } from '@icon-park/react';
 import classNames from 'classnames';
 import React, { useMemo, useState } from 'react';
@@ -87,11 +87,18 @@ const MessageText: React.FC<{ message: IMessageText }> = ({ message }) => {
   };
 
   const copyButton = (
-    <Tooltip content={t('common.copy', { defaultValue: 'Copy' })}>
-      <div className='p-4px rd-4px cursor-pointer hover:bg-3 transition-colors opacity-0 pointer-events-none group-hover:opacity-100 group-hover:pointer-events-auto focus-within:opacity-100 focus-within:pointer-events-auto' onClick={handleCopy} style={{ lineHeight: 0 }}>
-        <Copy theme='outline' size='16' fill={iconColors.secondary} />
-      </div>
-    </Tooltip>
+    <TooltipProvider>
+      <Tooltip>
+        <TooltipTrigger asChild>
+          <div className='p-4px rd-4px cursor-pointer hover:bg-3 transition-colors opacity-0 pointer-events-none group-hover:opacity-100 group-hover:pointer-events-auto focus-within:opacity-100 focus-within:pointer-events-auto' onClick={handleCopy} style={{ lineHeight: 0 }}>
+            <Copy theme='outline' size='16' fill={iconColors.secondary} />
+          </div>
+        </TooltipTrigger>
+        <TooltipContent>
+          <p>{t('common.copy', { defaultValue: 'Copy' })}</p>
+        </TooltipContent>
+      </Tooltip>
+    </TooltipProvider>
   );
 
   return (
@@ -135,7 +142,11 @@ const MessageText: React.FC<{ message: IMessageText }> = ({ message }) => {
           {copyButton}
         </div>
       </div>
-      {showCopyAlert && <Alert type='success' content={t('messages.copySuccess')} showIcon className='fixed top-20px left-50% transform -translate-x-50% z-9999 w-max max-w-[80%]' style={{ boxShadow: '0px 2px 12px rgba(0,0,0,0.12)' }} closable={false} />}
+      {showCopyAlert && (
+        <div className="fixed top-5 left-1/2 -translate-x-1/2 z-[9999] bg-green-500 text-white px-4 py-2 rounded-md shadow-lg flex items-center gap-2">
+          <span>{t('messages.copySuccess')}</span>
+        </div>
+      )}
     </>
   );
 };

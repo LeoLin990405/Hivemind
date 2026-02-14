@@ -8,7 +8,7 @@ import type { IMessageToolCall } from '@/common/chatLib';
 import FileChangesPanel from '@/renderer/components/base/FileChangesPanel';
 import { useDiffPreviewHandlers } from '@/renderer/hooks/useDiffPreviewHandlers';
 import { parseDiff } from '@/renderer/utils/diffUtils';
-import { Alert } from '@arco-design/web-react';
+import { Alert, AlertDescription } from '@/renderer/components/ui/alert';
 import { MessageSearch } from '@icon-park/react';
 import { createTwoFilesPatch } from 'diff';
 import React, { useMemo } from 'react';
@@ -33,13 +33,25 @@ const MessageToolCall: React.FC<{ message: IMessageToolCall }> = ({ message }) =
   if (['list_directory', 'read_file', 'write_file'].includes(message.content.name)) {
     const { absolute_path, path, file_path = absolute_path || path, status } = message.content.args;
     const OpName = message.content.name === 'read_file' ? 'ReadFile' : 'WriteFile';
-    return <Alert content={OpName + ':' + file_path} type={status === 'error' ? 'error' : status === 'success' ? 'success' : 'info'}></Alert>;
+    const variant = status === 'error' ? 'destructive' : status === 'success' ? 'default' : 'default';
+    return (
+      <Alert variant={variant}>
+        <AlertDescription>{OpName + ':' + file_path}</AlertDescription>
+      </Alert>
+    );
   }
   if (message.content.name === 'google_web_search') {
-    return <Alert icon={<MessageSearch theme='outline' fill={iconColors.primary} className='lh-[1]' />} content={message.content.args.query}></Alert>;
+    return (
+      <Alert>
+        <MessageSearch theme='outline' fill={iconColors.primary} className='h-4 w-4 mr-2' />
+        <AlertDescription>{message.content.args.query}</AlertDescription>
+      </Alert>
+    );
   }
   if (message.content.name === 'run_shell_command') {
-    const shellSnippet = `\`\`\`shell\n${message.content.args.command}\n#${message.content.args.description}`;
+    const shellSnippet = `\`\`\`shell
+${message.content.args.command}
+#${message.content.args.description}`;
     return <MarkdownView>{shellSnippet}</MarkdownView>;
   }
   if (message.content.name === 'replace') {

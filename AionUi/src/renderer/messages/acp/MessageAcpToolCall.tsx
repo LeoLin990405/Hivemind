@@ -8,7 +8,8 @@ import type { IMessageAcpToolCall } from '@/common/chatLib';
 import FileChangesPanel from '@/renderer/components/base/FileChangesPanel';
 import { useDiffPreviewHandlers } from '@/renderer/hooks/useDiffPreviewHandlers';
 import { parseDiff } from '@/renderer/utils/diffUtils';
-import { Card, Tag } from '@arco-design/web-react';
+import { Card, CardContent } from '@/renderer/components/ui/card';
+import { Badge } from '@/renderer/components/ui/badge';
 import { createTwoFilesPatch } from 'diff';
 import React, { useMemo } from 'react';
 import MarkdownView from '../../components/Markdown';
@@ -17,16 +18,16 @@ const StatusTag: React.FC<{ status: string }> = ({ status }) => {
   const getTagProps = () => {
     switch (status) {
       case 'pending':
-        return { color: 'blue', text: 'Pending' };
+        return { variant: 'default' as const, text: 'Pending' };
       case 'in_progress':
-        return { color: 'orange', text: 'In Progress' };
+        return { variant: 'secondary' as const, text: 'In Progress' };
       default:
-        return { color: 'gray', text: status };
+        return { variant: 'outline' as const, text: status };
     }
   };
 
-  const { color, text } = getTagProps();
-  return <Tag color={color}>{text}</Tag>;
+  const { variant, text } = getTagProps();
+  return <Badge variant={variant}>{text}</Badge>;
 };
 
 // Diff content display as a separate component to ensure hooks are called unconditionally
@@ -82,24 +83,26 @@ const MessageAcpToolCall: React.FC<{ message: IMessageAcpToolCall }> = ({ messag
   };
 
   return (
-    <Card className='w-full mb-2' size='small' bordered>
-      <div className='flex items-start gap-3'>
-        <div className='flex-1 min-w-0'>
-          <div className='flex items-center gap-2 mb-2'>
-            <span className='font-medium text-t-primary'>{title || getKindDisplayName(kind)}</span>
-            <StatusTag status={status} />
-          </div>
-          {rawInput && <div className='text-sm'>{typeof rawInput === 'string' ? <MarkdownView>{`\`\`\`\n${rawInput}\n\`\`\``}</MarkdownView> : <pre className='bg-1 p-2 rounded text-xs overflow-x-auto'>{JSON.stringify(rawInput, null, 2)}</pre>}</div>}
-          {diffContent && diffContent.length > 0 && (
-            <div>
-              {diffContent.map((content, index) => (
-                <ContentView key={index} content={content} />
-              ))}
+    <Card className='w-full mb-2'>
+      <CardContent className="p-4">
+        <div className='flex items-start gap-3'>
+          <div className='flex-1 min-w-0'>
+            <div className='flex items-center gap-2 mb-2'>
+              <span className='font-medium text-t-primary'>{title || getKindDisplayName(kind)}</span>
+              <StatusTag status={status} />
             </div>
-          )}
-          <div className='text-xs text-t-secondary mt-2'>Tool Call ID: {toolCallId}</div>
+            {rawInput && <div className='text-sm'>{typeof rawInput === 'string' ? <MarkdownView>{`\`\`\`\n${rawInput}\n\`\`\``}</MarkdownView> : <pre className='bg-1 p-2 rounded text-xs overflow-x-auto'>{JSON.stringify(rawInput, null, 2)}</pre>}</div>}
+            {diffContent && diffContent.length > 0 && (
+              <div>
+                {diffContent.map((content, index) => (
+                  <ContentView key={index} content={content} />
+                ))}
+              </div>
+            )}
+            <div className='text-xs text-t-secondary mt-2'>Tool Call ID: {toolCallId}</div>
+          </div>
         </div>
-      </div>
+      </CardContent>
     </Card>
   );
 };

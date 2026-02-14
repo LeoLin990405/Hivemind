@@ -5,6 +5,45 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.11.0] - 2026-02-14
+
+### Added
+
+#### 🧩 Skills Manager Integration
+
+- Added Skills Manager database schema and migration (`skills`, `ai_tools`, `skill_tool_mapping`)
+- Added backend skills services:
+  - `SkillsService` (skill CRUD + file persistence)
+  - `AIToolDetector` (local tool detection)
+  - `SymlinkManager` (symlink create/remove)
+  - `SyncService` (mapping + sync orchestration)
+- Added IPC bridges for skills/tooling/sync workflows:
+  - `skillsBridge`
+  - `toolsBridge`
+  - `syncBridge`
+- Added Skills Manager UI:
+  - `src/renderer/pages/skills/index.tsx`
+  - `src/renderer/pages/skills/SkillEditor.tsx`
+  - `src/renderer/pages/skills/components/*`
+- Added navigation and routes:
+  - `/skills`
+  - `/skills/new`
+  - `/skills/:skillId`
+
+### Changed
+
+- Improved sync failure feedback in Skills page with clearer user-facing messages
+- Disabling a skill-tool mapping now removes existing symlink immediately
+- Updated package version to `1.11.0`
+
+### Tests
+
+- Added unit tests for Skills Manager services:
+  - `SkillsService`
+  - `AIToolDetector`
+  - `SymlinkManager`
+  - `SyncService` flow tests (sync/edit reflection/unsync/disable)
+
 ## [1.10.0] - 2026-02-14
 
 ### Added
@@ -91,4 +130,5 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [1.9.0] - Previous Release
 
 ### Added
+
 - Initial release features

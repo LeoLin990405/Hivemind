@@ -5,7 +5,7 @@
  */
 
 import type { CodexToolCallUpdate } from '@/common/chatLib';
-import { Tag } from '@arco-design/web-react';
+import { Badge } from '@/renderer/components/ui/badge';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import BaseToolCallDisplay from './BaseToolCallDisplay';
@@ -31,7 +31,7 @@ const PatchDisplay: React.FC<{ content: PatchUpdate }> = ({ content }) => {
 
   const getAdditionalTags = () => {
     if (subtype === 'patch_apply_begin' && 'auto_approved' in data && data.auto_approved !== undefined) {
-      return <Tag color={data.auto_approved ? 'green' : 'orange'}>{data.auto_approved ? t('tools.labels.auto_approved') : t('tools.labels.manual_approval')}</Tag>;
+      return <Badge variant={data.auto_approved ? 'default' : 'secondary'}>{data.auto_approved ? t('tools.labels.auto_approved') : t('tools.labels.manual_approval')}</Badge>;
     }
     return null;
   };
@@ -67,9 +67,9 @@ const PatchDisplay: React.FC<{ content: PatchUpdate }> = ({ content }) => {
           <div className='bg-1 p-2 rounded text-sm'>
             {changeSummary.map(({ file, action }, index) => (
               <div key={index} className='flex items-center gap-2'>
-                <Tag size='small' color={action === 'create' ? 'green' : action === 'delete' ? 'red' : 'blue'}>
+                <Badge variant={action === 'create' ? 'default' : action === 'delete' ? 'destructive' : 'outline'}>
                   {t(`tools.actions.${action}`, { defaultValue: action })}
-                </Tag>
+                </Badge>
                 <span className='font-mono text-xs'>{file}</span>
               </div>
             ))}

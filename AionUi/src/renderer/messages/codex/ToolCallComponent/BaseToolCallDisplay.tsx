@@ -4,7 +4,8 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { Card, Tag } from '@arco-design/web-react';
+import { Card, CardContent } from '@/renderer/components/ui/card';
+import { Badge } from '@/renderer/components/ui/badge';
 import type { ReactNode } from 'react';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
@@ -15,22 +16,22 @@ export const StatusTag: React.FC<{ status: string }> = ({ status }) => {
   const getTagProps = () => {
     switch (status) {
       case 'pending':
-        return { color: 'blue', text: t('tools.status.pending') };
+        return { variant: 'default' as const, text: t('tools.status.pending') };
       case 'executing':
-        return { color: 'orange', text: t('tools.status.executing') };
+        return { variant: 'secondary' as const, text: t('tools.status.executing') };
       case 'success':
-        return { color: 'green', text: t('tools.status.success') };
+        return { variant: 'default' as const, text: t('tools.status.success') };
       case 'error':
-        return { color: 'red', text: t('tools.status.error') };
+        return { variant: 'destructive' as const, text: t('tools.status.error') };
       case 'canceled':
-        return { color: 'gray', text: t('tools.status.canceled') };
+        return { variant: 'outline' as const, text: t('tools.status.canceled') };
       default:
-        return { color: 'gray', text: status };
+        return { variant: 'outline' as const, text: status };
     }
   };
 
-  const { color, text } = getTagProps();
-  return <Tag color={color}>{text}</Tag>;
+  const { variant, text } = getTagProps();
+  return <Badge variant={variant}>{text}</Badge>;
 };
 
 interface BaseToolCallDisplayProps {
@@ -45,24 +46,26 @@ interface BaseToolCallDisplayProps {
 
 const BaseToolCallDisplay: React.FC<BaseToolCallDisplayProps> = ({ toolCallId, title, status, description, icon, additionalTags, children }) => {
   return (
-    <Card className='w-full mb-2' size='small' bordered>
-      <div className='flex items-start gap-3'>
-        <div className='flex-1 min-w-0'>
-          <div className='flex items-center gap-2 mb-2'>
-            <span className='text-lg'>{icon}</span>
-            <span className='font-medium text-t-primary'>{title}</span>
-            <StatusTag status={status} />
-            {additionalTags}
+    <Card className='w-full mb-2'>
+      <CardContent className="p-4">
+        <div className='flex items-start gap-3'>
+          <div className='flex-1 min-w-0'>
+            <div className='flex items-center gap-2 mb-2'>
+              <span className='text-lg'>{icon}</span>
+              <span className='font-medium text-t-primary'>{title}</span>
+              <StatusTag status={status} />
+              {additionalTags}
+            </div>
+
+            {description && <div className='text-sm text-t-secondary mb-2 overflow-hidden'>{description}</div>}
+
+            {/* 特定工具的详细信息 */}
+            {children}
+
+            <div className='text-xs text-t-secondary mt-2'>Tool Call ID: {toolCallId}</div>
           </div>
-
-          {description && <div className='text-sm text-t-secondary mb-2 overflow-hidden'>{description}</div>}
-
-          {/* 特定工具的详细信息 */}
-          {children}
-
-          <div className='text-xs text-t-secondary mt-2'>Tool Call ID: {toolCallId}</div>
         </div>
-      </div>
+      </CardContent>
     </Card>
   );
 };

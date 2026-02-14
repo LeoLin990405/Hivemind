@@ -302,6 +302,24 @@ AionUi includes **10+ professional assistants** with predefined capabilities, ex
 
 </details>
 
+
+### 🧩 **Skills Manager (v1.11.0)**
+
+_Manage reusable skills centrally, then sync to Claude Code / Codex / OpenCode with one click._
+
+- ✅ **Unified Skills Workspace** - Create, edit, delete skills from `/skills`
+- ✅ **Tool Detection** - Detect local AI tools and show availability status
+- ✅ **Per-Tool Mapping** - Enable/disable each skill for each tool independently
+- ✅ **Symlink Sync** - Sync all enabled mappings and track sync status/errors
+- ✅ **Monaco Editor** - Edit `SKILL.md` with markdown support inside HiveMind
+
+**Quick Start**
+
+1. Open **Skills** from the left sidebar
+2. Click **Detect Tools** to refresh local tool status
+3. Create or edit a skill, then choose target tools
+4. Click **Sync All** and verify status badges
+
 ### 🎨 **Personalized Interface Customization**
 
 _Customize with your own CSS code, make your interface match your preferences_
