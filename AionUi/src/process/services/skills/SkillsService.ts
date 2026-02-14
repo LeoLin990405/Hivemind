@@ -79,16 +79,7 @@ export class SkillsService {
     return row ? this.rowToSkill(row) : null;
   }
 
-  async createSkill(params: {
-    name: string;
-    category: string;
-    description?: string;
-    content: string;
-    manifest?: Record<string, unknown>;
-    version?: string;
-    author?: string;
-    tags?: string[];
-  }): Promise<ISkill> {
+  async createSkill(params: { name: string; category: string; description?: string; content: string; manifest?: Record<string, unknown>; version?: string; author?: string; tags?: string[] }): Promise<ISkill> {
     const id = createId();
     const now = Date.now();
 
@@ -110,20 +101,7 @@ export class SkillsService {
       ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     `);
 
-    stmt.run(
-      id,
-      params.name,
-      params.category,
-      params.description || null,
-      relativeFilePath,
-      params.content,
-      manifestText,
-      now,
-      now,
-      params.version || '1.0.0',
-      params.author || null,
-      JSON.stringify(params.tags || [])
-    );
+    stmt.run(id, params.name, params.category, params.description || null, relativeFilePath, params.content, manifestText, now, now, params.version || '1.0.0', params.author || null, JSON.stringify(params.tags || []));
 
     const created = this.getSkillById(id);
     if (!created) {
@@ -175,16 +153,7 @@ export class SkillsService {
       WHERE id = ?
     `);
 
-    stmt.run(
-      updates.description !== undefined ? updates.description : skill.description,
-      nextContent,
-      nextManifestText,
-      now,
-      updates.version !== undefined ? updates.version : skill.version,
-      updates.author !== undefined ? updates.author : skill.author,
-      JSON.stringify(updates.tags ?? skill.tags ?? []),
-      id
-    );
+    stmt.run(updates.description !== undefined ? updates.description : skill.description, nextContent, nextManifestText, now, updates.version !== undefined ? updates.version : skill.version, updates.author !== undefined ? updates.author : skill.author, JSON.stringify(updates.tags ?? skill.tags ?? []), id);
 
     const updated = this.getSkillById(id);
     if (!updated) {

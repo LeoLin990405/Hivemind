@@ -1,24 +1,11 @@
 import React, { useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useLocation, useNavigate } from 'react-router-dom';
-import {
-  ArrowLeftCircle,
-  BookOpen,
-  History,
-  LayoutDashboard,
-  Plus,
-  Settings,
-  Wrench,
-} from 'lucide-react';
+import { ArrowLeftCircle, BookOpen, History, LayoutDashboard, Plus, Settings, Wrench } from 'lucide-react';
 import WorkspaceGroupedHistory from './pages/conversation/WorkspaceGroupedHistory';
 import SettingsSider from './pages/settings/SettingsSider';
 import { iconColors } from './theme/colors';
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from '@/renderer/components/ui/tooltip';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/renderer/components/ui/tooltip';
 import { usePreviewContext } from './pages/conversation/preview';
 
 interface SiderProps {
@@ -145,17 +132,17 @@ const Sider: React.FC<SiderProps> = ({ onSessionClick, collapsed = false }) => {
 
   return (
     <TooltipProvider>
-      <div className="size-full flex flex-col">
+      <div className='size-full flex flex-col'>
         {/* Main content area */}
-        <div className="flex-1 min-h-0 overflow-y-auto">
+        <div className='flex-1 min-h-0 overflow-y-auto'>
           {isSettings ? (
             <SettingsSider collapsed={collapsed}></SettingsSider>
           ) : (
-            <div className="size-full flex flex-col">
+            <div className='size-full flex flex-col'>
               <Tooltip>
                 <TooltipTrigger asChild>
                   <div
-                    className="flex items-center justify-start gap-10px px-12px py-8px hover:bg-hover rd-0.5rem mb-8px cursor-pointer group shrink-0"
+                    className='flex items-center justify-start gap-10px px-12px py-8px hover:bg-hover rd-0.5rem mb-8px cursor-pointer group shrink-0'
                     onClick={() => {
                       closePreview();
                       Promise.resolve(navigate('/guid')).catch((error) => {
@@ -167,170 +154,89 @@ const Sider: React.FC<SiderProps> = ({ onSessionClick, collapsed = false }) => {
                       }
                     }}
                   >
-                    <Plus
-                      className="flex"
-                      style={{ color: iconColors.primary }}
-                      size={24}
-                    />
-                    <span className="collapsed-hidden font-bold text-t-primary">
-                      {t('conversation.welcome.newConversation')}
-                    </span>
+                    <Plus className='flex' style={{ color: iconColors.primary }} size={24} />
+                    <span className='collapsed-hidden font-bold text-t-primary'>{t('conversation.welcome.newConversation')}</span>
                   </div>
                 </TooltipTrigger>
-                {collapsed && (
-                  <TooltipContent side="right">
-                    {t('conversation.welcome.newConversation')}
-                  </TooltipContent>
-                )}
+                {collapsed && <TooltipContent side='right'>{t('conversation.welcome.newConversation')}</TooltipContent>}
               </Tooltip>
-              <WorkspaceGroupedHistory
-                collapsed={collapsed}
-                onSessionClick={onSessionClick}
-              ></WorkspaceGroupedHistory>
+              <WorkspaceGroupedHistory collapsed={collapsed} onSessionClick={onSessionClick}></WorkspaceGroupedHistory>
             </div>
           )}
         </div>
         {/* Footer - Knowledge Hub button */}
-        <div className="shrink-0">
+        <div className='shrink-0'>
           <Tooltip>
             <TooltipTrigger asChild>
-              <div
-                onClick={handleKnowledgeClick}
-                className="flex items-center justify-start gap-10px px-12px py-8px hover:bg-hover rd-0.5rem mb-8px cursor-pointer"
-              >
-                <BookOpen className="flex text-22px" />
-                <span className="collapsed-hidden text-t-primary">
-                  {t('knowledge.title', { defaultValue: 'Knowledge Hub' })}
-                </span>
+              <div onClick={handleKnowledgeClick} className='flex items-center justify-start gap-10px px-12px py-8px hover:bg-hover rd-0.5rem mb-8px cursor-pointer'>
+                <BookOpen className='flex text-22px' />
+                <span className='collapsed-hidden text-t-primary'>{t('knowledge.title', { defaultValue: 'Knowledge Hub' })}</span>
               </div>
             </TooltipTrigger>
-            {collapsed && (
-              <TooltipContent side="right">
-                {t('knowledge.title', { defaultValue: 'Knowledge Hub' })}
-              </TooltipContent>
-            )}
+            {collapsed && <TooltipContent side='right'>{t('knowledge.title', { defaultValue: 'Knowledge Hub' })}</TooltipContent>}
           </Tooltip>
         </div>
         {/* Footer - Memory Hub button */}
-        <div className="shrink-0">
+        <div className='shrink-0'>
           <Tooltip>
             <TooltipTrigger asChild>
-              <div
-                onClick={handleMemoryClick}
-                className="flex items-center justify-start gap-10px px-12px py-8px hover:bg-hover rd-0.5rem mb-8px cursor-pointer"
-              >
-                <History className="flex text-22px" />
-                <span className="collapsed-hidden text-t-primary">
-                  {t('memory.title')}
-                </span>
+              <div onClick={handleMemoryClick} className='flex items-center justify-start gap-10px px-12px py-8px hover:bg-hover rd-0.5rem mb-8px cursor-pointer'>
+                <History className='flex text-22px' />
+                <span className='collapsed-hidden text-t-primary'>{t('memory.title')}</span>
               </div>
             </TooltipTrigger>
-            {collapsed && (
-              <TooltipContent side="right">{t('memory.title')}</TooltipContent>
-            )}
+            {collapsed && <TooltipContent side='right'>{t('memory.title')}</TooltipContent>}
           </Tooltip>
         </div>
         {/* Footer - monitor button */}
-        <div className="shrink-0">
+        <div className='shrink-0'>
           <Tooltip>
             <TooltipTrigger asChild>
-              <div
-                onClick={handleMonitorClick}
-                className="flex items-center justify-start gap-10px px-12px py-8px hover:bg-hover rd-0.5rem mb-8px cursor-pointer"
-              >
-                <LayoutDashboard className="flex text-22px" />
-                <span className="collapsed-hidden text-t-primary">
-                  {t('monitor.title', { defaultValue: 'Monitor' })}
-                </span>
+              <div onClick={handleMonitorClick} className='flex items-center justify-start gap-10px px-12px py-8px hover:bg-hover rd-0.5rem mb-8px cursor-pointer'>
+                <LayoutDashboard className='flex text-22px' />
+                <span className='collapsed-hidden text-t-primary'>{t('monitor.title', { defaultValue: 'Monitor' })}</span>
               </div>
             </TooltipTrigger>
-            {collapsed && (
-              <TooltipContent side="right">
-                {t('monitor.title', { defaultValue: 'Monitor' })}
-              </TooltipContent>
-            )}
+            {collapsed && <TooltipContent side='right'>{t('monitor.title', { defaultValue: 'Monitor' })}</TooltipContent>}
           </Tooltip>
         </div>
 
         {/* Footer - Skills button */}
-        <div className="shrink-0">
+        <div className='shrink-0'>
           <Tooltip>
             <TooltipTrigger asChild>
-              <div
-                onClick={handleSkillsClick}
-                className="flex items-center justify-start gap-10px px-12px py-8px hover:bg-hover rd-0.5rem mb-8px cursor-pointer"
-              >
-                <Wrench
-                  className="flex"
-                  style={{ color: iconColors.primary }}
-                  size={22}
-                />
-                <span className="collapsed-hidden text-t-primary">
-                  {t('skills.title', { defaultValue: 'Skills' })}
-                </span>
+              <div onClick={handleSkillsClick} className='flex items-center justify-start gap-10px px-12px py-8px hover:bg-hover rd-0.5rem mb-8px cursor-pointer'>
+                <Wrench className='flex' style={{ color: iconColors.primary }} size={22} />
+                <span className='collapsed-hidden text-t-primary'>{t('skills.title', { defaultValue: 'Skills' })}</span>
               </div>
             </TooltipTrigger>
-            {collapsed && (
-              <TooltipContent side="right">
-                {t('skills.title', { defaultValue: 'Skills' })}
-              </TooltipContent>
-            )}
+            {collapsed && <TooltipContent side='right'>{t('skills.title', { defaultValue: 'Skills' })}</TooltipContent>}
           </Tooltip>
         </div>
 
         {/* Footer - Agent Teams button */}
-        <div className="shrink-0">
+        <div className='shrink-0'>
           <Tooltip>
             <TooltipTrigger asChild>
-              <div
-                onClick={handleAgentTeamsClick}
-                className="flex items-center justify-start gap-10px px-12px py-8px hover:bg-hover rd-0.5rem mb-8px cursor-pointer"
-              >
-                <LayoutDashboard className="flex text-22px" />
-                <span className="collapsed-hidden text-t-primary">
-                  {t('agentTeams.title', { defaultValue: 'Agent Teams' })}
-                </span>
+              <div onClick={handleAgentTeamsClick} className='flex items-center justify-start gap-10px px-12px py-8px hover:bg-hover rd-0.5rem mb-8px cursor-pointer'>
+                <LayoutDashboard className='flex text-22px' />
+                <span className='collapsed-hidden text-t-primary'>{t('agentTeams.title', { defaultValue: 'Agent Teams' })}</span>
               </div>
             </TooltipTrigger>
-            {collapsed && (
-              <TooltipContent side="right">
-                {t('agentTeams.title', { defaultValue: 'Agent Teams' })}
-              </TooltipContent>
-            )}
+            {collapsed && <TooltipContent side='right'>{t('agentTeams.title', { defaultValue: 'Agent Teams' })}</TooltipContent>}
           </Tooltip>
         </div>
 
         {/* Footer - settings button */}
-        <div className="shrink-0 sider-footer">
+        <div className='shrink-0 sider-footer'>
           <Tooltip>
             <TooltipTrigger asChild>
-              <div
-                onClick={handleSettingsClick}
-                className="flex items-center justify-start gap-10px px-12px py-8px hover:bg-hover rd-0.5rem mb-8px cursor-pointer"
-              >
-                {isSettings ? (
-                  <ArrowLeftCircle
-                    className="flex"
-                    style={{ color: iconColors.primary }}
-                    size={24}
-                  />
-                ) : (
-                  <Settings
-                    className="flex"
-                    style={{ color: iconColors.primary }}
-                    size={24}
-                  />
-                )}
-                <span className="collapsed-hidden text-t-primary">
-                  {isSettings ? t('common.back') : t('common.settings')}
-                </span>
+              <div onClick={handleSettingsClick} className='flex items-center justify-start gap-10px px-12px py-8px hover:bg-hover rd-0.5rem mb-8px cursor-pointer'>
+                {isSettings ? <ArrowLeftCircle className='flex' style={{ color: iconColors.primary }} size={24} /> : <Settings className='flex' style={{ color: iconColors.primary }} size={24} />}
+                <span className='collapsed-hidden text-t-primary'>{isSettings ? t('common.back') : t('common.settings')}</span>
               </div>
             </TooltipTrigger>
-            {collapsed && (
-              <TooltipContent side="right">
-                {isSettings ? t('common.back') : t('common.settings')}
-              </TooltipContent>
-            )}
+            {collapsed && <TooltipContent side='right'>{isSettings ? t('common.back') : t('common.settings')}</TooltipContent>}
           </Tooltip>
         </div>
       </div>

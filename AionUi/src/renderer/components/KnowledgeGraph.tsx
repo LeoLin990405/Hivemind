@@ -72,9 +72,7 @@ const KnowledgeGraph: React.FC<KnowledgeGraphProps> = ({ nodes, edges, width = 9
   if (nodes.length === 0) {
     return (
       <Card>
-        <CardContent className="flex items-center justify-center py-12 text-muted-foreground">
-          暂无可视化节点数据
-        </CardContent>
+        <CardContent className='flex items-center justify-center py-12 text-muted-foreground'>暂无可视化节点数据</CardContent>
       </Card>
     );
   }
@@ -115,9 +113,7 @@ const KnowledgeGraph: React.FC<KnowledgeGraphProps> = ({ nodes, edges, width = 9
           </svg>
         </div>
 
-        <div className="mt-3 text-sm text-muted-foreground">
-          节点大小表示来源占用比例，连线表示同类或高活跃笔记的关联。
-        </div>
+        <div className='mt-3 text-sm text-muted-foreground'>节点大小表示来源占用比例，连线表示同类或高活跃笔记的关联。</div>
       </CardContent>
     </Card>
   );

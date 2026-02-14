@@ -134,12 +134,7 @@ const ChatLayout: React.FC<{
   const { data: customAgents } = useSWR(backend === 'custom' && !agentName ? 'acp.customAgents' : null, () => ConfigStorage.get('acp.customAgents'));
 
   // Compute display name with fallback chain (use first custom agent as fallback for backward compatibility)
-  const displayName =
-    agentName ||
-    (backend === 'custom' && customAgents?.[0]?.name) ||
-    (backend === 'hivemind' ? 'Hivemind' : undefined) ||
-    ACP_BACKENDS_ALL[backend as keyof typeof ACP_BACKENDS_ALL]?.name ||
-    backend;
+  const displayName = agentName || (backend === 'custom' && customAgents?.[0]?.name) || (backend === 'hivemind' ? 'Hivemind' : undefined) || ACP_BACKENDS_ALL[backend as keyof typeof ACP_BACKENDS_ALL]?.name || backend;
 
   // 获取 tabs 状态，有 tabs 时隐藏会话标题
   const { openTabs } = useConversationTabs();
@@ -474,7 +469,9 @@ const ChatLayout: React.FC<{
             <WorkspacePanelHeader showToggle={!isMacRuntime && !isWindowsRuntime} collapsed={rightSiderCollapsed} onToggle={() => dispatchWorkspaceToggleEvent()} togglePlacement={layout?.isMobile ? 'left' : 'right'}>
               {props.siderTitle}
             </WorkspacePanelHeader>
-            <main className='overflow-hidden' style={{ height: `calc(100% - ${WORKSPACE_HEADER_HEIGHT}px)` }}>{props.sider}</main>
+            <main className='overflow-hidden' style={{ height: `calc(100% - ${WORKSPACE_HEADER_HEIGHT}px)` }}>
+              {props.sider}
+            </main>
           </div>
         )}
 

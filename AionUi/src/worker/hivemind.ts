@@ -10,4 +10,3 @@ export {};
 if (require.main === module) {
   console.log('Hivemind worker started');
 }
-

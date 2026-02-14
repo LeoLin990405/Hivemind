@@ -27,8 +27,11 @@ import { iconColors } from '@/renderer/theme/colors';
 import { emitter, useAddEventListener } from '@/renderer/utils/emitter';
 import { buildDisplayMessage, collectSelectedFiles } from '@/renderer/utils/messageFiles';
 import { mergeFileSelectionItems } from '@/renderer/utils/fileSelection';
-import { Button, Message, Select, Tag } from '@arco-design/web-react';
-import { Plus } from '@icon-park/react';
+import { Button } from '@/renderer/components/ui/button';
+import { Badge } from '@/renderer/components/ui/badge';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/renderer/components/ui/select';
+import { toast } from 'sonner';
+import { Plus, X } from 'lucide-react';
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import HivemindProviderBadge from './HivemindProviderBadge';
@@ -312,7 +315,7 @@ const HivemindSendBox: React.FC<{ conversation_id: string; gatewayUrl?: string }
             const fallbackProvider = resolveFallbackProvider(providerForError);
             if (fallbackProvider) {
               setSelectedProviderRef.current(fallbackProvider);
-              Message.warning(
+              toast.warning(
                 tRef.current('hivemind.quotaSwitched', {
                   from: providerForError || 'unknown',
                   to: fallbackProvider,
@@ -660,67 +663,71 @@ const HivemindSendBox: React.FC<{ conversation_id: string; gatewayUrl?: string }
   const providerSelector = useMemo(
     () => (
       <Select
-        size='mini'
         value={selectedProvider ?? ''}
-        style={{
-          width: 180,
-          borderRadius: DesignTokens.radius.md,
-          transition: DesignTokens.transitions.fast,
+        onValueChange={(value: string) => {
+          setSelectedProvider(value || null);
         }}
         disabled={running || aiProcessing || !gatewayConnected}
-        onChange={(value) => {
-          const normalized = typeof value === 'string' ? value : '';
-          setSelectedProvider(normalized || null);
-        }}
-        renderFormat={(_option, value) => {
-          const optionValue = typeof value === 'string' ? value : '';
-          const selected = HIVEMIND_PROVIDER_OPTIONS.find((opt) => opt.value === optionValue);
-          const label = selected?.label ?? optionValue;
-          const healthColor = getProviderHealthColor(optionValue);
-          return (
-            <span className='flex items-center gap-4px'>
-              {healthColor && (
-                <span
-                  style={{
-                    width: 6,
-                    height: 6,
-                    borderRadius: '50%',
-                    backgroundColor: healthColor,
-                    display: 'inline-block',
-                    flexShrink: 0,
-                  }}
-                />
-              )}
-              {label}
-            </span>
-          );
-        }}
       >
-        {HIVEMIND_PROVIDER_OPTIONS.map((opt) => {
-          const healthColor = getProviderHealthColor(opt.value);
-          return (
-            <Select.Option key={opt.value} value={opt.value}>
-              <span className='flex items-center gap-4px'>
-                {healthColor && (
-                  <span
-                    style={{
-                      width: 6,
-                      height: 6,
-                      borderRadius: '50%',
-                      backgroundColor: healthColor,
-                      display: 'inline-block',
-                      flexShrink: 0,
-                    }}
-                  />
-                )}
-                {opt.label}
-              </span>
-            </Select.Option>
-          );
-        })}
+        <SelectTrigger 
+          className="w-[180px] h-7 text-xs"
+          style={{
+            borderRadius: DesignTokens.radius.md,
+          }}
+        >
+          <SelectValue placeholder={t('hivemind.selectProvider')}>
+            {(() => {
+              const optionValue = selectedProvider ?? '';
+              const selected = HIVEMIND_PROVIDER_OPTIONS.find((opt) => opt.value === optionValue);
+              const label = selected?.label ?? optionValue;
+              const healthColor = getProviderHealthColor(optionValue);
+              return (
+                <span className='flex items-center gap-1'>
+                  {healthColor && (
+                    <span
+                      style={{
+                        width: 6,
+                        height: 6,
+                        borderRadius: '50%',
+                        backgroundColor: healthColor,
+                        display: 'inline-block',
+                        flexShrink: 0,
+                      }}
+                    />
+                  )}
+                  {label}
+                </span>
+              );
+            })()}
+          </SelectValue>
+        </SelectTrigger>
+        <SelectContent>
+          {HIVEMIND_PROVIDER_OPTIONS.map((opt) => {
+            const healthColor = getProviderHealthColor(opt.value);
+            return (
+              <SelectItem key={opt.value} value={opt.value} className="text-xs">
+                <span className='flex items-center gap-1'>
+                  {healthColor && (
+                    <span
+                      style={{
+                        width: 6,
+                        height: 6,
+                        borderRadius: '50%',
+                        backgroundColor: healthColor,
+                        display: 'inline-block',
+                        flexShrink: 0,
+                      }}
+                    />
+                  )}
+                  {opt.label}
+                </span>
+              </SelectItem>
+            );
+          })}
+        </SelectContent>
       </Select>
     ),
-    [selectedProvider, running, aiProcessing, gatewayConnected, setSelectedProvider, getProviderHealthColor]
+    [selectedProvider, running, aiProcessing, gatewayConnected, setSelectedProvider, getProviderHealthColor, t]
   );
 
   const sendButtonPrefix = useMemo(() => {
@@ -754,9 +761,9 @@ const HivemindSendBox: React.FC<{ conversation_id: string; gatewayUrl?: string }
         lockMultiLine={true}
         tools={
           <Button
-            type='secondary'
-            shape='circle'
-            icon={<Plus theme='outline' size='14' strokeWidth={2} fill={iconColors.primary} />}
+            variant='secondary'
+            size='icon'
+            className='rounded-full'
             onClick={() => {
               void ipcBridge.dialog.showOpen.invoke({ properties: ['openFile', 'multiSelections'] }).then((files) => {
                 if (!files?.length) {
@@ -765,7 +772,9 @@ const HivemindSendBox: React.FC<{ conversation_id: string; gatewayUrl?: string }
                 setUploadFile([...uploadFile, ...files]);
               });
             }}
-          />
+          >
+            <Plus size={14} strokeWidth={2} color={iconColors.primary} />
+          </Button>
         }
         prefix={
           <>
@@ -802,18 +811,23 @@ const HivemindSendBox: React.FC<{ conversation_id: string; gatewayUrl?: string }
                   if (typeof item === 'string') return null;
                   if (!item.isFile) {
                     return (
-                      <Tag
+                      <Badge
                         key={item.path}
-                        color='blue'
-                        closable
-                        onClose={() => {
-                          const newAtPath = atPath.filter((v) => (typeof v === 'string' ? true : v.path !== item.path));
-                          emitter.emit('hivemind.selected.file', newAtPath as any);
-                          setAtPath(newAtPath as any);
-                        }}
+                        variant='secondary'
+                        className='gap-1 pr-1'
                       >
                         {item.name}
-                      </Tag>
+                        <button
+                          onClick={() => {
+                            const newAtPath = atPath.filter((v) => (typeof v === 'string' ? true : v.path !== item.path));
+                            emitter.emit('hivemind.selected.file', newAtPath as any);
+                            setAtPath(newAtPath as any);
+                          }}
+                          className='ml-1 rounded-full hover:bg-muted p-0.5'
+                        >
+                          <X size={12} />
+                        </button>
+                      </Badge>
                     );
                   }
                   return null;

@@ -80,9 +80,6 @@ export function initSchema(db: Database.Database): void {
     CREATE INDEX IF NOT EXISTS idx_messages_conversation_created ON messages(conversation_id, created_at);
   `);
 
-
-
-
   // Skills Manager tables
   db.exec(`
     CREATE TABLE IF NOT EXISTS skills (

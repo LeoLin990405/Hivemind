@@ -6,7 +6,7 @@
 
 import type { PreviewMetadata } from '../../context/PreviewContext';
 import { useTextSelection } from '@/renderer/hooks/useTextSelection';
-import { Checkbox } from '@arco-design/web-react';
+import { Checkbox } from '@/renderer/components/ui/checkbox';
 import classNames from 'classnames';
 import { html } from 'diff2html';
 import 'diff2html/bundles/css/diff2html.min.css';
@@ -128,9 +128,12 @@ const DiffPreview: React.FC<DiffPreviewProps> = ({ content, hideToolbar = false,
 
           <div className='flex items-center gap-8px'>
             {viewMode === 'preview' && (
-              <Checkbox className='whitespace-nowrap text-12px' checked={sideBySide} onChange={(value) => setSideBySide(value)}>
-                <span className='text-12px text-t-secondary'>side-by-side</span>
-              </Checkbox>
+              <div className='flex items-center gap-2 whitespace-nowrap text-12px'>
+                <Checkbox id='side-by-side' checked={sideBySide} onCheckedChange={(checked) => setSideBySide(checked === true)} />
+                <label htmlFor='side-by-side' className='text-12px text-t-secondary cursor-pointer'>
+                  side-by-side
+                </label>
+              </div>
             )}
             <div className='flex items-center gap-4px px-8px py-4px rd-4px cursor-pointer hover:bg-bg-3 transition-colors' onClick={handleDownload} title={t('preview.downloadDiff')}>
               <svg width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='currentColor' strokeWidth='2' className='text-t-secondary'>
@@ -164,9 +167,12 @@ const DiffPreview: React.FC<DiffPreviewProps> = ({ content, hideToolbar = false,
       {viewMode === 'preview' &&
         operatorRef.current &&
         ReactDOM.createPortal(
-          <Checkbox className='whitespace-nowrap' checked={sideBySide} onChange={(value) => setSideBySide(value)}>
-            <span className='whitespace-nowrap'>side-by-side</span>
-          </Checkbox>,
+          <div className='flex items-center gap-2'>
+            <Checkbox id='portal-side-by-side' checked={sideBySide} onCheckedChange={(checked) => setSideBySide(checked === true)} />
+            <label htmlFor='portal-side-by-side' className='whitespace-nowrap text-sm cursor-pointer'>
+              side-by-side
+            </label>
+          </div>,
           operatorRef.current
         )}
 

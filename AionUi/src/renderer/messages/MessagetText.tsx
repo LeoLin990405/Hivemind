@@ -143,7 +143,7 @@ const MessageText: React.FC<{ message: IMessageText }> = ({ message }) => {
         </div>
       </div>
       {showCopyAlert && (
-        <div className="fixed top-5 left-1/2 -translate-x-1/2 z-[9999] bg-green-500 text-white px-4 py-2 rounded-md shadow-lg flex items-center gap-2">
+        <div className='fixed top-5 left-1/2 -translate-x-1/2 z-[9999] bg-green-500 text-white px-4 py-2 rounded-md shadow-lg flex items-center gap-2'>
           <span>{t('messages.copySuccess')}</span>
         </div>
       )}

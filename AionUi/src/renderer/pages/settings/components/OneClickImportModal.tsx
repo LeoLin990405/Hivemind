@@ -1,13 +1,7 @@
 import type { IMcpServer, IMcpTool } from '@/common/storage';
 import { acpConversation, mcpService } from '@/common/ipcBridge';
 import { Button } from '@/renderer/components/ui/button';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/renderer/components/ui/select';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/renderer/components/ui/select';
 import { Loader2 } from 'lucide-react';
 import { Check } from '@icon-park/react';
 import { iconColors } from '@/renderer/theme/colors';
@@ -154,7 +148,7 @@ const OneClickImportModal: React.FC<OneClickImportModalProps> = ({ visible, onCa
   const renderStep1 = () => (
     <div className='py-4'>
       <Select value={selectedAgent} onValueChange={setSelectedAgent}>
-        <SelectTrigger className="w-full">
+        <SelectTrigger className='w-full'>
           <SelectValue placeholder={t('settings.mcpSelectCLI')} />
         </SelectTrigger>
         <SelectContent>
@@ -174,7 +168,7 @@ const OneClickImportModal: React.FC<OneClickImportModalProps> = ({ visible, onCa
       {loadingImport ? (
         <div className='py-8'>
           <div className='flex items-center gap-3 bg-fill-1 rounded-lg p-4'>
-            <Loader2 size={20} className="animate-spin" />
+            <Loader2 size={20} className='animate-spin' />
             <div className='text-t-secondary text-sm'>{t('settings.mcpLoadingTools')}</div>
           </div>
         </div>
@@ -229,7 +223,7 @@ const OneClickImportModal: React.FC<OneClickImportModalProps> = ({ visible, onCa
     <div className='flex justify-end gap-10px'>
       {currentStep === 1 && (
         <>
-          <Button onClick={onCancel} variant="outline" className='min-w-[100px]'>
+          <Button onClick={onCancel} variant='outline' className='min-w-[100px]'>
             {t('common.cancel')}
           </Button>
           <Button onClick={handleNextStep} disabled={!selectedAgent} className='min-w-[120px]'>
@@ -239,7 +233,7 @@ const OneClickImportModal: React.FC<OneClickImportModalProps> = ({ visible, onCa
       )}
       {currentStep === 2 && (
         <>
-          <Button onClick={handlePrevStep} variant="outline" className='min-w-[100px]'>
+          <Button onClick={handlePrevStep} variant='outline' className='min-w-[100px]'>
             {t('settings.mcpPrevStep')}
           </Button>
           <Button onClick={handleNextStep} disabled={loadingImport || importableServers.length === 0} className='min-w-[120px]'>
@@ -256,14 +250,7 @@ const OneClickImportModal: React.FC<OneClickImportModalProps> = ({ visible, onCa
   );
 
   return (
-    <AionModal 
-      header={{ title: t('settings.mcpOneKeyImport'), showClose: true }} 
-      visible={visible} 
-      onCancel={onCancel} 
-      footer={{ render: renderFooter }} 
-      style={{ width: 600, height: 420 }} 
-      contentStyle={{ borderRadius: 16, padding: '24px', background: 'var(--bg-1)', overflow: 'hidden', height: 420 - 96 }}
-    >
+    <AionModal header={{ title: t('settings.mcpOneKeyImport'), showClose: true }} visible={visible} onCancel={onCancel} footer={{ render: renderFooter }} style={{ width: 600, height: 420 }} contentStyle={{ borderRadius: 16, padding: '24px', background: 'var(--bg-1)', overflow: 'hidden', height: 420 - 96 }}>
       <div className='flex flex-col h-275px mt-20px'>
         <div className='mb-6 text-t-secondary text-sm'>{t('settings.mcpImportDescription')}</div>
 

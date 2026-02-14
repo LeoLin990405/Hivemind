@@ -19,10 +19,7 @@ interface RealtimeUpdateCallbacks {
  * 实时更新 Hook
  * 订阅 Agent Teams 的实时更新事件
  */
-export function useRealtimeUpdates(
-  teamId: string | null,
-  callbacks: RealtimeUpdateCallbacks
-) {
+export function useRealtimeUpdates(teamId: string | null, callbacks: RealtimeUpdateCallbacks) {
   const callbacksRef = useRef(callbacks);
   callbacksRef.current = callbacks;
 
@@ -70,11 +67,7 @@ export function useRealtimeUpdates(
  * 全局实时更新 Hook
  * 不限制团队 ID，接收所有更新
  */
-export function useGlobalRealtimeUpdates(callbacks: {
-  onTaskUpdate?: (teamId: string, task: IAgentTask) => void;
-  onMessageReceived?: (teamId: string, message: IAgentTeamMessage) => void;
-  onTeamUpdate?: (teamId: string, team: IAgentTeam) => void;
-}) {
+export function useGlobalRealtimeUpdates(callbacks: { onTaskUpdate?: (teamId: string, task: IAgentTask) => void; onMessageReceived?: (teamId: string, message: IAgentTeamMessage) => void; onTeamUpdate?: (teamId: string, team: IAgentTeam) => void }) {
   const callbacksRef = useRef(callbacks);
   callbacksRef.current = callbacks;
 

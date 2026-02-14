@@ -49,14 +49,14 @@ const DependencyGraph: React.FC<DependencyGraphProps> = ({ tasks }) => {
   if (tasks.length === 0) {
     return (
       <div style={{ padding: '24px', textAlign: 'center' }}>
-        <div className="text-muted-foreground">No tasks yet</div>
+        <div className='text-muted-foreground'>No tasks yet</div>
       </div>
     );
   }
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-      <Typography variant="h6">Dependency Graph</Typography>
+      <Typography variant='h6'>Dependency Graph</Typography>
       <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
         {nodeRows.map(({ task, deps, dependents, isReady }) => (
           <motion.div
@@ -68,32 +68,36 @@ const DependencyGraph: React.FC<DependencyGraphProps> = ({ tasks }) => {
               background: 'var(--bg-1)',
               borderRadius: 'var(--radius-md)',
               border: '1px solid var(--color-border)',
-              boxShadow: 'var(--shadow-sm)'
+              boxShadow: 'var(--shadow-sm)',
             }}
           >
-            <div className="flex flex-col w-full gap-2">
+            <div className='flex flex-col w-full gap-2'>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                 <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
-                  <Typography variant="body2" bold>{task.subject}</Typography>
+                  <Typography variant='body2' bold>
+                    {task.subject}
+                  </Typography>
                   <Badge variant={statusVariant[task.status]}>{task.status}</Badge>
-                  {task.status === 'pending' && (
-                    <Badge variant={isReady ? 'default' : 'secondary'}>
-                      {isReady ? 'READY' : 'BLOCKED'}
-                    </Badge>
-                  )}
+                  {task.status === 'pending' && <Badge variant={isReady ? 'default' : 'secondary'}>{isReady ? 'READY' : 'BLOCKED'}</Badge>}
                 </div>
-                <Typography variant="caption" color="tertiary">Priority P{task.priority}</Typography>
+                <Typography variant='caption' color='tertiary'>
+                  Priority P{task.priority}
+                </Typography>
               </div>
 
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px', marginTop: '8px' }}>
                 <div>
-                  <Typography variant="caption" color="secondary" bold style={{ marginBottom: '4px', display: 'block' }}>Depends on:</Typography>
+                  <Typography variant='caption' color='secondary' bold style={{ marginBottom: '4px', display: 'block' }}>
+                    Depends on:
+                  </Typography>
                   <div style={{ display: 'flex', gap: '4px', flexWrap: 'wrap' }}>
                     {deps.length === 0 ? (
-                      <Typography variant="caption" color="tertiary">None</Typography>
+                      <Typography variant='caption' color='tertiary'>
+                        None
+                      </Typography>
                     ) : (
                       deps.map((dep) => (
-                        <Badge key={dep.id} variant="outline">
+                        <Badge key={dep.id} variant='outline'>
                           {dep.subject}
                         </Badge>
                       ))
@@ -102,13 +106,17 @@ const DependencyGraph: React.FC<DependencyGraphProps> = ({ tasks }) => {
                 </div>
 
                 <div>
-                  <Typography variant="caption" color="secondary" bold style={{ marginBottom: '4px', display: 'block' }}>Blocks:</Typography>
+                  <Typography variant='caption' color='secondary' bold style={{ marginBottom: '4px', display: 'block' }}>
+                    Blocks:
+                  </Typography>
                   <div style={{ display: 'flex', gap: '4px', flexWrap: 'wrap' }}>
                     {dependents.length === 0 ? (
-                      <Typography variant="caption" color="tertiary">None</Typography>
+                      <Typography variant='caption' color='tertiary'>
+                        None
+                      </Typography>
                     ) : (
                       dependents.map((dep) => (
-                        <Badge key={dep.id} variant="outline">
+                        <Badge key={dep.id} variant='outline'>
                           {dep.subject}
                         </Badge>
                       ))

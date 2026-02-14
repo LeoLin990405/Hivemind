@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { IconLeft, IconRight } from '@arco-design/web-react/icon';
+import { ChevronLeft, ChevronRight } from 'lucide-react';
 import React, { useRef, useState, useEffect } from 'react';
 
 interface HorizontalFileListProps {
@@ -137,13 +137,13 @@ const HorizontalFileList: React.FC<HorizontalFileListProps> = ({ children }) => 
         >
           <button
             onClick={handleScrollLeft}
-            className='ml-0px w-28px h-28px rd-50% bg-1 flex items-center justify-center hover:bg-2 transition-colors border-1 border-solid b-color-border-2'
+            className='ml-0px w-28px h-28px rounded-full bg-1 flex items-center justify-center hover:bg-2 transition-colors border border-border-2'
             style={{
               pointerEvents: 'auto', // 按钮响应点击
               boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)',
             }}
           >
-            <IconLeft style={{ fontSize: '14px', color: 'var(--text-t-primary)' }} />
+            <ChevronLeft className="h-3.5 w-3.5" style={{ color: 'var(--text-t-primary)' }} />
           </button>
         </div>
       )}
@@ -159,13 +159,13 @@ const HorizontalFileList: React.FC<HorizontalFileListProps> = ({ children }) => 
         >
           <button
             onClick={handleScrollRight}
-            className='ml-auto mr-0px w-28px h-28px rd-50% bg-1 flex items-center justify-center hover:bg-2 transition-colors border-1 border-solid b-color-border-2'
+            className='ml-auto mr-0px w-28px h-28px rounded-full bg-1 flex items-center justify-center hover:bg-2 transition-colors border border-border-2'
             style={{
               pointerEvents: 'auto', // 按钮响应点击
               boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)',
             }}
           >
-            <IconRight style={{ fontSize: '14px', color: 'var(--text-t-primary)' }} />
+            <ChevronRight className="h-3.5 w-3.5" style={{ color: 'var(--text-t-primary)' }} />
           </button>
         </div>
       )}

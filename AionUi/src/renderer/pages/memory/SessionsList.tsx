@@ -5,14 +5,7 @@ import React, { useEffect, useState } from 'react';
 import { Button } from '@/renderer/components/ui/button';
 import { Badge } from '@/renderer/components/ui/badge';
 import { Avatar, AvatarFallback } from '@/renderer/components/ui/avatar';
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from '@/renderer/components/ui/dialog';
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/renderer/components/ui/dialog';
 import { Trash2, ExternalLink } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
@@ -85,39 +78,27 @@ const SessionsList: React.FC = () => {
     return (
       <div key={title} className='mb-24px'>
         <h3 className='text-14px font-semibold text-t-secondary mb-12px'>{title}</h3>
-        <div className="space-y-2">
+        <div className='space-y-2'>
           {items.map((item: Conversation) => (
-            <div
-              key={item.id}
-              className='hover:bg-fill-2 cursor-pointer rounded-md p-12px border flex items-center justify-between group'
-              onClick={() => navigate(`/conversation/${item.id}`)}
-            >
-              <div className="flex items-center gap-3">
-                <Avatar className="h-10 w-10">
+            <div key={item.id} className='hover:bg-fill-2 cursor-pointer rounded-md p-12px border flex items-center justify-between group' onClick={() => navigate(`/conversation/${item.id}`)}>
+              <div className='flex items-center gap-3'>
+                <Avatar className='h-10 w-10'>
                   <AvatarFallback>{item.type[0].toUpperCase()}</AvatarFallback>
                 </Avatar>
                 <div>
-                  <div className="font-medium">{item.name}</div>
+                  <div className='font-medium'>{item.name}</div>
                   <div className='flex items-center gap-8px text-sm'>
-                    <Badge variant="default">{item.type}</Badge>
-                    <Badge variant="outline">{item.message_count || 0} messages</Badge>
+                    <Badge variant='default'>{item.type}</Badge>
+                    <Badge variant='outline'>{item.message_count || 0} messages</Badge>
                     <span className='text-12px text-t-secondary'>{new Date(item.updated_at).toLocaleString()}</span>
                   </div>
                 </div>
               </div>
-              <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  onClick={(e) => handleExport(item.id, e)}
-                >
+              <div className='flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity'>
+                <Button variant='ghost' size='icon' onClick={(e) => handleExport(item.id, e)}>
                   <ExternalLink size={16} />
                 </Button>
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  onClick={(e) => confirmDelete(item.id, e)}
-                >
+                <Button variant='ghost' size='icon' onClick={(e) => confirmDelete(item.id, e)}>
                   <Trash2 size={16} />
                 </Button>
               </div>
@@ -131,17 +112,13 @@ const SessionsList: React.FC = () => {
   if (isLoading) {
     return (
       <div className='flex items-center justify-center h-full'>
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+        <div className='animate-spin rounded-full h-8 w-8 border-b-2 border-primary'></div>
       </div>
     );
   }
 
   if (sessions.length === 0) {
-    return (
-      <div className="flex flex-col items-center justify-center h-full text-muted-foreground">
-        {t('memory.sessions.empty')}
-      </div>
-    );
+    return <div className='flex flex-col items-center justify-center h-full text-muted-foreground'>{t('memory.sessions.empty')}</div>;
   }
 
   const grouped = groupSessionsByDate(sessions);
@@ -159,15 +136,13 @@ const SessionsList: React.FC = () => {
         <DialogContent>
           <DialogHeader>
             <DialogTitle>{t('memory.sessions.confirmDelete')}</DialogTitle>
-            <DialogDescription>
-              This action cannot be undone.
-            </DialogDescription>
+            <DialogDescription>This action cannot be undone.</DialogDescription>
           </DialogHeader>
           <DialogFooter>
-            <Button variant="outline" onClick={() => setDeleteDialogOpen(false)}>
+            <Button variant='outline' onClick={() => setDeleteDialogOpen(false)}>
               {t('common.cancel', { defaultValue: 'Cancel' })}
             </Button>
-            <Button variant="destructive" onClick={handleDelete}>
+            <Button variant='destructive' onClick={handleDelete}>
               {t('common.delete', { defaultValue: 'Delete' })}
             </Button>
           </DialogFooter>

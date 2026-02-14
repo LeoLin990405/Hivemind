@@ -6,8 +6,8 @@
 
 import type { AgentTeamsDatabase } from '@process/database/agentTeams';
 import type { AllocationStrategy, IAgentTask, ITeammate, TaskStatus } from './types';
-import { ProviderRouter } from './ProviderRouter';
-import { DependencyResolver } from './DependencyResolver';
+import type { ProviderRouter } from './ProviderRouter';
+import type { DependencyResolver } from './DependencyResolver';
 
 export class TaskManager {
   private readonly roundRobinState = new Map<string, number>();
@@ -18,15 +18,7 @@ export class TaskManager {
     private readonly dependencyResolver: DependencyResolver
   ) {}
 
-  createTask(params: {
-    team_id: string;
-    subject: string;
-    description: string;
-    priority?: number;
-    blocks?: string[];
-    blocked_by?: string[];
-    metadata?: unknown;
-  }): IAgentTask {
+  createTask(params: { team_id: string; subject: string; description: string; priority?: number; blocks?: string[]; blocked_by?: string[]; metadata?: unknown }): IAgentTask {
     return this.db.createTask(params);
   }
 
@@ -186,7 +178,7 @@ export class TaskManager {
     const now = Date.now();
     return this.db.updateTask(taskId, {
       status,
-      started_at: status === 'in_progress' ? task.started_at ?? now : task.started_at,
+      started_at: status === 'in_progress' ? (task.started_at ?? now) : task.started_at,
       completed_at: status === 'completed' || status === 'failed' || status === 'cancelled' ? now : task.completed_at,
     });
   }

@@ -12,9 +12,12 @@ interface TasksTabProps {
 export const TasksTab: React.FC<TasksTabProps> = ({ tasks }) => {
   const getStatusVariant = (status: string) => {
     switch (status) {
-      case 'completed': return 'default';
-      case 'failed': return 'destructive';
-      default: return 'secondary';
+      case 'completed':
+        return 'default';
+      case 'failed':
+        return 'destructive';
+      default:
+        return 'secondary';
     }
   };
 
@@ -33,18 +36,22 @@ export const TasksTab: React.FC<TasksTabProps> = ({ tasks }) => {
               border: '1px solid var(--color-border)',
               display: 'flex',
               justifyContent: 'space-between',
-              alignItems: 'center'
+              alignItems: 'center',
             }}
           >
             <div>
-              <Typography variant="body1" bold>{task.subject}</Typography>
-              <Typography variant="caption" color="secondary">{task.description}</Typography>
+              <Typography variant='body1' bold>
+                {task.subject}
+              </Typography>
+              <Typography variant='caption' color='secondary'>
+                {task.description}
+              </Typography>
             </div>
             <div style={{ display: 'flex', gap: 12, alignItems: 'center' }}>
-              <Typography variant="caption" color="secondary">P{task.priority}</Typography>
-              <Badge variant={getStatusVariant(task.status)}>
-                {task.status}
-              </Badge>
+              <Typography variant='caption' color='secondary'>
+                P{task.priority}
+              </Typography>
+              <Badge variant={getStatusVariant(task.status)}>{task.status}</Badge>
             </div>
           </motion.div>
         ))}

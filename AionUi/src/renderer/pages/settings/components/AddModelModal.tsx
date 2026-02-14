@@ -2,13 +2,7 @@ import type { IProvider } from '@/common/storage';
 import ModalHOC from '@/renderer/utils/ModalHOC';
 import AionModal from '@/renderer/components/base/AionModal';
 import { Badge } from '@/renderer/components/ui/badge';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/renderer/components/ui/select';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/renderer/components/ui/select';
 import React, { useCallback, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import useModeModeList from '../../../hooks/useModeModeList';
@@ -46,35 +40,17 @@ const AddModelModal = ModalHOC<{ data?: IProvider; onSubmit: (model: IProvider) 
   }, [data, existingModels, model, modelProtocol, isNewApi, onSubmit, modalCtrl]);
 
   return (
-    <AionModal 
-      visible={modalProps.visible} 
-      onCancel={modalCtrl.close} 
-      header={{ title: t('settings.addModel'), showClose: true }} 
-      style={{ maxHeight: '90vh' }} 
-      contentStyle={{ background: 'var(--bg-1)', borderRadius: 16, padding: '20px 24px', overflow: 'auto' }} 
-      onOk={handleConfirm} 
-      okText={t('common.confirm')} 
-      cancelText={t('common.cancel')} 
-      okButtonProps={{ disabled: !model }}
-    >
+    <AionModal visible={modalProps.visible} onCancel={modalCtrl.close} header={{ title: t('settings.addModel'), showClose: true }} style={{ maxHeight: '90vh' }} contentStyle={{ background: 'var(--bg-1)', borderRadius: 16, padding: '20px 24px', overflow: 'auto' }} onOk={handleConfirm} okText={t('common.confirm')} cancelText={t('common.cancel')} okButtonProps={{ disabled: !model }}>
       <div className='flex flex-col gap-16px pt-20px'>
         <div className='space-y-8px'>
           <div className='text-13px font-500 text-t-secondary'>{t('settings.addModelPlaceholder')}</div>
-          <Select 
-            value={model} 
-            onValueChange={setModel}
-            disabled={isLoading}
-          >
+          <Select value={model} onValueChange={setModel} disabled={isLoading}>
             <SelectTrigger>
               <SelectValue placeholder={t('settings.addModelPlaceholder')} />
             </SelectTrigger>
             <SelectContent>
               {optionsList?.map((option) => (
-                <SelectItem 
-                  key={option.value} 
-                  value={option.value}
-                  disabled={option.disabled}
-                >
+                <SelectItem key={option.value} value={option.value} disabled={option.disabled}>
                   {option.label}
                 </SelectItem>
               ))}

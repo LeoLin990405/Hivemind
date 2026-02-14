@@ -65,20 +65,7 @@ export function useArcoForm(): [FormInstance] {
 }
 
 // Form.Item 组件
-export const FormItem: React.FC<FormItemProps> = ({
-  label,
-  field,
-  required,
-  rules,
-  hidden,
-  extra,
-  validateStatus,
-  help,
-  initialValue,
-  children,
-  className,
-  layout = 'vertical',
-}) => {
+export const FormItem: React.FC<FormItemProps> = ({ label, field, required, rules, hidden, extra, validateStatus, help, initialValue, children, className, layout = 'vertical' }) => {
   if (hidden) return null;
 
   const isError = validateStatus === 'error';
@@ -86,54 +73,37 @@ export const FormItem: React.FC<FormItemProps> = ({
 
   return (
     <div className={cn('form-item mb-4', className)}>
-      {label && (
-        <label className={cn(
-          'block text-sm font-medium mb-1.5',
-          isError ? 'text-destructive' : 'text-foreground',
-          required && "after:content-['*'] after:text-destructive after:ml-0.5"
-        )}>
-          {label}
-        </label>
-      )}
-      <div className="form-item-control">
+      {label && <label className={cn('block text-sm font-medium mb-1.5', isError ? 'text-destructive' : 'text-foreground', required && "after:content-['*'] after:text-destructive after:ml-0.5")}>{label}</label>}
+      <div className='form-item-control'>
         {React.cloneElement(children as React.ReactElement<any>, {
           ...(children.props as Record<string, unknown>),
-          className: cn(
-            (children.props as { className?: string }).className,
-            isError && 'border-destructive focus-visible:ring-destructive'
-          ),
+          className: cn((children.props as { className?: string }).className, isError && 'border-destructive focus-visible:ring-destructive'),
         })}
       </div>
-      {isError && errorMessage && (
-        <div className="text-sm text-destructive mt-1">{errorMessage}</div>
-      )}
-      {extra && <div className="text-xs text-muted-foreground mt-1">{extra}</div>}
+      {isError && errorMessage && <div className='text-sm text-destructive mt-1'>{errorMessage}</div>}
+      {extra && <div className='text-xs text-muted-foreground mt-1'>{extra}</div>}
     </div>
   );
 };
 
 // Form 组件
-export const Form: React.FC<FormProps> & { 
-  Item: typeof FormItem; 
+export const Form: React.FC<FormProps> & {
+  Item: typeof FormItem;
   useForm: typeof useArcoForm;
   useWatch: (name?: string) => any;
 } = ({ form, layout = 'vertical', className, children, onSubmit }) => {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (form && onSubmit) {
-      form.validate().then(onSubmit).catch(() => {});
+      form
+        .validate()
+        .then(onSubmit)
+        .catch(() => {});
     }
   };
 
   return (
-    <form 
-      onSubmit={handleSubmit}
-      className={cn(
-        'form',
-        layout === 'vertical' && 'space-y-0',
-        className
-      )}
-    >
+    <form onSubmit={handleSubmit} className={cn('form', layout === 'vertical' && 'space-y-0', className)}>
       {children}
     </form>
   );

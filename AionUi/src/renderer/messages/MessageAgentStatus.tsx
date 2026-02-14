@@ -24,51 +24,51 @@ const MessageAgentStatus: React.FC<MessageAgentStatusProps> = ({ message }) => {
     switch (status) {
       case 'connecting':
         return (
-          <div className="flex items-center gap-2">
-            <div className="h-2 w-2 rounded-full bg-blue-500 animate-pulse" />
-            <span className="text-sm">{t('acp.status.connecting', { agent: backend })}</span>
+          <div className='flex items-center gap-2'>
+            <div className='h-2 w-2 rounded-full bg-blue-500 animate-pulse' />
+            <span className='text-sm'>{t('acp.status.connecting', { agent: backend })}</span>
           </div>
         );
       case 'connected':
         return (
-          <div className="flex items-center gap-2">
-            <div className="h-2 w-2 rounded-full bg-green-500" />
-            <span className="text-sm">{t('acp.status.connected', { agent: backend })}</span>
+          <div className='flex items-center gap-2'>
+            <div className='h-2 w-2 rounded-full bg-green-500' />
+            <span className='text-sm'>{t('acp.status.connected', { agent: backend })}</span>
           </div>
         );
       case 'authenticated':
         return (
-          <div className="flex items-center gap-2">
-            <div className="h-2 w-2 rounded-full bg-green-500" />
-            <span className="text-sm">{t('acp.status.authenticated', { agent: backend })}</span>
+          <div className='flex items-center gap-2'>
+            <div className='h-2 w-2 rounded-full bg-green-500' />
+            <span className='text-sm'>{t('acp.status.authenticated', { agent: backend })}</span>
           </div>
         );
       case 'session_active':
         return (
-          <div className="flex items-center gap-2">
-            <div className="h-2 w-2 rounded-full bg-green-500" />
-            <span className="text-sm">{t('acp.status.session_active', { agent: backend })}</span>
+          <div className='flex items-center gap-2'>
+            <div className='h-2 w-2 rounded-full bg-green-500' />
+            <span className='text-sm'>{t('acp.status.session_active', { agent: backend })}</span>
           </div>
         );
       case 'disconnected':
         return (
-          <div className="flex items-center gap-2">
-            <div className="h-2 w-2 rounded-full bg-gray-400" />
-            <span className="text-sm">{t('acp.status.disconnected', { agent: backend })}</span>
+          <div className='flex items-center gap-2'>
+            <div className='h-2 w-2 rounded-full bg-gray-400' />
+            <span className='text-sm'>{t('acp.status.disconnected', { agent: backend })}</span>
           </div>
         );
       case 'error':
         return (
-          <div className="flex items-center gap-2">
-            <div className="h-2 w-2 rounded-full bg-red-500" />
-            <span className="text-sm">{t('acp.status.error')}</span>
+          <div className='flex items-center gap-2'>
+            <div className='h-2 w-2 rounded-full bg-red-500' />
+            <span className='text-sm'>{t('acp.status.error')}</span>
           </div>
         );
       default:
         return (
-          <div className="flex items-center gap-2">
-            <div className="h-2 w-2 rounded-full bg-gray-400" />
-            <span className="text-sm">{t('acp.status.unknown')}</span>
+          <div className='flex items-center gap-2'>
+            <div className='h-2 w-2 rounded-full bg-gray-400' />
+            <span className='text-sm'>{t('acp.status.unknown')}</span>
           </div>
         );
     }
@@ -87,9 +87,7 @@ const MessageAgentStatus: React.FC<MessageAgentStatusProps> = ({ message }) => {
       }}
     >
       <div className='flex items-center gap-2'>
-        <span className="font-bold capitalize">
-          {backend.charAt(0).toUpperCase() + backend.slice(1)}
-        </span>
+        <span className='font-bold capitalize'>{backend.charAt(0).toUpperCase() + backend.slice(1)}</span>
       </div>
 
       <div className='flex-1'>{getStatusBadge()}</div>

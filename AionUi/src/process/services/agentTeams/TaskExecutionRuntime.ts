@@ -5,12 +5,13 @@
  */
 
 import type { AgentTeamsDatabase } from '@process/database/agentTeams';
-import { ProviderRouter } from './ProviderRouter';
-import { providerFactory, ProviderFactory } from './providers';
-import { SessionManager } from './SessionManager';
-import { TaskManager } from './TaskManager';
-import { TeamCoordinator } from './TeamCoordinator';
-import { MessageBroker } from './MessageBroker';
+import type { ProviderRouter } from './ProviderRouter';
+import type { ProviderFactory } from './providers';
+import { providerFactory } from './providers';
+import type { SessionManager } from './SessionManager';
+import type { TaskManager } from './TaskManager';
+import type { TeamCoordinator } from './TeamCoordinator';
+import type { MessageBroker } from './MessageBroker';
 import type { IAgentTask } from './types';
 
 export interface ITaskExecutionResult {
@@ -314,17 +315,7 @@ export class TaskExecutionRuntime {
   }
 
   private buildPrompt(task: IAgentTask): string {
-    return [
-      `Task Subject: ${task.subject}`,
-      '',
-      'Task Description:',
-      task.description,
-      '',
-      'Execution Rules:',
-      '- Return a concise actionable result.',
-      '- Include key decisions and assumptions.',
-      '- Provide any follow-up recommendations.',
-    ].join('\n');
+    return [`Task Subject: ${task.subject}`, '', 'Task Description:', task.description, '', 'Execution Rules:', '- Return a concise actionable result.', '- Include key decisions and assumptions.', '- Provide any follow-up recommendations.'].join('\n');
   }
 
   private getRetryConfig(task: IAgentTask): { maxRetries: number; backoffMs: number } {

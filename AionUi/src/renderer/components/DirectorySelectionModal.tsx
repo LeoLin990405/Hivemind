@@ -4,8 +4,9 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { Button, Modal, Spin } from '@arco-design/web-react';
-import { IconFile, IconFolder, IconUp } from '@arco-design/web-react/icon';
+import { Button } from '@/renderer/components/ui/button';
+import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from '@/renderer/components/ui/dialog';
+import { Loader2, File, Folder, ChevronUp } from 'lucide-react';
 import React, { useCallback, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
@@ -97,63 +98,73 @@ const DirectorySelectionModal: React.FC<DirectorySelectionModalProps> = ({ visib
   };
 
   return (
-    <Modal
-      visible={visible}
-      title={isFileMode ? '📄 ' + t('fileSelection.selectFile') : '📁 ' + t('fileSelection.selectDirectory')}
-      onCancel={onCancel}
-      onOk={handleConfirm}
-      okButtonProps={{ disabled: !selectedPath }}
-      className='w-[90vw] md:w-[600px]'
-      style={{ width: 'min(600px, 90vw)' }}
-      wrapStyle={{ zIndex: 3000 }}
-      maskStyle={{ zIndex: 2990 }}
-      footer={
-        <div className='w-full flex justify-between items-center'>
-          <div className='text-t-secondary text-14px overflow-hidden text-ellipsis whitespace-nowrap max-w-[70vw]' title={selectedPath || currentPath}>
+    <Dialog open={visible} onOpenChange={(open) => !open && onCancel()}>
+      <DialogContent className="sm:max-w-[600px] w-[90vw]" style={{ zIndex: 3000 }}>
+        <DialogHeader>
+          <DialogTitle>
+            {isFileMode ? '📄 ' + t('fileSelection.selectFile') : '📁 ' + t('fileSelection.selectDirectory')}
+          </DialogTitle>
+        </DialogHeader>
+        
+        <div className="relative">
+          {loading && (
+            <div className="absolute inset-0 bg-background/50 flex items-center justify-center z-10">
+              <Loader2 className="h-6 w-6 animate-spin text-primary" />
+            </div>
+          )}
+          <div className='w-full border border-border rounded-md overflow-hidden' style={{ height: 'min(400px, 60vh)' }}>
+            <div className='h-full overflow-y-auto'>
+              {directoryData.canGoUp && (
+                <div className='flex items-center p-10px border-b border-border cursor-pointer hover:bg-muted transition' onClick={handleGoUp}>
+                  <ChevronUp className='mr-10px text-muted-foreground h-4 w-4' />
+                  <span>..</span>
+                </div>
+              )}
+              {directoryData.items.map((item, index) => (
+                <div 
+                  key={index} 
+                  className='flex items-center justify-between p-10px border-b border-border cursor-pointer hover:bg-muted transition' 
+                  style={selectedPath === item.path ? { background: 'var(--brand-light)' } : {}} 
+                  onClick={() => handleItemClick(item)} 
+                  onDoubleClick={() => handleItemDoubleClick(item)}
+                >
+                  <div className='flex items-center flex-1 min-w-0'>
+                    {item.isDirectory ? 
+                      <Folder className='mr-10px text-warning h-4 w-4 shrink-0' /> : 
+                      <File className='mr-10px text-primary h-4 w-4 shrink-0' />
+                    }
+                    <span className='overflow-hidden text-ellipsis whitespace-nowrap'>{item.name}</span>
+                  </div>
+                  {canSelect(item) && (
+                    <Button
+                      size='sm'
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleSelect(item.path);
+                      }}
+                    >
+                      {t('common.select')}
+                    </Button>
+                  )}
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+
+        <DialogFooter className="flex-col sm:flex-row gap-2">
+          <div className='text-muted-foreground text-sm overflow-hidden text-ellipsis whitespace-nowrap flex-1' title={selectedPath || currentPath}>
             {selectedPath || currentPath || (isFileMode ? t('fileSelection.pleaseSelectFile') : t('fileSelection.pleaseSelectDirectory'))}
           </div>
-          <div className='flex gap-10px'>
-            <Button onClick={onCancel}>{t('common.cancel')}</Button>
-            <Button type='primary' onClick={handleConfirm} disabled={!selectedPath}>
+          <div className='flex gap-2'>
+            <Button variant="outline" onClick={onCancel}>{t('common.cancel')}</Button>
+            <Button onClick={handleConfirm} disabled={!selectedPath}>
               {t('common.confirm')}
             </Button>
           </div>
-        </div>
-      }
-    >
-      <Spin loading={loading} className='w-full'>
-        <div className='w-full border border-b-base rd-4px overflow-hidden' style={{ height: 'min(400px, 60vh)' }}>
-          <div className='h-full overflow-y-auto'>
-            {directoryData.canGoUp && (
-              <div className='flex items-center p-10px border-b border-b-light cursor-pointer hover:bg-hover transition' onClick={handleGoUp}>
-                <IconUp className='mr-10px text-t-secondary' />
-                <span>..</span>
-              </div>
-            )}
-            {directoryData.items.map((item, index) => (
-              <div key={index} className='flex items-center justify-between p-10px border-b border-b-light cursor-pointer hover:bg-hover transition' style={selectedPath === item.path ? { background: 'var(--brand-light)' } : {}} onClick={() => handleItemClick(item)} onDoubleClick={() => handleItemDoubleClick(item)}>
-                <div className='flex items-center flex-1 min-w-0'>
-                  {item.isDirectory ? <IconFolder className='mr-10px text-warning shrink-0' /> : <IconFile className='mr-10px text-primary shrink-0' />}
-                  <span className='overflow-hidden text-ellipsis whitespace-nowrap'>{item.name}</span>
-                </div>
-                {canSelect(item) && (
-                  <Button
-                    type='primary'
-                    size='mini'
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      handleSelect(item.path);
-                    }}
-                  >
-                    {t('common.select')}
-                  </Button>
-                )}
-              </div>
-            ))}
-          </div>
-        </div>
-      </Spin>
-    </Modal>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
   );
 };
 

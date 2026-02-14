@@ -17,26 +17,13 @@ export function setupApplicationMenu(): void {
   if (isMac) {
     template.push({
       label: appDisplayName,
-      submenu: [
-        { label: `关于${appDisplayName}`, role: 'about' },
-        { type: 'separator' },
-        { label: '服务', role: 'services' },
-        { type: 'separator' },
-        { label: `隐藏${appDisplayName}`, role: 'hide' },
-        { label: '隐藏其他', role: 'hideOthers' },
-        { label: '显示全部', role: 'unhide' },
-        { type: 'separator' },
-        { label: `退出${appDisplayName}`, role: 'quit' },
-      ],
+      submenu: [{ label: `关于${appDisplayName}`, role: 'about' }, { type: 'separator' }, { label: '服务', role: 'services' }, { type: 'separator' }, { label: `隐藏${appDisplayName}`, role: 'hide' }, { label: '隐藏其他', role: 'hideOthers' }, { label: '显示全部', role: 'unhide' }, { type: 'separator' }, { label: `退出${appDisplayName}`, role: 'quit' }],
     });
   }
 
   template.push({
     label: '文件',
-    submenu: [
-      { label: '关闭', role: 'close' },
-      ...(!isMac ? ([{ type: 'separator' }, { label: '退出', role: 'quit' }] as MenuItemConstructorOptions[]) : []),
-    ],
+    submenu: [{ label: '关闭', role: 'close' }, ...(!isMac ? ([{ type: 'separator' }, { label: '退出', role: 'quit' }] as MenuItemConstructorOptions[]) : [])],
   });
 
   template.push({
@@ -49,33 +36,23 @@ export function setupApplicationMenu(): void {
       { label: '复制', role: 'copy' },
       { label: '粘贴', role: 'paste' },
       ...(isMac
-        ? ([{ label: '粘贴并匹配样式', role: 'pasteAndMatchStyle' }, { label: '删除', role: 'delete' }, { label: '全选', role: 'selectAll' }] as MenuItemConstructorOptions[])
+        ? ([
+            { label: '粘贴并匹配样式', role: 'pasteAndMatchStyle' },
+            { label: '删除', role: 'delete' },
+            { label: '全选', role: 'selectAll' },
+          ] as MenuItemConstructorOptions[])
         : ([{ label: '删除', role: 'delete' }, { type: 'separator' }, { label: '全选', role: 'selectAll' }] as MenuItemConstructorOptions[])),
     ],
   });
 
   template.push({
     label: '查看',
-    submenu: [
-      { label: '重新加载', role: 'reload' },
-      { label: '强制重新加载', role: 'forceReload' },
-      { label: '开发者工具', role: 'toggleDevTools' },
-      { type: 'separator' },
-      { label: '重置缩放', role: 'resetZoom' },
-      { label: '放大', role: 'zoomIn' },
-      { label: '缩小', role: 'zoomOut' },
-      { type: 'separator' },
-      { label: '切换全屏', role: 'togglefullscreen' },
-    ],
+    submenu: [{ label: '重新加载', role: 'reload' }, { label: '强制重新加载', role: 'forceReload' }, { label: '开发者工具', role: 'toggleDevTools' }, { type: 'separator' }, { label: '重置缩放', role: 'resetZoom' }, { label: '放大', role: 'zoomIn' }, { label: '缩小', role: 'zoomOut' }, { type: 'separator' }, { label: '切换全屏', role: 'togglefullscreen' }],
   });
 
   template.push({
     label: '窗口',
-    submenu: [
-      { label: '最小化', role: 'minimize' },
-      { label: '缩放', role: 'zoom' },
-      ...(isMac ? ([{ type: 'separator' }, { label: '前置全部窗口', role: 'front' }] as MenuItemConstructorOptions[]) : []),
-    ],
+    submenu: [{ label: '最小化', role: 'minimize' }, { label: '缩放', role: 'zoom' }, ...(isMac ? ([{ type: 'separator' }, { label: '前置全部窗口', role: 'front' }] as MenuItemConstructorOptions[]) : [])],
   });
 
   template.push({

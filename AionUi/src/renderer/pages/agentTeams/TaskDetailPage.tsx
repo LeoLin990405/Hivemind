@@ -72,14 +72,18 @@ const TaskDetailPage: React.FC = () => {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center py-12">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+      <div className='flex items-center justify-center py-12'>
+        <div className='animate-spin rounded-full h-8 w-8 border-b-2 border-primary'></div>
       </div>
     );
   }
 
   if (!task) {
-    return <Card><CardContent>Task not found.</CardContent></Card>;
+    return (
+      <Card>
+        <CardContent>Task not found.</CardContent>
+      </Card>
+    );
   }
 
   return (
@@ -87,7 +91,7 @@ const TaskDetailPage: React.FC = () => {
       <CardHeader>
         <CardTitle>{task.subject}</CardTitle>
       </CardHeader>
-      <CardContent className="space-y-4">
+      <CardContent className='space-y-4'>
         <Description
           column={2}
           items={[
@@ -113,10 +117,16 @@ const TaskDetailPage: React.FC = () => {
           ]}
         />
 
-        <div className="flex flex-wrap gap-2 pt-4">
-          <Button onClick={() => void refresh()} variant="outline">Refresh</Button>
-          <Button onClick={() => void transition('pending')} variant="outline">Set Pending</Button>
-          <Button onClick={() => void transition('in_progress')} variant="outline">Set In Progress</Button>
+        <div className='flex flex-wrap gap-2 pt-4'>
+          <Button onClick={() => void refresh()} variant='outline'>
+            Refresh
+          </Button>
+          <Button onClick={() => void transition('pending')} variant='outline'>
+            Set Pending
+          </Button>
+          <Button onClick={() => void transition('in_progress')} variant='outline'>
+            Set In Progress
+          </Button>
           <Button
             onClick={async () => {
               const result = await agentTeamsApi.runTask(task.id);
@@ -125,7 +135,7 @@ const TaskDetailPage: React.FC = () => {
           >
             Run Task
           </Button>
-          <Button variant="destructive" onClick={() => void transition('failed')}>
+          <Button variant='destructive' onClick={() => void transition('failed')}>
             Fail
           </Button>
         </div>

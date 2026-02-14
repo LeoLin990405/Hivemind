@@ -9,12 +9,7 @@ import type { TChatConversation } from '@/common/storage';
 import { uuid } from '@/common/utils';
 import { iconColors } from '@/renderer/theme/colors';
 import { emitter } from '@/renderer/utils/emitter';
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from '@/renderer/components/ui/dropdown-menu';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/renderer/components/ui/dropdown-menu';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/renderer/components/ui/tooltip';
 import { X, Plus } from 'lucide-react';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
@@ -230,12 +225,12 @@ const ConversationTabs: React.FC = () => {
                           />
                         </div>
                       </TooltipTrigger>
-                      <TooltipContent side="bottom">
+                      <TooltipContent side='bottom'>
                         <p>{tab.name}</p>
                       </TooltipContent>
                     </Tooltip>
                   </DropdownMenuTrigger>
-                  <DropdownMenuContent align="start">
+                  <DropdownMenuContent align='start'>
                     <DropdownMenuItem disabled={!menuItems.hasOtherTabs} onClick={menuItems.handlers['close-others']}>
                       {t('conversation.tabs.closeOthers')}
                     </DropdownMenuItem>
@@ -245,9 +240,7 @@ const ConversationTabs: React.FC = () => {
                     <DropdownMenuItem disabled={!menuItems.hasRightTabs} onClick={menuItems.handlers['close-right']}>
                       {t('conversation.tabs.closeRight')}
                     </DropdownMenuItem>
-                    <DropdownMenuItem onClick={menuItems.handlers['close-all']}>
-                      {t('conversation.tabs.closeAll')}
-                    </DropdownMenuItem>
+                    <DropdownMenuItem onClick={menuItems.handlers['close-all']}>{t('conversation.tabs.closeAll')}</DropdownMenuItem>
                   </DropdownMenuContent>
                 </DropdownMenu>
               );

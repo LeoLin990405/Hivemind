@@ -5,9 +5,8 @@
  */
 
 import React from 'react';
-import { Card, Empty, List, Tag, Typography } from '@arco-design/web-react';
-
-const { Text } = Typography;
+import { Card, CardContent, CardHeader, CardTitle } from '@/renderer/components/ui/card';
+import { Badge } from '@/renderer/components/ui/badge';
 
 export type TimelineEvent = {
   id: string;
@@ -26,36 +25,42 @@ const TimelineView: React.FC<TimelineViewProps> = ({ events }) => {
   if (events.length === 0) {
     return (
       <Card>
-        <Empty description='暂无时间线数据' />
+        <CardContent className="flex flex-col items-center justify-center py-8">
+          <div className="text-muted-foreground text-sm">暂无时间线数据</div>
+        </CardContent>
       </Card>
     );
   }
 
   return (
     <Card>
-      <List
-        dataSource={events}
-        render={(event: TimelineEvent) => (
-          <List.Item key={`${event.id}-${event.timestamp || ''}`}>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 4, width: '100%' }}>
-              <div style={{ alignItems: 'center', display: 'flex', gap: 8 }}>
-                <Tag color='arcoblue'>{event.type}</Tag>
-                {event.category && <Tag>{event.category}</Tag>}
-                <Text bold>{event.title}</Text>
-              </div>
+      <CardHeader>
+        <CardTitle className="text-base">Timeline</CardTitle>
+      </CardHeader>
+      <CardContent className="p-0">
+        <div className="divide-y divide-border">
+          {events.map((event) => (
+            <div key={`${event.id}-${event.timestamp || ''}`} className="p-4 hover:bg-muted/50 transition-colors">
+              <div className="flex flex-col gap-1 w-full">
+                <div className="flex items-center gap-2 flex-wrap">
+                  <Badge variant="default" className="text-xs">{event.type}</Badge>
+                  {event.category && <Badge variant="outline" className="text-xs">{event.category}</Badge>}
+                  <span className="font-semibold text-sm">{event.title}</span>
+                </div>
 
-              <div style={{ alignItems: 'center', display: 'flex', gap: 12 }}>
-                <Text type='secondary'>{event.timestamp || 'unknown'}</Text>
-                {typeof event.source_count === 'number' && (
-                  <Text type='secondary'>
-                    Sources: <Text code>{event.source_count}</Text>
-                  </Text>
-                )}
+                <div className="flex items-center gap-3 text-xs text-muted-foreground">
+                  <span>{event.timestamp || 'unknown'}</span>
+                  {typeof event.source_count === 'number' && (
+                    <span>
+                      Sources: <code className="bg-muted px-1 py-0.5 rounded text-xs">{event.source_count}</code>
+                    </span>
+                  )}
+                </div>
               </div>
             </div>
-          </List.Item>
-        )}
-      />
+          ))}
+        </div>
+      </CardContent>
     </Card>
   );
 };

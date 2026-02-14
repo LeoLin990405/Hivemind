@@ -38,21 +38,17 @@ const CronJobManager: React.FC<CronJobManagerProps> = ({ conversationId }) => {
     return (
       <Popover>
         <PopoverTrigger asChild>
-          <Button
-            variant="ghost"
-            size="icon"
-            className="h-8 w-8 mr-4"
-          >
+          <Button variant='ghost' size='icon' className='h-8 w-8 mr-4'>
             <span className='inline-flex items-center gap-0.5 rounded-full px-2 py-0.5 bg-muted'>
-              <AlarmClock size={16} className="text-muted-foreground" />
+              <AlarmClock size={16} className='text-muted-foreground' />
               <span className='ml-1 w-2 h-2 rounded-full bg-gray-400' />
             </span>
           </Button>
         </PopoverTrigger>
-        <PopoverContent className="w-60">
+        <PopoverContent className='w-60'>
           <div className='flex flex-col gap-2'>
             <p className='text-sm text-muted-foreground'>{t('cron.status.unconfiguredHint')}</p>
-            <Button size='sm' onClick={handleCreateClick} className="w-full">
+            <Button size='sm' onClick={handleCreateClick} className='w-full'>
               {t('cron.status.createNow')}
             </Button>
           </div>
@@ -95,14 +91,9 @@ const CronJobManager: React.FC<CronJobManagerProps> = ({ conversationId }) => {
     <TooltipProvider>
       <Tooltip>
         <TooltipTrigger asChild>
-          <Button
-            variant="ghost"
-            size="icon"
-            className="h-8 w-8 mr-4"
-            onClick={() => setDrawerVisible(true)}
-          >
+          <Button variant='ghost' size='icon' className='h-8 w-8 mr-4' onClick={() => setDrawerVisible(true)}>
             <span className='inline-flex items-center gap-0.5 rounded-full px-2 py-0.5 bg-muted'>
-              <AlarmClock size={16} className="text-primary" />
+              <AlarmClock size={16} className='text-primary' />
               <span className={`ml-1 w-2 h-2 rounded-full ${getStatusColor()}`} />
             </span>
           </Button>

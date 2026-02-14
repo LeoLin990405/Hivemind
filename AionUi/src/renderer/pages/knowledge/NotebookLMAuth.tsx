@@ -98,13 +98,7 @@ const NotebookLMAuth: React.FC = () => {
 
         <Form layout='inline'>
           <Form.Item label='Notebook ID'>
-            <Input
-              placeholder='Optional: notebook id'
-              value={notebookId}
-              onChange={setNotebookId}
-              style={{ width: 320 }}
-              allowClear
-            />
+            <Input placeholder='Optional: notebook id' value={notebookId} onChange={setNotebookId} style={{ width: 320 }} allowClear />
           </Form.Item>
           <Form.Item>
             <Button icon={<IconLaunch />} onClick={openNotebook} loading={loading}>

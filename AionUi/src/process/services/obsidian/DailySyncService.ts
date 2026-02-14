@@ -226,18 +226,7 @@ class DailySyncService {
     const totalUser = summaries.reduce((acc, row) => acc + row.userMessages, 0);
     const totalAssistant = summaries.reduce((acc, row) => acc + row.assistantMessages, 0);
 
-    const header = [
-      '',
-      `## HiveMind Daily Sync (${dateText})`,
-      '',
-      `- Generated At: ${new Date().toLocaleString()}`,
-      `- Conversations Active Today: ${summaries.length}`,
-      `- Text Messages: ${totalMessages} (User ${totalUser} / Assistant ${totalAssistant})`,
-      `- Trigger: ${force ? 'manual' : 'scheduled (23:00)'}`,
-      '',
-      '### Conversation Highlights',
-      '',
-    ];
+    const header = ['', `## HiveMind Daily Sync (${dateText})`, '', `- Generated At: ${new Date().toLocaleString()}`, `- Conversations Active Today: ${summaries.length}`, `- Text Messages: ${totalMessages} (User ${totalUser} / Assistant ${totalAssistant})`, `- Trigger: ${force ? 'manual' : 'scheduled (23:00)'}`, '', '### Conversation Highlights', ''];
 
     if (topSummaries.length === 0) {
       header.push('- No conversation activity detected today.', '');

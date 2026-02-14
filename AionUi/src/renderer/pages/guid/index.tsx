@@ -1470,7 +1470,7 @@ const Guid: React.FC = () => {
           <p className={`text-2xl font-semibold mb-8 text-0 text-center`}>{t('conversation.welcome.title')}</p>
 
           {/* Agent 选择器 - 在标题下方 */}
-          {(
+          {
             <div className='w-full flex justify-center'>
               <div
                 className='inline-flex items-center bg-fill-2'
@@ -1613,7 +1613,7 @@ const Guid: React.FC = () => {
                 })()}
               </div>
             </div>
-          )}
+          }
 
           <div
             className={`${styles.guidInputCard} relative p-16px border-3 b bg-dialog-fill-0 b-solid rd-20px flex flex-col ${mentionOpen ? 'overflow-visible' : 'overflow-hidden'} transition-all duration-200 ${isFileDragging ? 'border-dashed' : ''}`}

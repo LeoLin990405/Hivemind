@@ -280,7 +280,7 @@ const JsonImportModal: React.FC<JsonImportModalProps> = ({ visible, server, onCa
         </div>
 
         <Alert>
-          <Info className="h-4 w-4" />
+          <Info className='h-4 w-4' />
           <AlertTitle>{t('settings.mcpImportTips')}</AlertTitle>
           <AlertDescription>
             <ul className='list-disc pl-5 mt-2 space-y-1 text-sm'>

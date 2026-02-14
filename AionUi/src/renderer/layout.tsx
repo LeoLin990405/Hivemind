@@ -171,7 +171,7 @@ const Layout: React.FC<{
   }, [collapsed]);
 
   // Calculate sider width based on state
-  const siderWidth = isMobile ? (collapsed ? 0 : DEFAULT_SIDER_WIDTH) : (collapsed ? 64 : DEFAULT_SIDER_WIDTH);
+  const siderWidth = isMobile ? (collapsed ? 0 : DEFAULT_SIDER_WIDTH) : collapsed ? 64 : DEFAULT_SIDER_WIDTH;
 
   return (
     <LayoutContext.Provider value={{ isMobile, siderCollapsed: collapsed, setSiderCollapsed: setCollapsed }}>
@@ -212,7 +212,7 @@ const Layout: React.FC<{
               >
                 <img
                   src={logoSvg}
-                  alt="HiveMind Logo"
+                  alt='HiveMind Logo'
                   className={classNames('w-5.5 h-5.5', {
                     'scale-140': !collapsed,
                   })}

@@ -15,13 +15,7 @@ import { Input } from '@/renderer/components/ui/input';
 import { Switch } from '@/renderer/components/ui/switch';
 import { Checkbox } from '@/renderer/components/ui/checkbox';
 import { LegacyModal } from '@/renderer/components/ui/legacy-modal';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/renderer/components/ui/select';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/renderer/components/ui/select';
 
 import { Close, Delete, FolderOpen, Plus, Robot, SettingOne } from '@icon-park/react';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
@@ -648,7 +642,7 @@ const AssistantManagement: React.FC<AssistantManagementProps> = ({ message }) =>
             <div className='flex-shrink-0'>
               <span className='font-medium'>{t('settings.assistantMainAgent', { defaultValue: 'Main Agent' })}</span>
               <Select value={editAgent} onValueChange={(value) => setEditAgent(value as PresetAgentType)}>
-                <SelectTrigger className="mt-10px w-full">
+                <SelectTrigger className='mt-10px w-full'>
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
@@ -660,9 +654,7 @@ const AssistantManagement: React.FC<AssistantManagementProps> = ({ message }) =>
               </Select>
             </div>
             <div className='flex-shrink-0'>
-              <span className='font-medium flex-shrink-0'>
-                {t('settings.assistantRules', { defaultValue: 'Rules' })}
-              </span>
+              <span className='font-medium flex-shrink-0'>{t('settings.assistantRules', { defaultValue: 'Rules' })}</span>
               {/* Prompt Edit/Preview Tabs */}
               <div className='mt-10px border border-border-2 overflow-hidden rounded-4px' style={{ height: '300px' }}>
                 {!activeAssistant?.isBuiltin && (
@@ -678,12 +670,7 @@ const AssistantManagement: React.FC<AssistantManagementProps> = ({ message }) =>
                 <div className='bg-fill-2' style={{ height: activeAssistant?.isBuiltin ? '100%' : 'calc(100% - 36px)', overflow: 'auto' }}>
                   {promptViewMode === 'edit' && !activeAssistant?.isBuiltin ? (
                     <div ref={textareaWrapperRef} className='h-full'>
-                      <textarea
-                        value={editContext}
-                        onChange={(e) => setEditContext(e.target.value)}
-                        placeholder={t('settings.assistantRulesPlaceholder', { defaultValue: 'Enter rules in Markdown format...' })}
-                        className='w-full h-full border-none rounded-none bg-transparent resize-none p-2 focus:outline-none focus:ring-0'
-                      />
+                      <textarea value={editContext} onChange={(e) => setEditContext(e.target.value)} placeholder={t('settings.assistantRulesPlaceholder', { defaultValue: 'Enter rules in Markdown format...' })} className='w-full h-full border-none rounded-none bg-transparent resize-none p-2 focus:outline-none focus:ring-0' />
                     </div>
                   ) : (
                     <div className='p-16px'>{editContext ? <MarkdownView hiddenCodeCopyButton>{editContext}</MarkdownView> : <div className='text-t-secondary text-center py-32px'>{t('settings.promptPreviewEmpty', { defaultValue: 'No content to preview' })}</div>}</div>
@@ -819,15 +806,7 @@ const AssistantManagement: React.FC<AssistantManagementProps> = ({ message }) =>
       </Drawer>
 
       {/* Delete Confirmation Modal */}
-      <LegacyModal
-        title={t('settings.deleteAssistantTitle', { defaultValue: 'Delete Assistant' })}
-        visible={deleteConfirmVisible}
-        onCancel={() => setDeleteConfirmVisible(false)}
-        onOk={handleDeleteConfirm}
-        okText={t('common.delete', { defaultValue: 'Delete' })}
-        cancelText={t('common.cancel', { defaultValue: 'Cancel' })}
-        width={400}
-      >
+      <LegacyModal title={t('settings.deleteAssistantTitle', { defaultValue: 'Delete Assistant' })} visible={deleteConfirmVisible} onCancel={() => setDeleteConfirmVisible(false)} onOk={handleDeleteConfirm} okText={t('common.delete', { defaultValue: 'Delete' })} cancelText={t('common.cancel', { defaultValue: 'Cancel' })} width={400}>
         <p>{t('settings.deleteAssistantConfirm', { defaultValue: 'Are you sure you want to delete this assistant? This action cannot be undone.' })}</p>
         {activeAssistant && (
           <div className='mt-12px p-12px bg-fill-2 rounded-lg flex items-center gap-12px'>

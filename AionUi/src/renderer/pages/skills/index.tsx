@@ -52,11 +52,7 @@ const SkillsPage: React.FC = () => {
   const refresh = async () => {
     setLoading(true);
     try {
-      const [nextSkills, nextTools, status] = await Promise.all([
-        skillsApi.listSkills(category === 'all' ? undefined : category),
-        skillsApi.listTools(),
-        skillsApi.syncStatus(),
-      ]);
+      const [nextSkills, nextTools, status] = await Promise.all([skillsApi.listSkills(category === 'all' ? undefined : category), skillsApi.listTools(), skillsApi.syncStatus()]);
       setSkills(nextSkills);
       setTools(nextTools);
       setSyncStatus(status);

@@ -47,7 +47,7 @@ interface BaseToolCallDisplayProps {
 const BaseToolCallDisplay: React.FC<BaseToolCallDisplayProps> = ({ toolCallId, title, status, description, icon, additionalTags, children }) => {
   return (
     <Card className='w-full mb-2'>
-      <CardContent className="p-4">
+      <CardContent className='p-4'>
         <div className='flex items-start gap-3'>
           <div className='flex-1 min-w-0'>
             <div className='flex items-center gap-2 mb-2'>

@@ -11,7 +11,9 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
-import { Button, Message, Progress } from '@arco-design/web-react';
+import { Button } from '@/renderer/components/ui/button';
+import { Progress } from '@/renderer/components/ui/progress';
+import { toast } from 'sonner';
 import { CheckOne, CloseOne, Loading, Down, Up } from '@icon-park/react';
 import classNames from 'classnames';
 import { ipcBridge } from '@/common';
@@ -75,7 +77,7 @@ const AgentSetupCard: React.FC<AgentSetupCardProps> = ({ conversationId, current
         // Get current conversation info
         const conversation = await ipcBridge.conversation.get.invoke({ id: conversationId });
         if (!conversation) {
-          Message.error(t('conversation.chat.switchAgentFailed', { defaultValue: 'Failed to switch agent' }));
+          toast.error(t('conversation.chat.switchAgentFailed', { defaultValue: 'Failed to switch agent' }));
           switchingRef.current = false;
           setSwitching(false);
           return;
@@ -122,7 +124,7 @@ const AgentSetupCard: React.FC<AgentSetupCardProps> = ({ conversationId, current
         });
 
         if (!newConversation?.id) {
-          Message.error(t('conversation.chat.switchAgentFailed', { defaultValue: 'Failed to switch agent' }));
+          toast.error(t('conversation.chat.switchAgentFailed', { defaultValue: 'Failed to switch agent' }));
           switchingRef.current = false;
           setSwitching(false);
           return;
@@ -142,7 +144,7 @@ const AgentSetupCard: React.FC<AgentSetupCardProps> = ({ conversationId, current
         }
 
         // Show success notification and navigate
-        Message.success(
+        toast.success(
           t('conversation.chat.switchedToAgent', {
             defaultValue: `Switched to ${agent.name}`,
             agent: agent.name,
@@ -152,7 +154,7 @@ const AgentSetupCard: React.FC<AgentSetupCardProps> = ({ conversationId, current
         void navigate(`/conversation/${newConversation.id}`);
       } catch (error) {
         console.error('Failed to switch agent:', error);
-        Message.error(t('conversation.chat.switchAgentFailed', { defaultValue: 'Failed to switch agent' }));
+        toast.error(t('conversation.chat.switchAgentFailed', { defaultValue: 'Failed to switch agent' }));
       } finally {
         switchingRef.current = false;
         setSwitching(false);
@@ -310,7 +312,7 @@ const AgentSetupCard: React.FC<AgentSetupCardProps> = ({ conversationId, current
             {/* Connection Progress - 连接进度条 */}
             {hasAvailableAndSwitching && bestAgent && (
               <div className='mt-12px'>
-                <Progress percent={switching ? 50 : 100} size='small' status='success' showText={false} />
+                <Progress value={switching ? 50 : 100} className="h-1.5" />
                 <div className='text-11px mt-4px text-center text-t-tertiary'>{t('guid.scanning.establishingConnection', { defaultValue: 'Establishing connection...' })}</div>
               </div>
             )}
@@ -321,7 +323,7 @@ const AgentSetupCard: React.FC<AgentSetupCardProps> = ({ conversationId, current
                 <div className='text-24px mb-4px'>😔</div>
                 <div className='text-13px font-medium mb-4px text-t-primary'>{t('agent.setup.noAlternatives', { defaultValue: 'No available agents found' })}</div>
                 <div className='text-12px text-t-secondary'>{t('agent.setup.configureFirst', { defaultValue: 'Please configure an agent in Settings first.' })}</div>
-                <Button type='outline' size='small' className='mt-8px' onClick={() => navigate('/settings')}>
+                <Button variant='outline' size='sm' className='mt-8px' onClick={() => navigate('/settings')}>
                   {t('common.goToSettings', { defaultValue: 'Go to Settings' })}
                 </Button>
               </div>
@@ -330,7 +332,7 @@ const AgentSetupCard: React.FC<AgentSetupCardProps> = ({ conversationId, current
             {/* Retry button */}
             {!isChecking && !switching && onRetry && availableCount === 0 && (
               <div className='mt-12px flex justify-end'>
-                <Button type='text' size='small' onClick={onRetry}>
+                <Button variant='ghost' size='sm' onClick={onRetry}>
                   {t('common.retry', { defaultValue: 'Retry' })}
                 </Button>
               </div>

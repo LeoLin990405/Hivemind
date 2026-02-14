@@ -5,7 +5,7 @@
  */
 
 import { ipcBridge } from '@/common';
-import { Button } from '@arco-design/web-react';
+import { Button } from '@/renderer/components/ui/button';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 
@@ -57,10 +57,10 @@ const PPTPreview: React.FC<PPTPreviewProps> = ({ filePath }) => {
 
         {filePath && (
           <div className='flex items-center justify-center gap-12px'>
-            <Button size='small' onClick={handleOpenExternal}>
+            <Button size='sm' onClick={handleOpenExternal}>
               <span>{t('preview.pptOpenFile')}</span>
             </Button>
-            <Button size='small' onClick={handleShowInFolder}>
+            <Button size='sm' variant='outline' onClick={handleShowInFolder}>
               {t('preview.pptShowLocation')}
             </Button>
           </div>

@@ -18,4 +18,3 @@ export const OLLAMA_AGENT = {
 };
 
 export type OllamaAgentMeta = typeof OLLAMA_AGENT;
-

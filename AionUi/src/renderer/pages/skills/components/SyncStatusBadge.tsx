@@ -23,7 +23,11 @@ const SyncStatusBadge: React.FC<SyncStatusBadgeProps> = ({ totalSkills, syncedSk
   }
 
   if (syncedSkills > 0) {
-    return <Tag color='green'>Synced: {syncedSkills}/{totalSkills}</Tag>;
+    return (
+      <Tag color='green'>
+        Synced: {syncedSkills}/{totalSkills}
+      </Tag>
+    );
   }
 
   return <Tag color='orange'>Pending Sync</Tag>;

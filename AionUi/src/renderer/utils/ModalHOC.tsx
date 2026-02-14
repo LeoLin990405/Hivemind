@@ -1,4 +1,4 @@
-import type { ModalProps } from '@arco-design/web-react';
+import type { DialogProps } from '@/renderer/components/ui/dialog';
 import React, { useMemo, useState } from 'react';
 
 type TUseModalReturn<Props extends Record<string, any> = {}> = [
@@ -14,14 +14,14 @@ const ModalHOC = <Props extends Record<string, any> = {}>(
       modalCtrl: {
         close(): void;
       };
-      modalProps: ModalProps;
+      modalProps: Partial<DialogProps> & { open?: boolean };
     }
   >,
-  defaultModalProps?: ModalProps
+  defaultModalProps?: Partial<DialogProps> & { open?: boolean }
 ) => {
   const ModalComponent: React.FC<
     Props & {
-      modalProps: ModalProps;
+      modalProps: Partial<DialogProps> & { open?: boolean };
       modalCtrl: {
         close(): void;
       };
@@ -31,13 +31,13 @@ const ModalHOC = <Props extends Record<string, any> = {}>(
   } = ({ modalProps, modalCtrl, ...props }) => {
     const mergeModalProps = useMemo(() => {
       return {
-        onCancel() {
-          modalCtrl.close();
+        onOpenChange: (open: boolean) => {
+          if (!open) modalCtrl.close();
         },
         ...(defaultModalProps || {}),
         ...modalProps,
       };
-    }, [defaultModalProps, modalProps]);
+    }, [defaultModalProps, modalProps, modalCtrl]);
     return <ModalBodyComponent {...(props as unknown as Props)} modalCtrl={modalCtrl} modalProps={mergeModalProps}></ModalBodyComponent>;
   };
 
@@ -55,7 +55,7 @@ const ModalHOC = <Props extends Record<string, any> = {}>(
           setVisible(false);
         },
       };
-    }, [visible, setVisible, setModalProps]);
+    }, [setVisible, setModalProps]);
 
     const modalCtrl = useMemo(() => {
       return {
@@ -63,19 +63,19 @@ const ModalHOC = <Props extends Record<string, any> = {}>(
           setVisible(false);
         },
       };
-    }, []);
+    }, [setVisible]);
 
-    return [ctrl, <ModalComponent {...props} {...modalProps} modalProps={{ visible }} modalCtrl={modalCtrl}></ModalComponent>];
+    return [ctrl, <ModalComponent {...props} {...modalProps} modalProps={{ open: visible }} modalCtrl={modalCtrl}></ModalComponent>];
   };
   ModalComponent.useModal = useModal;
   return ModalComponent;
 };
 
-ModalHOC.Extra = <Props extends Record<string, any> = {}>(defaultModalProps?: ModalProps) => {
+ModalHOC.Extra = <Props extends Record<string, any> = {}>(defaultModalProps?: Partial<DialogProps> & { open?: boolean }) => {
   return (
     ModalBodyComponent: React.FC<
       Props & {
-        modalProps: ModalProps;
+        modalProps: Partial<DialogProps> & { open?: boolean };
         modalCtrl: {
           close(): void;
         };

@@ -95,30 +95,26 @@ const PresetManagement: React.FC<PresetManagementProps> = ({ message }) => {
   };
 
   return (
-    <div className="py-2">
+    <div className='py-2'>
       {presets.length === 0 ? (
-        <div className="text-center py-4 text-t-secondary">{t('settings.no_presets', { defaultValue: 'No custom presets generated yet.' })}</div>
+        <div className='text-center py-4 text-t-secondary'>{t('settings.no_presets', { defaultValue: 'No custom presets generated yet.' })}</div>
       ) : (
-        <div className="space-y-2">
+        <div className='space-y-2'>
           {presets.map((preset) => (
-            <div key={preset.id} className="p-4 bg-fill-2 rounded-lg">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2">
+            <div key={preset.id} className='p-4 bg-fill-2 rounded-lg'>
+              <div className='flex items-center justify-between'>
+                <div className='flex items-center gap-2'>
                   <Lightning theme='filled' fill='var(--color-primary-6)' />
-                  <div className="font-medium">{preset.name}</div>
+                  <div className='font-medium'>{preset.name}</div>
                 </div>
-                <div className="flex gap-2">
-                  <Button 
-                    variant="ghost" 
-                    size="sm" 
-                    onClick={() => handleEdit(preset)}
-                  >
+                <div className='flex gap-2'>
+                  <Button variant='ghost' size='sm' onClick={() => handleEdit(preset)}>
                     <EditTwo size={'14'} />
                   </Button>
                   <Button
-                    variant="ghost"
-                    size="sm"
-                    className="text-destructive hover:text-destructive"
+                    variant='ghost'
+                    size='sm'
+                    className='text-destructive hover:text-destructive'
                     onClick={() => {
                       setPresetToDelete(preset);
                       setDeleteVisible(true);
@@ -128,53 +124,38 @@ const PresetManagement: React.FC<PresetManagementProps> = ({ message }) => {
                   </Button>
                 </div>
               </div>
-              <div className="text-xs text-t-secondary mt-2 truncate max-w-[400px]">{preset.context?.substring(0, 100)}...</div>
+              <div className='text-xs text-t-secondary mt-2 truncate max-w-[400px]'>{preset.context?.substring(0, 100)}...</div>
             </div>
           ))}
         </div>
       )}
 
       {/* Edit Modal */}
-      <LegacyModal
-        title={t('settings.edit_preset', { defaultValue: 'Edit Preset' })}
-        visible={editVisible}
-        onOk={handleSave}
-        onCancel={() => setEditVisible(false)}
-        width={600}
-      >
-        <div className="space-y-4">
+      <LegacyModal title={t('settings.edit_preset', { defaultValue: 'Edit Preset' })} visible={editVisible} onOk={handleSave} onCancel={() => setEditVisible(false)} width={600}>
+        <div className='space-y-4'>
           <div>
-            <Typography variant="body2" bold>{t('settings.agent_name', { defaultValue: 'Agent Name' })}</Typography>
-            <Input 
-              className="mt-2" 
-              value={editName} 
-              onChange={(e) => setEditName(e.target.value)} 
-            />
+            <Typography variant='body2' bold>
+              {t('settings.agent_name', { defaultValue: 'Agent Name' })}
+            </Typography>
+            <Input className='mt-2' value={editName} onChange={(e) => setEditName(e.target.value)} />
           </div>
           <div>
-            <Typography variant="body2" bold>{t('settings.rule_content', { defaultValue: 'Rule Content / Instructions' })}</Typography>
-            <div className="mt-2 border rounded overflow-hidden">
-              <CodeMirror 
-                value={editContext} 
-                height="300px" 
-                theme={theme} 
-                extensions={[markdown()]} 
-                onChange={setEditContext} 
-              />
+            <Typography variant='body2' bold>
+              {t('settings.rule_content', { defaultValue: 'Rule Content / Instructions' })}
+            </Typography>
+            <div className='mt-2 border rounded overflow-hidden'>
+              <CodeMirror value={editContext} height='300px' theme={theme} extensions={[markdown()]} onChange={setEditContext} />
             </div>
           </div>
         </div>
       </LegacyModal>
 
       {/* Delete Confirm */}
-      <LegacyModal
-        title={t('common.confirm', { defaultValue: 'Confirm Delete' })}
-        visible={deleteVisible}
-        onOk={handleDelete}
-        onCancel={() => setDeleteVisible(false)}
-      >
+      <LegacyModal title={t('common.confirm', { defaultValue: 'Confirm Delete' })} visible={deleteVisible} onOk={handleDelete} onCancel={() => setDeleteVisible(false)}>
         <p>{t('settings.delete_preset_confirm', { defaultValue: 'Are you sure you want to delete this preset?' })}</p>
-        <Typography variant="body2" bold>{presetToDelete?.name}</Typography>
+        <Typography variant='body2' bold>
+          {presetToDelete?.name}
+        </Typography>
       </LegacyModal>
     </div>
   );

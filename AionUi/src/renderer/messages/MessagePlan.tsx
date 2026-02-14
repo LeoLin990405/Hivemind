@@ -8,7 +8,9 @@ const MessagePlan: React.FC<{ message: IMessagePlan }> = ({ message }) => {
   return (
     <div>
       <div className='flex items-center gap-10px color-#86909C cursor-pointer' onClick={() => setShowMore(!showMore)}>
-        <Badge variant="outline" className="text-[#86909C] border-[#86909C]">To do list</Badge>
+        <Badge variant='outline' className='text-[#86909C] border-[#86909C]'>
+          To do list
+        </Badge>
         {showMore ? <ChevronDown size={16} /> : <ChevronRight size={16} />}
       </div>
       {showMore && (

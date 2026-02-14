@@ -18,6 +18,7 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
+  AlertDialogTrigger,
 } from '@/renderer/components/ui/alert-dialog';
 import { toast } from 'sonner';
 import { DeleteFour, Info, Minus, Plus, Write } from '@icon-park/react';
@@ -210,9 +211,7 @@ const ModelModalContent: React.FC = () => {
                           <AlertDialogContent>
                             <AlertDialogHeader>
                               <AlertDialogTitle>{t('settings.deleteAllModelConfirm')}</AlertDialogTitle>
-                              <AlertDialogDescription>
-                                {t('settings.deleteAllModelConfirmDesc')}
-                              </AlertDialogDescription>
+                              <AlertDialogDescription>{t('settings.deleteAllModelConfirmDesc')}</AlertDialogDescription>
                             </AlertDialogHeader>
                             <AlertDialogFooter>
                               <AlertDialogCancel>{t('common.cancel')}</AlertDialogCancel>
@@ -264,9 +263,7 @@ const ModelModalContent: React.FC = () => {
                               <AlertDialogContent>
                                 <AlertDialogHeader>
                                   <AlertDialogTitle>{t('settings.deleteModelConfirm')}</AlertDialogTitle>
-                                  <AlertDialogDescription>
-                                    {t('settings.deleteModelConfirmDesc')}
-                                  </AlertDialogDescription>
+                                  <AlertDialogDescription>{t('settings.deleteModelConfirmDesc')}</AlertDialogDescription>
                                 </AlertDialogHeader>
                                 <AlertDialogFooter>
                                   <AlertDialogCancel>{t('common.cancel')}</AlertDialogCancel>

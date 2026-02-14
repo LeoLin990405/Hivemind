@@ -6,8 +6,8 @@
 
 import type { AgentTeamsDatabase } from '@process/database/agentTeams';
 import type { IAgentTask, IAgentTeam, ITeammate, AllocationStrategy } from './types';
-import { TaskManager } from './TaskManager';
-import { MessageBroker } from './MessageBroker';
+import type { TaskManager } from './TaskManager';
+import type { MessageBroker } from './MessageBroker';
 
 export class TeamCoordinator {
   constructor(
@@ -16,25 +16,11 @@ export class TeamCoordinator {
     private readonly messageBroker: MessageBroker
   ) {}
 
-  createTeam(params: {
-    name: string;
-    description?: string;
-    max_teammates?: number;
-    task_allocation_strategy?: AllocationStrategy;
-    metadata?: unknown;
-  }): IAgentTeam {
+  createTeam(params: { name: string; description?: string; max_teammates?: number; task_allocation_strategy?: AllocationStrategy; metadata?: unknown }): IAgentTeam {
     return this.db.createTeam(params);
   }
 
-  addTeammate(params: {
-    team_id: string;
-    name: string;
-    role: string;
-    provider: string;
-    model: string;
-    skills?: string[];
-    metadata?: unknown;
-  }): ITeammate {
+  addTeammate(params: { team_id: string; name: string; role: string; provider: string; model: string; skills?: string[]; metadata?: unknown }): ITeammate {
     const teammate = this.db.addTeammate(params);
     this.messageBroker.broadcastMessage(params.team_id, `Teammate joined: ${teammate.name}`, {
       type: 'teammate_joined',

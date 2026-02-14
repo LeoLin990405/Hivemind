@@ -8,14 +8,7 @@ import React, { useMemo, useState } from 'react';
 import { Button } from '@/renderer/components/ui/button';
 import { Input } from '@/renderer/components/ui/input';
 import { Card, CardContent, CardHeader, CardTitle } from '@/renderer/components/ui/card';
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from '@/renderer/components/ui/table';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/renderer/components/ui/table';
 import { RefreshCw } from 'lucide-react';
 
 const GATEWAY_URL = 'http://localhost:8765';
@@ -97,34 +90,26 @@ const DataviewQuery: React.FC = () => {
   };
 
   return (
-    <div className="flex flex-col gap-6 w-full">
+    <div className='flex flex-col gap-6 w-full'>
       <Card>
-        <CardContent className="pt-6 space-y-4">
-          <textarea
-            value={query}
-            onChange={(e) => setQuery(e.target.value)}
-            rows={8}
-            placeholder='输入 Dataview 查询'
-            className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
-          />
-          <div className="flex gap-2">
+        <CardContent className='pt-6 space-y-4'>
+          <textarea value={query} onChange={(e) => setQuery(e.target.value)} rows={8} placeholder='输入 Dataview 查询' className='w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2' />
+          <div className='flex gap-2'>
             <Button onClick={runQuery} disabled={loading}>
               {loading ? '执行中...' : '执行 Dataview 查询'}
             </Button>
             <Button
-              variant="outline"
+              variant='outline'
               onClick={() => {
                 setQuery(DEFAULT_QUERY);
               }}
-              className="gap-2"
+              className='gap-2'
             >
               <RefreshCw size={16} />
               恢复示例查询
             </Button>
           </div>
-          <p className="text-sm text-muted-foreground m-0">
-            提示：当前后端支持 `WHERE type/category/source_count`、`SORT`、`LIMIT` 的轻量语法子集。
-          </p>
+          <p className='text-sm text-muted-foreground m-0'>提示：当前后端支持 `WHERE type/category/source_count`、`SORT`、`LIMIT` 的轻量语法子集。</p>
         </CardContent>
       </Card>
 
@@ -134,12 +119,12 @@ const DataviewQuery: React.FC = () => {
         </CardHeader>
         <CardContent>
           {!result ? (
-            <p className="text-muted-foreground">尚未执行查询</p>
+            <p className='text-muted-foreground'>尚未执行查询</p>
           ) : result.status !== 'success' ? (
-            <p className="text-destructive">{result.error || '查询失败'}</p>
+            <p className='text-destructive'>{result.error || '查询失败'}</p>
           ) : (
-            <div className="space-y-2 w-full">
-              <p className="text-sm text-muted-foreground">
+            <div className='space-y-2 w-full'>
+              <p className='text-sm text-muted-foreground'>
                 执行时间：{new Date(result.executed_at).toLocaleString()} ｜ 结果数：{result.count}
               </p>
               <Table>
@@ -163,11 +148,7 @@ const DataviewQuery: React.FC = () => {
                         } else {
                           displayValue = String(value);
                         }
-                        return (
-                          <TableCell key={`${row.__rowKey}-${column}`}>
-                            {displayValue}
-                          </TableCell>
-                        );
+                        return <TableCell key={`${row.__rowKey}-${column}`}>{displayValue}</TableCell>;
                       })}
                     </TableRow>
                   ))}

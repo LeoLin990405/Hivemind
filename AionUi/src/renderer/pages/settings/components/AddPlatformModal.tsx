@@ -5,13 +5,7 @@ import { isGoogleApisHost } from '@/common/utils/urlValidation';
 import ModalHOC from '@/renderer/utils/ModalHOC';
 import { Button } from '@/renderer/components/ui/button';
 import { Input } from '@/renderer/components/ui/input';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/renderer/components/ui/select';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/renderer/components/ui/select';
 import { Search, LinkCloud, Edit } from '@icon-park/react';
 import React, { useEffect, useMemo, useState, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -58,7 +52,7 @@ const AddPlatformModal = ModalHOC<{
   onSubmit: (platform: IProvider) => void;
 }>(({ modalProps, onSubmit, modalCtrl }) => {
   const { t } = useTranslation();
-  
+
   // Form state (replaces Arco Form)
   const [formData, setFormData] = useState<FormData>({
     platform: 'gemini',
@@ -67,7 +61,7 @@ const AddPlatformModal = ModalHOC<{
     model: '',
   });
   const [errors, setErrors] = useState<Partial<Record<keyof FormData, string>>>({});
-  
+
   const [apiKeyEditorVisible, setApiKeyEditorVisible] = useState(false);
   const [lastDetectionInput, setLastDetectionInput] = useState<{ baseUrl: string; apiKey: string } | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
@@ -109,7 +103,7 @@ const AddPlatformModal = ModalHOC<{
   const handleSwitchPlatform = (suggestedPlatform: string) => {
     const targetPlatform = MODEL_PLATFORMS.find((p) => p.value === suggestedPlatform || p.name === suggestedPlatform);
     if (targetPlatform) {
-      setFormData(prev => ({ ...prev, platform: targetPlatform.value, model: '' }));
+      setFormData((prev) => ({ ...prev, platform: targetPlatform.value, model: '' }));
       protocolDetection.reset();
       setLastDetectionInput({ baseUrl: actualBaseUrl, apiKey });
       setErrorMessage(null);
@@ -137,26 +131,26 @@ const AddPlatformModal = ModalHOC<{
   // 处理自动修复的 base_url
   useEffect(() => {
     if (modelListState.data?.fix_base_url) {
-      setFormData(prev => ({ ...prev, baseUrl: modelListState.data.fix_base_url }));
+      setFormData((prev) => ({ ...prev, baseUrl: modelListState.data.fix_base_url }));
     }
   }, [modelListState.data?.fix_base_url]);
 
   // Validate form
   const validateForm = useCallback(() => {
     const newErrors: Partial<Record<keyof FormData, string>> = {};
-    
+
     if (!platform) newErrors.platform = t('validation.required');
     if (!model) newErrors.model = t('validation.required');
     if (!apiKey) newErrors.apiKey = t('validation.required');
     if ((isCustom || isNewApi) && !baseUrl) newErrors.baseUrl = t('validation.required');
-    
+
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   }, [platform, model, apiKey, baseUrl, isCustom, isNewApi, t]);
 
   const handleSubmit = () => {
     if (!validateForm()) return;
-    
+
     try {
       const name = selectedPlatform?.i18nKey ? t(selectedPlatform.i18nKey) : (selectedPlatform?.name ?? platform);
       const provider: IProvider = {
@@ -181,7 +175,7 @@ const AddPlatformModal = ModalHOC<{
   };
 
   const handlePlatformChange = (value: string) => {
-    setFormData(prev => ({ ...prev, platform: value, model: '' }));
+    setFormData((prev) => ({ ...prev, platform: value, model: '' }));
   };
 
   const handleModelSearch = () => {
@@ -199,23 +193,9 @@ const AddPlatformModal = ModalHOC<{
   const showBaseUrlField = isCustom || isNewApi || platform === 'gemini';
 
   return (
-    <AionModal 
-      visible={modalProps.visible} 
-      onCancel={modalCtrl.close} 
-      header={{ title: t('settings.addModel'), showClose: true }} 
-      style={{ maxWidth: '92vw', borderRadius: 16 }} 
-      contentStyle={{ background: 'var(--bg-1)', borderRadius: 16, padding: '20px 24px 16px', overflow: 'auto' }} 
-      onOk={handleSubmit} 
-      confirmLoading={modalProps.confirmLoading} 
-      okText={t('common.confirm')} 
-      cancelText={t('common.cancel')}
-    >
-      {errorMessage && (
-        <div className="mb-4 p-3 bg-destructive/10 text-destructive rounded-md text-sm">
-          {errorMessage}
-        </div>
-      )}
-      
+    <AionModal visible={modalProps.visible} onCancel={modalCtrl.close} header={{ title: t('settings.addModel'), showClose: true }} style={{ maxWidth: '92vw', borderRadius: 16 }} contentStyle={{ background: 'var(--bg-1)', borderRadius: 16, padding: '20px 24px 16px', overflow: 'auto' }} onOk={handleSubmit} confirmLoading={modalProps.confirmLoading} okText={t('common.confirm')} cancelText={t('common.cancel')}>
+      {errorMessage && <div className='mb-4 p-3 bg-destructive/10 text-destructive rounded-md text-sm'>{errorMessage}</div>}
+
       <div className='flex flex-col gap-16px py-20px'>
         <div className='space-y-4'>
           {/* 模型平台选择 */}
@@ -246,12 +226,7 @@ const AddPlatformModal = ModalHOC<{
                 {t('settings.baseUrl')}
                 {(isCustom || isNewApi) && <span className='text-destructive ml-0.5'>*</span>}
               </label>
-              <Input
-                value={baseUrl}
-                onChange={(e) => setFormData(prev => ({ ...prev, baseUrl: e.target.value }))}
-                placeholder={isNewApi ? t('settings.newApiBaseUrlPlaceholder') : selectedPlatform?.baseUrl || ''}
-                onBlur={() => void modelListState.mutate()}
-              />
+              <Input value={baseUrl} onChange={(e) => setFormData((prev) => ({ ...prev, baseUrl: e.target.value }))} placeholder={isNewApi ? t('settings.newApiBaseUrlPlaceholder') : selectedPlatform?.baseUrl || ''} onBlur={() => void modelListState.mutate()} />
               {errors.baseUrl && <p className='text-sm text-destructive'>{errors.baseUrl}</p>}
             </div>
           )}
@@ -263,30 +238,14 @@ const AddPlatformModal = ModalHOC<{
               <span className='text-destructive ml-0.5'>*</span>
             </label>
             <div className='relative'>
-              <Input
-                value={apiKey}
-                onChange={(e) => setFormData(prev => ({ ...prev, apiKey: e.target.value }))}
-                onBlur={() => void modelListState.mutate()}
-                className='pr-10'
-              />
-              <button
-                type='button'
-                className='absolute right-3 top-1/2 -translate-y-1/2 text-t-secondary hover:text-t-primary'
-                onClick={() => setApiKeyEditorVisible(true)}
-              >
+              <Input value={apiKey} onChange={(e) => setFormData((prev) => ({ ...prev, apiKey: e.target.value }))} onBlur={() => void modelListState.mutate()} className='pr-10' />
+              <button type='button' className='absolute right-3 top-1/2 -translate-y-1/2 text-t-secondary hover:text-t-primary' onClick={() => setApiKeyEditorVisible(true)}>
                 <Edit theme='outline' size={16} />
               </button>
             </div>
             <div className='space-y-2px'>
               <div className='text-11px text-t-secondary mt-2 leading-4'>{t('settings.multiApiKeyTip')}</div>
-              {shouldShowDetectionResult && (
-                <ProtocolDetectionStatus 
-                  isDetecting={protocolDetection.isDetecting} 
-                  result={protocolDetection.result} 
-                  currentPlatform={platform} 
-                  onSwitchPlatform={handleSwitchPlatform} 
-                />
-              )}
+              {shouldShowDetectionResult && <ProtocolDetectionStatus isDetecting={protocolDetection.isDetecting} result={protocolDetection.result} currentPlatform={platform} onSwitchPlatform={handleSwitchPlatform} />}
             </div>
             {errors.apiKey && <p className='text-sm text-destructive'>{errors.apiKey}</p>}
           </div>
@@ -298,7 +257,7 @@ const AddPlatformModal = ModalHOC<{
               <span className='text-destructive ml-0.5'>*</span>
             </label>
             <div className='relative'>
-              <Select value={model} onValueChange={(v) => setFormData(prev => ({ ...prev, model: v }))} disabled={modelListState.isLoading}>
+              <Select value={model} onValueChange={(v) => setFormData((prev) => ({ ...prev, model: v }))} disabled={modelListState.isLoading}>
                 <SelectTrigger>
                   <SelectValue placeholder={t('settings.addModelPlaceholder')} />
                 </SelectTrigger>
@@ -310,11 +269,7 @@ const AddPlatformModal = ModalHOC<{
                   ))}
                 </SelectContent>
               </Select>
-              <button
-                type='button'
-                className='absolute right-10 top-1/2 -translate-y-1/2 text-t-secondary hover:text-t-primary z-10'
-                onClick={handleModelSearch}
-              >
+              <button type='button' className='absolute right-10 top-1/2 -translate-y-1/2 text-t-secondary hover:text-t-primary z-10' onClick={handleModelSearch}>
                 <Search className='flex' />
               </button>
             </div>
@@ -350,7 +305,7 @@ const AddPlatformModal = ModalHOC<{
         apiKeys={apiKey || ''}
         onClose={() => setApiKeyEditorVisible(false)}
         onSave={(keys) => {
-          setFormData(prev => ({ ...prev, apiKey: keys }));
+          setFormData((prev) => ({ ...prev, apiKey: keys }));
           void modelListState.mutate();
         }}
         onTestKey={async (key) => {

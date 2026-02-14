@@ -5,12 +5,7 @@ import classNames from 'classnames';
 import React, { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useLocation, useNavigate } from 'react-router-dom';
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from '@/renderer/components/ui/tooltip';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/renderer/components/ui/tooltip';
 
 const SettingsSider: React.FC<{ collapsed?: boolean }> = ({ collapsed = false }) => {
   const navigate = useNavigate();
@@ -111,17 +106,13 @@ const SettingsSider: React.FC<{ collapsed?: boolean }> = ({ collapsed = false })
 
           return collapsed ? (
             <Tooltip key={item.path} delayDuration={0}>
-              <TooltipTrigger asChild>
-                {menuItem}
-              </TooltipTrigger>
-              <TooltipContent side="right">
+              <TooltipTrigger asChild>{menuItem}</TooltipTrigger>
+              <TooltipContent side='right'>
                 <p>{item.label}</p>
               </TooltipContent>
             </Tooltip>
           ) : (
-            <React.Fragment key={item.path}>
-              {menuItem}
-            </React.Fragment>
+            <React.Fragment key={item.path}>{menuItem}</React.Fragment>
           );
         })}
       </div>

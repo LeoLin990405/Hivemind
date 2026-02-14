@@ -61,7 +61,7 @@ describe('TaskExecutionRuntime', () => {
 
     let sessionCounter = 0;
     const sessionManager = {
-      createSession: jest.fn(() => ({ id: `session_${sessionCounter += 1}` })),
+      createSession: jest.fn(() => ({ id: `session_${(sessionCounter += 1)}` })),
       completeSession: jest.fn(),
       failSession: jest.fn(),
     } as any;

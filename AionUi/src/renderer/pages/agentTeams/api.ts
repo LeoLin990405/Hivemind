@@ -35,14 +35,7 @@ export const agentTeamsApi = {
     return ensureSuccess(response, 'Failed to load teammates');
   },
 
-  addTeammate: async (payload: {
-    team_id: string;
-    name: string;
-    role: string;
-    provider: string;
-    model: string;
-    skills?: string[];
-  }): Promise<IAgentTeammate> => {
+  addTeammate: async (payload: { team_id: string; name: string; role: string; provider: string; model: string; skills?: string[] }): Promise<IAgentTeammate> => {
     const response = await ipcBridge.agentTeams.addTeammate.invoke(payload);
     return ensureSuccess(response, 'Failed to add teammate');
   },
@@ -62,14 +55,7 @@ export const agentTeamsApi = {
     return ensureSuccess(response, 'Failed to load task dependencies');
   },
 
-  createTask: async (payload: {
-    team_id: string;
-    subject: string;
-    description: string;
-    priority?: number;
-    blocked_by?: string[];
-    metadata?: Record<string, unknown>;
-  }): Promise<IAgentTask> => {
+  createTask: async (payload: { team_id: string; subject: string; description: string; priority?: number; blocked_by?: string[]; metadata?: Record<string, unknown> }): Promise<IAgentTask> => {
     const response = await ipcBridge.agentTeams.createTask.invoke(payload);
     return ensureSuccess(response, 'Failed to create task');
   },
@@ -84,13 +70,7 @@ export const agentTeamsApi = {
     return ensureSuccess(response, 'Failed to load messages');
   },
 
-  sendMessage: async (payload: {
-    team_id: string;
-    type: 'broadcast' | 'p2p' | 'status_update' | 'system';
-    content: string;
-    from_teammate_id?: string;
-    to_teammate_id?: string;
-  }): Promise<IAgentTeamMessage> => {
+  sendMessage: async (payload: { team_id: string; type: 'broadcast' | 'p2p' | 'status_update' | 'system'; content: string; from_teammate_id?: string; to_teammate_id?: string }): Promise<IAgentTeamMessage> => {
     const response = await ipcBridge.agentTeams.sendMessage.invoke(payload);
     return ensureSuccess(response, 'Failed to send message');
   },

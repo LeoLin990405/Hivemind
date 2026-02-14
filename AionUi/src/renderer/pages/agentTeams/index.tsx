@@ -25,15 +25,11 @@ const AgentTeamsLayout: React.FC = () => {
   return (
     <div className='size-full flex flex-col bg-1 p-24px overflow-hidden'>
       <div className='mb-16px'>
-        <h1 className='text-2xl font-semibold mb-2'>
-          {t('agentTeams.title', { defaultValue: 'Agent Teams' })}
-        </h1>
-        <p className='text-muted-foreground text-sm mb-0'>
-          {t('agentTeams.subtitle', { defaultValue: 'Distributed AI collaboration dashboard.' })}
-        </p>
+        <h1 className='text-2xl font-semibold mb-2'>{t('agentTeams.title', { defaultValue: 'Agent Teams' })}</h1>
+        <p className='text-muted-foreground text-sm mb-0'>{t('agentTeams.subtitle', { defaultValue: 'Distributed AI collaboration dashboard.' })}</p>
       </div>
 
-      <div className="flex flex-wrap gap-2 mb-4">
+      <div className='flex flex-wrap gap-2 mb-4'>
         {NAV_ITEMS.map((item) => {
           const isActive = location.pathname.startsWith(item.key);
           return (

@@ -7,7 +7,8 @@
 import { ipcBridge } from '@/common';
 import type { ExcelWorkbookData } from '@/common/types/conversion';
 import { usePreviewToolbarExtras } from '../../context/PreviewToolbarExtrasContext';
-import { Button, Message } from '@arco-design/web-react';
+import { Button } from '@/renderer/components/ui/button';
+import { toast } from 'sonner';
 import React, { useCallback, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
@@ -31,23 +32,22 @@ const ExcelPreview: React.FC<ExcelPreviewProps> = ({ filePath, hideToolbar = fal
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [activeSheet, setActiveSheet] = useState<string>('');
-  const [messageApi, messageContextHolder] = Message.useMessage();
   const toolbarExtrasContext = usePreviewToolbarExtras();
   const usePortalToolbar = Boolean(toolbarExtrasContext) && !hideToolbar;
 
   const handleOpenInSystem = useCallback(async () => {
     if (!filePath) {
-      messageApi.error(t('preview.errors.openWithoutPath'));
+      toast.error(t('preview.errors.openWithoutPath'));
       return;
     }
 
     try {
       await ipcBridge.shell.openFile.invoke(filePath);
-      messageApi.success(t('preview.openInSystemSuccess'));
+      toast.success(t('preview.openInSystemSuccess'));
     } catch (err) {
-      messageApi.error(t('preview.openInSystemFailed'));
+      toast.error(t('preview.openInSystemFailed'));
     }
-  }, [filePath, messageApi, t]);
+  }, [filePath, t]);
 
   const sheetCount = excelData?.sheets.length;
 
@@ -288,8 +288,6 @@ const ExcelPreview: React.FC<ExcelPreviewProps> = ({ filePath, hideToolbar = fal
 
   return (
     <div className='h-full w-full flex flex-col'>
-      {messageContextHolder}
-
       {/* 工具栏 */}
       {!usePortalToolbar && !hideToolbar && (
         <div className='flex items-center justify-between h-40px px-12px bg-bg-2 border-b border-border-base flex-shrink-0'>
@@ -301,8 +299,8 @@ const ExcelPreview: React.FC<ExcelPreviewProps> = ({ filePath, hideToolbar = fal
           <div className='flex items-center gap-8px'>
             <span className='text-12px text-t-secondary'>{t('preview.excel.sheetCount', { count: excelData.sheets.length })}</span>
             {filePath && (
-              <Button size='mini' type='text' onClick={handleOpenInSystem} title={t('preview.openWithApp', { app: 'Excel' })}>
-                <svg width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='currentColor' strokeWidth='2'>
+              <Button size='sm' variant='ghost' onClick={handleOpenInSystem} title={t('preview.openWithApp', { app: 'Excel' })}>
+                <svg width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='currentColor' strokeWidth='2' className='mr-1'>
                   <path d='M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6' />
                   <polyline points='15 3 21 3 21 9' />
                   <line x1='10' y1='14' x2='21' y2='3' />

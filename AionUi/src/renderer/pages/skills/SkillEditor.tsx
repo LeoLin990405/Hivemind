@@ -161,10 +161,10 @@ const SkillEditor: React.FC = () => {
 
       <Card>
         <Form form={form} layout='vertical'>
-          <Form.Item field='name' label='Name' rules={[{ required: true }]}> 
+          <Form.Item field='name' label='Name' rules={[{ required: true }]}>
             <Input disabled={!isCreate} placeholder='e.g. pdf' />
           </Form.Item>
-          <Form.Item field='category' label='Category' rules={[{ required: true }]}> 
+          <Form.Item field='category' label='Category' rules={[{ required: true }]}>
             <Input disabled={!isCreate} placeholder='custom / claude-code / codex / opencode' />
           </Form.Item>
           <Form.Item field='description' label='Description'>

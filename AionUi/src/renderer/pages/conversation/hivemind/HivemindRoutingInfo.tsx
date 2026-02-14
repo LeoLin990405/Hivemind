@@ -21,14 +21,7 @@ const HivemindRoutingInfo: React.FC<HivemindRoutingInfoProps> = ({ requestedProv
   }
 
   if (requestedProvider && actualProvider && requestedProvider !== actualProvider) {
-    return (
-      <Alert
-        className='mb-8px'
-        type='warning'
-        content={t('hivemind.routeMismatch', { requested: requestedProvider, actual: actualProvider })}
-        showIcon
-      />
-    );
+    return <Alert className='mb-8px' type='warning' content={t('hivemind.routeMismatch', { requested: requestedProvider, actual: actualProvider })} showIcon />;
   }
 
   const effective = actualProvider || requestedProvider;

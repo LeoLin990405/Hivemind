@@ -110,6 +110,7 @@ const GeminiModalContent: React.FC<GeminiModalContentProps> = ({ onRequestClose 
       }
 
       const geminiConfig = {
+        authType: 'service_account',
         ...restConfig,
         accountProjects: Object.keys(accountProjects).length > 0 ? accountProjects : undefined,
         // 不再保存顶层的 GOOGLE_CLOUD_PROJECT / No longer save top-level GOOGLE_CLOUD_PROJECT
@@ -238,12 +239,7 @@ const GeminiModalContent: React.FC<GeminiModalContentProps> = ({ onRequestClose 
               {/* Proxy Config Section */}
               <div className='space-y-8px'>
                 <label className='text-sm font-medium text-t-primary block'>{t('settings.proxyConfig')}</label>
-                <Input
-                  className='aion-input'
-                  placeholder={t('settings.proxyHttpOnly')}
-                  value={formData.proxy}
-                  onChange={(e) => handleInputChange('proxy', e.target.value)}
-                />
+                <Input className='aion-input' placeholder={t('settings.proxyHttpOnly')} value={formData.proxy} onChange={(e) => handleInputChange('proxy', e.target.value)} />
               </div>
 
               <hr className='border-border-2' />
@@ -251,12 +247,7 @@ const GeminiModalContent: React.FC<GeminiModalContentProps> = ({ onRequestClose 
               {/* GOOGLE_CLOUD_PROJECT Section */}
               <div className='space-y-8px'>
                 <label className='text-sm font-medium text-t-primary block'>GOOGLE_CLOUD_PROJECT</label>
-                <Input
-                  className='aion-input'
-                  placeholder={t('settings.googleCloudProjectPlaceholder')}
-                  value={formData.GOOGLE_CLOUD_PROJECT}
-                  onChange={(e) => handleInputChange('GOOGLE_CLOUD_PROJECT', e.target.value)}
-                />
+                <Input className='aion-input' placeholder={t('settings.googleCloudProjectPlaceholder')} value={formData.GOOGLE_CLOUD_PROJECT} onChange={(e) => handleInputChange('GOOGLE_CLOUD_PROJECT', e.target.value)} />
               </div>
             </div>
           </div>

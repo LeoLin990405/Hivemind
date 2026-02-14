@@ -172,11 +172,13 @@ const ConfirmationDetails: React.FC<{
       {content.status === 'Confirming' && (
         <>
           <div className='mt-2.5 text-foreground'>{question}</div>
-          <RadioGroup value={selected || ''} onValueChange={(value) => setSelected(value as ToolConfirmationOutcome)} className="gap-1 mt-2">
+          <RadioGroup value={selected || ''} onValueChange={(value) => setSelected(value as ToolConfirmationOutcome)} className='gap-1 mt-2'>
             {options.map((item) => (
-              <div key={item.value} className="flex items-center space-x-2">
+              <div key={item.value} className='flex items-center space-x-2'>
                 <RadioGroupItem value={item.value} id={item.value} />
-                <label htmlFor={item.value} className="text-sm cursor-pointer">{item.label}</label>
+                <label htmlFor={item.value} className='text-sm cursor-pointer'>
+                  {item.label}
+                </label>
               </div>
             ))}
           </RadioGroup>
@@ -330,14 +332,7 @@ const ImageDisplay: React.FC<{
   }
 
   // 图片元素 Image element
-  const imageElement = (
-    <img
-      src={imageUrl}
-      alt={relativePath || 'Generated image'}
-      className="rounded-lg cursor-pointer object-contain"
-      style={{ width: '197px', maxHeight: '320px' }}
-    />
-  );
+  const imageElement = <img src={imageUrl} alt={relativePath || 'Generated image'} className='rounded-lg cursor-pointer object-contain' style={{ width: '197px', maxHeight: '320px' }} />;
 
   return (
     <TooltipProvider>
@@ -349,7 +344,7 @@ const ImageDisplay: React.FC<{
         <div className='flex gap-2'>
           <Tooltip>
             <TooltipTrigger asChild>
-              <Button variant='secondary' size='icon' className="h-8 w-8" onClick={handleCopy}>
+              <Button variant='secondary' size='icon' className='h-8 w-8' onClick={handleCopy}>
                 <Copy theme='outline' size='14' fill={iconColors.primary} />
               </Button>
             </TooltipTrigger>
@@ -359,7 +354,7 @@ const ImageDisplay: React.FC<{
           </Tooltip>
           <Tooltip>
             <TooltipTrigger asChild>
-              <Button variant='secondary' size='icon' className="h-8 w-8" onClick={handleDownload}>
+              <Button variant='secondary' size='icon' className='h-8 w-8' onClick={handleDownload}>
                 <Download theme='outline' size='14' fill={iconColors.primary} />
               </Button>
             </TooltipTrigger>
@@ -405,11 +400,11 @@ const ToolResultDisplay: React.FC<{
 const getStatusIcon = (status: string) => {
   switch (status) {
     case 'Error':
-      return <AlertCircle className="h-4 w-4" />;
+      return <AlertCircle className='h-4 w-4' />;
     case 'Success':
-      return <CheckCircle2 className="h-4 w-4" />;
+      return <CheckCircle2 className='h-4 w-4' />;
     case 'Canceled':
-      return <Info className="h-4 w-4" />;
+      return <Info className='h-4 w-4' />;
     default:
       return <LoadingOne theme='outline' size='12' fill={iconColors.primary} className='loading' />;
   }
@@ -495,15 +490,11 @@ const MessageToolGroup: React.FC<IMessageToolGroupProps> = ({ message }) => {
         // 将可展开的长内容放在 Alert 下方，保持 Alert 仅展示头部信息
         return (
           <div key={callId}>
-            <Alert variant={getStatusVariant(status)} className="py-2 px-2">
-              <div className="flex items-center gap-2">
-                {isLoading ? (
-                  <LoadingOne theme='outline' size='12' fill={iconColors.primary} className='loading' />
-                ) : (
-                  getStatusIcon(status)
-                )}
-                <AlertDescription className="flex items-center gap-1">
-                  <Badge variant="secondary" className="text-xs">
+            <Alert variant={getStatusVariant(status)} className='py-2 px-2'>
+              <div className='flex items-center gap-2'>
+                {isLoading ? <LoadingOne theme='outline' size='12' fill={iconColors.primary} className='loading' /> : getStatusIcon(status)}
+                <AlertDescription className='flex items-center gap-1'>
+                  <Badge variant='secondary' className='text-xs'>
                     {name}
                     {status === 'Canceled' ? `(${t('messages.canceledExecution')})` : ''}
                   </Badge>

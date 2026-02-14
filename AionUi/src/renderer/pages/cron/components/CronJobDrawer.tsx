@@ -14,21 +14,8 @@ import { Button } from '@/renderer/components/ui/button';
 import { Input } from '@/renderer/components/ui/input';
 import { Label } from '@/renderer/components/ui/label';
 import { Switch } from '@/renderer/components/ui/switch';
-import {
-  Sheet,
-  SheetContent,
-  SheetHeader,
-  SheetTitle,
-  SheetFooter,
-} from '@/renderer/components/ui/sheet';
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from '@/renderer/components/ui/dialog';
+import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetFooter } from '@/renderer/components/ui/sheet';
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/renderer/components/ui/dialog';
 
 interface CronJobDrawerProps {
   visible: boolean;
@@ -43,7 +30,7 @@ const CronJobDrawer: React.FC<CronJobDrawerProps> = ({ visible, job, onClose, on
   const [saving, setSaving] = useState(false);
   const [deleting, setDeleting] = useState(false);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
-  
+
   // Form state
   const [enabled, setEnabled] = useState(job.enabled);
   const [command, setCommand] = useState(job.target.payload.text);
@@ -75,7 +62,7 @@ const CronJobDrawer: React.FC<CronJobDrawerProps> = ({ visible, job, onClose, on
       Message.error(t('cron.drawer.commandRequired'));
       return;
     }
-    
+
     try {
       setSaving(true);
       await onSave({
@@ -110,15 +97,15 @@ const CronJobDrawer: React.FC<CronJobDrawerProps> = ({ visible, job, onClose, on
   return (
     <>
       <Sheet open={visible} onOpenChange={(open: boolean) => !open && onClose()}>
-        <SheetContent className="w-[400px] sm:w-[400px]">
+        <SheetContent className='w-[400px] sm:w-[400px]'>
           <SheetHeader>
-            <SheetTitle className="flex items-center gap-2">
+            <SheetTitle className='flex items-center gap-2'>
               <AlarmClock size={18} />
               {t('cron.drawer.title')}
             </SheetTitle>
           </SheetHeader>
-          
-          <div className="mt-6 space-y-4">
+
+          <div className='mt-6 space-y-4'>
             {/* Name Section */}
             <div className='bg-muted rounded-lg px-4 py-4'>
               <div className='flex items-center justify-between'>
@@ -132,9 +119,7 @@ const CronJobDrawer: React.FC<CronJobDrawerProps> = ({ visible, job, onClose, on
               <div className='flex items-center justify-between'>
                 <span className='text-sm'>{t('cron.drawer.taskStatus')}</span>
                 <div className='flex items-center gap-2'>
-                  <span className='text-sm text-muted-foreground'>
-                    {enabled ? t('cron.drawer.enabled') : t('cron.drawer.disabled')}
-                  </span>
+                  <span className='text-sm text-muted-foreground'>{enabled ? t('cron.drawer.enabled') : t('cron.drawer.disabled')}</span>
                   <Switch checked={enabled} onCheckedChange={setEnabled} />
                 </div>
               </div>
@@ -142,16 +127,9 @@ const CronJobDrawer: React.FC<CronJobDrawerProps> = ({ visible, job, onClose, on
 
             {/* Command Section */}
             <div className='bg-muted rounded-lg px-4 py-4'>
-              <div className="space-y-2">
-                <Label htmlFor="command">{t('cron.drawer.command')}</Label>
-                <textarea
-                  id="command"
-                  value={command}
-                  onChange={(e) => setCommand(e.target.value)}
-                  placeholder={t('cron.drawer.commandPlaceholder')}
-                  className="w-full min-h-[80px] max-h-[200px] px-3 py-2 rounded-md border border-input bg-background text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 resize-y"
-                  rows={3}
-                />
+              <div className='space-y-2'>
+                <Label htmlFor='command'>{t('cron.drawer.command')}</Label>
+                <textarea id='command' value={command} onChange={(e) => setCommand(e.target.value)} placeholder={t('cron.drawer.commandPlaceholder')} className='w-full min-h-[80px] max-h-[200px] px-3 py-2 rounded-md border border-input bg-background text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 resize-y' rows={3} />
               </div>
             </div>
 
@@ -170,16 +148,12 @@ const CronJobDrawer: React.FC<CronJobDrawerProps> = ({ visible, job, onClose, on
             </div>
           </div>
 
-          <SheetFooter className="mt-6 flex justify-between sm:justify-between">
+          <SheetFooter className='mt-6 flex justify-between sm:justify-between'>
             <Button onClick={handleSave} disabled={saving}>
               {saving ? t('common.saving') : t('cron.drawer.save')}
             </Button>
-            <Button 
-              variant="destructive" 
-              onClick={() => setShowDeleteConfirm(true)}
-              disabled={deleting}
-            >
-              <Trash2 size={16} className="mr-2" />
+            <Button variant='destructive' onClick={() => setShowDeleteConfirm(true)} disabled={deleting}>
+              <Trash2 size={16} className='mr-2' />
               {t('cron.actions.delete')}
             </Button>
           </SheetFooter>
@@ -191,15 +165,13 @@ const CronJobDrawer: React.FC<CronJobDrawerProps> = ({ visible, job, onClose, on
         <DialogContent>
           <DialogHeader>
             <DialogTitle>{t('cron.confirmDelete')}</DialogTitle>
-            <DialogDescription>
-              {t('cron.deleteDescription')}
-            </DialogDescription>
+            <DialogDescription>{t('cron.deleteDescription')}</DialogDescription>
           </DialogHeader>
           <DialogFooter>
-            <Button variant="outline" onClick={() => setShowDeleteConfirm(false)}>
+            <Button variant='outline' onClick={() => setShowDeleteConfirm(false)}>
               {t('common.cancel')}
             </Button>
-            <Button variant="destructive" onClick={handleDelete} disabled={deleting}>
+            <Button variant='destructive' onClick={handleDelete} disabled={deleting}>
               {deleting ? t('common.deleting') : t('common.delete')}
             </Button>
           </DialogFooter>

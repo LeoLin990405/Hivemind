@@ -8,20 +8,8 @@ import { ipcBridge } from '@/common';
 import LanguageSwitcher from '@/renderer/components/LanguageSwitcher';
 import { iconColors } from '@/renderer/theme/colors';
 import { Button } from '@/renderer/components/ui/button';
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from '@/renderer/components/ui/dialog';
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from '@/renderer/components/ui/tooltip';
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/renderer/components/ui/dialog';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/renderer/components/ui/tooltip';
 import { Alert, AlertDescription } from '@/renderer/components/ui/alert';
 import { FolderOpen } from '@icon-park/react';
 import React, { useEffect, useState } from 'react';
@@ -267,18 +255,8 @@ const SystemModalContent: React.FC<SystemModalContentProps> = ({ onRequestClose 
               ))}
             </div>
             <div className='space-y-16px'>
-              <DirInputItem
-                label={t('settings.cacheDir')}
-                field='cacheDir'
-                value={formData.cacheDir}
-                onChange={(value) => handleDirChange('cacheDir', value)}
-              />
-              <DirInputItem
-                label={t('settings.workDir')}
-                field='workDir'
-                value={formData.workDir}
-                onChange={(value) => handleDirChange('workDir', value)}
-              />
+              <DirInputItem label={t('settings.cacheDir')} field='cacheDir' value={formData.cacheDir} onChange={(value) => handleDirChange('cacheDir', value)} />
+              <DirInputItem label={t('settings.workDir')} field='workDir' value={formData.workDir} onChange={(value) => handleDirChange('workDir', value)} />
               {error && (
                 <Alert variant='destructive'>
                   <AlertDescription>{typeof error === 'string' ? error : JSON.stringify(error)}</AlertDescription>

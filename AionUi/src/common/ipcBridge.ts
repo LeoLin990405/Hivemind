@@ -514,8 +514,6 @@ export const agentTeams = {
   getCostAnalysis: bridge.buildProvider<IBridgeResponse<IAgentCostAnalysis>, { team_id: string }>('agent-teams.get-cost-analysis'),
 };
 
-
-
 export const skills = {
   list: bridge.buildProvider<IBridgeResponse<ISkill[]>, { category?: string }>('skills.list'),
   get: bridge.buildProvider<IBridgeResponse<ISkillDetail>, { id: string }>('skills.get'),

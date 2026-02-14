@@ -383,12 +383,12 @@ class GatewayConfig:
             timeout_s=600.0,
         )
 
-        # OpenCode (CLI) - use 'run --format json' for non-interactive mode
+        # OpenCode (CLI) - use 'run --format json' for non-interactive mode with paid model
         self.providers["opencode"] = ProviderConfig(
             name="opencode",
             backend_type=BackendType.CLI_EXEC,
             cli_command="opencode",
-            cli_args=["run", "--format", "json", "-m", "opencode/minimax-m2.5-free"],
+            cli_args=["run", "--format", "json", "-m", "minimax-cn-coding-plan/MiniMax-M2.5"],
             timeout_s=120.0,
         )
 

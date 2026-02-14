@@ -6,7 +6,8 @@
 
 import { ipcBridge } from '@/common';
 import { usePreviewToolbarExtras } from '../../context/PreviewToolbarExtrasContext';
-import { Button, Message } from '@arco-design/web-react';
+import { Button } from '@/renderer/components/ui/button';
+import { toast } from 'sonner';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
@@ -34,23 +35,22 @@ const PDFPreview: React.FC<PDFPreviewProps> = ({ filePath, content, hideToolbar 
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const webviewRef = useRef<ElectronWebView>(null);
-  const [messageApi, messageContextHolder] = Message.useMessage();
   const toolbarExtrasContext = usePreviewToolbarExtras();
   const usePortalToolbar = Boolean(toolbarExtrasContext) && !hideToolbar;
 
   const handleOpenInSystem = useCallback(async () => {
     if (!filePath) {
-      messageApi.error(t('preview.errors.openWithoutPath'));
+      toast.error(t('preview.errors.openWithoutPath'));
       return;
     }
 
     try {
       await ipcBridge.shell.openFile.invoke(filePath);
-      messageApi.success(t('preview.openInSystemSuccess'));
+      toast.success(t('preview.openInSystemSuccess'));
     } catch (err) {
-      messageApi.error(t('preview.openInSystemFailed'));
+      toast.error(t('preview.openInSystemFailed'));
     }
-  }, [filePath, messageApi, t]);
+  }, [filePath, t]);
 
   useEffect(() => {
     try {
@@ -114,7 +114,6 @@ const PDFPreview: React.FC<PDFPreviewProps> = ({ filePath, content, hideToolbar 
   if (error) {
     return (
       <div className='flex items-center justify-center h-full'>
-        {messageContextHolder}
         <div className='text-center'>
           <div className='text-16px text-t-error mb-8px'>❌ {error}</div>
           <div className='text-12px text-t-secondary'>{t('preview.pdf.unableDisplay')}</div>
@@ -126,7 +125,6 @@ const PDFPreview: React.FC<PDFPreviewProps> = ({ filePath, content, hideToolbar 
   if (loading) {
     return (
       <div className='flex items-center justify-center h-full'>
-        {messageContextHolder}
         <div className='text-14px text-t-secondary'>{t('preview.loading')}</div>
       </div>
     );
@@ -134,7 +132,6 @@ const PDFPreview: React.FC<PDFPreviewProps> = ({ filePath, content, hideToolbar 
 
   return (
     <div className='h-full w-full bg-bg-1 flex flex-col'>
-      {messageContextHolder}
       {!usePortalToolbar && !hideToolbar && (
         <div className='flex items-center justify-between h-40px px-12px bg-bg-2 flex-shrink-0'>
           <div className='flex items-center gap-8px'>
@@ -142,8 +139,8 @@ const PDFPreview: React.FC<PDFPreviewProps> = ({ filePath, content, hideToolbar 
             <span className='text-11px text-t-tertiary'>{t('preview.readOnlyLabel')}</span>
           </div>
           {filePath && (
-            <Button size='mini' type='text' onClick={handleOpenInSystem} title={t('preview.openInSystemApp')}>
-              <svg width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='currentColor' strokeWidth='2'>
+            <Button size='sm' variant='ghost' onClick={handleOpenInSystem} title={t('preview.openInSystemApp')}>
+              <svg width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='currentColor' strokeWidth='2' className='mr-1'>
                 <path d='M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6' />
                 <polyline points='15 3 21 3 21 9' />
                 <line x1='10' y1='14' x2='21' y2='3' />

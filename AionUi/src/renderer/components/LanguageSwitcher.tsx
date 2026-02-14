@@ -1,19 +1,13 @@
 import { ConfigStorage } from '@/common/storage';
-import AionSelect from '@/renderer/components/base/AionSelect';
-import type { SelectHandle } from '@arco-design/web-react/es/Select/interface';
-import React, { useCallback, useRef } from 'react';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import React, { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 
 const LanguageSwitcher: React.FC = () => {
   const { i18n } = useTranslation();
-  const selectRef = useRef<SelectHandle>(null);
 
   const handleLanguageChange = useCallback(
     (value: string) => {
-      // 切换前先 blur 触发元素，避免弹层和语言切换竞争布局
-      // Blur before switching to avoid dropdown and language change fighting for layout
-      selectRef.current?.blur?.();
-
       ConfigStorage.set('language', value).catch((error: Error) => {
         console.error('Failed to save language preference:', error);
       });
@@ -36,14 +30,19 @@ const LanguageSwitcher: React.FC = () => {
 
   return (
     <div className='flex items-center gap-8px'>
-      <AionSelect ref={selectRef} className='w-160px' value={i18n.language} onChange={handleLanguageChange}>
-        <AionSelect.Option value='zh-CN'>简体中文</AionSelect.Option>
-        <AionSelect.Option value='zh-TW'>繁體中文</AionSelect.Option>
-        <AionSelect.Option value='ja-JP'>日本語</AionSelect.Option>
-        <AionSelect.Option value='ko-KR'>한국어</AionSelect.Option>
-        <AionSelect.Option value='tr-TR'>Türkçe</AionSelect.Option>
-        <AionSelect.Option value='en-US'>English</AionSelect.Option>
-      </AionSelect>
+      <Select value={i18n.language} onValueChange={handleLanguageChange}>
+        <SelectTrigger className='w-160px'>
+          <SelectValue />
+        </SelectTrigger>
+        <SelectContent>
+          <SelectItem value='zh-CN'>简体中文</SelectItem>
+          <SelectItem value='zh-TW'>繁體中文</SelectItem>
+          <SelectItem value='ja-JP'>日本語</SelectItem>
+          <SelectItem value='ko-KR'>한국어</SelectItem>
+          <SelectItem value='tr-TR'>Türkçe</SelectItem>
+          <SelectItem value='en-US'>English</SelectItem>
+        </SelectContent>
+      </Select>
     </div>
   );
 };

@@ -183,14 +183,11 @@ const ChatWorkspace: React.FC<WorkspaceProps> = ({ conversation_id, workspace, e
   });
 
   // Debounced search handler
-  const onSearch = useDebouncedCallback(
-    (value: string) => {
-      void treeHook.loadWorkspace(workspace, value).then((files) => {
-        setShowSearch(files.length > 0 && files[0]?.children?.length > 0);
-      });
-    },
-    200
-  );
+  const onSearch = useDebouncedCallback((value: string) => {
+    void treeHook.loadWorkspace(workspace, value).then((files) => {
+      setShowSearch(files.length > 0 && files[0]?.children?.length > 0);
+    });
+  }, 200);
 
   // Context menu calculations
   const hasOriginalFiles = treeHook.files.length > 0 && treeHook.files[0]?.children?.length > 0;

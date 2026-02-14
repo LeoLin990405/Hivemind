@@ -67,9 +67,7 @@ const PatchDisplay: React.FC<{ content: PatchUpdate }> = ({ content }) => {
           <div className='bg-1 p-2 rounded text-sm'>
             {changeSummary.map(({ file, action }, index) => (
               <div key={index} className='flex items-center gap-2'>
-                <Badge variant={action === 'create' ? 'default' : action === 'delete' ? 'destructive' : 'outline'}>
-                  {t(`tools.actions.${action}`, { defaultValue: action })}
-                </Badge>
+                <Badge variant={action === 'create' ? 'default' : action === 'delete' ? 'destructive' : 'outline'}>{t(`tools.actions.${action}`, { defaultValue: action })}</Badge>
                 <span className='font-mono text-xs'>{file}</span>
               </div>
             ))}

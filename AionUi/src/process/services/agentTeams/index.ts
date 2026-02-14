@@ -21,17 +21,7 @@ const taskManager = new TaskManager(agentTeamsDb, providerRouter, dependencyReso
 const teamCoordinator = new TeamCoordinator(agentTeamsDb, taskManager, messageBroker);
 const taskExecutionRuntime = new TaskExecutionRuntime(agentTeamsDb, taskManager, teamCoordinator, sessionManager, providerRouter, messageBroker);
 
-export {
-  ProviderRouter,
-  providerRouter,
-  dependencyResolver,
-  messageBroker,
-  sessionManager,
-  taskManager,
-  teamCoordinator,
-  taskExecutionRuntime,
-  agentTeamsDb,
-};
+export { ProviderRouter, providerRouter, dependencyResolver, messageBroker, sessionManager, taskManager, teamCoordinator, taskExecutionRuntime, agentTeamsDb };
 
 export * from './types';
 

@@ -260,9 +260,9 @@ const SendBox: React.FC<{
           {domSnippets.length > 0 && (
             <div className='flex flex-wrap gap-6px mb-8px'>
               {domSnippets.map((snippet) => (
-                <Badge key={snippet.id} variant="secondary" className='text-12px bg-fill-2 b-1 b-solid b-border-2 rd-4px gap-1'>
+                <Badge key={snippet.id} variant='secondary' className='text-12px bg-fill-2 b-1 b-solid b-border-2 rd-4px gap-1'>
                   {snippet.tag}
-                  <X size={12} className="cursor-pointer" onClick={() => removeDomSnippet(snippet.id)} />
+                  <X size={12} className='cursor-pointer' onClick={() => removeDomSnippet(snippet.id)} />
                 </Badge>
               ))}
             </div>

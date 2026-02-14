@@ -16,16 +16,7 @@ export class MessageBroker {
 
   constructor(private readonly db: AgentTeamsDatabase) {}
 
-  sendMessage(params: {
-    team_id: string;
-    type: MessageType;
-    from_teammate_id?: string;
-    to_teammate_id?: string;
-    subject?: string;
-    content: string;
-    task_id?: string;
-    metadata?: unknown;
-  }): ITeamMessage {
+  sendMessage(params: { team_id: string; type: MessageType; from_teammate_id?: string; to_teammate_id?: string; subject?: string; content: string; task_id?: string; metadata?: unknown }): ITeamMessage {
     const message = this.db.sendMessage(params);
 
     if (params.type === 'p2p' && message.to_teammate_id) {

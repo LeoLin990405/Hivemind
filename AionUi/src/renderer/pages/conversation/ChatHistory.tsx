@@ -12,17 +12,7 @@ import { addEventListener, emitter } from '@/renderer/utils/emitter';
 import { getActivityTime, createTimelineGrouper } from '@/renderer/utils/timeline';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/renderer/components/ui/tooltip';
 import { Input } from '@/renderer/components/ui/input';
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger,
-} from '@/renderer/components/ui/alert-dialog';
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@/renderer/components/ui/alert-dialog';
 import { Trash2, MessageSquare, Pencil } from 'lucide-react';
 import classNames from 'classnames';
 import React, { useEffect, useState } from 'react';
@@ -192,14 +182,7 @@ const ChatHistory: React.FC<{ onSessionClick?: () => void; collapsed?: boolean }
               <MessageSquare size={20} className='mt-0.5 flex shrink-0' />
               <FlexFullContainer className='h-6 collapsed-hidden ml-2.5'>
                 {isEditing ? (
-                  <Input 
-                    className='chat-history__item-editor text-sm leading-6 h-6 w-full' 
-                    value={editingName} 
-                    onChange={(e) => setEditingName(e.target.value)} 
-                    onKeyDown={handleEditKeyDown} 
-                    onBlur={handleEditSave} 
-                    autoFocus 
-                  />
+                  <Input className='chat-history__item-editor text-sm leading-6 h-6 w-full' value={editingName} onChange={(e) => setEditingName(e.target.value)} onKeyDown={handleEditKeyDown} onBlur={handleEditSave} autoFocus />
                 ) : (
                   <div className='flex items-center gap-1 w-full'>
                     <div className='chat-history__item-name text-nowrap overflow-hidden inline-block flex-1 text-sm leading-6 whitespace-nowrap'>{conversation.name}</div>
@@ -241,22 +224,25 @@ const ChatHistory: React.FC<{ onSessionClick?: () => void; collapsed?: boolean }
                     <AlertDialogContent>
                       <AlertDialogHeader>
                         <AlertDialogTitle>{t('conversation.history.deleteTitle')}</AlertDialogTitle>
-                        <AlertDialogDescription>
-                          {t('conversation.history.deleteConfirm')}
-                        </AlertDialogDescription>
+                        <AlertDialogDescription>{t('conversation.history.deleteConfirm')}</AlertDialogDescription>
                       </AlertDialogHeader>
                       <AlertDialogFooter>
-                        <AlertDialogCancel onClick={(e) => {
-                          e.stopPropagation();
-                          setDeleteTargetId(null);
-                        }}>
+                        <AlertDialogCancel
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setDeleteTargetId(null);
+                          }}
+                        >
                           {t('conversation.history.cancelDelete')}
                         </AlertDialogCancel>
-                        <AlertDialogAction onClick={(e) => {
-                          e.stopPropagation();
-                          handleRemoveConversation(conversation.id);
-                          setDeleteTargetId(null);
-                        }} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
+                        <AlertDialogAction
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleRemoveConversation(conversation.id);
+                            setDeleteTargetId(null);
+                          }}
+                          className='bg-destructive text-destructive-foreground hover:bg-destructive/90'
+                        >
                           {t('conversation.history.confirmDelete')}
                         </AlertDialogAction>
                       </AlertDialogFooter>
@@ -267,7 +253,7 @@ const ChatHistory: React.FC<{ onSessionClick?: () => void; collapsed?: boolean }
             </div>
           </TooltipTrigger>
           {collapsed && (
-            <TooltipContent side="right">
+            <TooltipContent side='right'>
               <p>{conversation.name || t('conversation.welcome.newConversation')}</p>
             </TooltipContent>
           )}

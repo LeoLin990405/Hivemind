@@ -22,8 +22,10 @@ import { emitter, useAddEventListener } from '@/renderer/utils/emitter';
 import { mergeFileSelectionItems } from '@/renderer/utils/fileSelection';
 import { buildDisplayMessage, collectSelectedFiles } from '@/renderer/utils/messageFiles';
 import { getModelContextLimit } from '@/renderer/utils/modelContextLimits';
-import { Button, Message, Tag } from '@arco-design/web-react';
-import { Plus } from '@icon-park/react';
+import { Button } from '@/renderer/components/ui/button';
+import { Badge } from '@/renderer/components/ui/badge';
+import { toast } from 'sonner';
+import { Plus, X } from 'lucide-react';
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import type { GeminiModelSelection } from './useGeminiModelSelection';
@@ -490,12 +492,12 @@ const GeminiSendBox: React.FC<{
       }
       const fallbackTarget = resolveFallbackTarget(exhaustedModelsRef.current);
       if (!fallbackTarget || !currentModel || fallbackTarget.model === currentModel.useModel) {
-        Message.warning(t('conversation.chat.quotaExceededNoFallback', { defaultValue: 'Model quota reached. Please switch to another available model.' }));
+        toast.warning(t('conversation.chat.quotaExceededNoFallback', { defaultValue: 'Model quota reached. Please switch to another available model.' }));
         return;
       }
 
       void handleSelectModel(fallbackTarget.provider, fallbackTarget.model).then(() => {
-        Message.success(t('conversation.chat.quotaSwitched', { defaultValue: `Switched to ${fallbackTarget.model}.`, model: fallbackTarget.model }));
+        toast.success(t('conversation.chat.quotaSwitched', { defaultValue: `Switched to ${fallbackTarget.model}.`, model: fallbackTarget.model }));
       });
     },
     [currentModel, handleSelectModel, isApiErrorMessage, isQuotaErrorMessage, resolveFallbackTarget, t]
@@ -741,9 +743,9 @@ const GeminiSendBox: React.FC<{
         lockMultiLine={true}
         tools={
           <Button
-            type='secondary'
-            shape='circle'
-            icon={<Plus theme='outline' size='14' strokeWidth={2} fill={iconColors.primary} />}
+            variant='secondary'
+            size='icon'
+            className='rounded-full'
             onClick={() => {
               void ipcBridge.dialog.showOpen.invoke({ properties: ['openFile', 'multiSelections'] }).then((files) => {
                 if (files && files.length > 0) {
@@ -751,7 +753,9 @@ const GeminiSendBox: React.FC<{
                 }
               });
             }}
-          />
+          >
+            <Plus size={14} strokeWidth={2} color={iconColors.primary} />
+          </Button>
         }
         sendButtonPrefix={<ContextUsageIndicator tokenUsage={tokenUsage} contextLimit={getModelContextLimit(currentModel?.useModel)} size={24} />}
         prefix={
@@ -789,18 +793,23 @@ const GeminiSendBox: React.FC<{
                   if (typeof item === 'string') return null;
                   if (!item.isFile) {
                     return (
-                      <Tag
+                      <Badge
                         key={item.path}
-                        color='blue'
-                        closable
-                        onClose={() => {
-                          const newAtPath = atPath.filter((v) => (typeof v === 'string' ? true : v.path !== item.path));
-                          emitter.emit('gemini.selected.file', newAtPath);
-                          setAtPath(newAtPath);
-                        }}
+                        variant='secondary'
+                        className='gap-1 pr-1'
                       >
                         {item.name}
-                      </Tag>
+                        <button
+                          onClick={() => {
+                            const newAtPath = atPath.filter((v) => (typeof v === 'string' ? true : v.path !== item.path));
+                            emitter.emit('gemini.selected.file', newAtPath);
+                            setAtPath(newAtPath);
+                          }}
+                          className='ml-1 rounded-full hover:bg-muted p-0.5'
+                        >
+                          <X size={12} />
+                        </button>
+                      </Badge>
                     );
                   }
                   return null;

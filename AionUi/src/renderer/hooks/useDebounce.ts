@@ -34,10 +34,7 @@ export function useDebounce<T>(value: T, delay: number): T {
  * @param delay 延迟时间（毫秒）
  * @returns 防抖后的回调函数
  */
-export function useDebouncedCallback<T extends (...args: unknown[]) => unknown>(
-  callback: T,
-  delay: number
-): (...args: Parameters<T>) => void {
+export function useDebouncedCallback<T extends (...args: unknown[]) => unknown>(callback: T, delay: number): (...args: Parameters<T>) => void {
   let timeoutId: ReturnType<typeof setTimeout>;
 
   return (...args: Parameters<T>) => {

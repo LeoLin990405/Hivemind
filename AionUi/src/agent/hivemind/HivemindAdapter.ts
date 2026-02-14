@@ -72,4 +72,3 @@ export class HivemindAdapter {
     return this.createContent(msgId, chunk.content);
   }
 }
-

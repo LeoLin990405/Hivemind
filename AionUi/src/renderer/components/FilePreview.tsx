@@ -8,7 +8,6 @@ import { Close } from '@icon-park/react';
 import React, { useEffect, useState } from 'react';
 import { getFileExtension } from '@/renderer/services/FileService';
 import { ipcBridge } from '@/common';
-import { Image } from '@arco-design/web-react';
 import fileIcon from '@/renderer/assets/file-icon.svg';
 
 const IMAGE_EXTS = ['.jpg', '.jpeg', '.png', '.gif', '.bmp', '.webp', '.svg'];
@@ -81,8 +80,15 @@ const FilePreview: React.FC<FilePreviewProps> = ({ path, onRemove, readonly = fa
     return (
       <div className='relative inline-block'>
         <div className='rd-8px overflow-hidden border-1 border-solid b-color-border-2'>
-          <Image src={imageUrl} alt={fileName} width={60} height={60} className='object-cover cursor-pointer' style={{ display: imageUrl ? 'block' : 'none' }} preview={imageUrl ? true : false} />
-          {!imageUrl && <div className='w-60px h-60px bg-bg-3'></div>}
+          {imageUrl ? (
+            <img 
+              src={imageUrl} 
+              alt={fileName} 
+              className='w-[60px] h-[60px] object-cover cursor-pointer' 
+            />
+          ) : (
+            <div className='w-60px h-60px bg-bg-3'></div>
+          )}
         </div>
         {!readonly && (
           <div className='absolute -top-4px -right-4px w-16px h-16px rd-50% bg-white dark:bg-gray-700 cursor-pointer flex items-center justify-center shadow-md hover:shadow-lg transition-all z-10 border-1 border-solid border-gray-200 dark:border-gray-600' onClick={handleRemove}>

@@ -4,7 +4,8 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { Tag, Spin } from '@arco-design/web-react';
+import { Badge } from '@/renderer/components/ui/badge';
+import { Loader2 } from 'lucide-react';
 import React, { useMemo, useEffect, useState, useRef } from 'react';
 import { useThemeContext } from '@/renderer/context/ThemeContext';
 import { useTranslation } from 'react-i18next';
@@ -103,7 +104,7 @@ const ThoughtDisplay: React.FC<ThoughtDisplayProps> = ({ thought, style = 'defau
   if (running && !thought?.subject) {
     return (
       <div className='px-10px py-10px rd-20px text-14px pb-40px lh-20px text-t-primary flex items-center gap-8px' style={containerStyle}>
-        <Spin size={14} />
+        <Loader2 className="h-3.5 w-3.5 animate-spin" />
         <span className='text-t-secondary'>
           {t('conversation.chat.processing')}
           <span className='ml-8px opacity-60'>
@@ -117,10 +118,10 @@ const ThoughtDisplay: React.FC<ThoughtDisplayProps> = ({ thought, style = 'defau
   return (
     <div className='px-10px py-10px rd-20px text-14px pb-40px lh-20px text-t-primary' style={containerStyle}>
       <div className='flex items-center gap-8px'>
-        {running && <Spin size={14} />}
-        <Tag color='arcoblue' size='small'>
+        {running && <Loader2 className="h-3.5 w-3.5 animate-spin" />}
+        <Badge variant="secondary" className="text-xs">
           {thought.subject}
-        </Tag>
+        </Badge>
         <span className='flex-1 truncate'>{thought.description}</span>
         {running && (
           <span className='text-t-tertiary text-12px whitespace-nowrap'>

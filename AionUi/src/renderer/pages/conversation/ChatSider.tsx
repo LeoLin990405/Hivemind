@@ -28,15 +28,15 @@ const ChatSider: React.FC<{
 
   let workspaceNode: React.ReactNode = null;
   if (conversation?.type === 'gemini') {
-    workspaceNode = <ChatWorkspace conversation_id={conversation.id} workspace={conversation.extra.workspace} messageApi={messageApi}></ChatWorkspace>;
+    workspaceNode = <ChatWorkspace conversation_id={conversation.id} workspace={conversation.extra.workspace} messageApi={messageApi as any}></ChatWorkspace>;
   } else if (conversation?.type === 'acp' && conversation.extra?.workspace) {
-    workspaceNode = <ChatWorkspace conversation_id={conversation.id} workspace={conversation.extra.workspace} eventPrefix='acp' messageApi={messageApi}></ChatWorkspace>;
+    workspaceNode = <ChatWorkspace conversation_id={conversation.id} workspace={conversation.extra.workspace} eventPrefix='acp' messageApi={messageApi as any}></ChatWorkspace>;
   } else if (conversation?.type === 'codex' && conversation.extra?.workspace) {
-    workspaceNode = <ChatWorkspace conversation_id={conversation.id} workspace={conversation.extra.workspace} eventPrefix='codex' messageApi={messageApi}></ChatWorkspace>;
+    workspaceNode = <ChatWorkspace conversation_id={conversation.id} workspace={conversation.extra.workspace} eventPrefix='codex' messageApi={messageApi as any}></ChatWorkspace>;
   } else if (conversation?.type === 'openclaw-gateway' && conversation.extra?.workspace) {
-    workspaceNode = <ChatWorkspace conversation_id={conversation.id} workspace={conversation.extra.workspace} eventPrefix='openclaw-gateway' messageApi={messageApi}></ChatWorkspace>;
+    workspaceNode = <ChatWorkspace conversation_id={conversation.id} workspace={conversation.extra.workspace} eventPrefix='openclaw-gateway' messageApi={messageApi as any}></ChatWorkspace>;
   } else if (conversation?.type === 'hivemind' && conversation.extra?.workspace) {
-    workspaceNode = <ChatWorkspace conversation_id={conversation.id} workspace={conversation.extra.workspace} eventPrefix='hivemind' messageApi={messageApi}></ChatWorkspace>;
+    workspaceNode = <ChatWorkspace conversation_id={conversation.id} workspace={conversation.extra.workspace} eventPrefix='hivemind' messageApi={messageApi as any}></ChatWorkspace>;
   }
 
   if (!workspaceNode) {
@@ -45,7 +45,7 @@ const ChatSider: React.FC<{
 
   return (
     <>
-      <Toaster position="top-center" richColors closeButton />
+      <Toaster position='top-center' richColors closeButton />
       {workspaceNode}
     </>
   );

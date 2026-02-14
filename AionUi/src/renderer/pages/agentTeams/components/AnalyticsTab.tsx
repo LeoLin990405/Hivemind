@@ -1,13 +1,6 @@
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/renderer/components/ui/card';
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from '@/renderer/components/ui/table';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/renderer/components/ui/table';
 import { Typography } from '@/renderer/components/atoms/Typography';
 import CostChart from './CostChart';
 import type { IAgentCostAnalysis, IAgentTeamStats } from '@/common/ipcBridge';
@@ -24,7 +17,7 @@ export const AnalyticsTab: React.FC<AnalyticsTabProps> = ({ stats, cost }) => {
         <Card>
           <CardHeader>
             <CardTitle>
-              <Typography variant="h6">Cost Distribution</Typography>
+              <Typography variant='h6'>Cost Distribution</Typography>
             </CardTitle>
           </CardHeader>
           <CardContent>
@@ -34,7 +27,7 @@ export const AnalyticsTab: React.FC<AnalyticsTabProps> = ({ stats, cost }) => {
         <Card>
           <CardHeader>
             <CardTitle>
-              <Typography variant="h6">Teammate Performance</Typography>
+              <Typography variant='h6'>Teammate Performance</Typography>
             </CardTitle>
           </CardHeader>
           <CardContent>
@@ -50,11 +43,13 @@ export const AnalyticsTab: React.FC<AnalyticsTabProps> = ({ stats, cost }) => {
                 {(stats?.teammate_stats || []).map((teammate) => (
                   <TableRow key={teammate.teammate_id}>
                     <TableCell>
-                      <Typography variant="body2" bold>{teammate.name}</Typography>
+                      <Typography variant='body2' bold>
+                        {teammate.name}
+                      </Typography>
                     </TableCell>
                     <TableCell>{teammate.tasks_completed}</TableCell>
                     <TableCell>
-                      <Typography color="warning" bold>
+                      <Typography color='warning' bold>
                         ${Number(teammate.total_cost_usd || 0).toFixed(4)}
                       </Typography>
                     </TableCell>

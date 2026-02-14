@@ -255,16 +255,8 @@ call_gateway() {
             fi
             ;;
         failed)
-            # Check if there's a response despite failed status
-            local result
-            result=$(echo "$response" | jq -r '.response // empty')
-            if [[ -n "$result" ]]; then
-                echo "$result"
-                exit 0
-            fi
-            # 真正的失败：没有响应
             local error
-            error=$(echo "$response" | jq -r '.error // "No response available"')
+            error=$(echo "$response" | jq -r '.error // "Unknown error"')
             echo -e "${RED}错误: $error${NC}" >&2
             exit 1
             ;;
@@ -354,16 +346,15 @@ parse_and_call() {
             fi
             ;;
         opencode)
-            local model="${args[0]:-minimax-cn-coding-plan/MiniMax-M2.5}"
+            local model="${args[0]:-opencode/minimax-m2.5-free}"
             case "$model" in
-                mm|minimax) model="minimax-cn-coding-plan/MiniMax-M2.5"; message="${args[*]:1}" ;;
-                free) model="opencode/minimax-m2.5-free"; message="${args[*]:1}" ;;
+                mm|minimax) model="opencode/minimax-m2.5-free"; message="${args[*]:1}" ;;
                 kimi|k) model="opencode/kimi-k2.5-free"; message="${args[*]:1}" ;;
                 ds|deepseek) model="deepseek/deepseek-reasoner"; message="${args[*]:1}" ;;
                 glm) model="opencode/glm-4.7-free"; message="${args[*]:1}" ;;
                 *)
-                    if [[ "$model" != opencode/* && "$model" != deepseek/* && "$model" != minimax* ]]; then
-                        model="minimax-cn-coding-plan/MiniMax-M2.5"
+                    if [[ "$model" != opencode/* && "$model" != deepseek/* ]]; then
+                        model="opencode/minimax-m2.5-free"
                         message="${args[*]}"
                     else
                         message="${args[*]:1}"

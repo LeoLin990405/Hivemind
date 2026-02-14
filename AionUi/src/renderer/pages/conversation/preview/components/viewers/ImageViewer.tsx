@@ -5,7 +5,6 @@
  */
 
 import { ipcBridge } from '@/common';
-import { Image } from '@arco-design/web-react';
 import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
@@ -76,7 +75,23 @@ const ImagePreview: React.FC<ImagePreviewProps> = ({ filePath, content, fileName
       );
     }
 
-    return <Image src={imageSrc} alt={fileName || filePath || 'Image preview'} className='w-full h-full flex items-center justify-center [&_.arco-image-img]:w-full [&_.arco-image-img]:h-full [&_.arco-image-img]:object-contain' preview={!!imageSrc} />;
+    return (
+      <img
+        src={imageSrc}
+        alt={fileName || filePath || 'Image preview'}
+        className='max-w-full max-h-full object-contain cursor-zoom-in'
+        onClick={() => {
+          // Open image in new window or modal for full preview
+          if (imageSrc) {
+            const w = window.open('', '_blank');
+            if (w) {
+              w.document.write(`<img src="${imageSrc}" style="max-width:100%;max-height:100vh;object-fit:contain;" />`);
+              w.document.title = fileName || 'Image Preview';
+            }
+          }
+        }}
+      />
+    );
   };
 
   return <div className='flex-1 flex items-center justify-center bg-bg-1 p-24px overflow-auto'>{renderStatus()}</div>;

@@ -9,30 +9,11 @@ import { useNavigate } from 'react-router-dom';
 import { Button } from '@/renderer/components/ui/button';
 import { Input } from '@/renderer/components/ui/input';
 import { Label } from '@/renderer/components/ui/label';
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogFooter,
-} from '@/renderer/components/ui/dialog';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/renderer/components/ui/dialog';
 import { Card, CardContent, CardHeader, CardTitle } from '@/renderer/components/ui/card';
 import { Badge } from '@/renderer/components/ui/badge';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/renderer/components/ui/select';
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from '@/renderer/components/ui/table';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/renderer/components/ui/select';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/renderer/components/ui/table';
 import { motion } from 'framer-motion';
 import { agentTeamsApi } from './api';
 import type { IAgentTeam } from '@/common/ipcBridge';
@@ -98,24 +79,21 @@ const TeamsPage: React.FC = () => {
   }, []);
 
   return (
-    <motion.div
-      initial={{ opacity: 0, x: -20 }}
-      animate={{ opacity: 1, x: 0 }}
-      transition={{ duration: 0.5 }}
-      style={{ padding: '24px' }}
-    >
+    <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.5 }} style={{ padding: '24px' }}>
       <div style={{ marginBottom: '24px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
         <div>
-          <Typography variant="h4" bold>Teams</Typography>
-          <Typography variant="body2" color="secondary">Manage your AI agent teams</Typography>
+          <Typography variant='h4' bold>
+            Teams
+          </Typography>
+          <Typography variant='body2' color='secondary'>
+            Manage your AI agent teams
+          </Typography>
         </div>
-        <Button onClick={() => setVisible(true)}>
-          Create Team
-        </Button>
+        <Button onClick={() => setVisible(true)}>Create Team</Button>
       </div>
 
       <Card>
-        <CardContent className="p-0">
+        <CardContent className='p-0'>
           <Table>
             <TableHeader>
               <TableRow>
@@ -131,26 +109,26 @@ const TeamsPage: React.FC = () => {
                 <TableRow key={team.id}>
                   <TableCell>
                     <Button
-                      variant="link"
+                      variant='link'
                       onClick={() => {
                         void navigate(`/agent-teams/teams/${team.id}`);
                       }}
-                      className="p-0 h-auto font-semibold"
+                      className='p-0 h-auto font-semibold'
                     >
                       {team.name}
                     </Button>
                   </TableCell>
                   <TableCell>
-                    <Typography variant="body2" color="secondary">{team.description || '-'}</Typography>
+                    <Typography variant='body2' color='secondary'>
+                      {team.description || '-'}
+                    </Typography>
                   </TableCell>
                   <TableCell>{team.max_teammates}</TableCell>
                   <TableCell>
-                    <Badge variant="outline">{team.task_allocation_strategy}</Badge>
+                    <Badge variant='outline'>{team.task_allocation_strategy}</Badge>
                   </TableCell>
                   <TableCell>
-                    <Badge variant={team.status === 'active' ? 'default' : 'secondary'}>
-                      {team.status}
-                    </Badge>
+                    <Badge variant={team.status === 'active' ? 'default' : 'secondary'}>{team.status}</Badge>
                   </TableCell>
                 </TableRow>
               ))}
@@ -160,64 +138,45 @@ const TeamsPage: React.FC = () => {
       </Card>
 
       <Dialog open={visible} onOpenChange={setVisible}>
-        <DialogContent className="sm:max-w-[500px]">
+        <DialogContent className='sm:max-w-[500px]'>
           <DialogHeader>
             <DialogTitle>
-              <Typography variant="h6">Create Team</Typography>
+              <Typography variant='h6'>Create Team</Typography>
             </DialogTitle>
           </DialogHeader>
-          <div className="space-y-4 py-4">
-            <div className="space-y-2">
-              <Label htmlFor="team-name">Team Name</Label>
-              <Input
-                id="team-name"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                placeholder="e.g. Core Delivery Team"
-              />
-              {errors.name && <p className="text-sm text-destructive">{errors.name}</p>}
+          <div className='space-y-4 py-4'>
+            <div className='space-y-2'>
+              <Label htmlFor='team-name'>Team Name</Label>
+              <Input id='team-name' value={name} onChange={(e) => setName(e.target.value)} placeholder='e.g. Core Delivery Team' />
+              {errors.name && <p className='text-sm text-destructive'>{errors.name}</p>}
             </div>
-            <div className="space-y-2">
-              <Label htmlFor="team-description">Description</Label>
-              <Input
-                id="team-description"
-                value={description}
-                onChange={(e) => setDescription(e.target.value)}
-                placeholder="Optional description"
-              />
+            <div className='space-y-2'>
+              <Label htmlFor='team-description'>Description</Label>
+              <Input id='team-description' value={description} onChange={(e) => setDescription(e.target.value)} placeholder='Optional description' />
             </div>
-            <div className="space-y-2">
-              <Label htmlFor="max-teammates">Max Teammates</Label>
-              <Input
-                id="max-teammates"
-                type="number"
-                min={1}
-                max={20}
-                value={maxTeammates}
-                onChange={(e) => setMaxTeammates(Number(e.target.value))}
-              />
+            <div className='space-y-2'>
+              <Label htmlFor='max-teammates'>Max Teammates</Label>
+              <Input id='max-teammates' type='number' min={1} max={20} value={maxTeammates} onChange={(e) => setMaxTeammates(Number(e.target.value))} />
             </div>
-            <div className="space-y-2">
+            <div className='space-y-2'>
               <Label>Allocation Strategy</Label>
               <Select value={strategy} onValueChange={(value) => setStrategy(value as typeof strategy)}>
                 <SelectTrigger>
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="round_robin">Round Robin</SelectItem>
-                  <SelectItem value="load_balance">Load Balance</SelectItem>
-                  <SelectItem value="skill_based">Skill Based</SelectItem>
+                  <SelectItem value='round_robin'>Round Robin</SelectItem>
+                  <SelectItem value='load_balance'>Load Balance</SelectItem>
+                  <SelectItem value='skill_based'>Skill Based</SelectItem>
                 </SelectContent>
               </Select>
             </div>
           </div>
           <DialogFooter>
-            <Button variant="outline" onClick={() => setVisible(false)}>
+            <Button variant='outline' onClick={() => setVisible(false)}>
               Cancel
             </Button>
-            <Button onClick={() => void createTeam()}>
-              Create
-            </Button>
+            <Button onClick={() => void createTeam()}>Create</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>

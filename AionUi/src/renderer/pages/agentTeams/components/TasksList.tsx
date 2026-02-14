@@ -28,8 +28,8 @@ export const TasksList: React.FC<TasksListProps> = ({ tasks, onViewDetail, onRun
 
   if (tasks.length === 0) {
     return (
-      <div className="flex items-center justify-center h-64 bg-bg-1 rounded-lg border border-line-2">
-        <Typography variant="body2" color="secondary">
+      <div className='flex items-center justify-center h-64 bg-bg-1 rounded-lg border border-line-2'>
+        <Typography variant='body2' color='secondary'>
           暂无任务
         </Typography>
       </div>
@@ -37,11 +37,7 @@ export const TasksList: React.FC<TasksListProps> = ({ tasks, onViewDetail, onRun
   }
 
   return (
-    <div
-      ref={parentRef}
-      className="h-full overflow-auto bg-bg-1 rounded-lg border border-line-2 p-4"
-      style={{ maxHeight: '600px' }}
-    >
+    <div ref={parentRef} className='h-full overflow-auto bg-bg-1 rounded-lg border border-line-2 p-4' style={{ maxHeight: '600px' }}>
       <div
         style={{
           height: `${virtualizer.getTotalSize()}px`,
@@ -62,11 +58,7 @@ export const TasksList: React.FC<TasksListProps> = ({ tasks, onViewDetail, onRun
               padding: '0 8px',
             }}
           >
-            <TaskCard
-              task={tasks[virtualItem.index]}
-              onViewDetail={onViewDetail}
-              onRun={onRun}
-            />
+            <TaskCard task={tasks[virtualItem.index]} onViewDetail={onViewDetail} onRun={onRun} />
           </div>
         ))}
       </div>

@@ -20,17 +20,15 @@ export class SyncService {
   ) {}
 
   listTools(): IAITool[] {
-    return (this.db.prepare('SELECT * FROM ai_tools ORDER BY name ASC').all() as any[]) as IAITool[];
+    return this.db.prepare('SELECT * FROM ai_tools ORDER BY name ASC').all() as any[] as IAITool[];
   }
 
   listSkills(): ISkill[] {
-    return (this.db.prepare('SELECT * FROM skills ORDER BY updated_at DESC').all() as any[]) as ISkill[];
+    return this.db.prepare('SELECT * FROM skills ORDER BY updated_at DESC').all() as any[] as ISkill[];
   }
 
   ensureMapping(skillId: string, toolId: string): void {
-    const existing = this.db
-      .prepare('SELECT * FROM skill_tool_mapping WHERE skill_id = ? AND tool_id = ?')
-      .get(skillId, toolId) as any;
+    const existing = this.db.prepare('SELECT * FROM skill_tool_mapping WHERE skill_id = ? AND tool_id = ?').get(skillId, toolId) as any;
 
     if (existing) {
       return;
@@ -52,25 +50,17 @@ export class SyncService {
     this.ensureMapping(skillId, toolId);
 
     if (!enabled) {
-      const existing = this.db
-        .prepare('SELECT symlink_path FROM skill_tool_mapping WHERE skill_id = ? AND tool_id = ?')
-        .get(skillId, toolId) as { symlink_path?: string } | undefined;
+      const existing = this.db.prepare('SELECT symlink_path FROM skill_tool_mapping WHERE skill_id = ? AND tool_id = ?').get(skillId, toolId) as { symlink_path?: string } | undefined;
 
       if (existing?.symlink_path) {
         await this.symlinkManager.removeSymlink(existing.symlink_path);
       }
 
-      this.db
-        .prepare(
-          'UPDATE skill_tool_mapping SET enabled = 0, synced = 0, symlink_path = NULL, sync_error = NULL, updated_at = ? WHERE skill_id = ? AND tool_id = ?'
-        )
-        .run(Date.now(), skillId, toolId);
+      this.db.prepare('UPDATE skill_tool_mapping SET enabled = 0, synced = 0, symlink_path = NULL, sync_error = NULL, updated_at = ? WHERE skill_id = ? AND tool_id = ?').run(Date.now(), skillId, toolId);
       return;
     }
 
-    this.db
-      .prepare('UPDATE skill_tool_mapping SET enabled = 1, updated_at = ? WHERE skill_id = ? AND tool_id = ?')
-      .run(Date.now(), skillId, toolId);
+    this.db.prepare('UPDATE skill_tool_mapping SET enabled = 1, updated_at = ? WHERE skill_id = ? AND tool_id = ?').run(Date.now(), skillId, toolId);
   }
 
   async executeAll(): Promise<ISyncResult[]> {
@@ -182,9 +172,7 @@ export class SyncService {
       await this.symlinkManager.removeSymlink(targetPath);
     }
 
-    this.db
-      .prepare('UPDATE skill_tool_mapping SET synced = 0, symlink_path = NULL, sync_error = NULL, updated_at = ? WHERE skill_id = ? AND tool_id = ?')
-      .run(Date.now(), skillId, toolId);
+    this.db.prepare('UPDATE skill_tool_mapping SET synced = 0, symlink_path = NULL, sync_error = NULL, updated_at = ? WHERE skill_id = ? AND tool_id = ?').run(Date.now(), skillId, toolId);
   }
 
   getMappingsForSkill(skillId: string): Array<{ tool_id: string; enabled: number; synced: number; symlink_path: string | null; sync_error: string | null }> {

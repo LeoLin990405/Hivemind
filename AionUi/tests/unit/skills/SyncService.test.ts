@@ -47,8 +47,7 @@ const createFakeDb = (seed: { skills: SkillRow[]; tools: ToolRow[]; mappings?: M
   const tools = [...seed.tools];
   const mappings = [...(seed.mappings || [])];
 
-  const getMapping = (skillId: string, toolId: string): MappingRow | undefined =>
-    mappings.find((mapping) => mapping.skill_id === skillId && mapping.tool_id === toolId);
+  const getMapping = (skillId: string, toolId: string): MappingRow | undefined => mappings.find((mapping) => mapping.skill_id === skillId && mapping.tool_id === toolId);
 
   const getJoinRow = (skillId: string, toolId: string) => {
     const mapping = getMapping(skillId, toolId);

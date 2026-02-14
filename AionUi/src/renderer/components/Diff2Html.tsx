@@ -8,7 +8,9 @@ import { useThemeContext } from '@/renderer/context/ThemeContext';
 import { iconColors } from '@/renderer/theme/colors';
 import { extractContentFromDiff, parseFilePathFromDiff } from '@/renderer/utils/diffUtils';
 import { getFileTypeInfo } from '@/renderer/utils/fileType';
-import { Button, Checkbox, Tooltip } from '@arco-design/web-react';
+import { Button } from '@/renderer/components/ui/button';
+import { Checkbox } from '@/renderer/components/ui/checkbox';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/renderer/components/ui/tooltip';
 import { ExpandDownOne, FoldUpOne, PreviewOpen } from '@icon-park/react';
 import classNames from 'classnames';
 import { html } from 'diff2html';
@@ -151,21 +153,43 @@ const Diff2Html = ({ diff, className, title, filePath }: { diff: string; classNa
         ></div>
         {operatorRef.current &&
           ReactDOM.createPortal(
-            <>
+            <TooltipProvider>
               {/* side-by-side 选项 / Side-by-side option */}
-              <Checkbox className='whitespace-nowrap' checked={sideBySide} onChange={(value) => setSideBySide(value)}>
-                <span className='whitespace-nowrap'>side-by-side</span>
-              </Checkbox>
+              <div className="flex items-center gap-2 whitespace-nowrap">
+                <Checkbox 
+                  id="side-by-side" 
+                  checked={sideBySide} 
+                  onCheckedChange={(checked) => setSideBySide(checked === true)}
+                />
+                <label htmlFor="side-by-side" className="whitespace-nowrap text-sm cursor-pointer">
+                  side-by-side
+                </label>
+              </div>
 
-              <Tooltip content={t('preview.openInPanelTooltip')}>
-                <Button type='text' size='mini' onClick={handlePreviewClick as any} disabled={previewLoading} icon={<PreviewOpen theme='outline' size='14' fill={iconColors.secondary} />}>
-                  {t('preview.preview')}
-                </Button>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button 
+                    variant="ghost" 
+                    size="sm" 
+                    onClick={handlePreviewClick as any} 
+                    disabled={previewLoading}
+                    className="h-7 px-2 gap-1"
+                  >
+                    <PreviewOpen theme='outline' size='14' fill={iconColors.secondary} />
+                    <span className="text-xs">{t('preview.preview')}</span>
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p>{t('preview.openInPanelTooltip')}</p>
+                </TooltipContent>
               </Tooltip>
 
               {/* 折叠按钮 / Collapse button */}
-              {collapse ? <ExpandDownOne theme='outline' size='14' fill={iconColors.secondary} className='flex items-center' onClick={() => setCollapse(false)} /> : <FoldUpOne theme='outline' size='14' fill={iconColors.secondary} className='flex items-center' onClick={() => setCollapse(true)} />}
-            </>,
+              {collapse ? 
+                <ExpandDownOne theme='outline' size='14' fill={iconColors.secondary} className='flex items-center cursor-pointer' onClick={() => setCollapse(false)} /> : 
+                <FoldUpOne theme='outline' size='14' fill={iconColors.secondary} className='flex items-center cursor-pointer' onClick={() => setCollapse(true)} />
+              }
+            </TooltipProvider>,
             operatorRef.current
           )}
       </div>

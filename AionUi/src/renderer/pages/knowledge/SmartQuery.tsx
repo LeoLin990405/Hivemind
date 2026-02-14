@@ -55,20 +55,9 @@ const SmartQuery: React.FC = () => {
   return (
     <Card>
       <Space direction='vertical' size='large' style={{ width: '100%' }}>
-        <Input
-          placeholder='Optional notebook id for direct routing'
-          value={notebookId}
-          onChange={setNotebookId}
-          allowClear
-          style={{ width: 360 }}
-        />
+        <Input placeholder='Optional notebook id for direct routing' value={notebookId} onChange={setNotebookId} allowClear style={{ width: 360 }} />
 
-        <TextArea
-          placeholder='Ask NotebookLM a research question...'
-          value={question}
-          onChange={setQuestion}
-          autoSize={{ minRows: 4, maxRows: 8 }}
-        />
+        <TextArea placeholder='Ask NotebookLM a research question...' value={question} onChange={setQuestion} autoSize={{ minRows: 4, maxRows: 8 }} />
 
         <Space>
           <Button type='primary' icon={<IconSend />} onClick={handleQuery} loading={loading}>
@@ -95,11 +84,7 @@ const SmartQuery: React.FC = () => {
             <Space direction='vertical' style={{ width: '100%' }}>
               <Text bold>{result.success ? 'Answer' : 'Result'}</Text>
               {result.url && <Text type='secondary'>URL: {result.url}</Text>}
-              {result.answer ? (
-                <Paragraph style={{ whiteSpace: 'pre-wrap', marginBottom: 0 }}>{result.answer}</Paragraph>
-              ) : (
-                <Text type='secondary'>{result.error || 'No answer extracted yet'}</Text>
-              )}
+              {result.answer ? <Paragraph style={{ whiteSpace: 'pre-wrap', marginBottom: 0 }}>{result.answer}</Paragraph> : <Text type='secondary'>{result.error || 'No answer extracted yet'}</Text>}
             </Space>
           </Card>
         )}

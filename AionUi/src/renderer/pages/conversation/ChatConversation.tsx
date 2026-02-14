@@ -175,16 +175,7 @@ const ChatConversation: React.FC<{
         agentLogoIsEmoji: presetAssistantInfo.isEmoji,
       }
     : {
-        backend:
-          conversation?.type === 'acp'
-            ? conversation?.extra?.backend
-            : conversation?.type === 'codex'
-              ? 'codex'
-              : conversation?.type === 'openclaw-gateway'
-                ? 'openclaw-gateway'
-                : conversation?.type === 'hivemind'
-                  ? 'hivemind'
-                  : undefined,
+        backend: conversation?.type === 'acp' ? conversation?.extra?.backend : conversation?.type === 'codex' ? 'codex' : conversation?.type === 'openclaw-gateway' ? 'openclaw-gateway' : conversation?.type === 'hivemind' ? 'hivemind' : undefined,
         agentName: (conversation?.extra as { agentName?: string })?.agentName,
       };
 

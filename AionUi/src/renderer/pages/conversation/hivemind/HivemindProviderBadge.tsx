@@ -39,12 +39,8 @@ const HivemindProviderBadge: React.FC<HivemindProviderBadgeProps> = ({ provider,
           {t('hivemind.cached')}
         </Tag>
       )}
-      {typeof latencyMs === 'number' && Number.isFinite(latencyMs) && (
-        <Tag size='small'>{(latencyMs / 1000).toFixed(1)}s</Tag>
-      )}
-      {typeof totalTokens === 'number' && totalTokens > 0 && (
-        <Tag size='small'>⚡ {t('hivemind.tokens', { count: totalTokens })}</Tag>
-      )}
+      {typeof latencyMs === 'number' && Number.isFinite(latencyMs) && <Tag size='small'>{(latencyMs / 1000).toFixed(1)}s</Tag>}
+      {typeof totalTokens === 'number' && totalTokens > 0 && <Tag size='small'>⚡ {t('hivemind.tokens', { count: totalTokens })}</Tag>}
     </div>
   );
 };

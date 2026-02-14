@@ -275,10 +275,7 @@ class AcpAgentManager extends BaseAgentManager<AcpAgentManagerData, AcpPermissio
       throw new Error(payload.error);
     }
 
-    const content =
-      (typeof payload.message?.content === 'string' && payload.message.content) ||
-      (typeof payload.response === 'string' && payload.response) ||
-      '';
+    const content = (typeof payload.message?.content === 'string' && payload.message.content) || (typeof payload.response === 'string' && payload.response) || '';
 
     return {
       content,

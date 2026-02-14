@@ -371,9 +371,7 @@ class BrowserAutomationService {
         };
       }
 
-      const usesContentEditable = await input
-        .evaluate((el: Element) => el.getAttribute('contenteditable') === 'true')
-        .catch(() => false);
+      const usesContentEditable = await input.evaluate((el: Element) => el.getAttribute('contenteditable') === 'true').catch(() => false);
 
       if (usesContentEditable) {
         await input.click();

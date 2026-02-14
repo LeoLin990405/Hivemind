@@ -9,21 +9,15 @@ import { motion } from 'framer-motion';
 import { Card, CardContent, CardHeader, CardTitle } from '@/renderer/components/ui/card';
 import { Badge } from '@/renderer/components/ui/badge';
 import { Button } from '@/renderer/components/ui/button';
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from '@/renderer/components/ui/table';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/renderer/components/ui/table';
 import { People, CheckCorrect, ApplicationOne, PayCode } from '@icon-park/react';
 import { agentTeamsApi } from './api';
 import { ipcBridge } from '@/common';
 import type { IAgentTeam, IAgentTask } from '@/common/ipcBridge';
 import { Typography } from '@/renderer/components/atoms/Typography';
 import { StatCard } from '@/renderer/components/molecules/StatCard';
-import { ActivityTimeline, Activity } from '@/renderer/components/organisms/ActivityTimeline';
+import type { Activity } from '@/renderer/components/organisms/ActivityTimeline';
+import { ActivityTimeline } from '@/renderer/components/organisms/ActivityTimeline';
 import { PerformanceChart } from '@/renderer/components/organisms/PerformanceChart';
 import IconParkHOC from '@/renderer/components/IconParkHOC';
 
@@ -96,13 +90,9 @@ const AgentTeamsDashboard: React.FC = () => {
       const dayStart = new Date(date).setHours(0, 0, 0, 0);
       const dayEnd = new Date(date).setHours(23, 59, 59, 999);
 
-      const completed = allTasks.filter(
-        (t) => t.status === 'completed' && t.completed_at && t.completed_at >= dayStart && t.completed_at <= dayEnd
-      ).length;
+      const completed = allTasks.filter((t) => t.status === 'completed' && t.completed_at && t.completed_at >= dayStart && t.completed_at <= dayEnd).length;
 
-      const failed = allTasks.filter(
-        (t) => t.status === 'failed' && t.completed_at && t.completed_at >= dayStart && t.completed_at <= dayEnd
-      ).length;
+      const failed = allTasks.filter((t) => t.status === 'failed' && t.completed_at && t.completed_at >= dayStart && t.completed_at <= dayEnd).length;
 
       trend.push({ date: dateStr, completed, failed });
     }
@@ -133,9 +123,7 @@ const AgentTeamsDashboard: React.FC = () => {
 
       // 计算今日完成的任务
       const today = new Date().setHours(0, 0, 0, 0);
-      const completedToday = allTasks.filter(
-        (t) => t.status === 'completed' && t.completed_at && t.completed_at >= today
-      ).length;
+      const completedToday = allTasks.filter((t) => t.status === 'completed' && t.completed_at && t.completed_at >= today).length;
 
       // 计算总成本
       const totalCost = allTasks.reduce((sum, t) => sum + (t.cost_usd || 0), 0);
@@ -227,103 +215,67 @@ const AgentTeamsDashboard: React.FC = () => {
 
   if (loading && teams.length === 0) {
     return (
-      <div className="flex items-center justify-center h-full">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-primary mx-auto"></div>
-          <p className="mt-4 text-t-secondary">加载中...</p>
+      <div className='flex items-center justify-center h-full'>
+        <div className='text-center'>
+          <div className='animate-spin rounded-full h-10 w-10 border-b-2 border-primary mx-auto'></div>
+          <p className='mt-4 text-t-secondary'>加载中...</p>
         </div>
       </div>
     );
   }
 
   return (
-    <motion.div
-      variants={containerVariants}
-      initial="hidden"
-      animate="visible"
-      className="p-6 space-y-6 h-full overflow-y-auto"
-    >
+    <motion.div variants={containerVariants} initial='hidden' animate='visible' className='p-6 space-y-6 h-full overflow-y-auto'>
       {/* 欢迎头部 */}
-      <motion.div variants={itemVariants} className="flex items-center justify-between mb-8">
+      <motion.div variants={itemVariants} className='flex items-center justify-between mb-8'>
         <div>
-          <Typography variant="h3" bold className="text-t-primary">
+          <Typography variant='h3' bold className='text-t-primary'>
             Agent Teams 仪表盘
           </Typography>
-          <Typography variant="body2" color="secondary" className="mt-1">
+          <Typography variant='body2' color='secondary' className='mt-1'>
             管理和监控你的 AI 协作团队
           </Typography>
         </div>
-        <Button onClick={() => void loadDashboardData()}>
-          刷新数据
-        </Button>
+        <Button onClick={() => void loadDashboardData()}>刷新数据</Button>
       </motion.div>
 
       {/* 快速统计卡片 */}
       <motion.div variants={itemVariants}>
-        <div className="grid grid-cols-4 gap-6">
-          <StatCard
-            title="活跃团队"
-            value={stats.activeTeams}
-            icon={<IconPeople />}
-            color="primary"
-            trend={stats.activeTeams > 0 ? 100 : 0}
-            trendLabel="占总团队比例"
-          />
-          <StatCard
-            title="总任务数"
-            value={stats.totalTasks}
-            icon={<IconTasks />}
-            color="warning"
-          />
-          <StatCard
-            title="今日完成"
-            value={stats.completedToday}
-            icon={<IconCheck />}
-            color="success"
-          />
-          <StatCard
-            title="总成本"
-            value={`$${stats.totalCost.toFixed(2)}`}
-            icon={<IconCost />}
-            color="error"
-          />
+        <div className='grid grid-cols-4 gap-6'>
+          <StatCard title='活跃团队' value={stats.activeTeams} icon={<IconPeople />} color='primary' trend={stats.activeTeams > 0 ? 100 : 0} trendLabel='占总团队比例' />
+          <StatCard title='总任务数' value={stats.totalTasks} icon={<IconTasks />} color='warning' />
+          <StatCard title='今日完成' value={stats.completedToday} icon={<IconCheck />} color='success' />
+          <StatCard title='总成本' value={`$${stats.totalCost.toFixed(2)}`} icon={<IconCost />} color='error' />
         </div>
       </motion.div>
 
       {/* 任务完成趋势图表 + 最近活动 */}
       <motion.div variants={itemVariants}>
-        <div className="grid grid-cols-[1.4fr_1fr] gap-6 mt-6">
+        <div className='grid grid-cols-[1.4fr_1fr] gap-6 mt-6'>
           <Card>
             <CardHeader>
               <CardTitle>
-                <Typography variant="h6" bold>任务完成趋势</Typography>
+                <Typography variant='h6' bold>
+                  任务完成趋势
+                </Typography>
               </CardTitle>
             </CardHeader>
             <CardContent>
               {stats.completionTrend.length > 0 ? (
-                <div className="h-64">
+                <div className='h-64'>
                   {/* 这里可以集成 Recharts 图表 */}
-                  <div className="flex items-end justify-between h-full gap-4">
+                  <div className='flex items-end justify-between h-full gap-4'>
                     {stats.completionTrend.map((item, index) => (
-                      <motion.div
-                        key={item.date}
-                        initial={{ height: 0 }}
-                        animate={{ height: `${Math.max((item.completed / Math.max(...stats.completionTrend.map(t => t.completed), 1)) * 100, 10)}%` }}
-                        transition={{ duration: 0.5, delay: index * 0.1 }}
-                        className="flex-1 flex flex-col items-center"
-                      >
-                        <div className="w-full bg-primary/20 rounded-t-lg relative group cursor-pointer">
-                          <div 
-                            className="absolute bottom-0 w-full bg-primary rounded-t-lg transition-all"
-                            style={{ height: `${Math.max((item.completed / Math.max(item.completed + item.failed, 1)) * 100, 20)}%` }}
-                          />
+                      <motion.div key={item.date} initial={{ height: 0 }} animate={{ height: `${Math.max((item.completed / Math.max(...stats.completionTrend.map((t) => t.completed), 1)) * 100, 10)}%` }} transition={{ duration: 0.5, delay: index * 0.1 }} className='flex-1 flex flex-col items-center'>
+                        <div className='w-full bg-primary/20 rounded-t-lg relative group cursor-pointer'>
+                          <div className='absolute bottom-0 w-full bg-primary rounded-t-lg transition-all' style={{ height: `${Math.max((item.completed / Math.max(item.completed + item.failed, 1)) * 100, 20)}%` }} />
                           {/* Tooltip */}
-                          <div className="absolute -top-12 left-1/2 -translate-x-1/2 bg-bg-0 border border-line-2 rounded-lg px-2 py-1 text-xs opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap z-10 shadow-lg">
-                            <div className="text-success">完成: {item.completed}</div>
-                            <div className="text-error">失败: {item.failed}</div>
+                          <div className='absolute -top-12 left-1/2 -translate-x-1/2 bg-bg-0 border border-line-2 rounded-lg px-2 py-1 text-xs opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap z-10 shadow-lg'>
+                            <div className='text-success'>完成: {item.completed}</div>
+                            <div className='text-error'>失败: {item.failed}</div>
                           </div>
                         </div>
-                        <span className="text-xs text-t-secondary mt-2">{item.date}</span>
+                        <span className='text-xs text-t-secondary mt-2'>{item.date}</span>
                       </motion.div>
                     ))}
                   </div>
@@ -342,50 +294,46 @@ const AgentTeamsDashboard: React.FC = () => {
         <Card>
           <CardHeader>
             <CardTitle>
-              <Typography variant="h6" bold>活跃团队</Typography>
+              <Typography variant='h6' bold>
+                活跃团队
+              </Typography>
             </CardTitle>
           </CardHeader>
-          <CardContent className="p-0">
+          <CardContent className='p-0'>
             {activeTeams.length > 0 ? (
-              <div className="divide-y divide-line-2">
+              <div className='divide-y divide-line-2'>
                 {activeTeams.map((team) => (
-                  <motion.div
-                    key={team.id}
-                    whileHover={{ backgroundColor: 'var(--bg-1)' }}
-                    className="p-4 flex items-center justify-between cursor-pointer transition-colors"
-                    onClick={() => window.location.hash = `/agent-teams/teams/${team.id}`}
-                  >
-                    <div className="flex-1">
-                      <div className="flex items-center gap-3">
-                        <Typography variant="body2" bold className="text-t-primary">
+                  <motion.div key={team.id} whileHover={{ backgroundColor: 'var(--bg-1)' }} className='p-4 flex items-center justify-between cursor-pointer transition-colors' onClick={() => (window.location.hash = `/agent-teams/teams/${team.id}`)}>
+                    <div className='flex-1'>
+                      <div className='flex items-center gap-3'>
+                        <Typography variant='body2' bold className='text-t-primary'>
                           {team.name}
                         </Typography>
-                        <Badge variant="default">ACTIVE</Badge>
+                        <Badge variant='default'>ACTIVE</Badge>
                       </div>
-                      <Typography variant="caption" color="secondary" className="mt-1 block">
+                      <Typography variant='caption' color='secondary' className='mt-1 block'>
                         {team.description || '暂无描述'}
                       </Typography>
                     </div>
-                    <div className="text-right flex items-center gap-8">
+                    <div className='text-right flex items-center gap-8'>
                       <div>
-                        <Typography variant="caption" color="secondary">任务进度</Typography>
-                        <div className="flex items-center gap-2 mt-1">
-                          <div className="w-24 h-2 bg-bg-2 rounded-full overflow-hidden">
-                            <motion.div
-                              initial={{ width: 0 }}
-                              animate={{ width: `${team.total_tasks > 0 ? (team.completed_tasks / team.total_tasks) * 100 : 0}%` }}
-                              transition={{ duration: 0.5 }}
-                              className="h-full bg-success rounded-full"
-                            />
+                        <Typography variant='caption' color='secondary'>
+                          任务进度
+                        </Typography>
+                        <div className='flex items-center gap-2 mt-1'>
+                          <div className='w-24 h-2 bg-bg-2 rounded-full overflow-hidden'>
+                            <motion.div initial={{ width: 0 }} animate={{ width: `${team.total_tasks > 0 ? (team.completed_tasks / team.total_tasks) * 100 : 0}%` }} transition={{ duration: 0.5 }} className='h-full bg-success rounded-full' />
                           </div>
-                          <Typography variant="caption" className="text-t-secondary">
+                          <Typography variant='caption' className='text-t-secondary'>
                             {team.completed_tasks}/{team.total_tasks}
                           </Typography>
                         </div>
                       </div>
                       <div>
-                        <Typography variant="caption" color="secondary">成本</Typography>
-                        <Typography variant="body2" bold className="text-t-primary">
+                        <Typography variant='caption' color='secondary'>
+                          成本
+                        </Typography>
+                        <Typography variant='body2' bold className='text-t-primary'>
                           ${team.total_cost_usd.toFixed(2)}
                         </Typography>
                       </div>
@@ -394,8 +342,10 @@ const AgentTeamsDashboard: React.FC = () => {
                 ))}
               </div>
             ) : (
-              <div className="p-8 text-center">
-                <Typography variant="body2" color="secondary">暂无活跃团队</Typography>
+              <div className='p-8 text-center'>
+                <Typography variant='body2' color='secondary'>
+                  暂无活跃团队
+                </Typography>
               </div>
             )}
           </CardContent>
@@ -407,10 +357,12 @@ const AgentTeamsDashboard: React.FC = () => {
         <Card>
           <CardHeader>
             <CardTitle>
-              <Typography variant="h6" bold>团队概览</Typography>
+              <Typography variant='h6' bold>
+                团队概览
+              </Typography>
             </CardTitle>
           </CardHeader>
-          <CardContent className="p-0">
+          <CardContent className='p-0'>
             <Table>
               <TableHeader>
                 <TableRow>
@@ -428,24 +380,21 @@ const AgentTeamsDashboard: React.FC = () => {
                   return (
                     <TableRow key={team.id}>
                       <TableCell>
-                        <Typography variant="body2" bold>{team.name}</Typography>
+                        <Typography variant='body2' bold>
+                          {team.name}
+                        </Typography>
                       </TableCell>
                       <TableCell>
-                        <Badge variant={team.status === 'active' ? 'default' : 'secondary'}>
-                          {team.status.toUpperCase()}
-                        </Badge>
+                        <Badge variant={team.status === 'active' ? 'default' : 'secondary'}>{team.status.toUpperCase()}</Badge>
                       </TableCell>
                       <TableCell>{team.total_tasks}</TableCell>
                       <TableCell>{team.completed_tasks}</TableCell>
                       <TableCell>
-                        <div className="flex items-center gap-2">
-                          <div className="w-16 h-2 bg-bg-2 rounded-full overflow-hidden">
-                            <div
-                              className="h-full bg-primary rounded-full transition-all"
-                              style={{ width: `${percent}%` }}
-                            />
+                        <div className='flex items-center gap-2'>
+                          <div className='w-16 h-2 bg-bg-2 rounded-full overflow-hidden'>
+                            <div className='h-full bg-primary rounded-full transition-all' style={{ width: `${percent}%` }} />
                           </div>
-                          <span className="text-xs text-t-secondary">{percent}%</span>
+                          <span className='text-xs text-t-secondary'>{percent}%</span>
                         </div>
                       </TableCell>
                       <TableCell>${Number(team.total_cost_usd).toFixed(2)}</TableCell>

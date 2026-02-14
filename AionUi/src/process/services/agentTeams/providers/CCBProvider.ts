@@ -115,16 +115,9 @@ export class CCBProvider implements IAgentProvider {
       };
     }
 
-    const output =
-      (typeof parsedJson.output === 'string' ? parsedJson.output : null) ||
-      (typeof parsedJson.content === 'string' ? parsedJson.content : null) ||
-      (typeof parsedJson.text === 'string' ? parsedJson.text : null) ||
-      '';
+    const output = (typeof parsedJson.output === 'string' ? parsedJson.output : null) || (typeof parsedJson.content === 'string' ? parsedJson.content : null) || (typeof parsedJson.text === 'string' ? parsedJson.text : null) || '';
 
-    const error =
-      (typeof parsedJson.error === 'string' ? parsedJson.error : null) ||
-      (typeof parsedJson.message === 'string' && parsedJson.success === false ? parsedJson.message : null) ||
-      undefined;
+    const error = (typeof parsedJson.error === 'string' ? parsedJson.error : null) || (typeof parsedJson.message === 'string' && parsedJson.success === false ? parsedJson.message : null) || undefined;
 
     const success = parsedJson.success !== false && !error;
 
@@ -142,7 +135,14 @@ export class CCBProvider implements IAgentProvider {
   }
 
   private tryParseJson(text: string): Record<string, unknown> | null {
-    const candidates = [text, ...text.split(/\r?\n/).map((line) => line.trim()).filter(Boolean).reverse()];
+    const candidates = [
+      text,
+      ...text
+        .split(/\r?\n/)
+        .map((line) => line.trim())
+        .filter(Boolean)
+        .reverse(),
+    ];
 
     for (const candidate of candidates) {
       if (!candidate.startsWith('{') || !candidate.endsWith('}')) {

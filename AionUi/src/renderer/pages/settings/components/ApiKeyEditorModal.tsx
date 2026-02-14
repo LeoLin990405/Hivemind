@@ -1,12 +1,7 @@
 import { Button } from '@/renderer/components/ui/button';
 import { Input } from '@/renderer/components/ui/input';
 import { LegacyModal } from '@/renderer/components/ui/legacy-modal';
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from '@/renderer/components/ui/tooltip';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/renderer/components/ui/tooltip';
 import { CheckOne, CloseOne, Delete, Edit, Plus, DeleteFive, CheckSmall, Shield, LoadingOne } from '@icon-park/react';
 import React, { useCallback, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -166,25 +161,14 @@ const ApiKeyEditorModal: React.FC<ApiKeyEditorModalProps> = ({ visible, apiKeys,
 
   return (
     <TooltipProvider>
-      <LegacyModal
-        title={t('settings.editApiKey')}
-        visible={visible}
-        onCancel={onClose}
-        onOk={handleSave}
-        width={500}
-      >
+      <LegacyModal title={t('settings.editApiKey')} visible={visible} onCancel={onClose} onOk={handleSave} width={500}>
         <div className='flex flex-col gap-12px'>
           {/* Key 列表 */}
           <div className='flex flex-col gap-8px max-h-300px overflow-y-auto'>
             {keys.map((key) => (
               <div key={key.id} className='flex items-center gap-8px'>
                 <div className='flex-1'>
-                  <Input 
-                    value={key.value} 
-                    onChange={(e) => updateKeyValue(key.id, e.target.value)} 
-                    disabled={!key.editing} 
-                    placeholder={t('settings.apiKeyPlaceholder')} 
-                  />
+                  <Input value={key.value} onChange={(e) => updateKeyValue(key.id, e.target.value)} disabled={!key.editing} placeholder={t('settings.apiKeyPlaceholder')} />
                 </div>
                 {/* 操作按钮 - 编辑状态时只显示保存按钮 */}
                 {key.value.trim() && (
@@ -193,12 +177,7 @@ const ApiKeyEditorModal: React.FC<ApiKeyEditorModalProps> = ({ visible, apiKeys,
                       // 编辑状态：只显示保存按钮
                       <Tooltip>
                         <TooltipTrigger asChild>
-                          <Button 
-                            variant="ghost" 
-                            size="sm" 
-                            onClick={() => toggleEditing(key.id)}
-                            className="text-green-600"
-                          >
+                          <Button variant='ghost' size='sm' onClick={() => toggleEditing(key.id)} className='text-green-600'>
                             <CheckSmall theme='outline' size={16} className='flex' />
                           </Button>
                         </TooltipTrigger>
@@ -211,12 +190,7 @@ const ApiKeyEditorModal: React.FC<ApiKeyEditorModalProps> = ({ visible, apiKeys,
                         {key.status !== 'pending' && <div className='flex items-center'>{getStatusIcon(key.status)}</div>}
                         <Tooltip>
                           <TooltipTrigger asChild>
-                            <Button 
-                              variant="ghost" 
-                              size="sm" 
-                              onClick={() => testKey(key.id)}
-                              disabled={key.status === 'testing'}
-                            >
+                            <Button variant='ghost' size='sm' onClick={() => testKey(key.id)} disabled={key.status === 'testing'}>
                               <Shield theme='outline' size={16} className='flex' />
                             </Button>
                           </TooltipTrigger>
@@ -224,11 +198,7 @@ const ApiKeyEditorModal: React.FC<ApiKeyEditorModalProps> = ({ visible, apiKeys,
                         </Tooltip>
                         <Tooltip>
                           <TooltipTrigger asChild>
-                            <Button 
-                              variant="ghost" 
-                              size="sm" 
-                              onClick={() => toggleEditing(key.id)}
-                            >
+                            <Button variant='ghost' size='sm' onClick={() => toggleEditing(key.id)}>
                               <Edit theme='outline' size={16} className='flex' />
                             </Button>
                           </TooltipTrigger>
@@ -236,12 +206,7 @@ const ApiKeyEditorModal: React.FC<ApiKeyEditorModalProps> = ({ visible, apiKeys,
                         </Tooltip>
                         <Tooltip>
                           <TooltipTrigger asChild>
-                            <Button 
-                              variant="ghost" 
-                              size="sm" 
-                              onClick={() => deleteKey(key.id)}
-                              className="text-destructive"
-                            >
+                            <Button variant='ghost' size='sm' onClick={() => deleteKey(key.id)} className='text-destructive'>
                               <Delete theme='outline' size={16} className='flex' />
                             </Button>
                           </TooltipTrigger>
@@ -264,12 +229,7 @@ const ApiKeyEditorModal: React.FC<ApiKeyEditorModalProps> = ({ visible, apiKeys,
                   {hasTestedKeys && hasInvalidKeys && (
                     <Tooltip>
                       <TooltipTrigger asChild>
-                        <Button 
-                          variant="ghost" 
-                          size="sm" 
-                          onClick={deleteInvalidKeys}
-                          className="text-destructive"
-                        >
+                        <Button variant='ghost' size='sm' onClick={deleteInvalidKeys} className='text-destructive'>
                           <DeleteFive theme='outline' size={16} className='flex' />
                         </Button>
                       </TooltipTrigger>
@@ -278,11 +238,7 @@ const ApiKeyEditorModal: React.FC<ApiKeyEditorModalProps> = ({ visible, apiKeys,
                   )}
                   <Tooltip>
                     <TooltipTrigger asChild>
-                      <Button 
-                        variant="ghost" 
-                        size="sm" 
-                        onClick={testAllKeys}
-                      >
+                      <Button variant='ghost' size='sm' onClick={testAllKeys}>
                         <Shield theme='outline' size={16} className='flex' />
                       </Button>
                     </TooltipTrigger>
@@ -290,12 +246,7 @@ const ApiKeyEditorModal: React.FC<ApiKeyEditorModalProps> = ({ visible, apiKeys,
                   </Tooltip>
                 </>
               )}
-              <Button 
-                variant="outline" 
-                size="sm" 
-                onClick={addKey}
-                className="flex items-center gap-1"
-              >
+              <Button variant='outline' size='sm' onClick={addKey} className='flex items-center gap-1'>
                 <Plus theme='outline' size={14} />
                 {t('common.add')}
               </Button>

@@ -6,7 +6,7 @@
 
 import { ipcBridge } from '@/common';
 import { usePreviewToolbarExtras } from '../../context/PreviewToolbarExtrasContext';
-import { Message } from '@arco-design/web-react';
+import { toast } from 'sonner';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import MarkdownPreview from './MarkdownViewer';
@@ -30,14 +30,13 @@ const WordPreview: React.FC<WordPreviewProps> = ({ filePath, hideToolbar = false
   const [markdown, setMarkdown] = useState('');
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [messageApi, messageContextHolder] = Message.useMessage();
   const toolbarExtrasContext = usePreviewToolbarExtras();
   const usePortalToolbar = Boolean(toolbarExtrasContext) && !hideToolbar;
 
-  const messageApiRef = useRef(messageApi);
+  const toastRef = useRef<typeof toast>(toast);
   useEffect(() => {
-    messageApiRef.current = messageApi;
-  }, [messageApi]);
+    toastRef.current = toast;
+  }, []);
 
   /**
    * 加载 Word 文档并转换为 Markdown
@@ -69,7 +68,7 @@ const WordPreview: React.FC<WordPreviewProps> = ({ filePath, hideToolbar = false
         const defaultMessage = t('preview.word.loadFailed');
         const errorMessage = err instanceof Error ? err.message : defaultMessage;
         setError(`${errorMessage}\n${t('preview.pathLabel')}: ${filePath}`);
-        messageApiRef.current?.error?.(errorMessage);
+        toastRef.current?.error?.(errorMessage);
       } finally {
         setLoading(false);
       }
@@ -84,17 +83,17 @@ const WordPreview: React.FC<WordPreviewProps> = ({ filePath, hideToolbar = false
    */
   const handleOpenInSystem = useCallback(async () => {
     if (!filePath) {
-      messageApi.error(t('preview.errors.openWithoutPath'));
+      toast.error(t('preview.errors.openWithoutPath'));
       return;
     }
 
     try {
       await ipcBridge.shell.openFile.invoke(filePath);
-      messageApi.info(t('preview.openInSystemSuccess'));
+      toast.success(t('preview.openInSystemSuccess'));
     } catch (err) {
-      messageApi.error(t('preview.openInSystemFailed'));
+      toast.error(t('preview.openInSystemFailed'));
     }
-  }, [filePath, messageApi, t]);
+  }, [filePath, t]);
 
   // 设置工具栏扩展（必须在所有条件返回之前调用）
   // Set toolbar extras (must be called before any conditional returns)
@@ -132,8 +131,6 @@ const WordPreview: React.FC<WordPreviewProps> = ({ filePath, hideToolbar = false
 
   return (
     <div className='h-full w-full flex flex-col bg-bg-1'>
-      {messageContextHolder}
-
       {/* 工具栏 / Toolbar */}
       {!usePortalToolbar && !hideToolbar && (
         <div className='flex items-center justify-between h-40px px-12px bg-bg-2 flex-shrink-0'>

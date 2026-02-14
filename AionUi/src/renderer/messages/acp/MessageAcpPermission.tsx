@@ -85,11 +85,11 @@ const MessageAcpPermission: React.FC<MessageAcpPermissionProps> = React.memo(({ 
 
   return (
     <Card className='mb-4' style={{ background: 'var(--bg-1)' }}>
-      <CardContent className="space-y-4 pt-4">
+      <CardContent className='space-y-4 pt-4'>
         {/* Header with icon and title */}
         <div className='flex items-center space-x-2'>
           <span className='text-2xl'>{icon}</span>
-          <span className="block">{title}</span>
+          <span className='block'>{title}</span>
         </div>
         {(toolCall.rawInput?.command || toolCall.title) && (
           <div>
@@ -100,20 +100,22 @@ const MessageAcpPermission: React.FC<MessageAcpPermissionProps> = React.memo(({ 
         {!hasResponded && (
           <>
             <div className='mt-10px'>{t('messages.chooseAction')}</div>
-            <RadioGroup value={selected || ''} onValueChange={setSelected} className="flex flex-col gap-2">
+            <RadioGroup value={selected || ''} onValueChange={setSelected} className='flex flex-col gap-2'>
               {options && options.length > 0 ? (
                 options.map((option, index) => {
                   const optionName = option?.name || `${t('messages.option')} ${index + 1}`;
                   const optionId = option?.optionId || `option_${index}`;
                   return (
-                    <div key={optionId} className="flex items-center space-x-2">
+                    <div key={optionId} className='flex items-center space-x-2'>
                       <RadioGroupItem value={optionId} id={optionId} />
-                      <label htmlFor={optionId} className="text-sm cursor-pointer">{optionName}</label>
+                      <label htmlFor={optionId} className='text-sm cursor-pointer'>
+                        {optionName}
+                      </label>
                     </div>
                   );
                 })
               ) : (
-                <span className="text-sm text-muted-foreground">{t('messages.noOptionsAvailable')}</span>
+                <span className='text-sm text-muted-foreground'>{t('messages.noOptionsAvailable')}</span>
               )}
             </RadioGroup>
             <div className='flex justify-start pl-20px'>

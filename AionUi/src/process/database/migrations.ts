@@ -669,7 +669,6 @@ const migration_v13: IMigration = {
   },
 };
 
-
 /**
  * Migration v13 -> v14: Add Agent Teams tables
  */

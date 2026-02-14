@@ -67,13 +67,7 @@ export class AgentTeamsDatabase {
   // =====================
   // Team
   // =====================
-  createTeam(params: {
-    name: string;
-    description?: string;
-    max_teammates?: number;
-    task_allocation_strategy?: AllocationStrategy;
-    metadata?: unknown;
-  }): IAgentTeam {
+  createTeam(params: { name: string; description?: string; max_teammates?: number; task_allocation_strategy?: AllocationStrategy; metadata?: unknown }): IAgentTeam {
     const id = createId('team');
     const timestamp = nowMs();
     const description = params.description ?? null;
@@ -110,12 +104,8 @@ export class AgentTeamsDatabase {
     const limit = filters?.limit ?? 100;
     const offset = filters?.offset ?? 0;
 
-    const sql = status
-      ? 'SELECT * FROM agent_teams WHERE status = ? ORDER BY updated_at DESC LIMIT ? OFFSET ?'
-      : 'SELECT * FROM agent_teams ORDER BY updated_at DESC LIMIT ? OFFSET ?';
-    const rows = status
-      ? (this.db.prepare(sql).all(status, limit, offset) as TeamRow[])
-      : (this.db.prepare(sql).all(limit, offset) as TeamRow[]);
+    const sql = status ? 'SELECT * FROM agent_teams WHERE status = ? ORDER BY updated_at DESC LIMIT ? OFFSET ?' : 'SELECT * FROM agent_teams ORDER BY updated_at DESC LIMIT ? OFFSET ?';
+    const rows = status ? (this.db.prepare(sql).all(status, limit, offset) as TeamRow[]) : (this.db.prepare(sql).all(limit, offset) as TeamRow[]);
 
     return rows.map(toTeam);
   }
@@ -144,22 +134,7 @@ export class AgentTeamsDatabase {
         WHERE id = ?
       `
       )
-      .run(
-        next.name,
-        next.description,
-        next.status,
-        next.max_teammates,
-        next.task_allocation_strategy,
-        next.updated_at,
-        next.started_at,
-        next.completed_at,
-        next.total_tasks,
-        next.completed_tasks,
-        next.failed_tasks,
-        next.total_cost_usd,
-        next.metadata,
-        teamId
-      );
+      .run(next.name, next.description, next.status, next.max_teammates, next.task_allocation_strategy, next.updated_at, next.started_at, next.completed_at, next.total_tasks, next.completed_tasks, next.failed_tasks, next.total_cost_usd, next.metadata, teamId);
 
     return this.getTeam(teamId);
   }
@@ -172,15 +147,7 @@ export class AgentTeamsDatabase {
   // =====================
   // Teammate
   // =====================
-  addTeammate(params: {
-    team_id: string;
-    name: string;
-    role: string;
-    provider: string;
-    model: string;
-    skills?: string[];
-    metadata?: unknown;
-  }): ITeammate {
+  addTeammate(params: { team_id: string; name: string; role: string; provider: string; model: string; skills?: string[]; metadata?: unknown }): ITeammate {
     const id = createId('teammate');
     const timestamp = nowMs();
 
@@ -194,18 +161,7 @@ export class AgentTeamsDatabase {
         ) VALUES (?, ?, ?, ?, ?, ?, 'idle', NULL, ?, 0, 0, 0, 0.0, 0, ?, ?, NULL, ?)
       `
       )
-      .run(
-        id,
-        params.team_id,
-        params.name,
-        params.role,
-        params.provider,
-        params.model,
-        JSON.stringify(params.skills ?? []),
-        timestamp,
-        timestamp,
-        parseJsonString(params.metadata)
-      );
+      .run(id, params.team_id, params.name, params.role, params.provider, params.model, JSON.stringify(params.skills ?? []), timestamp, timestamp, parseJsonString(params.metadata));
 
     const teammate = this.getTeammate(id);
     if (!teammate) {
@@ -221,9 +177,7 @@ export class AgentTeamsDatabase {
   }
 
   listTeammates(teamId: string, status?: TeammateStatus): ITeammate[] {
-    const rows = status
-      ? (this.db.prepare('SELECT * FROM agent_teammates WHERE team_id = ? AND status = ? ORDER BY updated_at DESC').all(teamId, status) as TeammateRow[])
-      : (this.db.prepare('SELECT * FROM agent_teammates WHERE team_id = ? ORDER BY updated_at DESC').all(teamId) as TeammateRow[]);
+    const rows = status ? (this.db.prepare('SELECT * FROM agent_teammates WHERE team_id = ? AND status = ? ORDER BY updated_at DESC').all(teamId, status) as TeammateRow[]) : (this.db.prepare('SELECT * FROM agent_teammates WHERE team_id = ? ORDER BY updated_at DESC').all(teamId) as TeammateRow[]);
 
     return rows.map(toTeammate);
   }
@@ -254,24 +208,7 @@ export class AgentTeamsDatabase {
         WHERE id = ?
       `
       )
-      .run(
-        next.name,
-        next.role,
-        next.provider,
-        next.model,
-        next.status,
-        next.current_task_id,
-        JSON.stringify(next.skills),
-        next.tasks_completed,
-        next.tasks_failed,
-        next.total_tokens,
-        next.total_cost_usd,
-        next.avg_task_duration_ms,
-        next.updated_at,
-        next.last_active_at,
-        next.metadata,
-        teammateId
-      );
+      .run(next.name, next.role, next.provider, next.model, next.status, next.current_task_id, JSON.stringify(next.skills), next.tasks_completed, next.tasks_failed, next.total_tokens, next.total_cost_usd, next.avg_task_duration_ms, next.updated_at, next.last_active_at, next.metadata, teammateId);
 
     return this.getTeammate(teammateId);
   }
@@ -284,15 +221,7 @@ export class AgentTeamsDatabase {
   // =====================
   // Task
   // =====================
-  createTask(params: {
-    team_id: string;
-    subject: string;
-    description: string;
-    priority?: number;
-    blocks?: string[];
-    blocked_by?: string[];
-    metadata?: unknown;
-  }): IAgentTask {
+  createTask(params: { team_id: string; subject: string; description: string; priority?: number; blocks?: string[]; blocked_by?: string[]; metadata?: unknown }): IAgentTask {
     const id = createId('task');
     const timestamp = nowMs();
     const blocks = params.blocks ?? [];
@@ -310,18 +239,7 @@ export class AgentTeamsDatabase {
         ) VALUES (?, ?, ?, ?, 'pending', ?, NULL, NULL, NULL, ?, ?, NULL, NULL, 0, 0, 0.0, ?, ?, NULL, NULL, ?)
       `
       )
-      .run(
-        id,
-        params.team_id,
-        params.subject,
-        params.description,
-        Math.max(1, Math.min(10, params.priority ?? 5)),
-        timestamp,
-        timestamp,
-        JSON.stringify(blocks),
-        JSON.stringify(blockedBy),
-        parseJsonString(params.metadata)
-      );
+      .run(id, params.team_id, params.subject, params.description, Math.max(1, Math.min(10, params.priority ?? 5)), timestamp, timestamp, JSON.stringify(blocks), JSON.stringify(blockedBy), parseJsonString(params.metadata));
 
     for (const dependsOnTaskId of blockedBy) {
       this.addDependency({
@@ -396,27 +314,7 @@ export class AgentTeamsDatabase {
         WHERE id = ?
       `
       )
-      .run(
-        next.subject,
-        next.description,
-        next.status,
-        next.priority,
-        next.assigned_to,
-        next.provider,
-        next.model,
-        next.updated_at,
-        next.started_at,
-        next.completed_at,
-        next.input_tokens,
-        next.output_tokens,
-        next.cost_usd,
-        JSON.stringify(next.blocks),
-        JSON.stringify(next.blocked_by),
-        next.result,
-        next.error,
-        next.metadata,
-        taskId
-      );
+      .run(next.subject, next.description, next.status, next.priority, next.assigned_to, next.provider, next.model, next.updated_at, next.started_at, next.completed_at, next.input_tokens, next.output_tokens, next.cost_usd, JSON.stringify(next.blocks), JSON.stringify(next.blocked_by), next.result, next.error, next.metadata, taskId);
 
     this.recalculateTeamCounters(existing.team_id);
     return this.getTask(taskId);
@@ -483,30 +381,22 @@ export class AgentTeamsDatabase {
   }
 
   removeDependency(taskId: string, dependsOnTaskId: string): boolean {
-    const result = this.db
-      .prepare('DELETE FROM agent_task_dependencies WHERE task_id = ? AND depends_on_task_id = ?')
-      .run(taskId, dependsOnTaskId);
+    const result = this.db.prepare('DELETE FROM agent_task_dependencies WHERE task_id = ? AND depends_on_task_id = ?').run(taskId, dependsOnTaskId);
 
     this.syncTaskDependencyArrays(taskId);
     return result.changes > 0;
   }
 
   getDependency(taskId: string, dependsOnTaskId: string): ITaskDependency | null {
-    const row = this.db
-      .prepare('SELECT * FROM agent_task_dependencies WHERE task_id = ? AND depends_on_task_id = ?')
-      .get(taskId, dependsOnTaskId) as DependencyRow | undefined;
+    const row = this.db.prepare('SELECT * FROM agent_task_dependencies WHERE task_id = ? AND depends_on_task_id = ?').get(taskId, dependsOnTaskId) as DependencyRow | undefined;
 
     return row ? toDependency(row) : null;
   }
 
   getTaskDependencies(taskId: string): { blocks: string[]; blocked_by: string[] } {
-    const blockedByRows = this.db
-      .prepare('SELECT depends_on_task_id FROM agent_task_dependencies WHERE task_id = ?')
-      .all(taskId) as Array<{ depends_on_task_id: string }>;
+    const blockedByRows = this.db.prepare('SELECT depends_on_task_id FROM agent_task_dependencies WHERE task_id = ?').all(taskId) as Array<{ depends_on_task_id: string }>;
 
-    const blocksRows = this.db
-      .prepare('SELECT task_id FROM agent_task_dependencies WHERE depends_on_task_id = ?')
-      .all(taskId) as Array<{ task_id: string }>;
+    const blocksRows = this.db.prepare('SELECT task_id FROM agent_task_dependencies WHERE depends_on_task_id = ?').all(taskId) as Array<{ task_id: string }>;
 
     return {
       blocks: blocksRows.map((row) => row.task_id),
@@ -517,16 +407,7 @@ export class AgentTeamsDatabase {
   // =====================
   // Message
   // =====================
-  sendMessage(params: {
-    team_id: string;
-    type: MessageType;
-    from_teammate_id?: string;
-    to_teammate_id?: string;
-    subject?: string;
-    content: string;
-    task_id?: string;
-    metadata?: unknown;
-  }): ITeamMessage {
+  sendMessage(params: { team_id: string; type: MessageType; from_teammate_id?: string; to_teammate_id?: string; subject?: string; content: string; task_id?: string; metadata?: unknown }): ITeamMessage {
     const id = createId('msg');
     const timestamp = nowMs();
 
@@ -539,18 +420,7 @@ export class AgentTeamsDatabase {
         ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
       `
       )
-      .run(
-        id,
-        params.team_id,
-        params.type,
-        params.from_teammate_id ?? null,
-        params.to_teammate_id ?? null,
-        params.subject ?? null,
-        params.content,
-        params.task_id ?? null,
-        timestamp,
-        parseJsonString(params.metadata)
-      );
+      .run(id, params.team_id, params.type, params.from_teammate_id ?? null, params.to_teammate_id ?? null, params.subject ?? null, params.content, params.task_id ?? null, timestamp, parseJsonString(params.metadata));
 
     const message = this.getMessage(id);
     if (!message) {
@@ -594,13 +464,7 @@ export class AgentTeamsDatabase {
   // =====================
   // Session
   // =====================
-  createSession(params: {
-    teammate_id: string;
-    task_id: string;
-    provider: string;
-    model: string;
-    metadata?: unknown;
-  }): IAgentSession {
+  createSession(params: { teammate_id: string; task_id: string; provider: string; model: string; metadata?: unknown }): IAgentSession {
     const id = createId('session');
     const timestamp = nowMs();
 
@@ -654,21 +518,7 @@ export class AgentTeamsDatabase {
         WHERE id = ?
       `
       )
-      .run(
-        next.status,
-        next.provider,
-        next.model,
-        next.input_tokens,
-        next.output_tokens,
-        next.cost_usd,
-        next.started_at,
-        next.completed_at,
-        next.duration_ms,
-        next.result,
-        next.error,
-        next.metadata,
-        sessionId
-      );
+      .run(next.status, next.provider, next.model, next.input_tokens, next.output_tokens, next.cost_usd, next.started_at, next.completed_at, next.duration_ms, next.result, next.error, next.metadata, sessionId);
 
     return this.getSession(sessionId);
   }
@@ -761,9 +611,7 @@ export class AgentTeamsDatabase {
   }
 
   getCostAnalysis(teamId: string): ICostAnalysis {
-    const total = this.db
-      .prepare('SELECT COALESCE(SUM(cost_usd), 0) AS total_cost_usd FROM agent_tasks WHERE team_id = ?')
-      .get(teamId) as { total_cost_usd: number };
+    const total = this.db.prepare('SELECT COALESCE(SUM(cost_usd), 0) AS total_cost_usd FROM agent_tasks WHERE team_id = ?').get(teamId) as { total_cost_usd: number };
 
     const providerRows = this.db
       .prepare(
@@ -825,9 +673,7 @@ export class AgentTeamsDatabase {
   // =====================
   private syncTaskDependencyArrays(taskId: string): void {
     const dependencies = this.getTaskDependencies(taskId);
-    this.db
-      .prepare('UPDATE agent_tasks SET blocks = ?, blocked_by = ?, updated_at = ? WHERE id = ?')
-      .run(JSON.stringify(dependencies.blocks), JSON.stringify(dependencies.blocked_by), nowMs(), taskId);
+    this.db.prepare('UPDATE agent_tasks SET blocks = ?, blocked_by = ?, updated_at = ? WHERE id = ?').run(JSON.stringify(dependencies.blocks), JSON.stringify(dependencies.blocked_by), nowMs(), taskId);
   }
 
   private recalculateTeamCounters(teamId: string): void {

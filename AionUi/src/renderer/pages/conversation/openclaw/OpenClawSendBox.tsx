@@ -14,8 +14,9 @@ import { useAddOrUpdateMessage } from '@/renderer/messages/hooks';
 import { allSupportedExts, type FileMetadata } from '@/renderer/services/FileService';
 import { emitter, useAddEventListener } from '@/renderer/utils/emitter';
 import { mergeFileSelectionItems } from '@/renderer/utils/fileSelection';
-import { Button, Tag } from '@arco-design/web-react';
-import { Plus } from '@icon-park/react';
+import { Button } from '@/renderer/components/ui/button';
+import { Badge } from '@/renderer/components/ui/badge';
+import { Plus, X } from 'lucide-react';
 import { iconColors } from '@/renderer/theme/colors';
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -343,9 +344,9 @@ const OpenClawSendBox: React.FC<{ conversation_id: string }> = ({ conversation_i
         supportedExts={allSupportedExts}
         tools={
           <Button
-            type='secondary'
-            shape='circle'
-            icon={<Plus theme='outline' size='14' strokeWidth={2} fill={iconColors.primary} />}
+            variant='secondary'
+            size='icon'
+            className='rounded-full'
             onClick={() => {
               void ipcBridge.dialog.showOpen.invoke({ properties: ['openFile', 'multiSelections'] }).then((files) => {
                 if (files && files.length > 0) {
@@ -353,7 +354,9 @@ const OpenClawSendBox: React.FC<{ conversation_id: string }> = ({ conversation_i
                 }
               });
             }}
-          />
+          >
+            <Plus size={14} strokeWidth={2} color={iconColors.primary} />
+          </Button>
         }
         prefix={
           <>
@@ -388,18 +391,23 @@ const OpenClawSendBox: React.FC<{ conversation_id: string }> = ({ conversation_i
                   if (typeof item === 'string') return null;
                   if (!item.isFile) {
                     return (
-                      <Tag
+                      <Badge
                         key={item.path}
-                        color='blue'
-                        closable
-                        onClose={() => {
-                          const newAtPath = atPath.filter((v) => (typeof v === 'string' ? true : v.path !== item.path));
-                          emitter.emit('openclaw-gateway.selected.file', newAtPath);
-                          setAtPath(newAtPath);
-                        }}
+                        variant='secondary'
+                        className='gap-1 pr-1'
                       >
                         {item.name}
-                      </Tag>
+                        <button
+                          onClick={() => {
+                            const newAtPath = atPath.filter((v) => (typeof v === 'string' ? true : v.path !== item.path));
+                            emitter.emit('openclaw-gateway.selected.file', newAtPath);
+                            setAtPath(newAtPath);
+                          }}
+                          className='ml-1 rounded-full hover:bg-muted p-0.5'
+                        >
+                          <X size={12} />
+                        </button>
+                      </Badge>
                     );
                   }
                   return null;

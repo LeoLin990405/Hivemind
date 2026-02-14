@@ -32,32 +32,20 @@ const MonitorLayout: React.FC = () => {
     },
   ];
 
-  const selectedKey = menuItems.some((item) => item.key === location.pathname)
-    ? location.pathname
-    : '/monitor';
+  const selectedKey = menuItems.some((item) => item.key === location.pathname) ? location.pathname : '/monitor';
 
   return (
     <div className='flex h-full'>
       {/* Sidebar */}
       <aside className='w-[220px] border-r border-border bg-background flex-shrink-0'>
         <div className='p-4'>
-          <h2 className='text-base font-semibold mb-3'>
-            {t('monitor.title', { defaultValue: 'Gateway Monitor' })}
-          </h2>
+          <h2 className='text-base font-semibold mb-3'>{t('monitor.title', { defaultValue: 'Gateway Monitor' })}</h2>
           <nav className='space-y-1'>
             {menuItems.map((item) => {
               const Icon = item.icon;
               const isActive = selectedKey === item.key;
               return (
-                <button
-                  key={item.key}
-                  onClick={() => navigate(item.key)}
-                  className={`w-full flex items-center gap-3 px-3 py-2 rounded-md text-sm transition-colors text-left ${
-                    isActive
-                      ? 'bg-accent text-accent-foreground font-medium'
-                      : 'text-muted-foreground hover:bg-accent/50 hover:text-foreground'
-                  }`}
-                >
+                <button key={item.key} onClick={() => navigate(item.key)} className={`w-full flex items-center gap-3 px-3 py-2 rounded-md text-sm transition-colors text-left ${isActive ? 'bg-accent text-accent-foreground font-medium' : 'text-muted-foreground hover:bg-accent/50 hover:text-foreground'}`}>
                   <Icon className='h-4 w-4' />
                   <span>{item.label}</span>
                 </button>

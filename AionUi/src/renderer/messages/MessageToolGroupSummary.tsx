@@ -51,17 +51,23 @@ const MessageToolGroupSummary: React.FC<{ messages: Array<IMessageToolGroup | IM
 
   const getStatusVariant = (status: StatusType) => {
     switch (status) {
-      case 'success': return 'default';
-      case 'error': return 'destructive';
-      case 'processing': return 'secondary';
-      default: return 'outline';
+      case 'success':
+        return 'default';
+      case 'error':
+        return 'destructive';
+      case 'processing':
+        return 'secondary';
+      default:
+        return 'outline';
     }
   };
 
   return (
     <div>
       <div className='flex items-center gap-10px color-#86909C cursor-pointer' onClick={() => setShowMore(!showMore)}>
-        <Badge variant="outline" className="text-[#86909C] border-[#86909C]">View Steps</Badge>
+        <Badge variant='outline' className='text-[#86909C] border-[#86909C]'>
+          View Steps
+        </Badge>
         {showMore ? <ChevronDown size={16} /> : <ChevronRight size={16} />}
       </div>
       {showMore && (
@@ -71,7 +77,7 @@ const MessageToolGroupSummary: React.FC<{ messages: Array<IMessageToolGroup | IM
             return (
               <div key={item.key} className='flex flex-row color-#86909C gap-12px items-center'>
                 <Badge variant={getStatusVariant(item.status)} className={item.status === 'processing' ? 'badge-breathing' : ''}>
-                  {item.status === 'processing' && <span className="mr-1">●</span>}
+                  {item.status === 'processing' && <span className='mr-1'>●</span>}
                 </Badge>
                 <span>{`${item.name}(${item.desc})`} </span>
               </div>

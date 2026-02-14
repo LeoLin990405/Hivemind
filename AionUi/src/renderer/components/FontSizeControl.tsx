@@ -5,7 +5,8 @@
  */
 
 import React, { useMemo } from 'react';
-import { Button, Slider } from '@arco-design/web-react';
+import { Button } from '@/renderer/components/ui/button';
+import { Slider } from '@/renderer/components/ui/slider';
 import { useTranslation } from 'react-i18next';
 import { useThemeContext } from '../context/ThemeContext';
 import { FONT_SCALE_DEFAULT, FONT_SCALE_MAX, FONT_SCALE_MIN, FONT_SCALE_STEP } from '../hooks/useFontScale';
@@ -34,21 +35,13 @@ const FontSizeControl: React.FC = () => {
   // 格式化显示值为百分比 / Format display value as percentage
   const formattedValue = useMemo(() => `${Math.round(fontScale * 100)}%`, [fontScale]);
 
-  // 默认标记（100%位置）/ Default mark (100% position)
-  const defaultMarks = useMemo(
-    () => ({
-      1: <span className='font-scale-default-mark' aria-hidden='true' title='100%'></span>,
-    }),
-    []
-  );
-
   /**
    * 处理滑块值变化 / Handle slider value change
    * @param value - 新的缩放值 / New scale value
    */
-  const handleSliderChange = (value: number | number[]) => {
-    if (typeof value === 'number') {
-      void setFontScale(clamp(Number(value.toFixed(2))));
+  const handleSliderChange = (value: number[]) => {
+    if (value.length > 0) {
+      void setFontScale(clamp(Number(value[0].toFixed(2))));
     }
   };
 
@@ -70,19 +63,44 @@ const FontSizeControl: React.FC = () => {
 
   return (
     <div className='flex flex-col gap-2 w-full max-w-560px'>
-      <div className='flex items-center gap-1 w-full'>
-        <Button size='mini' type='secondary' onClick={() => handleStep(-FONT_SCALE_STEP)} disabled={fontScale <= FONT_SCALE_MIN + EPSILON}>
+      <div className='flex items-center gap-2 w-full'>
+        <Button 
+          size='sm' 
+          variant='secondary' 
+          onClick={() => handleStep(-FONT_SCALE_STEP)} 
+          disabled={fontScale <= FONT_SCALE_MIN + EPSILON}
+          className="w-8 h-8 p-0"
+        >
           -
         </Button>
         {/* 滑杆覆盖 80%-150% 区间，随值写入配置 / Slider covers 80%-150% range and persists value */}
-        <Slider className='flex-1 font-scale-slider p-0 m-0' showTicks min={FONT_SCALE_MIN} max={FONT_SCALE_MAX} step={FONT_SCALE_STEP} value={fontScale} onChange={handleSliderChange} marks={defaultMarks} />
-        <Button size='mini' type='secondary' onClick={() => handleStep(FONT_SCALE_STEP)} disabled={fontScale >= FONT_SCALE_MAX - EPSILON}>
+        <Slider 
+          className='flex-1' 
+          min={FONT_SCALE_MIN} 
+          max={FONT_SCALE_MAX} 
+          step={FONT_SCALE_STEP} 
+          value={[fontScale]} 
+          onValueChange={handleSliderChange}
+        />
+        <Button 
+          size='sm' 
+          variant='secondary' 
+          onClick={() => handleStep(FONT_SCALE_STEP)} 
+          disabled={fontScale >= FONT_SCALE_MAX - EPSILON}
+          className="w-8 h-8 p-0"
+        >
           +
         </Button>
         <span className='text-13px text-t-secondary' style={{ minWidth: '48px' }}>
           {formattedValue}
         </span>
-        <Button size='mini' type='text' className='p-0' onClick={handleReset} disabled={Math.abs(fontScale - FONT_SCALE_DEFAULT) < RESET_THRESHOLD}>
+        <Button 
+          size='sm' 
+          variant='ghost' 
+          onClick={handleReset} 
+          disabled={Math.abs(fontScale - FONT_SCALE_DEFAULT) < RESET_THRESHOLD}
+          className="px-2"
+        >
           {t('settings.fontSizeReset')}
         </Button>
       </div>
