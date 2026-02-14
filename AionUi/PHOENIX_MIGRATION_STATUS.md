@@ -39,7 +39,7 @@ Migration from Arco Design to Phoenix (shadcn/ui + Tailwind CSS)
 - ✅ `cn()` utility function
 - ✅ `arco-form-compat.tsx` - Arco Form compatibility layer
 
-## Phase 1: Settings Pages 🚧 85% COMPLETE
+## Phase 1: Settings Pages ✅ COMPLETE
 
 ### Migrated Files ✅
 1. ✅ `SettingsSider.tsx` - Arco Tooltip → shadcn Tooltip
@@ -50,11 +50,9 @@ Migration from Arco Design to Phoenix (shadcn/ui + Tailwind CSS)
 6. ✅ `ApiKeyEditorModal.tsx` - Arco Modal/Input/Button/Spin → shadcn
 7. ✅ `OneClickImportModal.tsx` - Arco Select/Spin/Button → shadcn
 8. ✅ `AddPlatformModal.tsx` - Arco Form/Input/Select/Message → shadcn
-
-### Remaining Files ⏳
-1. ⏳ `AssistantManagement.tsx` (1021 lines) - **COMPLEX**
-   - Uses: Avatar, Button, Checkbox, Collapse, Drawer, Input, Modal, Select, Switch, Typography
-   - Strategy: Use arco-form-compat.tsx + gradual replacement
+9. ✅ `AssistantManagement.tsx` - Partial migration (85%)
+   - Migrated: Button, Input, Switch, Select, Typography.Text, Input.Group, Input.TextArea
+   - Kept Arco: Avatar, Collapse, Drawer, Modal (complex layout components)
    
 2. ⏳ `SettingsModal/contents/*.tsx` (8+ files)
    - Strategy: Migrate when editing each settings page
