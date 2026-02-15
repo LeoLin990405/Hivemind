@@ -94,7 +94,11 @@
       "tooManyAttempts": "登录尝试过多，请稍后再试",
       "networkError": "连接失败，请稍后重试",
       "serverError": "服务器开小差了，请稍后重试",
-      "unknown": "登录失败，请稍后再试"
+      "unknown": "登录失败，请稍后再试",
+      "usernameRequired": "请输入用户名",
+      "usernameTooShort": "用户名至少需要2个字符",
+      "passwordRequired": "请输入密码",
+      "passwordTooShort": "密码至少需要4个字符"
     }
   },
   "fileSelection": {

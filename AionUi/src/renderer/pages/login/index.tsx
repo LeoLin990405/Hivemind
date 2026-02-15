@@ -12,6 +12,21 @@ type MessageState = {
   text: string;
 };
 
+type FieldErrors = {
+  username: string | null;
+  password: string | null;
+};
+
+type TouchedFields = {
+  username: boolean;
+  password: boolean;
+};
+
+type FormData = {
+  username: string;
+  password: string;
+};
+
 const REMEMBER_ME_KEY = 'rememberMe';
 const REMEMBERED_USERNAME_KEY = 'rememberedUsername';
 const REMEMBERED_PASSWORD_KEY = 'rememberedPassword';
@@ -36,16 +51,133 @@ const LoginPage: React.FC = () => {
   const navigate = useNavigate();
   const { status, login } = useAuth();
 
-  const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
+  const [formData, setFormData] = useState<FormData>({
+    username: '',
+    password: '',
+  });
   const [rememberMe, setRememberMe] = useState(false);
   const [passwordVisible, setPasswordVisible] = useState(false);
   const [message, setMessage] = useState<MessageState | null>(null);
   const [loading, setLoading] = useState(false);
+  const [fieldErrors, setFieldErrors] = useState<FieldErrors>({
+    username: null,
+    password: null,
+  });
+  const [touched, setTouched] = useState<TouchedFields>({
+    username: false,
+    password: false,
+  });
 
   const usernameRef = useRef<HTMLInputElement | null>(null);
   const passwordRef = useRef<HTMLInputElement | null>(null);
   const messageTimer = useRef<number | undefined>(undefined);
+
+  // Validation function
+  const validateField = useCallback(
+    (name: keyof FormData, value: string): string | null => {
+      const trimmedValue = value.trim();
+
+      switch (name) {
+        case 'username':
+          if (!trimmedValue) {
+            return t('login.errors.usernameRequired');
+          }
+          if (trimmedValue.length < 2) {
+            return t('login.errors.usernameTooShort');
+          }
+          return null;
+
+        case 'password':
+          if (!value) {
+            return t('login.errors.passwordRequired');
+          }
+          if (value.length < 4) {
+            return t('login.errors.passwordTooShort');
+          }
+          return null;
+
+        default:
+          return null;
+      }
+    },
+    [t]
+  );
+
+  // Validate all fields
+  const validateForm = useCallback((): boolean => {
+    const errors: FieldErrors = {
+      username: validateField('username', formData.username),
+      password: validateField('password', formData.password),
+    };
+    setFieldErrors(errors);
+
+    // Mark all fields as touched
+    setTouched({
+      username: true,
+      password: true,
+    });
+
+    return !errors.username && !errors.password;
+  }, [formData, validateField]);
+
+  // Handle field change
+  const handleFieldChange = useCallback(
+    (event: React.ChangeEvent<HTMLInputElement>) => {
+      const { name, value } = event.target;
+      const fieldName = name as keyof FormData;
+
+      setFormData((prev) => ({
+        ...prev,
+        [fieldName]: value,
+      }));
+
+      // Clear error when user starts typing
+      if (fieldErrors[fieldName]) {
+        setFieldErrors((prev) => ({
+          ...prev,
+          [fieldName]: null,
+        }));
+      }
+    },
+    [fieldErrors]
+  );
+
+  // Handle field blur for validation
+  const handleFieldBlur = useCallback(
+    (event: React.FocusEvent<HTMLInputElement>) => {
+      const { name, value } = event.target;
+      const fieldName = name as keyof FormData;
+
+      setTouched((prev) => ({
+        ...prev,
+        [fieldName]: true,
+      }));
+
+      const error = validateField(fieldName, value);
+      setFieldErrors((prev) => ({
+        ...prev,
+        [fieldName]: error,
+      }));
+    },
+    [validateField]
+  );
+
+  // Show field error if touched and has error
+  const getFieldError = useCallback(
+    (fieldName: keyof FormData): string | null => {
+      return touched[fieldName] ? fieldErrors[fieldName] : null;
+    },
+    [touched, fieldErrors]
+  );
+
+  // Get input class based on error state
+  const getInputClassName = useCallback(
+    (fieldName: keyof FormData): string => {
+      const error = getFieldError(fieldName);
+      return `login-page__input${error ? ' login-page__input--error' : ''}`;
+    },
+    [getFieldError]
+  );
 
   useEffect(() => {
     document.body.classList.add('login-page-active');
@@ -70,8 +202,18 @@ const LoginPage: React.FC = () => {
     if (isRememberMe) {
       const storedUsername = localStorage.getItem(REMEMBERED_USERNAME_KEY);
       const storedPassword = localStorage.getItem(REMEMBERED_PASSWORD_KEY);
-      if (storedUsername) setUsername(deobfuscate(storedUsername));
-      if (storedPassword) setPassword(deobfuscate(storedPassword));
+      if (storedUsername) {
+        setFormData((prev) => ({
+          ...prev,
+          username: deobfuscate(storedUsername),
+        }));
+      }
+      if (storedPassword) {
+        setFormData((prev) => ({
+          ...prev,
+          password: deobfuscate(storedPassword),
+        }));
+      }
       setRememberMe(true);
     }
     window.setTimeout(() => {
@@ -138,23 +280,35 @@ const LoginPage: React.FC = () => {
   const handleSubmit = useCallback(
     async (event: React.FormEvent) => {
       event.preventDefault();
-      const trimmedUsername = username.trim();
 
-      if (!trimmedUsername || !password) {
+      // Validate form before submission
+      if (!validateForm()) {
         showMessage({ type: 'error', text: t('login.errors.empty') });
+        // Focus on first field with error
+        if (fieldErrors.username) {
+          usernameRef.current?.focus();
+        } else if (fieldErrors.password) {
+          passwordRef.current?.focus();
+        }
         return;
       }
+
+      const trimmedUsername = formData.username.trim();
 
       setLoading(true);
       setMessage(null);
 
-      const result = await login({ username: trimmedUsername, password, remember: rememberMe });
+      const result = await login({
+        username: trimmedUsername,
+        password: formData.password,
+        remember: rememberMe,
+      });
 
       if (result.success) {
         if (rememberMe) {
           localStorage.setItem(REMEMBER_ME_KEY, 'true');
           localStorage.setItem(REMEMBERED_USERNAME_KEY, obfuscate(trimmedUsername));
-          localStorage.setItem(REMEMBERED_PASSWORD_KEY, obfuscate(password));
+          localStorage.setItem(REMEMBERED_PASSWORD_KEY, obfuscate(formData.password));
         } else {
           localStorage.removeItem(REMEMBER_ME_KEY);
           localStorage.removeItem(REMEMBERED_USERNAME_KEY);
@@ -189,12 +343,15 @@ const LoginPage: React.FC = () => {
 
       setLoading(false);
     },
-    [login, navigate, password, rememberMe, showMessage, t, username]
+    [validateForm, formData.username, formData.password, rememberMe, login, navigate, showMessage, t, fieldErrors.username, fieldErrors.password]
   );
 
   if (status === 'checking') {
     return <AppLoader />;
   }
+
+  const usernameError = getFieldError('username');
+  const passwordError = getFieldError('password');
 
   return (
     <div className='login-page'>
@@ -223,7 +380,7 @@ const LoginPage: React.FC = () => {
           <p className='login-page__subtitle'>{t('login.subtitle')}</p>
         </div>
 
-        <form className='login-page__form' onSubmit={handleSubmit}>
+        <form className='login-page__form' onSubmit={handleSubmit} noValidate>
           <div className='login-page__form-item'>
             <label className='login-page__label' htmlFor='username'>
               {t('login.username')}
@@ -233,8 +390,13 @@ const LoginPage: React.FC = () => {
                 <path d='M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2' />
                 <circle cx='12' cy='7' r='4' />
               </svg>
-              <input ref={usernameRef} id='username' name='username' className='login-page__input' placeholder={t('login.usernamePlaceholder')} autoComplete='username' value={username} onChange={(event) => setUsername(event.target.value)} aria-required='true' />
+              <input ref={usernameRef} id='username' name='username' className={getInputClassName('username')} placeholder={t('login.usernamePlaceholder')} autoComplete='username' value={formData.username} onChange={handleFieldChange} onBlur={handleFieldBlur} aria-required='true' aria-invalid={usernameError ? 'true' : 'false'} aria-describedby={usernameError ? 'username-error' : undefined} />
             </div>
+            {usernameError && (
+              <p id='username-error' className='login-page__field-error' role='alert'>
+                {usernameError}
+              </p>
+            )}
           </div>
 
           <div className='login-page__form-item'>
@@ -246,7 +408,7 @@ const LoginPage: React.FC = () => {
                 <rect x='3' y='11' width='18' height='11' rx='2' ry='2' />
                 <path d='M7 11V7a5 5 0 0 1 10 0v4' />
               </svg>
-              <input ref={passwordRef} id='password' name='password' type={passwordVisible ? 'text' : 'password'} className='login-page__input' placeholder={t('login.passwordPlaceholder')} autoComplete='current-password' value={password} onChange={(event) => setPassword(event.target.value)} aria-required='true' />
+              <input ref={passwordRef} id='password' name='password' type={passwordVisible ? 'text' : 'password'} className={getInputClassName('password')} placeholder={t('login.passwordPlaceholder')} autoComplete='current-password' value={formData.password} onChange={handleFieldChange} onBlur={handleFieldBlur} aria-required='true' aria-invalid={passwordError ? 'true' : 'false'} aria-describedby={passwordError ? 'password-error' : undefined} />
               <button type='button' className='login-page__toggle-password' onClick={() => setPasswordVisible((prev) => !prev)} aria-label={passwordVisible ? t('login.hidePassword') : t('login.showPassword')}>
                 <svg viewBox='0 0 24 24' fill='none' stroke='currentColor' strokeWidth='2'>
                   {passwordVisible ? (
@@ -263,6 +425,11 @@ const LoginPage: React.FC = () => {
                 </svg>
               </button>
             </div>
+            {passwordError && (
+              <p id='password-error' className='login-page__field-error' role='alert'>
+                {passwordError}
+              </p>
+            )}
           </div>
 
           <div className='login-page__checkbox'>

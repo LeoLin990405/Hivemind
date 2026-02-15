@@ -230,6 +230,54 @@ body.login-page-active {
   box-shadow: 0 0 0 3px rgba(14, 165, 233, 0.1);
 }
 
+/* Error state for inputs */
+.login-page__input--error {
+  border-color: var(--color-danger, #ff3366);
+  background-color: rgba(255, 51, 102, 0.04);
+}
+
+.login-page__input--error:hover {
+  border-color: var(--color-danger, #ff3366);
+}
+
+.login-page__input--error:focus {
+  border-color: var(--color-danger, #ff3366);
+  box-shadow: 0 0 0 3px rgba(255, 51, 102, 0.15);
+}
+
+/* Field error message */
+.login-page__field-error {
+  margin-top: 6px;
+  font-size: 12px;
+  color: var(--color-danger, #ff3366);
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  animation: login-error-fade-in 0.2s ease-out;
+}
+
+.login-page__field-error::before {
+  content: '';
+  display: inline-block;
+  width: 14px;
+  height: 14px;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23ff3366' stroke-width='2'%3E%3Ccircle cx='12' cy='12' r='10'/%3E%3Cline x1='12' y1='8' x2='12' y2='12'/%3E%3Cline x1='12' y1='16' x2='12.01' y2='16'/%3E%3C/svg%3E");
+  background-size: contain;
+  background-repeat: no-repeat;
+  flex-shrink: 0;
+}
+
+@keyframes login-error-fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
 .login-page__toggle-password {
   position: absolute;
   right: 14px;
