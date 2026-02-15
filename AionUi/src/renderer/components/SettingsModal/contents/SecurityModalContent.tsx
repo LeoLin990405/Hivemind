@@ -1,14 +1,14 @@
 /**
  * @license
- * Copyright 2025 AionUi (aionui.com)
+ * Copyright 2025 HiveMind (hivemind.com)
  * SPDX-License-Identifier: Apache-2.0
  */
 
 import { acpConversation } from '@/common/ipcBridge';
 import { ConfigStorage } from '@/common/storage';
-import AionScrollArea from '@/renderer/components/base/AionScrollArea';
+import HiveScrollArea from '@/renderer/components/base/HiveScrollArea';
 import { iconColors } from '@/renderer/theme/colors';
-import { ACP_BACKENDS_ALL, type AcpBackend, type AcpBackendAll } from '@/types/acpTypes';
+import { ACP_BACKENDS_ALL, ACP_ENABLED_BACKENDS, type AcpBackend, type AcpBackendAll } from '@/types/acpTypes';
 import { Divider, Switch, Tooltip } from '@arco-design/web-react';
 import { Help, Shield } from '@icon-park/react';
 import React, { useCallback, useEffect, useState } from 'react';
@@ -49,7 +49,7 @@ const YOLO_NOT_SUPPORTED_BACKENDS: Record<string, string> = {
 };
 
 // ACP backend IDs to display (excluding gemini, custom, openclaw-gateway)
-const ACP_AGENT_IDS = (Object.keys(ACP_BACKENDS_ALL) as AcpBackendAll[]).filter((id) => !EXCLUDED_ACP_BACKENDS.includes(id));
+const ACP_AGENT_IDS = (Object.keys(ACP_ENABLED_BACKENDS) as AcpBackendAll[]).filter((id) => !EXCLUDED_ACP_BACKENDS.includes(id));
 
 // ==================== Component ====================
 
@@ -171,7 +171,7 @@ const SecurityModalContent: React.FC = () => {
 
   return (
     <div className='flex flex-col h-full w-full'>
-      <AionScrollArea>
+      <HiveScrollArea>
         <div className='space-y-16px'>
           {/* Auto-Approve Section */}
           <div className='px-[12px] md:px-[32px] py-[24px] bg-2 rd-12px border border-border-2'>
@@ -252,7 +252,7 @@ const SecurityModalContent: React.FC = () => {
             )}
           </div>
         </div>
-      </AionScrollArea>
+      </HiveScrollArea>
     </div>
   );
 };

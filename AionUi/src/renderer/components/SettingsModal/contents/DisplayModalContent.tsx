@@ -1,6 +1,6 @@
 /**
  * @license
- * Copyright 2025 AionUi (aionui.com)
+ * Copyright 2025 HiveMind (hivemind.com)
  * SPDX-License-Identifier: Apache-2.0
  */
 
@@ -9,8 +9,8 @@ import { useTranslation } from 'react-i18next';
 import FontSizeControl from '@/renderer/components/FontSizeControl';
 import { ThemeSwitcher } from '@/renderer/components/ThemeSwitcher';
 import CssThemeSettings from '@/renderer/components/CssThemeSettings';
-import AionScrollArea from '@/renderer/components/base/AionScrollArea';
-import AionCollapse from '@/renderer/components/base/AionCollapse';
+import HiveScrollArea from '@/renderer/components/base/HiveScrollArea';
+import HiveCollapse from '@/renderer/components/base/HiveCollapse';
 import { iconColors } from '@/renderer/theme/colors';
 import { Down, Up } from '@icon-park/react';
 import { useSettingsViewMode } from '../settingsViewContext';
@@ -59,7 +59,7 @@ const DisplayModalContent: React.FC = () => {
   return (
     <div className='flex flex-col h-full w-full'>
       {/* 内容区域 / Content Area */}
-      <AionScrollArea className='flex-1 min-h-0 pb-16px' disableOverflow={isPageMode}>
+      <HiveScrollArea className='flex-1 min-h-0 pb-16px' disableOverflow={isPageMode}>
         <div className='space-y-16px'>
           {/* 显示设置 / Display Settings */}
           <div className='px-[12px] md:px-[32px] py-16px bg-2 rd-16px space-y-12px'>
@@ -73,13 +73,13 @@ const DisplayModalContent: React.FC = () => {
           </div>
 
           {/* CSS 主题设置 / CSS Theme Settings - Collapsible */}
-          <AionCollapse bordered={false} defaultActiveKey={['css']} expandIcon={renderExpandIcon} expandIconPosition='right'>
-            <AionCollapse.Item name='css' header={<span className='text-14px text-2'>{t('settings.cssSettings')}</span>} className='bg-transparent' contentStyle={{ padding: '12px 0 0' }}>
+          <HiveCollapse bordered={false} defaultActiveKey={['css']} expandIcon={renderExpandIcon} expandIconPosition='right'>
+            <HiveCollapse.Item name='css' header={<span className='text-14px text-2'>{t('settings.cssSettings')}</span>} className='bg-transparent' contentStyle={{ padding: '12px 0 0' }}>
               <CssThemeSettings />
-            </AionCollapse.Item>
-          </AionCollapse>
+            </HiveCollapse.Item>
+          </HiveCollapse>
         </div>
-      </AionScrollArea>
+      </HiveScrollArea>
     </div>
   );
 };

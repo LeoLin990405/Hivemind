@@ -1,6 +1,6 @@
 /**
  * @license
- * Copyright 2025 AionUi (aionui.com)
+ * Copyright 2025 HiveMind (hivemind.com)
  * SPDX-License-Identifier: Apache-2.0
  */
 
@@ -104,7 +104,7 @@ const ThoughtDisplay: React.FC<ThoughtDisplayProps> = ({ thought, style = 'defau
   if (running && !thought?.subject) {
     return (
       <div className='px-10px py-10px rd-20px text-14px pb-40px lh-20px text-t-primary flex items-center gap-8px' style={containerStyle}>
-        <Loader2 className="h-3.5 w-3.5 animate-spin" />
+        <Loader2 className='h-3.5 w-3.5 animate-spin' />
         <span className='text-t-secondary'>
           {t('conversation.chat.processing')}
           <span className='ml-8px opacity-60'>
@@ -118,8 +118,8 @@ const ThoughtDisplay: React.FC<ThoughtDisplayProps> = ({ thought, style = 'defau
   return (
     <div className='px-10px py-10px rd-20px text-14px pb-40px lh-20px text-t-primary' style={containerStyle}>
       <div className='flex items-center gap-8px'>
-        {running && <Loader2 className="h-3.5 w-3.5 animate-spin" />}
-        <Badge variant="secondary" className="text-xs">
+        {running && <Loader2 className='h-3.5 w-3.5 animate-spin' />}
+        <Badge variant='secondary' className='text-xs'>
           {thought.subject}
         </Badge>
         <span className='flex-1 truncate'>{thought.description}</span>

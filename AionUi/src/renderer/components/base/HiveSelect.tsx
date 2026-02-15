@@ -1,6 +1,6 @@
 /**
  * @license
- * Copyright 2025 AionUi (aionui.com)
+ * Copyright 2025 HiveMind (hivemind.com)
  * SPDX-License-Identifier: Apache-2.0
  */
 
@@ -15,13 +15,13 @@ import React from 'react';
  */
 type NativeSelectProps = Omit<SelectProps, 'size'>;
 type NativeSelectSize = NonNullable<SelectProps['size']>;
-type AionSelectSize = NativeSelectSize | 'middle';
+type HiveSelectSize = NativeSelectSize | 'middle';
 
-export interface AionSelectProps extends NativeSelectProps {
+export interface HiveSelectProps extends NativeSelectProps {
   /** 额外的类名 / Additional class name */
   className?: string;
   /** 统一尺寸，新增 middle（32px）/ Unified size with additional "middle" (32px) */
-  size?: AionSelectSize;
+  size?: HiveSelectSize;
 }
 
 /**
@@ -63,52 +63,52 @@ const defaultGetPopupContainer = (): HTMLElement => {
  * @example
  * ```tsx
  * // 基本用法 / Basic usage
- * <AionSelect placeholder="请选择" style={{ width: 200 }}>
- *   <AionSelect.Option value="1">选项1</AionSelect.Option>
- *   <AionSelect.Option value="2">选项2</AionSelect.Option>
- * </AionSelect>
+ * <HiveSelect placeholder="请选择" style={{ width: 200 }}>
+ *   <HiveSelect.Option value="1">选项1</HiveSelect.Option>
+ *   <HiveSelect.Option value="2">选项2</HiveSelect.Option>
+ * </HiveSelect>
  *
  * // 多选 / Multiple selection
- * <AionSelect mode="multiple" placeholder="请选择多个">
- *   <AionSelect.Option value="1">选项1</AionSelect.Option>
- *   <AionSelect.Option value="2">选项2</AionSelect.Option>
- * </AionSelect>
+ * <HiveSelect mode="multiple" placeholder="请选择多个">
+ *   <HiveSelect.Option value="1">选项1</HiveSelect.Option>
+ *   <HiveSelect.Option value="2">选项2</HiveSelect.Option>
+ * </HiveSelect>
  *
  * // 分组 / Grouped options
- * <AionSelect placeholder="请选择">
- *   <AionSelect.OptGroup label="分组1">
- *     <AionSelect.Option value="1">选项1</AionSelect.Option>
- *   </AionSelect.OptGroup>
- *   <AionSelect.OptGroup label="分组2">
- *     <AionSelect.Option value="2">选项2</AionSelect.Option>
- *   </AionSelect.OptGroup>
- * </AionSelect>
+ * <HiveSelect placeholder="请选择">
+ *   <HiveSelect.OptGroup label="分组1">
+ *     <HiveSelect.Option value="1">选项1</HiveSelect.Option>
+ *   </HiveSelect.OptGroup>
+ *   <HiveSelect.OptGroup label="分组2">
+ *     <HiveSelect.Option value="2">选项2</HiveSelect.Option>
+ *   </HiveSelect.OptGroup>
+ * </HiveSelect>
  * ```
  *
  * @see arco-override.css for theme-related styles (.aion-select)
  */
-const mapSizeToNative = (size?: AionSelectSize): NativeSelectSize | undefined => {
+const mapSizeToNative = (size?: HiveSelectSize): NativeSelectSize | undefined => {
   if (!size) return undefined;
   if (size === 'middle') return 'default';
   return size;
 };
 
-type AionSelectComponent = React.ForwardRefExoticComponent<AionSelectProps & React.RefAttributes<SelectHandle>> & {
+type HiveSelectComponent = React.ForwardRefExoticComponent<HiveSelectProps & React.RefAttributes<SelectHandle>> & {
   Option: typeof Select.Option;
   OptGroup: typeof Select.OptGroup;
 };
 
-const InternalSelect = React.forwardRef<SelectHandle, AionSelectProps>(({ className, getPopupContainer, size = 'middle', ...rest }, ref) => {
+const InternalSelect = React.forwardRef<SelectHandle, HiveSelectProps>(({ className, getPopupContainer, size = 'middle', ...rest }, ref) => {
   const normalizedSize = mapSizeToNative(size);
   return <Select ref={ref} size={normalizedSize} className={classNames(BASE_CLASS, className)} getPopupContainer={getPopupContainer || defaultGetPopupContainer} {...rest} />;
 });
 
-const AionSelect = InternalSelect as AionSelectComponent;
+const HiveSelect = InternalSelect as HiveSelectComponent;
 
-AionSelect.displayName = 'AionSelect';
+HiveSelect.displayName = 'HiveSelect';
 
 // 导出子组件 / Export sub-components
-AionSelect.Option = Select.Option;
-AionSelect.OptGroup = Select.OptGroup;
+HiveSelect.Option = Select.Option;
+HiveSelect.OptGroup = Select.OptGroup;
 
-export default AionSelect;
+export default HiveSelect;

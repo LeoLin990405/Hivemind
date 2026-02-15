@@ -1,11 +1,11 @@
 /**
  * @license
- * Copyright 2025 AionUi (aionui.com)
+ * Copyright 2025 HiveMind (hivemind.com)
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import AionModal from '@/renderer/components/base/AionModal';
-import AionScrollArea from '@/renderer/components/base/AionScrollArea';
+import HiveModal from '@/renderer/components/base/HiveModal';
+import HiveScrollArea from '@/renderer/components/base/HiveScrollArea';
 import { DesignTokens } from '@/renderer/design-system';
 import { iconColors } from '@/renderer/theme/colors';
 import { isElectronDesktop } from '@/renderer/utils/platform';
@@ -93,9 +93,9 @@ interface SubModalProps {
  */
 export const SubModal: React.FC<SubModalProps> = ({ visible, onCancel, title, children }) => {
   return (
-    <AionModal visible={visible} onCancel={onCancel} footer={null} className='settings-sub-modal' size='medium' title={title}>
-      <AionScrollArea className='h-full px-20px pb-16px text-14px text-t-primary'>{children}</AionScrollArea>
-    </AionModal>
+    <HiveModal visible={visible} onCancel={onCancel} footer={null} className='settings-sub-modal' size='medium' title={title}>
+      <HiveScrollArea className='h-full px-20px pb-16px text-14px text-t-primary'>{children}</HiveScrollArea>
+    </HiveModal>
   );
 };
 
@@ -272,7 +272,7 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ visible, onCancel, defaul
 
   // 桌面端菜单（侧边栏）/ Desktop menu (sidebar)
   const desktopMenu = (
-    <AionScrollArea className='flex-shrink-0 b-color-border-2 scrollbar-hide' style={{ width: `${SIDEBAR_WIDTH}px` }}>
+    <HiveScrollArea className='flex-shrink-0 b-color-border-2 scrollbar-hide' style={{ width: `${SIDEBAR_WIDTH}px` }}>
       <div className='flex flex-col gap-2px'>
         {menuItems.map((item) => (
           <div
@@ -292,12 +292,12 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ visible, onCancel, defaul
           </div>
         ))}
       </div>
-    </AionScrollArea>
+    </HiveScrollArea>
   );
 
   return (
     <SettingsViewModeProvider value='modal'>
-      <AionModal
+      <HiveModal
         visible={visible}
         onCancel={onCancel}
         footer={null}
@@ -321,9 +321,9 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ visible, onCancel, defaul
         >
           {isMobile ? mobileMenu : desktopMenu}
 
-          <AionScrollArea className={classNames('flex-1 min-h-0', isMobile ? 'overflow-y-auto' : 'flex flex-col pl-24px gap-16px')}>{renderContent()}</AionScrollArea>
+          <HiveScrollArea className={classNames('flex-1 min-h-0', isMobile ? 'overflow-y-auto' : 'flex flex-col pl-24px gap-16px')}>{renderContent()}</HiveScrollArea>
         </div>
-      </AionModal>
+      </HiveModal>
     </SettingsViewModeProvider>
   );
 };

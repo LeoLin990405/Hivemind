@@ -1,6 +1,6 @@
 /**
  * @license
- * Copyright 2025 AionUi (aionui.com)
+ * Copyright 2025 HiveMind (hivemind.com)
  * SPDX-License-Identifier: Apache-2.0
  */
 
@@ -15,7 +15,7 @@ import { FolderOpen } from '@icon-park/react';
 import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import useSWR from 'swr';
-import AionScrollArea from '@/renderer/components/base/AionScrollArea';
+import HiveScrollArea from '@/renderer/components/base/HiveScrollArea';
 import classNames from 'classnames';
 import { useSettingsViewMode } from '../settingsViewContext';
 
@@ -243,7 +243,7 @@ const SystemModalContent: React.FC<SystemModalContentProps> = ({ onRequestClose 
       </Dialog>
 
       {/* 内容区域 / Content Area */}
-      <AionScrollArea className='flex-1 min-h-0 pb-16px' disableOverflow={isPageMode}>
+      <HiveScrollArea className='flex-1 min-h-0 pb-16px' disableOverflow={isPageMode}>
         <div className='space-y-16px'>
           {/* 偏好设置与高级设置合并展示 / Combined preferences and advanced settings */}
           <div className='px-[12px] md:px-[32px] py-16px bg-2 rd-16px space-y-12px'>
@@ -265,7 +265,7 @@ const SystemModalContent: React.FC<SystemModalContentProps> = ({ onRequestClose 
             </div>
           </div>
         </div>
-      </AionScrollArea>
+      </HiveScrollArea>
 
       {/* 底部操作栏 / Footer with action buttons */}
       <div className={classNames('flex-shrink-0 flex gap-10px border-t border-border-2 px-24px pt-10px', isPageMode ? 'border-none px-0 pt-10px flex-col md:flex-row md:justify-end' : 'justify-end')}>

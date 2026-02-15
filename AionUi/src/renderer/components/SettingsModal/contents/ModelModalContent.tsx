@@ -1,6 +1,6 @@
 /**
  * @license
- * Copyright 2025 AionUi (aionui.com)
+ * Copyright 2025 HiveMind (hivemind.com)
  * SPDX-License-Identifier: Apache-2.0
  */
 
@@ -9,17 +9,7 @@ import type { IProvider } from '@/common/storage';
 import { Button } from '@/renderer/components/ui/button';
 import { Badge } from '@/renderer/components/ui/badge';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/renderer/components/ui/collapsible';
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger,
-} from '@/renderer/components/ui/alert-dialog';
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@/renderer/components/ui/alert-dialog';
 import { toast } from 'sonner';
 import { DeleteFour, Info, Minus, Plus, Write } from '@icon-park/react';
 import React, { useState } from 'react';
@@ -29,7 +19,7 @@ import AddModelModal from '@/renderer/pages/settings/components/AddModelModal';
 import AddPlatformModal from '@/renderer/pages/settings/components/AddPlatformModal';
 import { isNewApiPlatform, NEW_API_PROTOCOL_OPTIONS } from '@/renderer/config/modelPlatforms';
 import EditModeModal from '@/renderer/pages/settings/components/EditModeModal';
-import AionScrollArea from '@/renderer/components/base/AionScrollArea';
+import HiveScrollArea from '@/renderer/components/base/HiveScrollArea';
 import { useSettingsViewMode } from '../settingsViewContext';
 
 /**
@@ -154,14 +144,14 @@ const ModelModalContent: React.FC = () => {
       </div>
 
       {/* Content Area */}
-      <AionScrollArea className='flex-1 min-h-0' disableOverflow={isPageMode}>
+      <HiveScrollArea className='flex-1 min-h-0' disableOverflow={isPageMode}>
         {!data || data.length === 0 ? (
           <div className='flex flex-col items-center justify-center py-40px'>
             <Info theme='outline' size='48' className='text-t-secondary mb-16px' />
             <h3 className='text-16px font-500 text-t-primary mb-8px'>{t('settings.noConfiguredModels')}</h3>
             <p className='text-14px text-t-secondary text-center max-w-400px'>
               {t('settings.needHelpConfigGuide')}
-              <a href='https://github.com/iOfficeAI/AionUi/wiki/LLM-Configuration' target='_blank' rel='noopener noreferrer' className='text-primary hover:text-primary/80 underline ml-4px'>
+              <a href='https://github.com/iOfficeAI/HiveMind/wiki/LLM-Configuration' target='_blank' rel='noopener noreferrer' className='text-primary hover:text-primary/80 underline ml-4px'>
                 {t('settings.configGuide')}
               </a>
               {t('settings.configGuideSuffix')}
@@ -295,7 +285,7 @@ const ModelModalContent: React.FC = () => {
             })}
           </div>
         )}
-      </AionScrollArea>
+      </HiveScrollArea>
     </div>
   );
 };

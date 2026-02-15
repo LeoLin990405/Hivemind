@@ -1,6 +1,6 @@
 /**
  * @license
- * Copyright 2025 AionUi (aionui.com)
+ * Copyright 2025 HiveMind (hivemind.com)
  * SPDX-License-Identifier: Apache-2.0
  *
  * AgentSetupCard - A card component displayed above the SendBox when the current
@@ -312,7 +312,7 @@ const AgentSetupCard: React.FC<AgentSetupCardProps> = ({ conversationId, current
             {/* Connection Progress - 连接进度条 */}
             {hasAvailableAndSwitching && bestAgent && (
               <div className='mt-12px'>
-                <Progress value={switching ? 50 : 100} className="h-1.5" />
+                <Progress value={switching ? 50 : 100} className='h-1.5' />
                 <div className='text-11px mt-4px text-center text-t-tertiary'>{t('guid.scanning.establishingConnection', { defaultValue: 'Establishing connection...' })}</div>
               </div>
             )}

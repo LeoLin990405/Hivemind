@@ -1,6 +1,6 @@
 /**
  * @license
- * Copyright 2025 AionUi (aionui.com)
+ * Copyright 2025 HiveMind (hivemind.com)
  * SPDX-License-Identifier: Apache-2.0
  */
 
@@ -155,28 +155,18 @@ const Diff2Html = ({ diff, className, title, filePath }: { diff: string; classNa
           ReactDOM.createPortal(
             <TooltipProvider>
               {/* side-by-side 选项 / Side-by-side option */}
-              <div className="flex items-center gap-2 whitespace-nowrap">
-                <Checkbox 
-                  id="side-by-side" 
-                  checked={sideBySide} 
-                  onCheckedChange={(checked) => setSideBySide(checked === true)}
-                />
-                <label htmlFor="side-by-side" className="whitespace-nowrap text-sm cursor-pointer">
+              <div className='flex items-center gap-2 whitespace-nowrap'>
+                <Checkbox id='side-by-side' checked={sideBySide} onCheckedChange={(checked) => setSideBySide(checked === true)} />
+                <label htmlFor='side-by-side' className='whitespace-nowrap text-sm cursor-pointer'>
                   side-by-side
                 </label>
               </div>
 
               <Tooltip>
                 <TooltipTrigger asChild>
-                  <Button 
-                    variant="ghost" 
-                    size="sm" 
-                    onClick={handlePreviewClick as any} 
-                    disabled={previewLoading}
-                    className="h-7 px-2 gap-1"
-                  >
+                  <Button variant='ghost' size='sm' onClick={handlePreviewClick as any} disabled={previewLoading} className='h-7 px-2 gap-1'>
                     <PreviewOpen theme='outline' size='14' fill={iconColors.secondary} />
-                    <span className="text-xs">{t('preview.preview')}</span>
+                    <span className='text-xs'>{t('preview.preview')}</span>
                   </Button>
                 </TooltipTrigger>
                 <TooltipContent>
@@ -185,10 +175,7 @@ const Diff2Html = ({ diff, className, title, filePath }: { diff: string; classNa
               </Tooltip>
 
               {/* 折叠按钮 / Collapse button */}
-              {collapse ? 
-                <ExpandDownOne theme='outline' size='14' fill={iconColors.secondary} className='flex items-center cursor-pointer' onClick={() => setCollapse(false)} /> : 
-                <FoldUpOne theme='outline' size='14' fill={iconColors.secondary} className='flex items-center cursor-pointer' onClick={() => setCollapse(true)} />
-              }
+              {collapse ? <ExpandDownOne theme='outline' size='14' fill={iconColors.secondary} className='flex items-center cursor-pointer' onClick={() => setCollapse(false)} /> : <FoldUpOne theme='outline' size='14' fill={iconColors.secondary} className='flex items-center cursor-pointer' onClick={() => setCollapse(true)} />}
             </TooltipProvider>,
             operatorRef.current
           )}

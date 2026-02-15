@@ -1,6 +1,6 @@
 /**
  * @license
- * Copyright 2025 AionUi (aionui.com)
+ * Copyright 2025 HiveMind (hivemind.com)
  * SPDX-License-Identifier: Apache-2.0
  */
 
@@ -18,9 +18,10 @@ interface ContextUsageIndicatorProps {
   contextLimit?: number;
   className?: string;
   size?: number;
+  showWhenEmpty?: boolean;
 }
 
-const ContextUsageIndicator: React.FC<ContextUsageIndicatorProps> = ({ tokenUsage, contextLimit = DEFAULT_CONTEXT_LIMIT, className = '', size = 24 }) => {
+const ContextUsageIndicator: React.FC<ContextUsageIndicatorProps> = ({ tokenUsage, contextLimit = DEFAULT_CONTEXT_LIMIT, className = '', size = 24, showWhenEmpty = false }) => {
   const { t } = useTranslation();
 
   const { percentage, displayTotal, displayLimit, isWarning, isDanger } = useMemo(() => {
@@ -46,8 +47,8 @@ const ContextUsageIndicator: React.FC<ContextUsageIndicatorProps> = ({ tokenUsag
     };
   }, [tokenUsage, contextLimit]);
 
-  // 如果没有 token 数据，不显示
-  if (!tokenUsage) {
+  // 默认没有 token 数据时不显示；可通过 showWhenEmpty 显示上下文容量
+  if (!tokenUsage && !showWhenEmpty) {
     return null;
   }
 
@@ -71,9 +72,7 @@ const ContextUsageIndicator: React.FC<ContextUsageIndicatorProps> = ({ tokenUsag
 
   const tooltipContent = (
     <div className='p-8px min-w-160px'>
-      <div className='text-14px font-medium text-t-primary'>
-        {percentage.toFixed(1)}% · {displayTotal} / {displayLimit} {t('conversation.contextUsage.contextUsed', 'context used')}
-      </div>
+      <div className='text-14px font-medium text-t-primary'>{tokenUsage ? `${percentage.toFixed(1)}% · ${displayTotal} / ${displayLimit} ${t('conversation.contextUsage.contextUsed', 'context used')}` : `${displayLimit} ${t('conversation.contextUsage.contextLimit', 'context limit')}`}</div>
     </div>
   );
 

@@ -1,6 +1,6 @@
 /**
  * @license
- * Copyright 2025 AionUi (aionui.com)
+ * Copyright 2025 HiveMind (hivemind.com)
  * SPDX-License-Identifier: Apache-2.0
  */
 
@@ -8,7 +8,7 @@ import React, { useEffect, useMemo, useState } from 'react';
 import { Button, Progress } from '@arco-design/web-react';
 import { CheckOne, Download, FolderOpen, Refresh, CloseOne } from '@icon-park/react';
 import { ipcBridge } from '@/common';
-import AionModal from '@/renderer/components/base/AionModal';
+import HiveModal from '@/renderer/components/base/HiveModal';
 import MarkdownView from '@/renderer/components/Markdown';
 import type { UpdateDownloadProgressEvent, UpdateReleaseInfo } from '@/common/updateTypes';
 import { useTranslation } from 'react-i18next';
@@ -114,11 +114,11 @@ const UpdateModal: React.FC = () => {
 
   useEffect(() => {
     const removeOpenListener = ipcBridge.update.open.on(handleOpenUpdateModal);
-    window.addEventListener('aionui-open-update-modal', handleOpenUpdateModal);
+    window.addEventListener('hivemind-open-update-modal', handleOpenUpdateModal);
 
     return () => {
       removeOpenListener();
-      window.removeEventListener('aionui-open-update-modal', handleOpenUpdateModal);
+      window.removeEventListener('hivemind-open-update-modal', handleOpenUpdateModal);
     };
   }, []);
 
@@ -282,7 +282,7 @@ const UpdateModal: React.FC = () => {
   };
 
   return (
-    <AionModal
+    <HiveModal
       visible={visible}
       onCancel={handleClose}
       size={status === 'available' ? 'medium' : 'small'}
@@ -298,7 +298,7 @@ const UpdateModal: React.FC = () => {
       }}
     >
       <div className='flex flex-col h-full w-full'>{renderContent()}</div>
-    </AionModal>
+    </HiveModal>
   );
 };
 

@@ -1,6 +1,6 @@
 /**
  * @license
- * Copyright 2025 AionUi (aionui.com)
+ * Copyright 2025 HiveMind (hivemind.com)
  * SPDX-License-Identifier: Apache-2.0
  */
 
@@ -234,10 +234,10 @@ const SendBox: React.FC<{
   };
 
   return (
-    <div className={className}>
+    <div className={('hive-sendbox-shell ' + (className || '')).trim()}>
       <div
         ref={containerRef}
-        className={`relative p-16px border-3 b bg-dialog-fill-0 b-solid rd-20px flex flex-col overflow-hidden ${isFileDragging ? 'b-dashed' : ''}`}
+        className={`hive-sendbox relative p-16px border-3 b bg-dialog-fill-0 b-solid rd-20px flex flex-col overflow-hidden ${isFileDragging ? 'b-dashed' : ''}`}
         style={{
           transition: 'box-shadow 0.25s ease, border-color 0.25s ease',
           ...(isFileDragging
@@ -260,7 +260,7 @@ const SendBox: React.FC<{
           {domSnippets.length > 0 && (
             <div className='flex flex-wrap gap-6px mb-8px'>
               {domSnippets.map((snippet) => (
-                <Badge key={snippet.id} variant='secondary' className='text-12px bg-fill-2 b-1 b-solid b-border-2 rd-4px gap-1'>
+                <Badge key={snippet.id} variant='secondary' className='hive-sendbox-snippet-badge text-12px bg-fill-2 b-1 b-solid b-border-2 rd-4px gap-1'>
                   {snippet.tag}
                   <X size={12} className='cursor-pointer' onClick={() => removeDomSnippet(snippet.id)} />
                 </Badge>
@@ -269,13 +269,13 @@ const SendBox: React.FC<{
           )}
         </div>
         <div className={isSingleLine ? 'flex items-center gap-2 w-full min-w-0 overflow-hidden' : 'w-full overflow-hidden'}>
-          {isSingleLine && <div className='flex-shrink-0 sendbox-tools'>{tools}</div>}
+          {isSingleLine && <div className='flex-shrink-0 sendbox-tools hive-sendbox-tools'>{tools}</div>}
           <textarea
             autoFocus
             disabled={disabled}
             value={input}
             placeholder={placeholder}
-            className='pl-0 pr-0 border-none focus:shadow-none m-0 bg-transparent focus:bg-transparent hover:bg-transparent lh-[20px] resize-none text-14px outline-none'
+            className='hive-sendbox-textarea pl-0 pr-0 border-none focus:shadow-none m-0 bg-transparent focus:bg-transparent hover:bg-transparent lh-[20px] resize-none text-14px outline-none'
             style={{
               width: isSingleLine ? 'auto' : '100%',
               flex: isSingleLine ? 1 : 'none',
@@ -307,13 +307,13 @@ const SendBox: React.FC<{
             <div className='flex items-center gap-2'>
               {sendButtonPrefix}
               {isLoading || loading ? (
-                <Button variant='outline' size='icon' className='rounded-full' onClick={stopHandler}>
-                  <div className='mx-auto size-12px bg-6 rounded-full'></div>
+                <Button variant='outline' size='icon' className='rounded-full hive-sendbox-action' onClick={stopHandler}>
+                  <div className='hive-sendbox-stop-indicator mx-auto size-12px bg-6 rounded-full'></div>
                 </Button>
               ) : (
                 <Button
                   size='icon'
-                  className='rounded-full'
+                  className='rounded-full hive-sendbox-action'
                   onClick={() => {
                     sendMessageHandler();
                   }}
@@ -326,17 +326,17 @@ const SendBox: React.FC<{
         </div>
         {!isSingleLine && (
           <div className='flex items-center justify-between gap-2 w-full'>
-            <div className='sendbox-tools'>{tools}</div>
+            <div className='sendbox-tools hive-sendbox-tools'>{tools}</div>
             <div className='flex items-center gap-2'>
               {sendButtonPrefix}
               {isLoading || loading ? (
-                <Button variant='outline' size='icon' className='rounded-full' onClick={stopHandler}>
-                  <div className='mx-auto size-12px bg-6 rounded-full'></div>
+                <Button variant='outline' size='icon' className='rounded-full hive-sendbox-action' onClick={stopHandler}>
+                  <div className='hive-sendbox-stop-indicator mx-auto size-12px bg-6 rounded-full'></div>
                 </Button>
               ) : (
                 <Button
                   size='icon'
-                  className='rounded-full'
+                  className='rounded-full hive-sendbox-action'
                   onClick={() => {
                     sendMessageHandler();
                   }}

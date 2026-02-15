@@ -1,12 +1,12 @@
 /**
  * @license
- * Copyright 2025 AionUi (aionui.com)
+ * Copyright 2025 HiveMind (hivemind.com)
  * SPDX-License-Identifier: Apache-2.0
  */
 
 import { ipcBridge } from '@/common';
 import { ConfigStorage } from '@/common/storage';
-import AionScrollArea from '@/renderer/components/base/AionScrollArea';
+import HiveScrollArea from '@/renderer/components/base/HiveScrollArea';
 import { useThemeContext } from '@/renderer/context/ThemeContext';
 import { Button } from '@/renderer/components/ui/button';
 import { Input } from '@/renderer/components/ui/input';
@@ -162,7 +162,7 @@ const GeminiModalContent: React.FC<GeminiModalContentProps> = ({ onRequestClose 
   return (
     <div className='flex flex-col h-full w-full'>
       {/* Content Area */}
-      <AionScrollArea className='flex-1 min-h-0' disableOverflow={isPageMode}>
+      <HiveScrollArea className='flex-1 min-h-0' disableOverflow={isPageMode}>
         <div className='space-y-16px'>
           <div className='px-[12px] py-[24px] md:px-[32px] bg-2 rd-12px md:rd-16px border border-border-2'>
             <div className='space-y-20px'>
@@ -252,7 +252,7 @@ const GeminiModalContent: React.FC<GeminiModalContentProps> = ({ onRequestClose 
             </div>
           </div>
         </div>
-      </AionScrollArea>
+      </HiveScrollArea>
 
       {/* Footer with Buttons */}
       <div className={classNames('flex-shrink-0 flex gap-10px border-t border-border-2 pl-24px py-16px', isPageMode ? 'border-none pl-0 pr-0 pt-10px flex-col md:flex-row md:justify-end' : 'justify-end')}>

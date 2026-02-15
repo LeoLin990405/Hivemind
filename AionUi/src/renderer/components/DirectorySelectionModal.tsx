@@ -1,6 +1,6 @@
 /**
  * @license
- * Copyright 2025 AionUi (aionui.com)
+ * Copyright 2025 HiveMind (hivemind.com)
  * SPDX-License-Identifier: Apache-2.0
  */
 
@@ -99,17 +99,15 @@ const DirectorySelectionModal: React.FC<DirectorySelectionModalProps> = ({ visib
 
   return (
     <Dialog open={visible} onOpenChange={(open) => !open && onCancel()}>
-      <DialogContent className="sm:max-w-[600px] w-[90vw]" style={{ zIndex: 3000 }}>
+      <DialogContent className='sm:max-w-[600px] w-[90vw]' style={{ zIndex: 3000 }}>
         <DialogHeader>
-          <DialogTitle>
-            {isFileMode ? '📄 ' + t('fileSelection.selectFile') : '📁 ' + t('fileSelection.selectDirectory')}
-          </DialogTitle>
+          <DialogTitle>{isFileMode ? '📄 ' + t('fileSelection.selectFile') : '📁 ' + t('fileSelection.selectDirectory')}</DialogTitle>
         </DialogHeader>
-        
-        <div className="relative">
+
+        <div className='relative'>
           {loading && (
-            <div className="absolute inset-0 bg-background/50 flex items-center justify-center z-10">
-              <Loader2 className="h-6 w-6 animate-spin text-primary" />
+            <div className='absolute inset-0 bg-background/50 flex items-center justify-center z-10'>
+              <Loader2 className='h-6 w-6 animate-spin text-primary' />
             </div>
           )}
           <div className='w-full border border-border rounded-md overflow-hidden' style={{ height: 'min(400px, 60vh)' }}>
@@ -121,18 +119,9 @@ const DirectorySelectionModal: React.FC<DirectorySelectionModalProps> = ({ visib
                 </div>
               )}
               {directoryData.items.map((item, index) => (
-                <div 
-                  key={index} 
-                  className='flex items-center justify-between p-10px border-b border-border cursor-pointer hover:bg-muted transition' 
-                  style={selectedPath === item.path ? { background: 'var(--brand-light)' } : {}} 
-                  onClick={() => handleItemClick(item)} 
-                  onDoubleClick={() => handleItemDoubleClick(item)}
-                >
+                <div key={index} className='flex items-center justify-between p-10px border-b border-border cursor-pointer hover:bg-muted transition' style={selectedPath === item.path ? { background: 'var(--brand-light)' } : {}} onClick={() => handleItemClick(item)} onDoubleClick={() => handleItemDoubleClick(item)}>
                   <div className='flex items-center flex-1 min-w-0'>
-                    {item.isDirectory ? 
-                      <Folder className='mr-10px text-warning h-4 w-4 shrink-0' /> : 
-                      <File className='mr-10px text-primary h-4 w-4 shrink-0' />
-                    }
+                    {item.isDirectory ? <Folder className='mr-10px text-warning h-4 w-4 shrink-0' /> : <File className='mr-10px text-primary h-4 w-4 shrink-0' />}
                     <span className='overflow-hidden text-ellipsis whitespace-nowrap'>{item.name}</span>
                   </div>
                   {canSelect(item) && (
@@ -152,12 +141,14 @@ const DirectorySelectionModal: React.FC<DirectorySelectionModalProps> = ({ visib
           </div>
         </div>
 
-        <DialogFooter className="flex-col sm:flex-row gap-2">
+        <DialogFooter className='flex-col sm:flex-row gap-2'>
           <div className='text-muted-foreground text-sm overflow-hidden text-ellipsis whitespace-nowrap flex-1' title={selectedPath || currentPath}>
             {selectedPath || currentPath || (isFileMode ? t('fileSelection.pleaseSelectFile') : t('fileSelection.pleaseSelectDirectory'))}
           </div>
           <div className='flex gap-2'>
-            <Button variant="outline" onClick={onCancel}>{t('common.cancel')}</Button>
+            <Button variant='outline' onClick={onCancel}>
+              {t('common.cancel')}
+            </Button>
             <Button onClick={handleConfirm} disabled={!selectedPath}>
               {t('common.confirm')}
             </Button>

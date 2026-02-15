@@ -1,6 +1,6 @@
 /**
  * @license
- * Copyright 2025 AionUi (aionui.com)
+ * Copyright 2025 HiveMind (hivemind.com)
  * SPDX-License-Identifier: Apache-2.0
  */
 
@@ -42,23 +42,23 @@ const AboutModalContent: React.FC = () => {
   const checkUpdate = () => {
     // 使用 window 自定义事件在渲染进程内部通信（buildEmitter 只支持主进程->渲染进程）
     // Use window custom event for renderer-side communication (buildEmitter only works main->renderer)
-    window.dispatchEvent(new CustomEvent('aionui-open-update-modal', { detail: { source: 'about' } }));
+    window.dispatchEvent(new CustomEvent('hivemind-open-update-modal', { detail: { source: 'about' } }));
   };
 
   const linkItems = [
     {
       title: t('settings.helpDocumentation'),
-      url: 'https://github.com/iOfficeAI/AionUi/wiki',
+      url: 'https://github.com/iOfficeAI/HiveMind/wiki',
       icon: <Right theme='outline' size='16' />,
     },
     {
       title: t('settings.updateLog'),
-      url: 'https://github.com/iOfficeAI/AionUi/releases',
+      url: 'https://github.com/iOfficeAI/HiveMind/releases',
       icon: <Right theme='outline' size='16' />,
     },
     {
       title: t('settings.feedback'),
-      url: 'https://github.com/iOfficeAI/AionUi/issues',
+      url: 'https://github.com/iOfficeAI/HiveMind/issues',
       icon: <Right theme='outline' size='16' />,
     },
     {
@@ -68,7 +68,7 @@ const AboutModalContent: React.FC = () => {
     },
     {
       title: t('settings.officialWebsite'),
-      url: 'https://www.aionui.com',
+      url: 'https://www.hivemind.com',
       icon: <Right theme='outline' size='16' />,
     },
   ];
@@ -86,7 +86,7 @@ const AboutModalContent: React.FC = () => {
             <Typography.Text className='text-14px text-t-secondary mb-12px text-center'>{t('settings.appDescription')}</Typography.Text>
             <div className='flex items-center justify-center gap-8px mb-16px'>
               <span className='px-10px py-4px rd-6px text-13px bg-fill-2 text-t-primary font-500'>v{packageJson.version}</span>
-              <div className='text-t-primary cursor-pointer hover:text-t-secondary transition-colors p-4px' onClick={() => openLink('https://github.com/iOfficeAI/AionUi').catch((error) => console.error('Failed to open link:', error))}>
+              <div className='text-t-primary cursor-pointer hover:text-t-secondary transition-colors p-4px' onClick={() => openLink('https://github.com/iOfficeAI/HiveMind').catch((error) => console.error('Failed to open link:', error))}>
                 <Github theme='outline' size='20' />
               </div>
             </div>

@@ -1,6 +1,6 @@
 /**
  * @license
- * Copyright 2025 AionUi (aionui.com)
+ * Copyright 2025 HiveMind (hivemind.com)
  * SPDX-License-Identifier: Apache-2.0
  */
 
@@ -143,7 +143,7 @@ const HorizontalFileList: React.FC<HorizontalFileListProps> = ({ children }) => 
               boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)',
             }}
           >
-            <ChevronLeft className="h-3.5 w-3.5" style={{ color: 'var(--text-t-primary)' }} />
+            <ChevronLeft className='h-3.5 w-3.5' style={{ color: 'var(--text-t-primary)' }} />
           </button>
         </div>
       )}
@@ -165,7 +165,7 @@ const HorizontalFileList: React.FC<HorizontalFileListProps> = ({ children }) => 
               boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)',
             }}
           >
-            <ChevronRight className="h-3.5 w-3.5" style={{ color: 'var(--text-t-primary)' }} />
+            <ChevronRight className='h-3.5 w-3.5' style={{ color: 'var(--text-t-primary)' }} />
           </button>
         </div>
       )}

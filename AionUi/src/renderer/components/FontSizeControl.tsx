@@ -1,6 +1,6 @@
 /**
  * @license
- * Copyright 2025 AionUi (aionui.com)
+ * Copyright 2025 HiveMind (hivemind.com)
  * SPDX-License-Identifier: Apache-2.0
  */
 
@@ -64,43 +64,18 @@ const FontSizeControl: React.FC = () => {
   return (
     <div className='flex flex-col gap-2 w-full max-w-560px'>
       <div className='flex items-center gap-2 w-full'>
-        <Button 
-          size='sm' 
-          variant='secondary' 
-          onClick={() => handleStep(-FONT_SCALE_STEP)} 
-          disabled={fontScale <= FONT_SCALE_MIN + EPSILON}
-          className="w-8 h-8 p-0"
-        >
+        <Button size='sm' variant='secondary' onClick={() => handleStep(-FONT_SCALE_STEP)} disabled={fontScale <= FONT_SCALE_MIN + EPSILON} className='w-8 h-8 p-0'>
           -
         </Button>
         {/* 滑杆覆盖 80%-150% 区间，随值写入配置 / Slider covers 80%-150% range and persists value */}
-        <Slider 
-          className='flex-1' 
-          min={FONT_SCALE_MIN} 
-          max={FONT_SCALE_MAX} 
-          step={FONT_SCALE_STEP} 
-          value={[fontScale]} 
-          onValueChange={handleSliderChange}
-        />
-        <Button 
-          size='sm' 
-          variant='secondary' 
-          onClick={() => handleStep(FONT_SCALE_STEP)} 
-          disabled={fontScale >= FONT_SCALE_MAX - EPSILON}
-          className="w-8 h-8 p-0"
-        >
+        <Slider className='flex-1' min={FONT_SCALE_MIN} max={FONT_SCALE_MAX} step={FONT_SCALE_STEP} value={[fontScale]} onValueChange={handleSliderChange} />
+        <Button size='sm' variant='secondary' onClick={() => handleStep(FONT_SCALE_STEP)} disabled={fontScale >= FONT_SCALE_MAX - EPSILON} className='w-8 h-8 p-0'>
           +
         </Button>
         <span className='text-13px text-t-secondary' style={{ minWidth: '48px' }}>
           {formattedValue}
         </span>
-        <Button 
-          size='sm' 
-          variant='ghost' 
-          onClick={handleReset} 
-          disabled={Math.abs(fontScale - FONT_SCALE_DEFAULT) < RESET_THRESHOLD}
-          className="px-2"
-        >
+        <Button size='sm' variant='ghost' onClick={handleReset} disabled={Math.abs(fontScale - FONT_SCALE_DEFAULT) < RESET_THRESHOLD} className='px-2'>
           {t('settings.fontSizeReset')}
         </Button>
       </div>

@@ -1,11 +1,11 @@
 /**
  * @license
- * Copyright 2025 AionUi (aionui.com)
+ * Copyright 2025 HiveMind (hivemind.com)
  * SPDX-License-Identifier: Apache-2.0
  */
 
 import React from 'react';
-import { IconProvider, DEFAULT_ICON_CONFIGS } from '@icon-park/react/es/runtime';
+import { IconProvider, DEFAULT_ICON_CONFIGS } from '@icon-park/react/lib/runtime';
 import { theme } from '@office-ai/platform';
 import { iconColors } from '@/renderer/theme/colors';
 

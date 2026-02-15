@@ -1,27 +1,27 @@
 /**
  * @license
- * Copyright 2026 AionUi (aionui.com)
+ * Copyright 2026 HiveMind (hivemind.com)
  * SPDX-License-Identifier: Apache-2.0
  */
 
 export const DesignTokens = {
   colors: {
     primary: {
-      50: '#f0f9ff',
-      100: '#e0f2fe',
-      200: '#bae6fd',
-      300: '#7dd3fc',
-      400: '#38bdf8',
-      500: '#0ea5e9',
-      600: '#0284c7',
-      700: '#0369a1',
-      800: '#075985',
-      900: '#0c4a6e',
+      50: '#eef2ff',
+      100: '#e0e7ff',
+      200: '#c7d2fe',
+      300: '#a5b4fc',
+      400: '#818cf8',
+      500: '#6366f1',
+      600: '#4f46e5',
+      700: '#4338ca',
+      800: '#3730a3',
+      900: '#312e81',
     },
-    success: '#10b981',
+    success: '#22c55e',
     warning: '#f59e0b',
     error: '#ef4444',
-    info: '#3b82f6',
+    info: '#38bdf8',
     gray: {
       50: '#f8fafc',
       100: '#f1f5f9',
@@ -45,17 +45,17 @@ export const DesignTokens = {
     '3xl': '64px',
   },
   radius: {
-    sm: '6px',
-    md: '10px',
-    lg: '14px',
-    xl: '18px',
+    sm: '8px',
+    md: '12px',
+    lg: '16px',
+    xl: '22px',
     full: '9999px',
   },
   shadows: {
-    sm: '0 1px 2px 0 rgb(0 0 0 / 0.04)',
-    md: '0 4px 6px -1px rgb(0 0 0 / 0.08)',
-    lg: '0 10px 15px -3px rgb(0 0 0 / 0.08)',
-    xl: '0 20px 25px -5px rgb(0 0 0 / 0.08)',
+    sm: '0 2px 8px 0 rgb(30 41 59 / 0.08)',
+    md: '0 10px 26px -10px rgb(15 23 42 / 0.22)',
+    lg: '0 20px 40px -18px rgb(15 23 42 / 0.32)',
+    xl: '0 30px 55px -25px rgb(15 23 42 / 0.4)',
   },
   typography: {
     fontSize: {
@@ -75,9 +75,9 @@ export const DesignTokens = {
     },
   },
   transitions: {
-    fast: '150ms cubic-bezier(0.4, 0, 0.2, 1)',
-    base: '300ms cubic-bezier(0.4, 0, 0.2, 1)',
-    slow: '500ms cubic-bezier(0.4, 0, 0.2, 1)',
+    fast: '140ms cubic-bezier(0.4, 0, 0.2, 1)',
+    base: '220ms cubic-bezier(0.4, 0, 0.2, 1)',
+    slow: '380ms cubic-bezier(0.4, 0, 0.2, 1)',
   },
 };
 

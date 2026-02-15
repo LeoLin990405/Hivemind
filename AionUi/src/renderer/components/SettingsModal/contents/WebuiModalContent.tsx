@@ -1,12 +1,12 @@
 /**
  * @license
- * Copyright 2025 AionUi (aionui.com)
+ * Copyright 2025 HiveMind (hivemind.com)
  * SPDX-License-Identifier: Apache-2.0
  */
 
 import { shell, webui, type IWebUIStatus } from '@/common/ipcBridge';
-import AionModal from '@/renderer/components/base/AionModal';
-import AionScrollArea from '@/renderer/components/base/AionScrollArea';
+import HiveModal from '@/renderer/components/base/HiveModal';
+import HiveScrollArea from '@/renderer/components/base/HiveScrollArea';
 import { isElectronDesktop } from '@/renderer/utils/platform';
 import { Form, Input, Message, Switch, Tooltip } from '@arco-design/web-react';
 import { Copy, Refresh } from '@icon-park/react';
@@ -534,19 +534,19 @@ const WebuiModalContent: React.FC = () => {
   if (!isDesktop) {
     return (
       <div className='flex flex-col h-full w-full'>
-        <AionScrollArea className='flex-1 min-h-0 pb-16px' disableOverflow={isPageMode}>
+        <HiveScrollArea className='flex-1 min-h-0 pb-16px' disableOverflow={isPageMode}>
           <div className='space-y-16px'>
             <h2 className='text-20px font-500 text-t-primary m-0'>Channels</h2>
             <ChannelModalContent />
           </div>
-        </AionScrollArea>
+        </HiveScrollArea>
       </div>
     );
   }
 
   return (
     <div className='flex flex-col h-full w-full'>
-      <AionScrollArea className='flex-1 min-h-0 pb-16px' disableOverflow={isPageMode}>
+      <HiveScrollArea className='flex-1 min-h-0 pb-16px' disableOverflow={isPageMode}>
         <div className='space-y-16px'>
           {/* 标题 / Title */}
           <h2 className='text-20px font-500 text-t-primary m-0'>WebUI</h2>
@@ -587,7 +587,7 @@ const WebuiModalContent: React.FC = () => {
                 <>
                   {t('settings.webui.allowRemoteDesc')}
                   {'  '}
-                  <button className='text-primary hover:underline cursor-pointer bg-transparent border-none p-0 text-12px' onClick={() => shell.openExternal.invoke('https://github.com/iOfficeAI/AionUi/wiki/Remote-Internet-Access-Guide').catch(console.error)}>
+                  <button className='text-primary hover:underline cursor-pointer bg-transparent border-none p-0 text-12px' onClick={() => shell.openExternal.invoke('https://github.com/iOfficeAI/HiveMind/wiki/Remote-Internet-Access-Guide').catch(console.error)}>
                     {t('settings.webui.viewGuide')}
                   </button>
                 </>
@@ -670,10 +670,10 @@ const WebuiModalContent: React.FC = () => {
             <ChannelModalContent />
           </div>
         </div>
-      </AionScrollArea>
+      </HiveScrollArea>
 
       {/* 设置新密码弹窗 / Set New Password Modal */}
-      <AionModal visible={setPasswordModalVisible} onCancel={() => setSetPasswordModalVisible(false)} onOk={handleSetNewPassword} confirmLoading={passwordLoading} title={t('settings.webui.setNewPassword')} size='small'>
+      <HiveModal visible={setPasswordModalVisible} onCancel={() => setSetPasswordModalVisible(false)} onOk={handleSetNewPassword} confirmLoading={passwordLoading} title={t('settings.webui.setNewPassword')} size='small'>
         <Form form={form} layout='vertical' className='pt-16px'>
           <Form.Item
             label={t('settings.webui.newPassword')}
@@ -704,7 +704,7 @@ const WebuiModalContent: React.FC = () => {
             <Input.Password placeholder={t('settings.webui.confirmPasswordPlaceholder')} />
           </Form.Item>
         </Form>
-      </AionModal>
+      </HiveModal>
     </div>
   );
 };
