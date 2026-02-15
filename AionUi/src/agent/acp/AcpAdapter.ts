@@ -1,6 +1,6 @@
 /**
  * @license
- * Copyright 2025 AionUi (aionui.com)
+ * Copyright 2025 HiveMind (hivemind.com)
  * SPDX-License-Identifier: Apache-2.0
  */
 
@@ -9,7 +9,7 @@ import { uuid } from '@/common/utils';
 import type { AcpBackend, AcpSessionUpdate, AgentMessageChunkUpdate, AgentThoughtChunkUpdate, AvailableCommandsUpdate, PlanUpdate, ToolCallUpdate, ToolCallUpdateStatus } from '@/types/acpTypes';
 
 /**
- * Adapter class to convert ACP messages to AionUI message format
+ * Adapter class to convert ACP messages to HiveMind message format
  */
 export class AcpAdapter {
   private conversationId: string;
@@ -42,7 +42,7 @@ export class AcpAdapter {
   }
 
   /**
-   * Convert ACP session update to AionUI messages
+   * Convert ACP session update to HiveMind messages
    */
   convertSessionUpdate(sessionUpdate: AcpSessionUpdate): TMessage[] {
     const messages: TMessage[] = [];
@@ -123,7 +123,7 @@ export class AcpAdapter {
   }
 
   /**
-   * Convert ACP session update chunk to AionUI message
+   * Convert ACP session update chunk to HiveMind message
    */
   private convertSessionUpdateChunk(update: AgentMessageChunkUpdate['update']): TMessage | null {
     const msgId = this.getCurrentMessageId(); // Use consistent msg_id for streaming chunks
@@ -149,7 +149,7 @@ export class AcpAdapter {
   }
 
   /**
-   * Convert ACP thought chunk to AionUI message
+   * Convert ACP thought chunk to HiveMind message
    */
   private convertThoughtChunk(update: AgentThoughtChunkUpdate['update']): TMessage | null {
     const baseMessage = {
@@ -243,7 +243,7 @@ export class AcpAdapter {
   }
 
   /**
-   * Convert plan update to AionUI message
+   * Convert plan update to HiveMind message
    */
   private convertPlanUpdate(update: PlanUpdate): IMessagePlan | null {
     const baseMessage = {
@@ -270,7 +270,7 @@ export class AcpAdapter {
   }
 
   /**
-   * Convert available commands update to AionUI message
+   * Convert available commands update to HiveMind message
    */
   private convertAvailableCommandsUpdate(update: AvailableCommandsUpdate): TMessage | null {
     const baseMessage = {

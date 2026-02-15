@@ -112,12 +112,12 @@ export async function loadCliConfig({ workspace, settings, extensions, sessionId
   // 创建虚拟 extension 来承载内置 skills
   // Create a virtual extension to hold builtin skills
   const builtinSkillsExtension: GeminiCLIExtension = {
-    name: 'aionui-builtin-skills',
+    name: 'hivemind-builtin-skills',
     version: '1.0.0',
     isActive: true,
     path: skillsDir || '',
     contextFiles: [],
-    id: 'aionui-builtin-skills',
+    id: 'hivemind-builtin-skills',
     skills: builtinSkills,
   };
 
@@ -230,8 +230,8 @@ export async function loadCliConfig({ workspace, settings, extensions, sessionId
     userMemory: memoryContent,
     geminiMdFileCount: fileCount,
     approvalMode: argv.yolo || false ? ApprovalMode.YOLO : ApprovalMode.DEFAULT,
-    // AionUi 是桌面应用，支持用户交互确认，需要设置 interactive: true
-    // AionUi is a desktop app with user interaction support, needs interactive: true
+    // HiveMind 是桌面应用，支持用户交互确认，需要设置 interactive: true
+    // HiveMind is a desktop app with user interaction support, needs interactive: true
     interactive: true,
     showMemoryUsage: argv.showMemoryUsage || argv.show_memory_usage || settings.showMemoryUsage || false,
     accessibility: settings.accessibility,

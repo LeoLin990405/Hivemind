@@ -1,6 +1,6 @@
 /**
  * @license
- * Copyright 2026 AionUi (aionui.com)
+ * Copyright 2026 HiveMind (hivemind.com)
  * SPDX-License-Identifier: Apache-2.0
  */
 
@@ -58,7 +58,7 @@ export class HivemindAgent {
     });
   }
 
-  async send(message: string, provider?: string | null, files?: string[]): Promise<void> {
+  async send(message: string, provider?: string | null, files?: string[], model?: string | null): Promise<void> {
     const responseMsgId = `${this.id}:${uuid(8)}`;
     const requestedProvider = provider ?? this.config.defaultProvider ?? null;
 
@@ -104,7 +104,8 @@ export class HivemindAgent {
           },
         },
         provider,
-        files
+        files,
+        model
       );
 
       if (streamError) {
@@ -115,7 +116,7 @@ export class HivemindAgent {
     }
 
     try {
-      const askResponse = await this.connection.ask(message, provider, files);
+      const askResponse = await this.connection.ask(message, provider, files, model);
       this.emitProviderStatus(
         responseMsgId,
         askResponse.provider || requestedProvider,

@@ -1,6 +1,6 @@
 /**
  * @license
- * Copyright 2026 AionUi (aionui.com)
+ * Copyright 2026 HiveMind (hivemind.com)
  * SPDX-License-Identifier: Apache-2.0
  */
 
@@ -135,11 +135,12 @@ export class HivemindConnection {
     throw new Error('unreachable');
   }
 
-  async ask(message: string, provider?: string | null, files?: string[]): Promise<AskResponse> {
+  async ask(message: string, provider?: string | null, files?: string[], model?: string | null): Promise<AskResponse> {
     this.lastRequestId = null;
     const requestBody: AskRequest = {
       message,
       provider: provider ?? this.config.defaultProvider,
+      model: model ?? null,
       timeout_s: this.config.timeoutS,
       cache_bypass: this.config.cacheBypass,
       agent: this.config.agent,
@@ -189,7 +190,8 @@ export class HivemindConnection {
       onError: (error: Error) => void;
     },
     provider?: string | null,
-    files?: string[]
+    files?: string[],
+    model?: string | null
   ): Promise<void> {
     this.stop();
     this.lastRequestId = null;
@@ -198,6 +200,7 @@ export class HivemindConnection {
     const requestBody: AskRequest = {
       message,
       provider: provider ?? this.config.defaultProvider,
+      model: model ?? null,
       timeout_s: this.config.timeoutS,
       cache_bypass: this.config.cacheBypass,
       agent: this.config.agent,

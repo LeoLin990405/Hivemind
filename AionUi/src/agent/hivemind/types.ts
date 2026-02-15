@@ -1,6 +1,6 @@
 /**
  * @license
- * Copyright 2026 AionUi (aionui.com)
+ * Copyright 2026 HiveMind (hivemind.com)
  * SPDX-License-Identifier: Apache-2.0
  */
 
@@ -27,6 +27,7 @@ export const DEFAULT_HIVEMIND_CONFIG: HivemindConfig = {
 export interface AskRequest {
   message: string;
   provider?: string | null;
+  model?: string | null;
   timeout_s?: number;
   cache_bypass?: boolean;
   agent?: string | null;
@@ -95,6 +96,7 @@ export const HIVEMIND_PROVIDER_OPTIONS: Array<{ value: string; label: string }> 
   { value: 'iflow', label: '⚡ iFlow' },
   { value: 'ollama', label: '⚡ Ollama' },
   { value: 'opencode', label: '⚡ OpenCode' },
+  { value: 'obsidian', label: '📚 Obsidian CLI' },
   { value: 'claude', label: '🐢 Claude' },
   { value: 'codex', label: '🐢 Codex' },
   { value: 'gemini', label: '🐢 Gemini' },
@@ -113,6 +115,7 @@ export const PROVIDER_TIERS: Record<string, { emoji: string; label: string; colo
   iflow: { emoji: '⚡', label: 'Balanced', color: 'green' },
   ollama: { emoji: '⚡', label: 'Local', color: 'lime' },
   opencode: { emoji: '⚡', label: 'Balanced', color: 'green' },
+  obsidian: { emoji: '📚', label: 'Knowledge', color: 'cyan' },
   claude: { emoji: '🐢', label: 'Deep', color: 'orange' },
   codex: { emoji: '🐢', label: 'Deep', color: 'orange' },
   gemini: { emoji: '🐢', label: 'Deep', color: 'orange' },

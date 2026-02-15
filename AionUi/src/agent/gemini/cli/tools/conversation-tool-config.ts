@@ -1,6 +1,6 @@
 /**
  * @license
- * Copyright 2025 AionUi (aionui.com)
+ * Copyright 2025 HiveMind (hivemind.com)
  * SPDX-License-Identifier: Apache-2.0
  */
 
@@ -24,7 +24,7 @@ interface ConversationToolConfigOptions {
  */
 export class ConversationToolConfig {
   private useGeminiWebSearch = false;
-  private useAionuiWebFetch = false;
+  private useHiveMindWebFetch = false;
   private geminiModel: TProviderWithModel | null = null;
   private excludeTools: string[] = [];
   private dedicatedGeminiClient: GeminiClient | null = null; // 缓存专门的Gemini客户端
@@ -43,8 +43,8 @@ export class ConversationToolConfig {
    * @param authType 认证类型（平台类型）
    */
   async initializeForConversation(authType: AuthType): Promise<void> {
-    // 所有模型都使用 aionui_web_fetch 替换内置的 web_fetch
-    this.useAionuiWebFetch = true;
+    // 所有模型都使用 hivemind_web_fetch 替换内置的 web_fetch
+    this.useHiveMindWebFetch = true;
     this.excludeTools.push('web_fetch');
 
     // 根据 webSearchEngine 配置决定启用哪个搜索工具
@@ -117,7 +117,7 @@ export class ConversationToolConfig {
   getConfig() {
     return {
       useGeminiWebSearch: this.useGeminiWebSearch,
-      useAionuiWebFetch: this.useAionuiWebFetch,
+      useHiveMindWebFetch: this.useHiveMindWebFetch,
       geminiModel: this.geminiModel,
       excludeTools: this.excludeTools,
     };
@@ -130,14 +130,14 @@ export class ConversationToolConfig {
   async registerCustomTools(config: Config, geminiClient: GeminiClient): Promise<void> {
     const toolRegistry = await config.getToolRegistry();
 
-    // 注册 aionui_web_fetch 工具（所有模型）
-    if (this.useAionuiWebFetch) {
+    // 注册 hivemind_web_fetch 工具（所有模型）
+    if (this.useHiveMindWebFetch) {
       const customWebFetchTool = new WebFetchTool(geminiClient, config.getMessageBus());
       toolRegistry.registerTool(customWebFetchTool);
     }
 
     if (this.imageGenerationModel) {
-      // 注册 aionui_image_generation 工具（所有模型）
+      // 注册 hivemind_image_generation 工具（所有模型）
       const imageGenTool = new ImageGenerationTool(config, this.imageGenerationModel, this.proxy);
       toolRegistry.registerTool(imageGenTool);
     }
