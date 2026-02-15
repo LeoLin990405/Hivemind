@@ -1,6 +1,6 @@
 /**
  * @license
- * Copyright 2025 AionUi (aionui.com)
+ * Copyright 2025 HiveMind (hivemind.com)
  * SPDX-License-Identifier: Apache-2.0
  */
 
@@ -665,6 +665,7 @@ interface ISendMessageParams {
   files?: string[];
   loading_id?: string;
   provider?: string | null;
+  model?: string | null;
 }
 
 // Unified confirm message params for all agents (Gemini, ACP, Codex)
@@ -793,7 +794,7 @@ export const channel = {
 // HiveMind 模型选择相关接口
 export const models = {
   // 获取指定 Provider 的模型列表
-  getModels: bridge.buildProvider<import('@/types/acpTypes').ModelConfig[], import('@/types/acpTypes').AcpBackendAll>('models:getModels'),
+  getModels: bridge.buildProvider<import('@/types/acpTypes').ModelConfig[], { provider: AcpBackendAll }>('models:getModels'),
   // 获取 Ollama 动态模型列表
   getOllamaModels: bridge.buildProvider<import('@/types/acpTypes').ModelConfig[], void>('models:getOllamaModels'),
   // 获取用户的模型偏好设置
@@ -801,5 +802,5 @@ export const models = {
   // 保存用户的模型偏好
   saveUserPreferences: bridge.buildProvider<void, import('@/types/acpTypes').UserModelPreferences>('models:saveUserPreferences'),
   // 获取指定 Provider 的默认模型
-  getDefaultModel: bridge.buildProvider<import('@/types/acpTypes').ModelConfig | null, import('@/types/acpTypes').AcpBackendAll>('models:getDefaultModel'),
+  getDefaultModel: bridge.buildProvider<import('@/types/acpTypes').ModelConfig | null, { provider: AcpBackendAll }>('models:getDefaultModel'),
 };

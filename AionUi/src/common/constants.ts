@@ -1,21 +1,21 @@
 /**
  * @license
- * Copyright 2025 AionUi (aionui.com)
+ * Copyright 2025 HiveMind (hivemind.com)
  * SPDX-License-Identifier: Apache-2.0
  */
 
 /**
- * AionUI应用程序共用常量
+ * HiveMind 应用程序共用常量
  */
 
 // ===== 文件处理相关常量 =====
 
 /** 临时文件时间戳分隔符 */
-export const AIONUI_TIMESTAMP_SEPARATOR = '_aionui_';
+export const HIVEMIND_TIMESTAMP_SEPARATOR = '_hivemind_';
 
 /** 用于匹配和清理时间戳后缀的正则表达式 */
-export const AIONUI_TIMESTAMP_REGEX = /_aionui_\d{13}(\.\w+)?$/;
-export const AIONUI_FILES_MARKER = '[[AION_FILES]]';
+export const HIVEMIND_TIMESTAMP_REGEX = /_hivemind_\d{13}(\.\w+)?$/;
+export const HIVEMIND_FILES_MARKER = '[[HIVEMIND_FILES]]';
 
 // ===== 媒体类型相关常量 =====
 

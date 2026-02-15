@@ -1,6 +1,6 @@
 /**
  * @license
- * Copyright 2025 AionUi (aionui.com)
+ * Copyright 2025 HiveMind (hivemind.com)
  * SPDX-License-Identifier: Apache-2.0
  */
 
@@ -401,7 +401,7 @@ export const ACP_BACKENDS_ALL: Record<AcpBackendAll, AcpBackendConfig> = {
     name: 'Droid',
     cliCommand: 'droid',
     authRequired: false,
-    enabled: true, // ✅ Droid Terminal AI
+    enabled: false, // ⛔ Disabled: Droid CLI removed
     supportsStreaming: false,
     acpArgs: ['--acp'],
   },
@@ -810,7 +810,7 @@ export interface ModelConfig {
   /** 是否需要付费 */
   isPaid?: boolean;
   /** 模型速度等级: "fast" | "medium" | "slow" */
-  speedTier?: "fast" | "medium" | "slow";
+  speedTier?: 'fast' | 'medium' | 'slow';
 }
 
 /**
@@ -832,7 +832,7 @@ export interface ProviderModels {
  */
 export interface UserModelPreferences {
   /** Provider -> 选中的模型 ID 的映射 */
-  selectedModels: Record<AcpBackendAll, string>;
+  selectedModels: Partial<Record<AcpBackendAll, string>>;
   /** 上次修改时间 */
   lastUpdated?: string;
 }

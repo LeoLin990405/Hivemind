@@ -1,6 +1,6 @@
 /**
  * @license
- * Copyright 2025 AionUi (aionui.com)
+ * Copyright 2025 HiveMind (hivemind.com)
  * SPDX-License-Identifier: Apache-2.0
  */
 
@@ -244,6 +244,102 @@ const opencodeModels: ModelConfig[] = [
 ];
 
 /**
+ * Ollama 回退模型配置（当本地未拉取模型时）
+ */
+const ollamaModels: ModelConfig[] = [
+  {
+    id: 'ollama-default',
+    displayName: 'Ollama - 默认',
+    description: '本地 Ollama 模型（建议先执行 ollama pull）',
+    isDefault: true,
+    capabilities: ['local', 'code'],
+    estimatedResponseTime: 40,
+    isPaid: false,
+    speedTier: 'medium',
+  },
+];
+
+/**
+ * Goose 模型配置
+ */
+const gooseModels: ModelConfig[] = [
+  {
+    id: 'goose-default',
+    displayName: 'Goose - 默认',
+    description: 'Goose CLI 默认模型',
+    isDefault: true,
+    capabilities: ['code'],
+    estimatedResponseTime: 40,
+    isPaid: false,
+    speedTier: 'medium',
+  },
+];
+
+/**
+ * Auggie 模型配置
+ */
+const auggieModels: ModelConfig[] = [
+  {
+    id: 'auggie-default',
+    displayName: 'Auggie - 默认',
+    description: 'Auggie CLI 默认模型',
+    isDefault: true,
+    capabilities: ['code'],
+    estimatedResponseTime: 45,
+    isPaid: false,
+    speedTier: 'medium',
+  },
+];
+
+/**
+ * Copilot 模型配置
+ */
+const copilotModels: ModelConfig[] = [
+  {
+    id: 'copilot-default',
+    displayName: 'Copilot - 默认',
+    description: 'GitHub Copilot CLI 默认模型',
+    isDefault: true,
+    capabilities: ['code'],
+    estimatedResponseTime: 35,
+    isPaid: false,
+    speedTier: 'medium',
+  },
+];
+
+/**
+ * OpenClaw Gateway 模型配置
+ */
+const openclawModels: ModelConfig[] = [
+  {
+    id: 'openclaw-default',
+    displayName: 'OpenClaw - 默认',
+    description: 'OpenClaw Gateway 默认模型',
+    isDefault: true,
+    capabilities: ['code', 'reasoning'],
+    estimatedResponseTime: 40,
+    isPaid: false,
+    speedTier: 'medium',
+  },
+];
+
+/**
+ * Custom Agent 模型配置
+ */
+const customModels: ModelConfig[] = [
+  {
+    id: 'custom-default',
+    displayName: 'Custom - 默认',
+    description: '自定义 Agent 默认模型',
+    isDefault: true,
+    capabilities: ['code'],
+    estimatedResponseTime: 40,
+    isPaid: false,
+    speedTier: 'medium',
+  },
+];
+
+/**
  * Qoder 模型配置
  */
 const qoderModels: ModelConfig[] = [
@@ -272,22 +368,6 @@ const claudeModels: ModelConfig[] = [
     estimatedResponseTime: 120,
     isPaid: false,
     speedTier: 'slow',
-  },
-];
-
-/**
- * Droid 模型配置
- */
-const droidModels: ModelConfig[] = [
-  {
-    id: 'droid-default',
-    displayName: 'Droid - 终端',
-    description: '终端模式 AI 助手',
-    isDefault: true,
-    capabilities: ['terminal', 'automation'],
-    estimatedResponseTime: 60,
-    isPaid: false,
-    speedTier: 'medium',
   },
 ];
 
@@ -327,9 +407,29 @@ export const MODEL_REGISTRY: ProviderModels[] = [
     defaultModelId: 'iflow-normal',
   },
   {
+    provider: 'ollama',
+    models: ollamaModels,
+    defaultModelId: 'ollama-default',
+  },
+  {
     provider: 'opencode',
     models: opencodeModels,
     defaultModelId: 'minimax-cn-coding-plan/MiniMax-M2.5',
+  },
+  {
+    provider: 'goose',
+    models: gooseModels,
+    defaultModelId: 'goose-default',
+  },
+  {
+    provider: 'auggie',
+    models: auggieModels,
+    defaultModelId: 'auggie-default',
+  },
+  {
+    provider: 'copilot',
+    models: copilotModels,
+    defaultModelId: 'copilot-default',
   },
   {
     provider: 'qoder',
@@ -342,9 +442,14 @@ export const MODEL_REGISTRY: ProviderModels[] = [
     defaultModelId: 'claude-default',
   },
   {
-    provider: 'droid',
-    models: droidModels,
-    defaultModelId: 'droid-default',
+    provider: 'openclaw-gateway',
+    models: openclawModels,
+    defaultModelId: 'openclaw-default',
+  },
+  {
+    provider: 'custom',
+    models: customModels,
+    defaultModelId: 'custom-default',
   },
 ];
 
