@@ -11,8 +11,8 @@ import type {
   APIRequestOptions,
   EventCallback,
   UnsubscribeFn,
-  ConnectionStatus,
 } from './types';
+import { ConnectionStatus } from './types';
 
 // Extend window interface
 declare global {

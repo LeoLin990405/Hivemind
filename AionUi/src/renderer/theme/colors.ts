@@ -117,22 +117,22 @@ export const iconColors = {
  * Used in FileChangesPanel, Markdown diff highlighting, etc.
  */
 export const diffColors = {
-  /** Green for additions / insertions */
-  addition: '#52c41a',
-  /** Red for deletions / removals */
-  deletion: '#ff4d4f',
+  /** Neon green for additions / insertions */
+  addition: '#00ff88',
+  /** Hot pink for deletions / removals */
+  deletion: '#ff3366',
   /** Addition background (dark mode) */
-  additionBgDark: 'rgba(46,160,67,0.15)',
+  additionBgDark: 'rgba(0, 255, 136, 0.12)',
   /** Addition background (light mode) */
-  additionBgLight: '#e6ffec',
+  additionBgLight: 'rgba(0, 255, 136, 0.08)',
   /** Deletion background (dark mode) */
-  deletionBgDark: 'rgba(248,81,73,0.15)',
+  deletionBgDark: 'rgba(255, 51, 102, 0.12)',
   /** Deletion background (light mode) */
-  deletionBgLight: '#ffebe9',
+  deletionBgLight: 'rgba(255, 51, 102, 0.08)',
   /** Hunk header background (dark mode) */
-  hunkBgDark: 'rgba(56,139,253,0.15)',
+  hunkBgDark: 'rgba(0, 212, 255, 0.12)',
   /** Hunk header background (light mode) */
-  hunkBgLight: '#ddf4ff',
+  hunkBgLight: 'rgba(0, 212, 255, 0.08)',
 } as const;
 
 /**
@@ -153,6 +153,6 @@ export const colorMapping: Record<string, string> = {
   '#86909C': 'var(--color-bg-6)',
   '#1D2129': 'var(--color-bg-9)',
 
-  // Semantic colors - Sky Blue primary (0EA5E9)
-  '#6366F1': 'var(--color-primary)',
+  // Semantic colors - Neon Cyan primary (00D4FF)
+  '#00D4FF': 'var(--color-primary)',
 };

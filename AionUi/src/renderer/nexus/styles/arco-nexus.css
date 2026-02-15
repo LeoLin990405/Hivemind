@@ -1,0 +1,363 @@
+/* ================================================================== */
+/* HiveMind Nexus — Arco Design Light Theme Overrides                 */
+/* All selectors scoped under body.nexus-mode                         */
+/* ================================================================== */
+
+/* ---- Buttons ---- */
+
+/* Primary Button: Pure black background */
+body.nexus-mode .arco-btn-primary {
+  background: #111827;
+  border-color: #111827;
+  color: white;
+  border-radius: var(--nexus-radius-sm);
+  font-weight: 500;
+  transition: all 180ms ease;
+}
+
+body.nexus-mode .arco-btn-primary:hover {
+  background: #1f2937;
+  transform: translateY(-1px);
+  box-shadow: var(--nexus-shadow-md);
+}
+
+body.nexus-mode .arco-btn-primary:active {
+  transform: translateY(0);
+  box-shadow: var(--nexus-shadow-sm);
+}
+
+/* Secondary Button: White background + gray border */
+body.nexus-mode .arco-btn-default,
+body.nexus-mode .arco-btn-secondary {
+  background: white;
+  border: 1px solid var(--nexus-border-default);
+  color: var(--nexus-text-primary);
+  border-radius: var(--nexus-radius-sm);
+  transition: all 160ms ease;
+}
+
+body.nexus-mode .arco-btn-default:hover,
+body.nexus-mode .arco-btn-secondary:hover {
+  background: var(--nexus-bg-elevated);
+  border-color: var(--nexus-border-default);
+}
+
+/* Icon Button */
+body.nexus-mode .arco-btn-text {
+  color: var(--nexus-text-secondary);
+}
+
+body.nexus-mode .arco-btn-text:hover {
+  background: var(--nexus-bg-elevated);
+  border-radius: 50%;
+  color: var(--nexus-text-primary);
+}
+
+/* Danger Button */
+body.nexus-mode .arco-btn-status-danger {
+  background: #ef4444;
+  border-color: #ef4444;
+  color: white;
+}
+
+body.nexus-mode .arco-btn-status-danger:hover {
+  background: #dc2626;
+  border-color: #dc2626;
+  box-shadow: var(--nexus-shadow-md);
+}
+
+/* ---- Inputs / Textarea / Select ---- */
+body.nexus-mode .arco-input,
+body.nexus-mode .arco-textarea,
+body.nexus-mode .arco-input-wrapper,
+body.nexus-mode .arco-textarea-wrapper,
+body.nexus-mode .arco-select .arco-select-view {
+  background: white !important;
+  border: 1px solid var(--nexus-border-default) !important;
+  border-radius: var(--nexus-radius-sm);
+  color: var(--nexus-text-primary) !important;
+  transition: border-color 160ms ease, box-shadow 160ms ease;
+}
+
+body.nexus-mode .arco-input:focus,
+body.nexus-mode .arco-textarea:focus,
+body.nexus-mode .arco-input:focus-within,
+body.nexus-mode .arco-input-wrapper.arco-input-focus,
+body.nexus-mode .arco-textarea-wrapper.arco-textarea-focus,
+body.nexus-mode .arco-select-focused .arco-select-view {
+  border-color: var(--nexus-accent) !important;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1) !important;
+}
+
+body.nexus-mode .arco-input::placeholder,
+body.nexus-mode .arco-textarea::placeholder {
+  color: var(--nexus-text-disabled) !important;
+}
+
+/* ---- Cards ---- */
+body.nexus-mode .arco-card {
+  background: white;
+  border: 1px solid var(--nexus-border-subtle);
+  border-radius: var(--nexus-radius-lg);
+  box-shadow: var(--nexus-shadow-sm);
+  transition: all 200ms ease;
+}
+
+body.nexus-mode .arco-card:hover {
+  box-shadow: var(--nexus-shadow-md);
+}
+
+body.nexus-mode .arco-card-header {
+  border-bottom: 1px solid var(--nexus-border-subtle);
+}
+
+body.nexus-mode .arco-card-header-title {
+  color: var(--nexus-text-primary);
+  font-weight: 500;
+}
+
+/* ---- Modals ---- */
+body.nexus-mode .arco-modal-wrapper {
+  backdrop-filter: blur(8px);
+}
+
+body.nexus-mode .arco-modal {
+  background: white !important;
+  border-radius: var(--nexus-radius-lg);
+  box-shadow: var(--nexus-shadow-lg);
+}
+
+body.nexus-mode .arco-modal-header {
+  border-bottom: 1px solid var(--nexus-border-subtle) !important;
+}
+
+body.nexus-mode .arco-modal-title {
+  color: var(--nexus-text-primary) !important;
+  font-weight: 600;
+}
+
+body.nexus-mode .arco-modal-footer {
+  border-top: 1px solid var(--nexus-border-subtle) !important;
+}
+
+body.nexus-mode .arco-modal-close-icon {
+  color: var(--nexus-text-tertiary);
+}
+
+body.nexus-mode .arco-modal-close-icon:hover {
+  color: var(--nexus-text-primary);
+}
+
+/* ---- Tabs ---- */
+body.nexus-mode .arco-tabs-header-ink {
+  background: var(--nexus-accent) !important;
+}
+
+body.nexus-mode .arco-tabs-tab {
+  color: var(--nexus-text-secondary) !important;
+  transition: color 160ms ease;
+}
+
+body.nexus-mode .arco-tabs-tab:hover {
+  color: var(--nexus-text-primary) !important;
+}
+
+body.nexus-mode .arco-tabs-tab-active {
+  color: var(--nexus-accent) !important;
+}
+
+body.nexus-mode .arco-tabs-header-nav::before {
+  background: var(--nexus-border-subtle) !important;
+}
+
+/* ---- Dropdown / Popup ---- */
+body.nexus-mode .arco-dropdown-popup,
+body.nexus-mode .arco-trigger-popup {
+  background: white !important;
+  border: 1px solid var(--nexus-border-subtle) !important;
+  border-radius: var(--nexus-radius-md) !important;
+  box-shadow: var(--nexus-shadow-lg) !important;
+}
+
+body.nexus-mode .arco-dropdown-option,
+body.nexus-mode .arco-select-option {
+  color: var(--nexus-text-secondary) !important;
+  transition: all 120ms ease;
+}
+
+body.nexus-mode .arco-dropdown-option:hover,
+body.nexus-mode .arco-select-option-hover {
+  background: var(--nexus-bg-elevated) !important;
+  color: var(--nexus-text-primary) !important;
+}
+
+body.nexus-mode .arco-dropdown-option-active,
+body.nexus-mode .arco-select-option-selected {
+  background: rgba(59, 130, 246, 0.1) !important;
+  color: var(--nexus-accent) !important;
+}
+
+/* ---- Tooltip ---- */
+body.nexus-mode .arco-tooltip-content {
+  background: #1f2937 !important;
+  color: white !important;
+  font-size: 12px;
+  border-radius: var(--nexus-radius-sm) !important;
+  box-shadow: var(--nexus-shadow-md);
+}
+
+body.nexus-mode .arco-tooltip-content-inner {
+  background: transparent !important;
+}
+
+/* ---- Switch ---- */
+body.nexus-mode .arco-switch {
+  background: #d1d5db;
+}
+
+body.nexus-mode .arco-switch-checked {
+  background: var(--nexus-accent) !important;
+}
+
+/* ---- Tags ---- */
+body.nexus-mode .arco-tag {
+  background: var(--nexus-bg-elevated);
+  border: 1px solid var(--nexus-border-subtle);
+  color: var(--nexus-text-secondary);
+  border-radius: 6px;
+  font-size: 12px;
+}
+
+body.nexus-mode .arco-tag-checked {
+  background: rgba(59, 130, 246, 0.1);
+  border-color: var(--nexus-accent);
+  color: var(--nexus-accent);
+}
+
+/* ---- Message (toast) ---- */
+body.nexus-mode .arco-message {
+  font-family: var(--nexus-font-sans);
+}
+
+body.nexus-mode .arco-message-wrapper .arco-message-info {
+  background: rgba(59, 130, 246, 0.1);
+  border: 1px solid rgba(59, 130, 246, 0.2);
+  border-radius: var(--nexus-radius-sm);
+}
+
+body.nexus-mode .arco-message-wrapper .arco-message-success {
+  background: rgba(34, 197, 94, 0.1);
+  border: 1px solid rgba(34, 197, 94, 0.2);
+  border-radius: var(--nexus-radius-sm);
+}
+
+body.nexus-mode .arco-message-wrapper .arco-message-warning {
+  background: rgba(245, 158, 11, 0.1);
+  border: 1px solid rgba(245, 158, 11, 0.2);
+  border-radius: var(--nexus-radius-sm);
+}
+
+body.nexus-mode .arco-message-wrapper .arco-message-error {
+  background: rgba(239, 68, 68, 0.1);
+  border: 1px solid rgba(239, 68, 68, 0.2);
+  border-radius: var(--nexus-radius-sm);
+}
+
+/* ---- Table ---- */
+body.nexus-mode .arco-table-th {
+  background: var(--nexus-bg-elevated) !important;
+  color: var(--nexus-text-secondary) !important;
+  font-weight: 500;
+  border-bottom: 1px solid var(--nexus-border-subtle) !important;
+}
+
+body.nexus-mode .arco-table-td {
+  background: transparent !important;
+  color: var(--nexus-text-primary) !important;
+  border-bottom: 1px solid var(--nexus-border-subtle) !important;
+}
+
+body.nexus-mode .arco-table-tr:hover .arco-table-td {
+  background: var(--nexus-bg-elevated) !important;
+}
+
+/* ---- Checkbox / Radio ---- */
+body.nexus-mode .arco-checkbox:hover .arco-checkbox-icon-hover::before {
+  background: var(--nexus-bg-elevated);
+}
+
+body.nexus-mode .arco-checkbox-checked .arco-checkbox-icon {
+  background: var(--nexus-accent) !important;
+  border-color: var(--nexus-accent) !important;
+}
+
+body.nexus-mode .arco-radio-checked .arco-radio-icon {
+  background: var(--nexus-accent) !important;
+  border-color: var(--nexus-accent) !important;
+}
+
+/* ---- Popconfirm ---- */
+body.nexus-mode .arco-popconfirm-content {
+  background: white !important;
+  border: 1px solid var(--nexus-border-subtle);
+  border-radius: var(--nexus-radius-md);
+  box-shadow: var(--nexus-shadow-lg);
+}
+
+/* ---- Notification ---- */
+body.nexus-mode .arco-notification {
+  background: white !important;
+  border: 1px solid var(--nexus-border-subtle);
+  border-radius: var(--nexus-radius-md);
+  box-shadow: var(--nexus-shadow-lg);
+}
+
+/* ---- Drawer ---- */
+body.nexus-mode .arco-drawer-content {
+  background: white !important;
+}
+
+body.nexus-mode .arco-drawer-header {
+  border-bottom: 1px solid var(--nexus-border-subtle) !important;
+}
+
+body.nexus-mode .arco-drawer-title {
+  color: var(--nexus-text-primary) !important;
+  font-weight: 600;
+}
+
+/* ---- Scrollbar (global for Arco popups) ---- */
+body.nexus-mode ::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+body.nexus-mode ::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+body.nexus-mode ::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.1);
+  border-radius: 3px;
+}
+
+body.nexus-mode ::-webkit-scrollbar-thumb:hover {
+  background: rgba(0, 0, 0, 0.2);
+}
+
+body.nexus-mode .arco-scrollbar::-webkit-scrollbar {
+  width: 6px;
+}
+
+body.nexus-mode .arco-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+body.nexus-mode .arco-scrollbar::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.1);
+  border-radius: 3px;
+}
+
+body.nexus-mode .arco-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: rgba(0, 0, 0, 0.2);
+}

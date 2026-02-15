@@ -1,37 +1,47 @@
-import React from 'react';
+import React, { Suspense, lazy } from 'react';
 import { HashRouter, Navigate, Route, Routes } from 'react-router-dom';
 import AppLoader from './components/AppLoader';
 import { useAuth } from './context/AuthContext';
-import Conversation from './pages/conversation';
-import Guid from './pages/guid';
-import About from './pages/settings/About';
-import AgentSettings from './pages/settings/AgentSettings';
-import DisplaySettings from './pages/settings/DisplaySettings';
-import GeminiSettings from './pages/settings/GeminiSettings';
-import ModeSettings from './pages/settings/ModeSettings';
-import SecuritySettings from './pages/settings/SecuritySettings';
-import SystemSettings from './pages/settings/SystemSettings';
-import ToolsSettings from './pages/settings/ToolsSettings';
-import WebuiSettings from './pages/settings/WebuiSettings';
-import HivemindSettings from './pages/settings/HivemindSettings';
-import LoginPage from './pages/login';
-import ComponentsShowcase from './pages/test/ComponentsShowcase';
-import MonitorLayout from './pages/monitor/MonitorLayout';
-import Dashboard from './pages/monitor/Dashboard';
-import CacheManager from './pages/monitor/CacheManager';
-import TaskQueue from './pages/monitor/TaskQueue';
-import KnowledgeHub from './pages/knowledge';
-import MemoryHub from './pages/memory';
-import AgentTeamsLayout from './pages/agentTeams';
-import AgentTeamsDashboard from './pages/agentTeams/Dashboard';
-import TeamsPage from './pages/agentTeams/TeamsPage';
-import TeamDetailPage from './pages/agentTeams/TeamDetailPage';
-import TasksKanbanPage from './pages/agentTeams/TasksKanbanPage';
-import TaskDetailPage from './pages/agentTeams/TaskDetailPage';
-import AgentTeamsMonitorDashboard from './pages/agentTeams/MonitorDashboard';
-import AgentTeamsAnalyticsPage from './pages/agentTeams/AnalyticsPage';
-import SkillsPage from './pages/skills';
-import SkillEditor from './pages/skills/SkillEditor';
+
+// Route-level code splitting for better initial load performance
+// Each page is loaded on-demand, reducing initial bundle size
+const Conversation = lazy(() => import('./pages/conversation'));
+const Guid = lazy(() => import('./pages/guid'));
+const About = lazy(() => import('./pages/settings/About'));
+const AgentSettings = lazy(() => import('./pages/settings/AgentSettings'));
+const DisplaySettings = lazy(() => import('./pages/settings/DisplaySettings'));
+const GeminiSettings = lazy(() => import('./pages/settings/GeminiSettings'));
+const ModeSettings = lazy(() => import('./pages/settings/ModeSettings'));
+const SecuritySettings = lazy(() => import('./pages/settings/SecuritySettings'));
+const SystemSettings = lazy(() => import('./pages/settings/SystemSettings'));
+const ToolsSettings = lazy(() => import('./pages/settings/ToolsSettings'));
+const WebuiSettings = lazy(() => import('./pages/settings/WebuiSettings'));
+const HivemindSettings = lazy(() => import('./pages/settings/HivemindSettings'));
+const LoginPage = lazy(() => import('./pages/login'));
+const ComponentsShowcase = lazy(() => import('./pages/test/ComponentsShowcase'));
+const MonitorLayout = lazy(() => import('./pages/monitor/MonitorLayout'));
+const Dashboard = lazy(() => import('./pages/monitor/Dashboard'));
+const CacheManager = lazy(() => import('./pages/monitor/CacheManager'));
+const TaskQueue = lazy(() => import('./pages/monitor/TaskQueue'));
+const KnowledgeHub = lazy(() => import('./pages/knowledge'));
+const MemoryHub = lazy(() => import('./pages/memory'));
+const AgentTeamsLayout = lazy(() => import('./pages/agentTeams'));
+const AgentTeamsDashboard = lazy(() => import('./pages/agentTeams/Dashboard'));
+const TeamsPage = lazy(() => import('./pages/agentTeams/TeamsPage'));
+const TeamDetailPage = lazy(() => import('./pages/agentTeams/TeamDetailPage'));
+const TasksKanbanPage = lazy(() => import('./pages/agentTeams/TasksKanbanPage'));
+const TaskDetailPage = lazy(() => import('./pages/agentTeams/TaskDetailPage'));
+const AgentTeamsMonitorDashboard = lazy(() => import('./pages/agentTeams/MonitorDashboard'));
+const AgentTeamsAnalyticsPage = lazy(() => import('./pages/agentTeams/AnalyticsPage'));
+const SkillsPage = lazy(() => import('./pages/skills'));
+const SkillEditor = lazy(() => import('./pages/skills/SkillEditor'));
+
+// Loading fallback component for lazy-loaded routes
+const PageLoader: React.FC = () => (
+  <div className='flex items-center justify-center min-h-[200px] w-full'>
+    <AppLoader />
+  </div>
+);
 
 const ProtectedLayout: React.FC<{ layout: React.ReactElement }> = ({ layout }) => {
   const { status } = useAuth();
@@ -53,47 +63,275 @@ const PanelRoute: React.FC<{ layout: React.ReactElement }> = ({ layout }) => {
   return (
     <HashRouter>
       <Routes>
-        <Route path='/login' element={status === 'authenticated' ? <Navigate to='/guid' replace /> : <LoginPage />} />
+        <Route
+          path='/login'
+          element={
+            status === 'authenticated' ? (
+              <Navigate to='/guid' replace />
+            ) : (
+              <Suspense fallback={<PageLoader />}>
+                <LoginPage />
+              </Suspense>
+            )
+          }
+        />
         <Route element={<ProtectedLayout layout={layout} />}>
           <Route index element={<Navigate to='/guid' replace />} />
-          <Route path='/guid' element={<Guid />} />
-          <Route path='/conversation/:id' element={<Conversation />} />
+          <Route
+            path='/guid'
+            element={
+              <Suspense fallback={<PageLoader />}>
+                <Guid />
+              </Suspense>
+            }
+          />
+          <Route
+            path='/conversation/:id'
+            element={
+              <Suspense fallback={<PageLoader />}>
+                <Conversation />
+              </Suspense>
+            }
+          />
 
-          <Route path='/monitor' element={<MonitorLayout />}>
-            <Route index element={<Dashboard />} />
-            <Route path='stats' element={<Dashboard />} />
-            <Route path='cache' element={<CacheManager />} />
-            <Route path='tasks' element={<TaskQueue />} />
+          <Route
+            path='/monitor'
+            element={
+              <Suspense fallback={<PageLoader />}>
+                <MonitorLayout />
+              </Suspense>
+            }
+          >
+            <Route
+              index
+              element={
+                <Suspense fallback={<PageLoader />}>
+                  <Dashboard />
+                </Suspense>
+              }
+            />
+            <Route
+              path='stats'
+              element={
+                <Suspense fallback={<PageLoader />}>
+                  <Dashboard />
+                </Suspense>
+              }
+            />
+            <Route
+              path='cache'
+              element={
+                <Suspense fallback={<PageLoader />}>
+                  <CacheManager />
+                </Suspense>
+              }
+            />
+            <Route
+              path='tasks'
+              element={
+                <Suspense fallback={<PageLoader />}>
+                  <TaskQueue />
+                </Suspense>
+              }
+            />
           </Route>
-          <Route path='/knowledge' element={<KnowledgeHub />} />
-          <Route path='/memory' element={<MemoryHub />} />
+          <Route
+            path='/knowledge'
+            element={
+              <Suspense fallback={<PageLoader />}>
+                <KnowledgeHub />
+              </Suspense>
+            }
+          />
+          <Route
+            path='/memory'
+            element={
+              <Suspense fallback={<PageLoader />}>
+                <MemoryHub />
+              </Suspense>
+            }
+          />
 
-          <Route path='/agent-teams' element={<AgentTeamsLayout />}>
+          <Route
+            path='/agent-teams'
+            element={
+              <Suspense fallback={<PageLoader />}>
+                <AgentTeamsLayout />
+              </Suspense>
+            }
+          >
             <Route index element={<Navigate to='dashboard' replace />} />
-            <Route path='dashboard' element={<AgentTeamsDashboard />} />
-            <Route path='teams' element={<TeamsPage />} />
-            <Route path='teams/:teamId' element={<TeamDetailPage />} />
-            <Route path='tasks' element={<TasksKanbanPage />} />
-            <Route path='tasks/:taskId' element={<TaskDetailPage />} />
-            <Route path='monitor' element={<AgentTeamsMonitorDashboard />} />
-            <Route path='analytics' element={<AgentTeamsAnalyticsPage />} />
+            <Route
+              path='dashboard'
+              element={
+                <Suspense fallback={<PageLoader />}>
+                  <AgentTeamsDashboard />
+                </Suspense>
+              }
+            />
+            <Route
+              path='teams'
+              element={
+                <Suspense fallback={<PageLoader />}>
+                  <TeamsPage />
+                </Suspense>
+              }
+            />
+            <Route
+              path='teams/:teamId'
+              element={
+                <Suspense fallback={<PageLoader />}>
+                  <TeamDetailPage />
+                </Suspense>
+              }
+            />
+            <Route
+              path='tasks'
+              element={
+                <Suspense fallback={<PageLoader />}>
+                  <TasksKanbanPage />
+                </Suspense>
+              }
+            />
+            <Route
+              path='tasks/:taskId'
+              element={
+                <Suspense fallback={<PageLoader />}>
+                  <TaskDetailPage />
+                </Suspense>
+              }
+            />
+            <Route
+              path='monitor'
+              element={
+                <Suspense fallback={<PageLoader />}>
+                  <AgentTeamsMonitorDashboard />
+                </Suspense>
+              }
+            />
+            <Route
+              path='analytics'
+              element={
+                <Suspense fallback={<PageLoader />}>
+                  <AgentTeamsAnalyticsPage />
+                </Suspense>
+              }
+            />
           </Route>
 
-          <Route path='/skills' element={<SkillsPage />} />
-          <Route path='/skills/new' element={<SkillEditor />} />
-          <Route path='/skills/:skillId' element={<SkillEditor />} />
-          <Route path='/settings/gemini' element={<GeminiSettings />} />
-          <Route path='/settings/model' element={<ModeSettings />} />
-          <Route path='/settings/agent' element={<AgentSettings />} />
-          <Route path='/settings/display' element={<DisplaySettings />} />
-          <Route path='/settings/webui' element={<WebuiSettings />} />
-          <Route path='/settings/hivemind' element={<HivemindSettings />} />
-          <Route path='/settings/system' element={<SystemSettings />} />
-          <Route path='/settings/about' element={<About />} />
-          <Route path='/settings/tools' element={<ToolsSettings />} />
-          <Route path='/settings/security' element={<SecuritySettings />} />
+          <Route
+            path='/skills'
+            element={
+              <Suspense fallback={<PageLoader />}>
+                <SkillsPage />
+              </Suspense>
+            }
+          />
+          <Route
+            path='/skills/new'
+            element={
+              <Suspense fallback={<PageLoader />}>
+                <SkillEditor />
+              </Suspense>
+            }
+          />
+          <Route
+            path='/skills/:skillId'
+            element={
+              <Suspense fallback={<PageLoader />}>
+                <SkillEditor />
+              </Suspense>
+            }
+          />
+          <Route
+            path='/settings/gemini'
+            element={
+              <Suspense fallback={<PageLoader />}>
+                <GeminiSettings />
+              </Suspense>
+            }
+          />
+          <Route
+            path='/settings/model'
+            element={
+              <Suspense fallback={<PageLoader />}>
+                <ModeSettings />
+              </Suspense>
+            }
+          />
+          <Route
+            path='/settings/agent'
+            element={
+              <Suspense fallback={<PageLoader />}>
+                <AgentSettings />
+              </Suspense>
+            }
+          />
+          <Route
+            path='/settings/display'
+            element={
+              <Suspense fallback={<PageLoader />}>
+                <DisplaySettings />
+              </Suspense>
+            }
+          />
+          <Route
+            path='/settings/webui'
+            element={
+              <Suspense fallback={<PageLoader />}>
+                <WebuiSettings />
+              </Suspense>
+            }
+          />
+          <Route
+            path='/settings/hivemind'
+            element={
+              <Suspense fallback={<PageLoader />}>
+                <HivemindSettings />
+              </Suspense>
+            }
+          />
+          <Route
+            path='/settings/system'
+            element={
+              <Suspense fallback={<PageLoader />}>
+                <SystemSettings />
+              </Suspense>
+            }
+          />
+          <Route
+            path='/settings/about'
+            element={
+              <Suspense fallback={<PageLoader />}>
+                <About />
+              </Suspense>
+            }
+          />
+          <Route
+            path='/settings/tools'
+            element={
+              <Suspense fallback={<PageLoader />}>
+                <ToolsSettings />
+              </Suspense>
+            }
+          />
+          <Route
+            path='/settings/security'
+            element={
+              <Suspense fallback={<PageLoader />}>
+                <SecuritySettings />
+              </Suspense>
+            }
+          />
           <Route path='/settings' element={<Navigate to='/settings/hivemind' replace />} />
-          <Route path='/test/components' element={<ComponentsShowcase />} />
+          <Route
+            path='/test/components'
+            element={
+              <Suspense fallback={<PageLoader />}>
+                <ComponentsShowcase />
+              </Suspense>
+            }
+          />
         </Route>
         <Route path='*' element={<Navigate to={status === 'authenticated' ? '/guid' : '/login'} replace />} />
       </Routes>

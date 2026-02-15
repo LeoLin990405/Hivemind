@@ -13,9 +13,9 @@ import type {
   APIResponse,
   EventCallback,
   UnsubscribeFn,
-  ConnectionStatus,
   TokenStorage,
 } from './types';
+import { ConnectionStatus } from './types';
 import { tokenStorage as defaultTokenStorage } from './token-storage';
 
 /**

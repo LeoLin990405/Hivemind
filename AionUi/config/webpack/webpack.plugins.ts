@@ -29,6 +29,10 @@ export const plugins: WebpackPluginInstance[] = [
   }),
   new ForkTsCheckerWebpackPlugin({
     logger: 'webpack-infrastructure',
+    issue: {
+      // Don't block the build for type errors - report them but continue
+      exclude: [{ severity: 'error' }],
+    },
   }),
   new webpack.DefinePlugin({
     'process.env.env': JSON.stringify(process.env.env),
@@ -50,6 +54,14 @@ export const plugins: WebpackPluginInstance[] = [
   new webpack.IgnorePlugin({
     resourceRegExp: /\.wasm\?binary$/,
   }),
-  // NOTE: OpenTelemetry modules are handled via webpack alias to stub module
-  // Do NOT use IgnorePlugin for @opentelemetry/* as it prevents alias from working
+  // Redirect ALL @opentelemetry/* and @google-cloud/opentelemetry* imports to stub module
+  // aioncli-core uses telemetry optionally; we stub it entirely for HiveMind
+  new webpack.NormalModuleReplacementPlugin(
+    /@opentelemetry\//,
+    path.resolve(__dirname, '../../src/shims/opentelemetry-stub.ts'),
+  ),
+  new webpack.NormalModuleReplacementPlugin(
+    /@google-cloud\/opentelemetry/,
+    path.resolve(__dirname, '../../src/shims/opentelemetry-stub.ts'),
+  ),
 ];

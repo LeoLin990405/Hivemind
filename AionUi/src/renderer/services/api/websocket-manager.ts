@@ -10,10 +10,10 @@ import { io, type Socket } from 'socket.io-client';
 import type {
   EventCallback,
   UnsubscribeFn,
-  ConnectionStatus,
   WebSocketOptions,
   TokenStorage,
 } from './types';
+import { ConnectionStatus } from './types';
 import { tokenStorage as defaultTokenStorage } from './token-storage';
 
 /**

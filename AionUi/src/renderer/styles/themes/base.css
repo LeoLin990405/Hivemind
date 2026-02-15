@@ -387,7 +387,7 @@ body,
 }
 
 [data-theme='dark'] ::-webkit-scrollbar-thumb:hover {
-  background: rgba(255, 255, 255, 0.2);
+  background: rgba(0, 212, 255, 0.25);
 }
 
 /* Hide scrollbar while keeping scroll behavior */
@@ -405,7 +405,7 @@ body,
 }
 
 [data-theme='dark'] *:hover::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.1);
+  background: rgba(0, 212, 255, 0.12);
 }
 
 /* Diff2Html Dark Theme */
@@ -906,7 +906,27 @@ body,
 }
 
 .hive-message-item {
-  transition: transform var(--transition-fast), opacity var(--transition-fast);
+  animation: hive-message-enter 0.35s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+  animation-delay: calc(var(--message-index, 0) * 40ms);
+  opacity: 0;
+}
+
+@keyframes hive-message-enter {
+  from {
+    opacity: 0;
+    transform: translateY(10px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hive-message-item {
+    animation: none;
+    opacity: 1;
+  }
 }
 
 .hive-message-item--summary {
@@ -1819,5 +1839,264 @@ body,
 @media (min-width: 960px) {
   .hive-model-settings__grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+/* ========================================================================== */
+/* Sci-Fi Visual Effects                                                       */
+/* ========================================================================== */
+
+/* ----- Glassmorphism Panels ----- */
+.glass-panel {
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  backdrop-filter: blur(var(--glass-blur));
+  -webkit-backdrop-filter: blur(var(--glass-blur));
+}
+
+/* ----- Neon Glow Effects ----- */
+.neon-glow-sm { box-shadow: var(--neon-glow-sm); }
+.neon-glow-md { box-shadow: var(--neon-glow-md); }
+.neon-glow-lg { box-shadow: var(--neon-glow-lg); }
+.neon-border-glow { box-shadow: var(--neon-border-glow); }
+
+.neon-text {
+  text-shadow: var(--neon-text-glow);
+}
+
+.neon-text-danger {
+  text-shadow: 0 0 8px rgba(255, 51, 102, 0.6), 0 0 20px rgba(255, 51, 102, 0.2);
+}
+
+.neon-text-success {
+  text-shadow: 0 0 8px rgba(0, 255, 136, 0.6), 0 0 20px rgba(0, 255, 136, 0.2);
+}
+
+.neon-text-warning {
+  text-shadow: 0 0 8px rgba(255, 170, 0, 0.6), 0 0 20px rgba(255, 170, 0, 0.2);
+}
+
+/* ----- Gradient Border (animated) ----- */
+.gradient-border {
+  position: relative;
+  border: none !important;
+}
+
+.gradient-border::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  padding: 1px;
+  border-radius: inherit;
+  background: linear-gradient(
+    135deg,
+    var(--gradient-border-from),
+    var(--gradient-border-via),
+    var(--gradient-border-to),
+    var(--gradient-border-from)
+  );
+  background-size: 300% 300%;
+  animation: gradient-shift 6s ease infinite;
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  pointer-events: none;
+}
+
+.gradient-border-static::before {
+  animation: none;
+  background-size: 100% 100%;
+}
+
+@keyframes gradient-shift {
+  0%, 100% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+}
+
+/* ----- HUD Corner Accents ----- */
+.hud-corners {
+  position: relative;
+}
+
+.hud-corners::before,
+.hud-corners::after {
+  content: '';
+  position: absolute;
+  width: var(--hud-accent-size);
+  height: var(--hud-accent-size);
+  pointer-events: none;
+  z-index: 1;
+}
+
+.hud-corners::before {
+  top: -1px;
+  left: -1px;
+  border-top: 2px solid var(--hud-accent-color);
+  border-left: 2px solid var(--hud-accent-color);
+}
+
+.hud-corners::after {
+  bottom: -1px;
+  right: -1px;
+  border-bottom: 2px solid var(--hud-accent-color);
+  border-right: 2px solid var(--hud-accent-color);
+}
+
+/* 4-corner variant using a wrapper */
+.hud-corners-full > .hud-corners-extra::before {
+  content: '';
+  position: absolute;
+  top: -1px;
+  right: -1px;
+  width: var(--hud-accent-size);
+  height: var(--hud-accent-size);
+  border-top: 2px solid var(--hud-accent-color);
+  border-right: 2px solid var(--hud-accent-color);
+  pointer-events: none;
+  z-index: 1;
+}
+
+.hud-corners-full > .hud-corners-extra::after {
+  content: '';
+  position: absolute;
+  bottom: -1px;
+  left: -1px;
+  width: var(--hud-accent-size);
+  height: var(--hud-accent-size);
+  border-bottom: 2px solid var(--hud-accent-color);
+  border-left: 2px solid var(--hud-accent-color);
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* ----- Scanline Overlay ----- */
+.scanline-overlay {
+  position: relative;
+  overflow: hidden;
+}
+
+.scanline-overlay::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 2px,
+    var(--scanline-color) 2px,
+    var(--scanline-color) 4px
+  );
+  pointer-events: none;
+  z-index: 2;
+  animation: scanline-scroll 8s linear infinite;
+}
+
+@keyframes scanline-scroll {
+  0% { transform: translateY(0); }
+  100% { transform: translateY(4px); }
+}
+
+/* ----- Pulse / Breathing Animations ----- */
+.pulse-glow {
+  animation: pulse-glow 2s ease-in-out infinite;
+}
+
+@keyframes pulse-glow {
+  0%, 100% { box-shadow: 0 0 4px var(--pulse-color); }
+  50% { box-shadow: 0 0 16px var(--pulse-color), 0 0 4px var(--pulse-color); }
+}
+
+.pulse-dot {
+  animation: pulse-dot 1.5s ease-in-out infinite;
+}
+
+@keyframes pulse-dot {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.5; transform: scale(0.85); }
+}
+
+/* Status dot breathing for Nexus */
+.nexus-status-dot--ok {
+  animation: pulse-dot-ok 2s ease-in-out infinite;
+}
+
+@keyframes pulse-dot-ok {
+  0%, 100% { box-shadow: 0 0 3px rgba(0, 255, 136, 0.5); }
+  50% { box-shadow: 0 0 10px rgba(0, 255, 136, 0.7), 0 0 3px rgba(0, 255, 136, 0.4); }
+}
+
+/* ----- Flicker / Data Stream ----- */
+.flicker {
+  animation: flicker 4s linear infinite;
+}
+
+@keyframes flicker {
+  0%, 19%, 21%, 23%, 25%, 54%, 56%, 100% { opacity: 1; }
+  20%, 24%, 55% { opacity: 0.6; }
+}
+
+/* ----- Neon Underline ----- */
+.neon-underline {
+  position: relative;
+}
+
+.neon-underline::after {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  left: 0;
+  width: 100%;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--primary), transparent);
+  box-shadow: 0 0 6px var(--pulse-color);
+}
+
+/* ----- Enhanced Scrollbar (Sci-Fi) ----- */
+.sci-fi-scrollbar::-webkit-scrollbar {
+  width: 5px;
+}
+
+.sci-fi-scrollbar::-webkit-scrollbar-track {
+  background: rgba(0, 212, 255, 0.03);
+}
+
+.sci-fi-scrollbar::-webkit-scrollbar-thumb {
+  background: rgba(0, 212, 255, 0.15);
+  border-radius: 3px;
+}
+
+.sci-fi-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: rgba(0, 212, 255, 0.3);
+}
+
+/* ----- Entrance Animations ----- */
+.fade-up-enter {
+  animation: fade-up-enter 0.35s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+@keyframes fade-up-enter {
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.scale-enter {
+  animation: scale-enter 0.25s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+@keyframes scale-enter {
+  from { opacity: 0; transform: scale(0.92); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .gradient-border::before,
+  .scanline-overlay::after,
+  .pulse-glow,
+  .pulse-dot,
+  .nexus-status-dot--ok,
+  .flicker,
+  .fade-up-enter,
+  .scale-enter {
+    animation: none !important;
   }
 }

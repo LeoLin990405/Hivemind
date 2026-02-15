@@ -39,16 +39,7 @@ export const mainConfig: Configuration = {
       '@process': path.resolve(__dirname, '../../src/process'),
       '@worker': path.resolve(__dirname, '../../src/worker'),
       '@xterm/headless$': path.resolve(__dirname, '../../src/shims/xterm-headless.ts'),
-      // Stub all OpenTelemetry modules - optional telemetry from aioncli-core
-      '@opentelemetry/api': path.resolve(__dirname, '../../src/shims/opentelemetry-stub.ts'),
-      '@opentelemetry/sdk-metrics': path.resolve(__dirname, '../../src/shims/opentelemetry-stub.ts'),
-      '@opentelemetry/sdk-node': path.resolve(__dirname, '../../src/shims/opentelemetry-stub.ts'),
-      '@opentelemetry/sdk-logs': path.resolve(__dirname, '../../src/shims/opentelemetry-stub.ts'),
-      '@opentelemetry/sdk-trace-node': path.resolve(__dirname, '../../src/shims/opentelemetry-stub.ts'),
-      '@opentelemetry/exporter-trace-otlp-grpc': path.resolve(__dirname, '../../src/shims/opentelemetry-stub.ts'),
-      '@opentelemetry/exporter-metrics-otlp-grpc': path.resolve(__dirname, '../../src/shims/opentelemetry-stub.ts'),
-      '@opentelemetry/exporter-logs-otlp-grpc': path.resolve(__dirname, '../../src/shims/opentelemetry-stub.ts'),
-      '@opentelemetry/auto-instrumentations-node': path.resolve(__dirname, '../../src/shims/opentelemetry-stub.ts'),
+      // OpenTelemetry is handled via NormalModuleReplacementPlugin in webpack.plugins.ts
     },
   },
   externals: {
@@ -65,11 +56,10 @@ export const mainConfig: Configuration = {
     // Handle ?binary WASM imports from aioncli-core - let them fail so fallback can work
     'web-tree-sitter/tree-sitter.wasm?binary': 'commonjs web-tree-sitter/tree-sitter.wasm',
     'tree-sitter-bash/tree-sitter-bash.wasm?binary': 'commonjs tree-sitter-bash/tree-sitter-bash.wasm',
-    // OpenTelemetry SDK - aioncli-core 依赖
-    // OpenTelemetry SDK - dependency of aioncli-core
-    '@opentelemetry/sdk-metrics': 'commonjs @opentelemetry/sdk-metrics',
-    '@opentelemetry/sdk-node': 'commonjs @opentelemetry/sdk-node',
-    '@opentelemetry/sdk-logs': 'commonjs @opentelemetry/sdk-logs',
-    '@opentelemetry/api': 'commonjs @opentelemetry/api',
+    // Playwright is used by BrowserAutomationService at runtime, not bundled
+    'playwright': 'commonjs playwright',
+    'playwright-core': 'commonjs playwright-core',
+    // OpenTelemetry is handled via resolve.alias → stub module (NOT externals)
+    // Using externals would prevent alias from working and cause runtime errors
   },
 };
