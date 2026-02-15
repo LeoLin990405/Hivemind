@@ -5,17 +5,18 @@ import MiniCssExtractPlugin from 'mini-css-extract-plugin';
 import path from 'path';
 import type { WebpackPluginInstance } from 'webpack';
 import webpack from 'webpack';
-import unoConfig from '../../uno.config';
+import unoConfig from '../../../uno.config';
+import { paths } from '../config/paths';
 
 const ForkTsCheckerWebpackPlugin: typeof IForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin');
 
-export const plugins: WebpackPluginInstance[] = [
+export const basePlugins: WebpackPluginInstance[] = [
   new CopyPlugin({
     patterns: [
-      { from: path.resolve(__dirname, '../../skills'), to: 'skills', noErrorOnMissing: true },
-      { from: path.resolve(__dirname, '../../rules'), to: 'rules', noErrorOnMissing: true },
-      { from: path.resolve(__dirname, '../../assistant'), to: 'assistant', noErrorOnMissing: true },
-      { from: path.resolve(__dirname, '../../src/renderer/assets/logos'), to: 'static/images', noErrorOnMissing: true, force: true },
+      { from: path.resolve(paths.root, 'skills'), to: 'skills', noErrorOnMissing: true },
+      { from: path.resolve(paths.root, 'rules'), to: 'rules', noErrorOnMissing: true },
+      { from: path.resolve(paths.root, 'assistant'), to: 'assistant', noErrorOnMissing: true },
+      { from: path.resolve(paths.renderer, 'assets/logos'), to: 'static/images', noErrorOnMissing: true, force: true },
     ],
   }),
   new ForkTsCheckerWebpackPlugin({

@@ -1,13 +1,14 @@
 import type { Configuration } from 'webpack';
-import { rules } from './webpack.rules';
-import { plugins } from './webpack.plugins';
-import { isDevelopment } from './helpers/paths';
-import { createResolveConfig } from './helpers/resolve';
-import path from 'path';
+import { rules } from './modules/rules';
+import { basePlugins } from './modules/plugins';
+import { mainResolveConfig } from './modules/resolve';
+import { mainExternals } from './modules/externals';
+import { mainOptimizationConfig } from './modules/optimization';
+import { environment } from './config/environment';
 
-export const mainConfig: Configuration = {
-  mode: isDevelopment ? 'development' : 'production',
-   evtool: isDevelopment ? 'source-map' : false,
+  port const mainConfig: Configuration = {
+   ode: environment.nodeEnv,
+   evtool: environment.isDevelopment ? 'source-map' : false,
    ntry: {
     index: './src/index.ts',
     worker: './src/worker/index.ts',
@@ -23,23 +24,8 @@ export const mainConfig: Configuration = {
   module: {
     rules,
   },
-  plugins,
-  resolve: {
-    ...createResolveConfig(),
-    alias: {
-      ...createResolveConfig().alias,
-      '@xterm/headless$': path.resolve(__dirname, '../../src/shims/xterm-headless.ts'),
-    },
-  },
-  externals: {
-    'better-sqlite3': 'commonjs better-sqlite3',
-    'node-pty': 'commonjs node-pty',
-    'playwright': 'commonjs playwright',
-    'playwright-core': 'commonjs playwright-core',
-    'tree-sitter': 'commonjs tree-sitter',
-    'tree-sitter-bash': 'commonjs tree-sitter-bash',
-    'web-tree-sitter': 'commonjs web-tree-sitter',
-    'web-tree-sitter/tree-sitter.wasm?binary': 'commonjs web-tree-sitter/tree-sitter.wasm',
-    'tree-sitter-bash/tree-sitter-bash.wasm?binary': 'commonjs tree-sitter-bash/tree-sitter-bash.wasm',
-  },
+  plugins: basePlugins,
+  resolve: mainResolveConfig,
+  externals: mainExternals,
+  optimization: mainOptimizationConfig,
 };

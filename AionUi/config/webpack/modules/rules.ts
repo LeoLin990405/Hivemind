@@ -1,8 +1,9 @@
 import MiniCssExtractPlugin from 'mini-css-extract-plugin';
 import path from 'path';
 import type { ModuleOptions } from 'webpack';
+import { paths } from '../config/paths';
 
-export const rules: Required<ModuleOptions>['rules'] = [
+export const rules: Required&lt;ModuleOptions&gt;['rules'] = [
   {
     test: /\.wasm$/,
     type: 'asset/resource',
@@ -77,7 +78,7 @@ export const rules: Required<ModuleOptions>['rules'] = [
     test: /\.json$/,
     type: 'json',
     parser: {
-      parse: (source: string) => {
+      parse: (source: string) =&gt; {
         try {
           return JSON.parse(source);
         } catch (e) {
@@ -98,7 +99,7 @@ export const rules: Required<ModuleOptions>['rules'] = [
     exclude: /node_modules/,
     use: [
       {
-        loader: path.resolve(__dirname, './icon-park-loader.js'),
+        loader: path.resolve(__dirname, '../icon-park-loader.js'),
         options: {
           cacheDirectory: true,
           cacheIdentifier: 'icon-park-loader',
