@@ -1,6 +1,6 @@
 /**
  * @license
- * Copyright 2025 AionUi (aionui.com)
+ * Copyright 2025 HiveMind (hivemind.com)
  * SPDX-License-Identifier: Apache-2.0
  */
 
@@ -154,5 +154,5 @@ export const colorMapping: Record<string, string> = {
   '#1D2129': 'var(--color-bg-9)',
 
   // Semantic colors - Sky Blue primary (0EA5E9)
-  '#0EA5E9': 'var(--color-primary)',
+  '#6366F1': 'var(--color-primary)',
 };

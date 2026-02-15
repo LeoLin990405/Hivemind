@@ -1,10 +1,10 @@
 import React, { useEffect, useRef } from 'react';
+import classNames from 'classnames';
 import { useTranslation } from 'react-i18next';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { ArrowLeftCircle, BookOpen, History, LayoutDashboard, Plus, Settings, Wrench } from 'lucide-react';
 import WorkspaceGroupedHistory from './pages/conversation/WorkspaceGroupedHistory';
 import SettingsSider from './pages/settings/SettingsSider';
-import { iconColors } from './theme/colors';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/renderer/components/ui/tooltip';
 import { usePreviewContext } from './pages/conversation/preview';
 
@@ -12,6 +12,39 @@ interface SiderProps {
   onSessionClick?: () => void;
   collapsed?: boolean;
 }
+
+interface NavItemProps {
+  label: string;
+  icon: React.ReactNode;
+  onClick: () => void;
+  collapsed: boolean;
+  active?: boolean;
+  primary?: boolean;
+  className?: string;
+}
+
+const NavItem: React.FC<NavItemProps> = ({ label, icon, onClick, collapsed, active = false, primary = false, className }) => {
+  const content = (
+    <div
+      onClick={onClick}
+      className={classNames('hive-nav-item', className, {
+        'hive-nav-item--active': active,
+        'hive-nav-item--primary': primary,
+        'hive-nav-item--collapsed': collapsed,
+      })}
+    >
+      <span className='hive-nav-item__icon'>{icon}</span>
+      <span className='hive-nav-item__label collapsed-hidden'>{label}</span>
+    </div>
+  );
+
+  return (
+    <Tooltip>
+      <TooltipTrigger asChild>{content}</TooltipTrigger>
+      {collapsed && <TooltipContent side='right'>{label}</TooltipContent>}
+    </Tooltip>
+  );
+};
 
 const Sider: React.FC<SiderProps> = ({ onSessionClick, collapsed = false }) => {
   const location = useLocation();
@@ -34,210 +67,75 @@ const Sider: React.FC<SiderProps> = ({ onSessionClick, collapsed = false }) => {
     }
   }, [pathname, search, hash]);
 
+  const safeNavigate = (target: string) => {
+    Promise.resolve(navigate(target)).catch((error) => {
+      console.error('Navigation failed:', error);
+    });
+    onSessionClick?.();
+  };
+
   const handleSettingsClick = () => {
     if (isSettings) {
-      const target = lastNonSettingsPathRef.current || '/guid';
-      Promise.resolve(navigate(target)).catch((error) => {
-        console.error('Navigation failed:', error);
-      });
-    } else {
-      Promise.resolve(navigate('/settings/hivemind')).catch((error) => {
-        console.error('Navigation failed:', error);
-      });
+      safeNavigate(lastNonSettingsPathRef.current || '/guid');
+      return;
     }
-    if (onSessionClick) {
-      onSessionClick();
-    }
+    safeNavigate('/settings/hivemind');
   };
 
   const handleMonitorClick = () => {
-    if (isMonitor) {
-      Promise.resolve(navigate('/guid')).catch((error) => {
-        console.error('Navigation failed:', error);
-      });
-    } else {
-      Promise.resolve(navigate('/monitor')).catch((error) => {
-        console.error('Navigation failed:', error);
-      });
-    }
-
-    if (onSessionClick) {
-      onSessionClick();
-    }
+    safeNavigate(isMonitor ? '/guid' : '/monitor');
   };
 
   const handleKnowledgeClick = () => {
-    if (isKnowledge) {
-      Promise.resolve(navigate('/guid')).catch((error) => {
-        console.error('Navigation failed:', error);
-      });
-    } else {
-      Promise.resolve(navigate('/knowledge')).catch((error) => {
-        console.error('Navigation failed:', error);
-      });
-    }
-
-    if (onSessionClick) {
-      onSessionClick();
-    }
+    safeNavigate(isKnowledge ? '/guid' : '/knowledge');
   };
 
   const handleAgentTeamsClick = () => {
-    if (isAgentTeams) {
-      Promise.resolve(navigate('/guid')).catch((error) => {
-        console.error('Navigation failed:', error);
-      });
-    } else {
-      Promise.resolve(navigate('/agent-teams/dashboard')).catch((error) => {
-        console.error('Navigation failed:', error);
-      });
-    }
-
-    if (onSessionClick) {
-      onSessionClick();
-    }
+    safeNavigate(isAgentTeams ? '/guid' : '/agent-teams/dashboard');
   };
 
   const handleSkillsClick = () => {
-    if (isSkills) {
-      Promise.resolve(navigate('/guid')).catch((error) => {
-        console.error('Navigation failed:', error);
-      });
-    } else {
-      Promise.resolve(navigate('/skills')).catch((error) => {
-        console.error('Navigation failed:', error);
-      });
-    }
-
-    if (onSessionClick) {
-      onSessionClick();
-    }
+    safeNavigate(isSkills ? '/guid' : '/skills');
   };
 
   const handleMemoryClick = () => {
-    if (isMemory) {
-      Promise.resolve(navigate('/guid')).catch((error) => {
-        console.error('Navigation failed:', error);
-      });
-    } else {
-      Promise.resolve(navigate('/memory')).catch((error) => {
-        console.error('Navigation failed:', error);
-      });
-    }
-
-    if (onSessionClick) {
-      onSessionClick();
-    }
+    safeNavigate(isMemory ? '/guid' : '/memory');
   };
 
   return (
     <TooltipProvider>
-      <div className='size-full flex flex-col'>
-        {/* Main content area */}
+      <div className='size-full flex flex-col hive-nav'>
         <div className='flex-1 min-h-0 overflow-y-auto'>
           {isSettings ? (
             <SettingsSider collapsed={collapsed}></SettingsSider>
           ) : (
             <div className='size-full flex flex-col'>
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <div
-                    className='flex items-center justify-start gap-10px px-12px py-8px hover:bg-hover rd-0.5rem mb-8px cursor-pointer group shrink-0'
-                    onClick={() => {
-                      closePreview();
-                      Promise.resolve(navigate('/guid')).catch((error) => {
-                        console.error('Navigation failed:', error);
-                      });
-                      // 点击new chat后自动隐藏sidebar / Hide sidebar after starting new chat on mobile
-                      if (onSessionClick) {
-                        onSessionClick();
-                      }
-                    }}
-                  >
-                    <Plus className='flex' style={{ color: iconColors.primary }} size={24} />
-                    <span className='collapsed-hidden font-bold text-t-primary'>{t('conversation.welcome.newConversation')}</span>
-                  </div>
-                </TooltipTrigger>
-                {collapsed && <TooltipContent side='right'>{t('conversation.welcome.newConversation')}</TooltipContent>}
-              </Tooltip>
+              <NavItem
+                label={t('conversation.welcome.newConversation')}
+                icon={<Plus size={20} />}
+                collapsed={collapsed}
+                primary
+                className='mb-10px'
+                onClick={() => {
+                  closePreview();
+                  safeNavigate('/guid');
+                }}
+              />
               <WorkspaceGroupedHistory collapsed={collapsed} onSessionClick={onSessionClick}></WorkspaceGroupedHistory>
             </div>
           )}
         </div>
-        {/* Footer - Knowledge Hub button */}
-        <div className='shrink-0'>
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <div onClick={handleKnowledgeClick} className='flex items-center justify-start gap-10px px-12px py-8px hover:bg-hover rd-0.5rem mb-8px cursor-pointer'>
-                <BookOpen className='flex text-22px' />
-                <span className='collapsed-hidden text-t-primary'>{t('knowledge.title', { defaultValue: 'Knowledge Hub' })}</span>
-              </div>
-            </TooltipTrigger>
-            {collapsed && <TooltipContent side='right'>{t('knowledge.title', { defaultValue: 'Knowledge Hub' })}</TooltipContent>}
-          </Tooltip>
-        </div>
-        {/* Footer - Memory Hub button */}
-        <div className='shrink-0'>
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <div onClick={handleMemoryClick} className='flex items-center justify-start gap-10px px-12px py-8px hover:bg-hover rd-0.5rem mb-8px cursor-pointer'>
-                <History className='flex text-22px' />
-                <span className='collapsed-hidden text-t-primary'>{t('memory.title')}</span>
-              </div>
-            </TooltipTrigger>
-            {collapsed && <TooltipContent side='right'>{t('memory.title')}</TooltipContent>}
-          </Tooltip>
-        </div>
-        {/* Footer - monitor button */}
-        <div className='shrink-0'>
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <div onClick={handleMonitorClick} className='flex items-center justify-start gap-10px px-12px py-8px hover:bg-hover rd-0.5rem mb-8px cursor-pointer'>
-                <LayoutDashboard className='flex text-22px' />
-                <span className='collapsed-hidden text-t-primary'>{t('monitor.title', { defaultValue: 'Monitor' })}</span>
-              </div>
-            </TooltipTrigger>
-            {collapsed && <TooltipContent side='right'>{t('monitor.title', { defaultValue: 'Monitor' })}</TooltipContent>}
-          </Tooltip>
+
+        <div className='hive-nav-section'>
+          <NavItem label={t('knowledge.title', { defaultValue: 'Knowledge Hub' })} icon={<BookOpen size={20} />} collapsed={collapsed} active={isKnowledge} onClick={handleKnowledgeClick} />
+          <NavItem label={t('memory.title')} icon={<History size={20} />} collapsed={collapsed} active={isMemory} onClick={handleMemoryClick} />
+          <NavItem label={t('monitor.title', { defaultValue: 'Monitor' })} icon={<LayoutDashboard size={20} />} collapsed={collapsed} active={isMonitor} onClick={handleMonitorClick} />
+          <NavItem label={t('skills.title', { defaultValue: 'Skills' })} icon={<Wrench size={20} />} collapsed={collapsed} active={isSkills} onClick={handleSkillsClick} />
+          <NavItem label={t('agentTeams.title', { defaultValue: 'Agent Teams' })} icon={<LayoutDashboard size={20} />} collapsed={collapsed} active={isAgentTeams} onClick={handleAgentTeamsClick} />
         </div>
 
-        {/* Footer - Skills button */}
-        <div className='shrink-0'>
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <div onClick={handleSkillsClick} className='flex items-center justify-start gap-10px px-12px py-8px hover:bg-hover rd-0.5rem mb-8px cursor-pointer'>
-                <Wrench className='flex' style={{ color: iconColors.primary }} size={22} />
-                <span className='collapsed-hidden text-t-primary'>{t('skills.title', { defaultValue: 'Skills' })}</span>
-              </div>
-            </TooltipTrigger>
-            {collapsed && <TooltipContent side='right'>{t('skills.title', { defaultValue: 'Skills' })}</TooltipContent>}
-          </Tooltip>
-        </div>
-
-        {/* Footer - Agent Teams button */}
-        <div className='shrink-0'>
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <div onClick={handleAgentTeamsClick} className='flex items-center justify-start gap-10px px-12px py-8px hover:bg-hover rd-0.5rem mb-8px cursor-pointer'>
-                <LayoutDashboard className='flex text-22px' />
-                <span className='collapsed-hidden text-t-primary'>{t('agentTeams.title', { defaultValue: 'Agent Teams' })}</span>
-              </div>
-            </TooltipTrigger>
-            {collapsed && <TooltipContent side='right'>{t('agentTeams.title', { defaultValue: 'Agent Teams' })}</TooltipContent>}
-          </Tooltip>
-        </div>
-
-        {/* Footer - settings button */}
-        <div className='shrink-0 sider-footer'>
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <div onClick={handleSettingsClick} className='flex items-center justify-start gap-10px px-12px py-8px hover:bg-hover rd-0.5rem mb-8px cursor-pointer'>
-                {isSettings ? <ArrowLeftCircle className='flex' style={{ color: iconColors.primary }} size={24} /> : <Settings className='flex' style={{ color: iconColors.primary }} size={24} />}
-                <span className='collapsed-hidden text-t-primary'>{isSettings ? t('common.back') : t('common.settings')}</span>
-              </div>
-            </TooltipTrigger>
-            {collapsed && <TooltipContent side='right'>{isSettings ? t('common.back') : t('common.settings')}</TooltipContent>}
-          </Tooltip>
+        <div className='hive-nav-section sider-footer'>
+          <NavItem label={isSettings ? t('common.back') : t('common.settings')} icon={isSettings ? <ArrowLeftCircle size={20} /> : <Settings size={20} />} collapsed={collapsed} active={isSettings} onClick={handleSettingsClick} />
         </div>
       </div>
     </TooltipProvider>

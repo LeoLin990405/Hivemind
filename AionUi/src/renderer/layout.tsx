@@ -1,6 +1,6 @@
 /**
  * @license
- * Copyright 2025 AionUi (aionui.com)
+ * Copyright 2025 HiveMind (hivemind.com)
  * SPDX-License-Identifier: Apache-2.0
  */
 
@@ -65,7 +65,6 @@ const Layout: React.FC<{
   const workspaceAvailable = location.pathname.startsWith('/conversation/');
   const collapsedRef = useRef(collapsed);
 
-  // 加载并监听自定义 CSS 配置 / Load & watch custom CSS configuration
   useEffect(() => {
     const loadCustomCss = () => {
       ConfigStorage.get('customCss')
@@ -97,7 +96,6 @@ const Layout: React.FC<{
     };
   }, []);
 
-  // 注入自定义 CSS / Inject custom CSS into document head
   useEffect(() => {
     const styleId = 'user-defined-custom-css';
 
@@ -144,45 +142,40 @@ const Layout: React.FC<{
     };
   }, [customCss]);
 
-  // 检测移动端并响应窗口大小变化
   useEffect(() => {
     const checkMobile = () => {
       const mobile = window.innerWidth < 768;
       setIsMobile(mobile);
     };
 
-    // 初始检测
     checkMobile();
 
-    // 监听窗口大小变化
     window.addEventListener('resize', checkMobile);
     return () => window.removeEventListener('resize', checkMobile);
   }, []);
 
-  // 进入移动端后立即折叠 / Collapse immediately when switching to mobile
   useEffect(() => {
     if (!isMobile || collapsedRef.current) {
       return;
     }
     setCollapsed(true);
   }, [isMobile]);
+
   useEffect(() => {
     collapsedRef.current = collapsed;
   }, [collapsed]);
 
-  // Calculate sider width based on state
   const siderWidth = isMobile ? (collapsed ? 0 : DEFAULT_SIDER_WIDTH) : collapsed ? 64 : DEFAULT_SIDER_WIDTH;
 
   return (
     <LayoutContext.Provider value={{ isMobile, siderCollapsed: collapsed, setSiderCollapsed: setCollapsed }}>
-      <div className='app-shell flex flex-col size-full min-h-0'>
+      <div className='app-shell hive-shell flex flex-col size-full min-h-0'>
         <Titlebar workspaceAvailable={workspaceAvailable} />
-        {/* 移动端左侧边栏蒙板 / Mobile left sider backdrop */}
-        {isMobile && !collapsed && <div className='fixed inset-0 bg-black/30 z-90' onClick={() => setCollapsed(true)} aria-hidden='true' />}
+        {isMobile && !collapsed && <div className='fixed inset-0 bg-[rgba(6,10,22,0.52)] z-90 backdrop-blur-[1px]' onClick={() => setCollapsed(true)} aria-hidden='true' />}
 
-        <div className='flex size-full flex-1 min-h-0'>
+        <div className='hive-workspace flex size-full flex-1 min-h-0'>
           <aside
-            className={classNames('!bg-2 layout-sider flex flex-col shrink-0 transition-all duration-200', {
+            className={classNames('layout-sider hive-sider flex flex-col shrink-0 transition-all duration-200', {
               collapsed: collapsed,
             })}
             style={{
@@ -200,33 +193,32 @@ const Layout: React.FC<{
             }}
           >
             <header
-              className={classNames('flex items-center justify-start py-10px px-16px pl-20px gap-12px layout-sider-header shrink-0', {
+              className={classNames('layout-sider-header hive-sider-header flex items-center justify-start gap-12px shrink-0', {
                 'cursor-pointer group ': collapsed,
               })}
             >
               <div
-                className={classNames('bg-black shrink-0 size-40px relative rd-0.5rem flex items-center justify-center', {
-                  '!size-24px': collapsed,
+                className={classNames('hive-logo-badge shrink-0 relative flex items-center justify-center', {
+                  'hive-logo-badge--collapsed': collapsed,
                 })}
                 onClick={onClick}
               >
                 <img
                   src={logoSvg}
                   alt='HiveMind Logo'
-                  className={classNames('w-5.5 h-5.5', {
-                    'scale-140': !collapsed,
+                  className={classNames('hive-logo-mark', {
+                    'scale-130': !collapsed,
                   })}
                 />
               </div>
-              <div className=' flex-1 text-20px collapsed-hidden font-bold'>HiveMind</div>
+              <div className='hive-brand-title flex-1 collapsed-hidden'>HiveMind</div>
               {isMobile && !collapsed && (
                 <button type='button' className='app-titlebar__button' onClick={() => setCollapsed(true)} aria-label='Collapse sidebar'>
                   {collapsed ? <MenuUnfold theme='outline' size='18' fill='currentColor' /> : <MenuFold theme='outline' size='18' fill='currentColor' />}
                 </button>
               )}
-              {/* 侧栏折叠改由标题栏统一控制 / Sidebar folding handled by Titlebar toggle */}
             </header>
-            <div className={classNames('p-8px layout-sider-content flex-1 overflow-auto', !isMobile && 'h-[calc(100%-72px-16px)]')}>
+            <div className={classNames('layout-sider-content hive-sider-content p-8px flex-1 overflow-auto', !isMobile && 'h-[calc(100%-72px-16px)]')}>
               {React.isValidElement(sider)
                 ? React.cloneElement(sider, {
                     onSessionClick: () => {
@@ -239,7 +231,7 @@ const Layout: React.FC<{
           </aside>
 
           <main
-            className='bg-1 layout-content flex flex-col flex-1 min-h-0 overflow-auto'
+            className='layout-content hive-content bg-1 flex flex-col flex-1 min-h-0 overflow-auto'
             onClick={() => {
               if (isMobile && !collapsed) setCollapsed(true);
             }}

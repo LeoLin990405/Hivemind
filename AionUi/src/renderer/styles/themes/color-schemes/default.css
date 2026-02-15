@@ -1,172 +1,154 @@
-/* Default Color Scheme - Sky Blue Theme */
+/* Default Color Scheme - Hive Flux */
 
-/* Light Mode */
 :root,
 [data-color-scheme='default'] {
-  /* Sky Blue palette (light -> dark) */
-  --aou-1: #f0f9ff;
-  --aou-2: #e0f2fe;
-  --aou-3: #bae6fd;
-  --aou-4: #7dd3fc;
-  --aou-5: #38bdf8;
-  --aou-6: #0ea5e9;
-  --aou-7: #0284c7;
-  --aou-8: #0369a1;
-  --aou-9: #075985;
-  --aou-10: #0c4a6e;
+  /* Hive primary palette (light -> dark) */
+  --aou-1: #f5f7ff;
+  --aou-2: #e8ecff;
+  --aou-3: #d5ddff;
+  --aou-4: #b7c4ff;
+  --aou-5: #8d9fff;
+  --aou-6: #6366f1;
+  --aou-7: #5256d8;
+  --aou-8: #3f46b4;
+  --aou-9: #30378f;
+  --aou-10: #252c71;
 
-  /* Compatibility aliases */
   --aou-6-brand: var(--aou-6);
   --aou-8-selected: var(--aou-8);
 
-  /* Primary steps */
-  --primary-1: #f0f9ff;
-  --primary-2: #e0f2fe;
-  --primary-3: #bae6fd;
-  --primary-4: #7dd3fc;
-  --primary-5: #38bdf8;
-  --primary-6: #0ea5e9;
-  --primary-7: #0284c7;
-  --primary-8: #0369a1;
-  --primary-9: #075985;
-  --primary-10: #0c4a6e;
+  --primary-1: #f5f7ff;
+  --primary-2: #e8ecff;
+  --primary-3: #d5ddff;
+  --primary-4: #b7c4ff;
+  --primary-5: #8d9fff;
+  --primary-6: #6366f1;
+  --primary-7: #5256d8;
+  --primary-8: #3f46b4;
+  --primary-9: #30378f;
+  --primary-10: #252c71;
 
-  /* Background Colors */
-  --bg-base: #ffffff;
-  --bg-1: #f8fafc;
-  --bg-2: #f1f5f9;
-  --bg-3: #e2e8f0;
-  --bg-4: #cbd5e1;
-  --bg-5: #94a3b8;
-  --bg-6: #64748b;
-  --bg-8: #334155;
-  --bg-9: #1e293b;
-  --bg-10: #0f172a;
+  --bg-base: #f6f8fc;
+  --bg-1: #eef2f9;
+  --bg-2: #e7ecf5;
+  --bg-3: #d4dceb;
+  --bg-4: #bdc8dc;
+  --bg-5: #8f9db8;
+  --bg-6: #66748f;
+  --bg-8: #3a465f;
+  --bg-9: #252f44;
+  --bg-10: #171f31;
 
-  /* Interactive State Colors */
-  --bg-hover: #f1f5f9;
-  --bg-active: #e2e8f0;
+  --bg-hover: #dde5f2;
+  --bg-active: #cdd7e9;
 
-  /* Text Colors */
-  --text-primary: #0f172a;
-  --text-secondary: #64748b;
-  --text-disabled: #cbd5e1;
+  --text-primary: #121a2b;
+  --text-secondary: #58657f;
+  --text-disabled: #9ba9c0;
 
-  /* Semantic Colors */
-  --primary: #0ea5e9;
-  --success: #10b981;
-  --warning: #f59e0b;
-  --danger: #ef4444;
-  --info: #3b82f6;
+  --primary: #6366f1;
+  --success: #16a34a;
+  --warning: #d97706;
+  --danger: #dc2626;
+  --info: #0ea5e9;
 
-  /* Border Colors */
-  --border-base: #e2e8f0;
-  --border-light: #f1f5f9;
+  --border-base: #d4dceb;
+  --border-light: #e5ebf5;
 
-  /* Brand Colors */
-  --brand: #0ea5e9;
-  --brand-light: #e0f2fe;
-  --brand-hover: #0284c7;
+  --brand: #6366f1;
+  --brand-light: #e8ecff;
+  --brand-hover: #5256d8;
 
-  /* Message & UI Component Colors */
-  --message-user-bg: #e0f2fe;
-  --message-tips-bg: #f0f9ff;
-  --workspace-btn-bg: #f1f5f9;
+  --message-user-bg: #e8ecff;
+  --message-tips-bg: #edf1fb;
+  --workspace-btn-bg: #e7ecf5;
 
-  /* Special Colors */
-  --fill: #f8fafc;
+  --fill: #edf1f8;
   --inverse: #ffffff;
 
-  /* Custom Colors */
   --dialog-fill-0: #ffffff;
-  --text-0: #000000;
+  --text-0: #0b1220;
   --text-white: #ffffff;
   --fill-0: #ffffff;
   --fill-white-to-black: #ffffff;
-  --border-special: var(--bg-3);
+  --border-special: #d4dceb;
+
+  --hive-glow-primary: rgba(99, 102, 241, 0.3);
+  --hive-glow-secondary: rgba(14, 165, 233, 0.18);
 }
 
-/* Dark Mode */
 [data-color-scheme='default'][data-theme='dark'] {
-  /* Sky Blue palette for dark mode (deep -> light) */
-  --aou-1: #0c4a6e;
-  --aou-2: #075985;
-  --aou-3: #0369a1;
-  --aou-4: #0284c7;
-  --aou-5: #0ea5e9;
-  --aou-6: #38bdf8;
-  --aou-7: #7dd3fc;
-  --aou-8: #bae6fd;
-  --aou-9: #e0f2fe;
-  --aou-10: #f0f9ff;
+  /* Hive primary palette for dark mode (deep -> light) */
+  --aou-1: #191f37;
+  --aou-2: #222b4a;
+  --aou-3: #2b3861;
+  --aou-4: #36477d;
+  --aou-5: #4c5fc0;
+  --aou-6: #8b9bff;
+  --aou-7: #a7b2ff;
+  --aou-8: #c2cbff;
+  --aou-9: #dce1ff;
+  --aou-10: #eef1ff;
 
-  /* Compatibility aliases */
   --aou-6-brand: var(--aou-6);
   --aou-8-selected: var(--aou-8);
 
-  /* Primary steps */
-  --primary-1: #0c4a6e;
-  --primary-2: #075985;
-  --primary-3: #0369a1;
-  --primary-4: #0284c7;
-  --primary-5: #0ea5e9;
-  --primary-6: #38bdf8;
-  --primary-7: #7dd3fc;
-  --primary-8: #bae6fd;
-  --primary-9: #e0f2fe;
-  --primary-10: #f0f9ff;
+  --primary-1: #191f37;
+  --primary-2: #222b4a;
+  --primary-3: #2b3861;
+  --primary-4: #36477d;
+  --primary-5: #4c5fc0;
+  --primary-6: #8b9bff;
+  --primary-7: #a7b2ff;
+  --primary-8: #c2cbff;
+  --primary-9: #dce1ff;
+  --primary-10: #eef1ff;
 
-  /* Background Colors */
-  --bg-base: #0f172a;
-  --bg-1: #1e293b;
-  --bg-2: #334155;
-  --bg-3: #475569;
-  --bg-4: #64748b;
-  --bg-5: #94a3b8;
-  --bg-6: #cbd5e1;
-  --bg-8: #e2e8f0;
-  --bg-9: #f1f5f9;
-  --bg-10: #f8fafc;
+  --bg-base: #090d16;
+  --bg-1: #111827;
+  --bg-2: #182233;
+  --bg-3: #26324a;
+  --bg-4: #3a4a67;
+  --bg-5: #5e7192;
+  --bg-6: #8ea3c5;
+  --bg-8: #b6c8e1;
+  --bg-9: #d5e0ef;
+  --bg-10: #edf2fb;
 
-  /* Interactive State Colors */
-  --bg-hover: #334155;
-  --bg-active: #475569;
+  --bg-hover: #223049;
+  --bg-active: #2c3c58;
 
-  /* Text Colors */
-  --text-primary: #f1f5f9;
-  --text-secondary: #94a3b8;
-  --text-disabled: #475569;
+  --text-primary: #e6ecff;
+  --text-secondary: #9cafcc;
+  --text-disabled: #566685;
 
-  /* Semantic Colors */
-  --primary: #38bdf8;
-  --success: #34d399;
+  --primary: #8b9bff;
+  --success: #4ade80;
   --warning: #fbbf24;
   --danger: #f87171;
-  --info: #60a5fa;
+  --info: #38bdf8;
 
-  /* Border Colors */
-  --border-base: #334155;
-  --border-light: #1e293b;
+  --border-base: #24324a;
+  --border-light: #1a2538;
 
-  /* Brand Colors */
-  --brand: #38bdf8;
-  --brand-light: #0c4a6e;
-  --brand-hover: #7dd3fc;
+  --brand: #8b9bff;
+  --brand-light: #1f2944;
+  --brand-hover: #a7b2ff;
 
-  /* Message & UI Component Colors */
-  --message-user-bg: #0f2740;
-  --message-tips-bg: #15263a;
-  --workspace-btn-bg: #1e293b;
+  --message-user-bg: #1e2843;
+  --message-tips-bg: #162233;
+  --workspace-btn-bg: #182233;
 
-  /* Special Colors */
-  --fill: #1e293b;
+  --fill: #131d2d;
   --inverse: #ffffff;
 
-  /* Custom Colors */
-  --dialog-fill-0: #334155;
-  --text-0: #ffffff;
+  --dialog-fill-0: #192538;
+  --text-0: #eef2ff;
   --text-white: #ffffff;
   --fill-0: rgba(255, 255, 255, 0.08);
   --fill-white-to-black: #000000;
-  --border-special: #475569;
+  --border-special: #2a3a57;
+
+  --hive-glow-primary: rgba(139, 155, 255, 0.26);
+  --hive-glow-secondary: rgba(56, 189, 248, 0.2);
 }

@@ -558,3 +558,1266 @@ body,
 .arco-input-inner-wrapper {
   background-color: var(--fill-0) !important;
 }
+
+/* ========================================================================== */
+/* HiveMind UI V2 Shell                                                        */
+/* ========================================================================== */
+
+:root {
+  --hive-surface-soft: color-mix(in srgb, var(--bg-1) 86%, white 14%);
+  --hive-surface-strong: color-mix(in srgb, var(--bg-2) 90%, black 10%);
+  --hive-border-soft: color-mix(in srgb, var(--border-base) 82%, white 18%);
+}
+
+.hive-shell {
+  background:
+    radial-gradient(1100px 420px at -10% -20%, var(--hive-glow-primary), transparent 62%),
+    radial-gradient(900px 360px at 120% -10%, var(--hive-glow-secondary), transparent 58%),
+    linear-gradient(180deg, var(--bg-base) 0%, var(--bg-1) 100%);
+  color: var(--text-primary);
+}
+
+.hive-workspace {
+  padding: 8px;
+  gap: 8px;
+}
+
+.hive-sider {
+  background: linear-gradient(180deg, color-mix(in srgb, var(--bg-2) 90%, white 10%) 0%, var(--bg-1) 100%);
+  border: 1px solid var(--hive-border-soft);
+  border-radius: 14px;
+  box-shadow:
+    0 16px 36px -22px rgba(15, 23, 42, 0.5),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2);
+  backdrop-filter: blur(14px);
+}
+
+.hive-sider-header {
+  padding: 12px 14px 10px 14px;
+  margin-bottom: 2px;
+  border-bottom: 1px solid color-mix(in srgb, var(--border-base) 70%, transparent 30%);
+}
+
+.hive-logo-badge {
+  width: 38px;
+  height: 38px;
+  border-radius: 12px;
+  background:
+    radial-gradient(circle at 18% 18%, rgba(255, 255, 255, 0.24), transparent 42%),
+    linear-gradient(145deg, var(--brand), color-mix(in srgb, var(--brand) 70%, #0ea5e9 30%));
+  box-shadow:
+    0 8px 20px -12px var(--hive-glow-primary),
+    inset 0 1px 0 rgba(255, 255, 255, 0.35);
+}
+
+.hive-logo-badge--collapsed {
+  width: 28px;
+  height: 28px;
+  border-radius: 9px;
+}
+
+.hive-logo-mark {
+  width: 22px;
+  height: 22px;
+  filter: drop-shadow(0 1px 0 rgba(0, 0, 0, 0.18));
+}
+
+.hive-brand-title {
+  font-size: 18px;
+  font-weight: 700;
+  letter-spacing: 0.2px;
+  color: var(--text-primary);
+}
+
+.hive-sider-content {
+  padding-top: 10px;
+}
+
+.hive-nav {
+  gap: 8px;
+}
+
+.hive-nav-section {
+  padding: 0 2px;
+}
+
+.hive-nav-item {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 10px;
+  border-radius: 10px;
+  margin-bottom: 8px;
+  padding: 9px 10px;
+  color: var(--text-secondary);
+  cursor: pointer;
+  border: 1px solid transparent;
+  transition:
+    background-color var(--transition-fast),
+    border-color var(--transition-fast),
+    color var(--transition-fast),
+    transform var(--transition-fast),
+    box-shadow var(--transition-fast);
+}
+
+.hive-nav-item:hover {
+  color: var(--text-primary);
+  background: color-mix(in srgb, var(--brand-light) 52%, transparent 48%);
+  border-color: color-mix(in srgb, var(--brand) 28%, transparent 72%);
+}
+
+.hive-nav-item:active {
+  transform: translateY(1px);
+}
+
+.hive-nav-item--active {
+  color: var(--text-primary);
+  border-color: color-mix(in srgb, var(--brand) 32%, transparent 68%);
+  background:
+    linear-gradient(180deg, color-mix(in srgb, var(--brand-light) 76%, transparent 24%) 0%, color-mix(in srgb, var(--brand-light) 48%, transparent 52%) 100%);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.24);
+}
+
+.hive-nav-item--primary {
+  color: #ffffff;
+  border-color: transparent;
+  background: linear-gradient(135deg, var(--brand) 0%, color-mix(in srgb, var(--brand) 65%, #0ea5e9 35%) 100%);
+  box-shadow: 0 10px 20px -14px color-mix(in srgb, var(--brand) 70%, transparent 30%);
+}
+
+.hive-nav-item--primary:hover {
+  color: #ffffff;
+  border-color: transparent;
+  background: linear-gradient(135deg, var(--brand-hover) 0%, color-mix(in srgb, var(--brand-hover) 68%, #0ea5e9 32%) 100%);
+}
+
+.hive-nav-item--collapsed {
+  justify-content: center;
+  padding-inline: 8px;
+}
+
+.hive-nav-item__icon {
+  width: 20px;
+  height: 20px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.hive-nav-item__label {
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 1.2;
+  color: inherit;
+}
+
+.hive-content {
+  background:
+    linear-gradient(180deg, color-mix(in srgb, var(--bg-base) 62%, white 38%) 0%, color-mix(in srgb, var(--bg-1) 92%, white 8%) 100%);
+  border: 1px solid var(--hive-border-soft);
+  border-radius: 14px;
+  box-shadow:
+    0 16px 36px -26px rgba(15, 23, 42, 0.45),
+    inset 0 1px 0 rgba(255, 255, 255, 0.18);
+}
+
+.app-titlebar.hive-titlebar {
+  background: linear-gradient(180deg, color-mix(in srgb, var(--bg-2) 85%, white 15%) 0%, color-mix(in srgb, var(--bg-1) 94%, transparent 6%) 100%);
+  border: 1px solid var(--hive-border-soft);
+  border-radius: 12px;
+  margin: 8px 8px 0 8px;
+  height: 40px;
+  min-height: 40px;
+  line-height: 40px;
+  backdrop-filter: blur(12px);
+}
+
+.app-titlebar.hive-titlebar.app-titlebar--mac {
+  height: 44px;
+  min-height: 40px;
+}
+
+.app-titlebar.hive-titlebar .app-titlebar__brand {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  font-size: 11px;
+  letter-spacing: 0.8px;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.hive-titlebar__brand-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 999px;
+  background: linear-gradient(145deg, var(--brand) 0%, #0ea5e9 100%);
+  box-shadow: 0 0 0 6px color-mix(in srgb, var(--brand) 16%, transparent 84%);
+}
+
+.app-titlebar.hive-titlebar .app-titlebar__button {
+  width: 32px;
+  height: 32px;
+  border-radius: 9px;
+  color: var(--text-secondary);
+}
+
+.app-titlebar.hive-titlebar .app-titlebar__button:hover {
+  color: var(--text-primary);
+  background: color-mix(in srgb, var(--brand-light) 56%, transparent 44%);
+}
+
+.workspace-header__toggle {
+  border: 1px solid color-mix(in srgb, var(--border-base) 72%, transparent 28%);
+  background: color-mix(in srgb, var(--bg-2) 70%, transparent 30%);
+}
+
+.workspace-header__toggle:hover {
+  border-color: color-mix(in srgb, var(--brand) 28%, transparent 72%);
+  background: color-mix(in srgb, var(--brand-light) 60%, transparent 40%);
+}
+
+[data-theme='dark'] .hive-shell {
+  background:
+    radial-gradient(980px 380px at -8% -20%, var(--hive-glow-primary), transparent 64%),
+    radial-gradient(760px 320px at 115% -10%, var(--hive-glow-secondary), transparent 60%),
+    linear-gradient(180deg, #080d16 0%, var(--bg-base) 100%);
+}
+
+[data-theme='dark'] .hive-sider {
+  background: linear-gradient(180deg, color-mix(in srgb, var(--bg-2) 92%, black 8%) 0%, color-mix(in srgb, var(--bg-1) 88%, black 12%) 100%);
+  box-shadow:
+    0 18px 40px -24px rgba(0, 0, 0, 0.7),
+    inset 0 1px 0 rgba(255, 255, 255, 0.06);
+}
+
+[data-theme='dark'] .hive-content {
+  background: linear-gradient(180deg, color-mix(in srgb, var(--bg-1) 86%, black 14%) 0%, color-mix(in srgb, var(--bg-base) 94%, black 6%) 100%);
+  box-shadow:
+    0 24px 48px -30px rgba(0, 0, 0, 0.75),
+    inset 0 1px 0 rgba(255, 255, 255, 0.04);
+}
+
+[data-theme='dark'] .hive-nav-item {
+  color: color-mix(in srgb, var(--text-secondary) 92%, white 8%);
+}
+
+[data-theme='dark'] .hive-nav-item:hover {
+  color: var(--text-primary);
+  background: color-mix(in srgb, var(--brand-light) 62%, transparent 38%);
+}
+
+[data-theme='dark'] .hive-nav-item--active {
+  background: linear-gradient(180deg, color-mix(in srgb, var(--brand-light) 72%, transparent 28%) 0%, color-mix(in srgb, var(--brand-light) 48%, transparent 52%) 100%);
+  border-color: color-mix(in srgb, var(--brand) 38%, transparent 62%);
+}
+
+[data-theme='dark'] .app-titlebar.hive-titlebar {
+  background: linear-gradient(180deg, color-mix(in srgb, var(--bg-2) 88%, black 12%) 0%, color-mix(in srgb, var(--bg-1) 92%, black 8%) 100%);
+}
+
+@media (max-width: 767px) {
+  .hive-workspace {
+    padding: 0;
+    gap: 0;
+  }
+
+  .hive-sider,
+  .app-titlebar.hive-titlebar,
+  .hive-content {
+    border-radius: 0;
+    border-left: none;
+    border-right: none;
+  }
+
+  .app-titlebar.hive-titlebar {
+    margin: 0;
+    border-top: none;
+  }
+}
+
+/* ========================================================================== */
+/* HiveMind UI V2 Conversation                                                  */
+/* ========================================================================== */
+
+.hive-chat-layout {
+  color: var(--text-primary);
+}
+
+.hive-chat-layout__body {
+  border-radius: 14px;
+}
+
+.hive-chat-panel,
+.hive-workspace-panel,
+.hive-chat-preview-panel {
+  border-radius: 14px;
+  border: 1px solid color-mix(in srgb, var(--border-base) 72%, transparent 28%);
+  background: linear-gradient(180deg, color-mix(in srgb, var(--bg-1) 94%, white 6%) 0%, color-mix(in srgb, var(--bg-base) 95%, white 5%) 100%);
+  box-shadow:
+    0 12px 30px -24px rgba(15, 23, 42, 0.55),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2);
+}
+
+.hive-chat-panel-shell,
+.hive-workspace-panel,
+.hive-chat-preview-panel {
+  overflow: hidden;
+}
+
+.hive-chat-header {
+  border-bottom: 1px solid color-mix(in srgb, var(--border-base) 74%, transparent 26%);
+  background: linear-gradient(180deg, color-mix(in srgb, var(--bg-2) 72%, white 28%) 0%, color-mix(in srgb, var(--bg-1) 92%, transparent 8%) 100%);
+}
+
+.hive-chat-agent-badge {
+  border: 1px solid color-mix(in srgb, var(--brand) 26%, transparent 74%);
+  background: color-mix(in srgb, var(--brand-light) 62%, transparent 38%) !important;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.3);
+}
+
+.hive-chat-main {
+  background: color-mix(in srgb, var(--bg-base) 94%, white 6%) !important;
+}
+
+.hive-workspace-panel-header {
+  border-bottom-color: color-mix(in srgb, var(--border-base) 74%, transparent 26%) !important;
+  background: color-mix(in srgb, var(--bg-2) 68%, transparent 32%);
+}
+
+.hive-workspace-float-toggle {
+  box-shadow: 0 10px 24px -18px rgba(15, 23, 42, 0.6);
+}
+
+.hive-chat-scene {
+  padding-top: 12px;
+  padding-bottom: 10px;
+  gap: 10px;
+}
+
+.hive-message-list {
+  border-radius: 14px;
+}
+
+.hive-message-scroll {
+  padding-top: 2px;
+}
+
+.hive-message-item {
+  transition: transform var(--transition-fast), opacity var(--transition-fast);
+}
+
+.hive-message-item--summary {
+  margin-top: 14px !important;
+}
+
+.hive-message-block {
+  width: 100%;
+}
+
+.hive-message-bubble {
+  border-radius: 14px;
+  border: 1px solid color-mix(in srgb, var(--border-base) 70%, transparent 30%);
+  background: color-mix(in srgb, var(--bg-1) 84%, white 16%);
+  box-shadow:
+    0 10px 18px -16px rgba(15, 23, 42, 0.55),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2);
+  padding: 10px 12px;
+}
+
+.hive-message-bubble--assistant {
+  border-left: 3px solid color-mix(in srgb, var(--brand) 32%, transparent 68%);
+}
+
+.hive-message-bubble--user {
+  color: #fff;
+  border-color: color-mix(in srgb, var(--brand) 35%, transparent 65%);
+  background: linear-gradient(140deg, var(--brand) 0%, color-mix(in srgb, var(--brand) 62%, #0ea5e9 38%) 100%);
+}
+
+.hive-message-bubble--user a,
+.hive-message-bubble--user p,
+.hive-message-bubble--user li,
+.hive-message-bubble--user strong,
+.hive-message-bubble--user code {
+  color: #fff !important;
+}
+
+.hive-message-copy-btn {
+  border-radius: 8px;
+}
+
+.hive-message-copy-btn:hover {
+  background: color-mix(in srgb, var(--brand-light) 54%, transparent 46%) !important;
+}
+
+.hive-copy-alert {
+  background: linear-gradient(120deg, #16a34a 0%, #22c55e 100%) !important;
+}
+
+.hive-message-tips__card {
+  border-radius: 12px;
+  border: 1px solid color-mix(in srgb, var(--warning) 30%, transparent 70%);
+  background: color-mix(in srgb, var(--bg-1) 84%, white 16%);
+}
+
+.hive-agent-status {
+  border-radius: 12px;
+  box-shadow: 0 8px 20px -18px rgba(15, 23, 42, 0.6);
+}
+
+.hive-tool-call-card,
+.hive-tool-call-alert,
+.hive-tool-group__alert {
+  border-radius: 12px;
+  border-color: color-mix(in srgb, var(--border-base) 74%, transparent 26%) !important;
+  background: color-mix(in srgb, var(--bg-1) 86%, white 14%) !important;
+  box-shadow:
+    0 8px 22px -20px rgba(15, 23, 42, 0.6),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2);
+}
+
+.hive-tool-call-card__id {
+  opacity: 0.82;
+}
+
+.hive-tool-call-markdown {
+  border-radius: 12px;
+  border: 1px solid color-mix(in srgb, var(--border-base) 72%, transparent 28%);
+  background: color-mix(in srgb, var(--bg-2) 84%, transparent 16%);
+  padding: 10px 12px;
+}
+
+.hive-tool-group {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  width: 100%;
+}
+
+.hive-tool-group__item {
+  width: 100%;
+}
+
+.hive-tool-summary {
+  border-radius: 12px;
+  padding: 10px 12px;
+  border: 1px solid color-mix(in srgb, var(--border-base) 72%, transparent 28%);
+  background: color-mix(in srgb, var(--bg-1) 86%, white 14%);
+}
+
+.hive-tool-summary__toggle {
+  color: var(--text-secondary) !important;
+}
+
+.hive-sendbox-shell {
+  width: 100%;
+}
+
+.hive-sendbox {
+  border-radius: 16px !important;
+  border: 1px solid color-mix(in srgb, var(--border-base) 78%, transparent 22%) !important;
+  background: linear-gradient(180deg, color-mix(in srgb, var(--bg-base) 95%, white 5%) 0%, color-mix(in srgb, var(--bg-1) 92%, transparent 8%) 100%) !important;
+  box-shadow:
+    0 16px 30px -24px rgba(15, 23, 42, 0.55),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2);
+}
+
+.hive-sendbox-textarea {
+  color: var(--text-primary);
+}
+
+.hive-sendbox-textarea::placeholder {
+  color: var(--text-secondary);
+  opacity: 0.86;
+}
+
+.hive-sendbox-tools {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.hive-sendbox-action {
+  border-radius: 999px !important;
+  border: 1px solid color-mix(in srgb, var(--brand) 28%, transparent 72%) !important;
+  background: color-mix(in srgb, var(--brand-light) 76%, transparent 24%) !important;
+}
+
+.hive-sendbox-action:hover {
+  background: color-mix(in srgb, var(--brand-light) 60%, transparent 40%) !important;
+}
+
+.hive-sendbox-snippet-badge {
+  border-radius: 999px !important;
+  background: color-mix(in srgb, var(--brand-light) 72%, transparent 28%) !important;
+  border-color: color-mix(in srgb, var(--brand) 24%, transparent 76%) !important;
+}
+
+.hive-sendbox-stop-indicator {
+  background: color-mix(in srgb, var(--danger) 80%, black 20%) !important;
+}
+
+.hive-scroll-bottom-mask {
+  background: linear-gradient(180deg, transparent 0%, color-mix(in srgb, var(--bg-base) 90%, transparent 10%) 100%);
+}
+
+.hive-scroll-bottom-btn {
+  border-color: color-mix(in srgb, var(--border-base) 70%, transparent 30%) !important;
+  background: color-mix(in srgb, var(--bg-base) 90%, white 10%) !important;
+}
+
+.hive-confirm-card {
+  border-radius: 14px !important;
+  border: 1px solid color-mix(in srgb, var(--border-base) 72%, transparent 28%);
+  background: color-mix(in srgb, var(--bg-base) 94%, white 6%) !important;
+}
+
+.hive-confirm-option {
+  border-color: color-mix(in srgb, var(--border-base) 70%, transparent 30%) !important;
+  transition: background-color var(--transition-fast), border-color var(--transition-fast);
+}
+
+.hive-confirm-option:hover {
+  border-color: color-mix(in srgb, var(--brand) 28%, transparent 72%) !important;
+  background: color-mix(in srgb, var(--brand-light) 56%, transparent 44%) !important;
+}
+
+.hive-confirm-retry {
+  border-radius: 8px;
+}
+
+[data-theme='dark'] .hive-chat-panel,
+[data-theme='dark'] .hive-workspace-panel,
+[data-theme='dark'] .hive-chat-preview-panel,
+[data-theme='dark'] .hive-message-bubble,
+[data-theme='dark'] .hive-tool-summary,
+[data-theme='dark'] .hive-sendbox,
+[data-theme='dark'] .hive-confirm-card {
+  box-shadow:
+    0 20px 40px -30px rgba(0, 0, 0, 0.78),
+    inset 0 1px 0 rgba(255, 255, 255, 0.05);
+}
+
+[data-theme='dark'] .hive-message-bubble--assistant {
+  border-left-color: color-mix(in srgb, var(--brand) 46%, transparent 54%);
+}
+
+[data-theme='dark'] .hive-chat-header,
+[data-theme='dark'] .hive-workspace-panel-header {
+  background: color-mix(in srgb, var(--bg-2) 78%, black 22%);
+}
+
+[data-theme='dark'] .hive-chat-agent-badge {
+  background: color-mix(in srgb, var(--brand-light) 64%, transparent 36%) !important;
+}
+
+[data-theme='dark'] .hive-sendbox-action {
+  background: color-mix(in srgb, var(--brand-light) 66%, transparent 34%) !important;
+}
+
+@media (max-width: 767px) {
+  .hive-chat-scene {
+    padding-inline: 8px;
+    padding-top: 8px;
+  }
+
+  .hive-chat-panel,
+  .hive-workspace-panel,
+  .hive-chat-preview-panel {
+    border-radius: 10px;
+  }
+}
+
+.hive-chat-warning {
+  border-radius: 10px !important;
+  border-color: color-mix(in srgb, var(--warning) 36%, transparent 64%) !important;
+  background: color-mix(in srgb, var(--warning) 12%, var(--bg-base) 88%) !important;
+}
+
+/* ========================================================================== */
+/* HiveMind UI V2 Settings / Knowledge / Agent Teams                          */
+/* ========================================================================== */
+
+.hive-settings-page {
+  background:
+    radial-gradient(640px 260px at 4% 0%, color-mix(in srgb, var(--brand-light) 24%, transparent 76%), transparent 68%),
+    linear-gradient(180deg, color-mix(in srgb, var(--bg-base) 96%, white 4%) 0%, var(--bg-base) 100%);
+}
+
+.hive-settings-content {
+  border-radius: 18px;
+  border: 1px solid color-mix(in srgb, var(--border-base) 74%, transparent 26%);
+  background: linear-gradient(180deg, color-mix(in srgb, var(--bg-1) 95%, white 5%) 0%, color-mix(in srgb, var(--bg-base) 96%, white 4%) 100%);
+  box-shadow:
+    0 18px 38px -30px rgba(15, 23, 42, 0.55),
+    inset 0 1px 0 rgba(255, 255, 255, 0.22);
+  padding: 20px;
+}
+
+.hive-settings-sider {
+  padding: 4px;
+}
+
+.hive-settings-sider__item {
+  border: 1px solid transparent;
+  background: color-mix(in srgb, var(--bg-1) 84%, transparent 16%);
+}
+
+.hive-settings-sider__item:hover {
+  border-color: color-mix(in srgb, var(--brand) 24%, transparent 76%);
+  background: color-mix(in srgb, var(--brand-light) 56%, transparent 44%);
+}
+
+.hive-settings-sider__item--active {
+  border-color: color-mix(in srgb, var(--brand) 30%, transparent 70%);
+  box-shadow: 0 8px 20px -18px rgba(15, 23, 42, 0.55);
+}
+
+.hive-settings-sider__item-label {
+  font-weight: 500;
+}
+
+.hive-knowledge-page {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.hive-knowledge-header {
+  margin-bottom: 4px;
+}
+
+.hive-knowledge-header__inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.hive-knowledge-stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 16px;
+}
+
+.hive-knowledge-card {
+  border-radius: 14px;
+  border: 1px solid color-mix(in srgb, var(--border-base) 74%, transparent 26%);
+  background: linear-gradient(180deg, color-mix(in srgb, var(--bg-1) 92%, white 8%) 0%, color-mix(in srgb, var(--bg-base) 96%, white 4%) 100%);
+  box-shadow:
+    0 12px 26px -22px rgba(15, 23, 42, 0.55),
+    inset 0 1px 0 rgba(255, 255, 255, 0.18);
+}
+
+.hive-knowledge-tabs {
+  margin-inline: 10px;
+  margin-top: 8px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid color-mix(in srgb, var(--border-base) 72%, transparent 28%);
+}
+
+.hive-knowledge-tab-body,
+.hive-knowledge-settings {
+  border-radius: 12px;
+}
+
+.hive-knowledge-upload {
+  background: color-mix(in srgb, var(--bg-1) 86%, transparent 14%);
+}
+
+.hive-agent-teams-layout {
+  padding: 24px;
+  gap: 14px;
+  background:
+    radial-gradient(700px 320px at 0% 0%, color-mix(in srgb, var(--brand-light) 20%, transparent 80%), transparent 70%),
+    linear-gradient(180deg, color-mix(in srgb, var(--bg-base) 96%, white 4%) 0%, var(--bg-base) 100%);
+}
+
+.hive-agent-teams-layout__header {
+  margin-bottom: 2px;
+}
+
+.hive-agent-teams-layout__nav {
+  margin-bottom: 2px;
+}
+
+.hive-agent-teams-layout__nav-item {
+  border-radius: 999px;
+}
+
+.hive-agent-teams-layout__content {
+  border-radius: 16px;
+}
+
+.hive-agent-page {
+  padding: 24px;
+}
+
+.hive-agent-page__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 24px;
+}
+
+.hive-agent-page__header--stack {
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.hive-agent-page__header--top {
+  align-items: flex-start;
+}
+
+.hive-agent-page__actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.hive-agent-surface {
+  border-radius: 14px;
+  border: 1px solid color-mix(in srgb, var(--border-base) 74%, transparent 26%);
+  background: linear-gradient(180deg, color-mix(in srgb, var(--bg-1) 93%, white 7%) 0%, color-mix(in srgb, var(--bg-base) 96%, white 4%) 100%);
+  box-shadow:
+    0 12px 30px -24px rgba(15, 23, 42, 0.55),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2);
+}
+
+.hive-agent-dialog {
+  border-radius: 14px;
+  border: 1px solid color-mix(in srgb, var(--border-base) 72%, transparent 28%);
+}
+
+.hive-agent-metric--success {
+  color: var(--color-success);
+}
+
+.hive-agent-metric--error {
+  color: var(--color-error);
+}
+
+.hive-agent-metric--warning {
+  color: var(--color-warning);
+}
+
+.hive-agent-kanban-board {
+  display: flex;
+  gap: 20px;
+  overflow-x: auto;
+  padding-bottom: 24px;
+  min-height: 600px;
+  align-items: flex-start;
+}
+
+.hive-agent-code {
+  font-size: 11px;
+  border-radius: 6px;
+  padding: 2px 6px;
+  background: color-mix(in srgb, var(--bg-2) 72%, transparent 28%);
+}
+
+.hive-agent-updates-toast {
+  position: fixed;
+  top: 80px;
+  right: 24px;
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.hive-agent-updates-toast__item {
+  background: var(--color-primary);
+  color: #fff;
+  padding: 8px 16px;
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-lg);
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.hive-agent-stats-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.hive-agent-tab-section {
+  padding: 24px 0;
+}
+
+.hive-agent-teammates-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 16px;
+}
+
+.hive-agent-teammate-card {
+  padding: 16px;
+  background: var(--bg-1);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--color-border);
+  box-shadow: var(--shadow-sm);
+}
+
+.hive-agent-teammate-card__header {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+
+.hive-agent-teammate-card__meta {
+  margin-top: 12px;
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+@media (max-width: 1024px) {
+  .hive-agent-page__header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .hive-agent-stats-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 767px) {
+  .hive-settings-content,
+  .hive-agent-teams-layout__content,
+  .hive-agent-surface {
+    border-radius: 12px;
+  }
+
+  .hive-knowledge-page,
+  .hive-agent-page,
+  .hive-agent-teams-layout {
+    padding: 12px;
+  }
+
+  .hive-knowledge-header__inner {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .hive-agent-stats-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+/* ========================================================================== */
+/* HiveMind UI V2 Agent Teams Components                                      */
+/* ========================================================================== */
+
+.hive-agent-empty-state {
+  padding: 24px;
+  text-align: center;
+}
+
+.hive-agent-stat-badge {
+  padding: 12px 16px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--color-border);
+  background: color-mix(in srgb, var(--bg-1) 92%, white 8%);
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  flex: 1;
+}
+
+.hive-agent-stat-badge__value {
+  color: var(--color-primary);
+}
+
+.hive-agent-stat-badge--success .hive-agent-stat-badge__value {
+  color: var(--color-success);
+}
+
+.hive-agent-stat-badge--warning .hive-agent-stat-badge__value {
+  color: var(--color-warning);
+}
+
+.hive-agent-stat-badge--error .hive-agent-stat-badge__value {
+  color: var(--color-error);
+}
+
+.hive-agent-tasks-list {
+  margin-top: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.hive-agent-task-row {
+  padding: 16px;
+  border-radius: var(--radius-md);
+  border: 1px solid color-mix(in srgb, var(--border-base) 74%, transparent 26%);
+  background: color-mix(in srgb, var(--bg-1) 92%, white 8%);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.hive-agent-task-row__meta {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+
+.hive-agent-dependency-graph {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.hive-agent-dependency-graph__list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.hive-agent-dependency-node {
+  padding: 16px;
+  border-radius: var(--radius-md);
+  border: 1px solid color-mix(in srgb, var(--border-base) 74%, transparent 26%);
+  background: color-mix(in srgb, var(--bg-1) 92%, white 8%);
+  box-shadow: var(--shadow-sm);
+}
+
+.hive-agent-dependency-node__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.hive-agent-dependency-node__badges {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.hive-agent-dependency-node__grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin-top: 8px;
+}
+
+.hive-agent-dependency-node__label {
+  margin-bottom: 4px;
+  display: block;
+}
+
+.hive-agent-dependency-node__tags {
+  display: flex;
+  gap: 4px;
+  flex-wrap: wrap;
+}
+
+.hive-agent-teammate-card__skills {
+  margin-top: 8px;
+  display: flex;
+  gap: 4px;
+  flex-wrap: wrap;
+}
+
+.hive-agent-analytics-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+}
+
+.hive-agent-cost-chart {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.hive-agent-cost-chart__rows {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  width: 100%;
+}
+
+.hive-agent-cost-chart__row {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.hive-agent-cost-chart__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.hive-agent-cost-chart__title {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.hive-agent-cost-chart__track {
+  height: 10px;
+  width: 100%;
+  border-radius: 999px;
+  overflow: hidden;
+  background: color-mix(in srgb, var(--bg-2) 92%, transparent 8%);
+}
+
+.hive-agent-cost-chart__bar {
+  height: 100%;
+  background: linear-gradient(90deg, var(--color-primary) 0%, color-mix(in srgb, var(--color-primary) 78%, #22d3ee 22%) 100%);
+  box-shadow: 0 0 8px var(--primary-rgba-40);
+}
+
+.hive-agent-tasks-virtual-empty {
+  height: 16rem;
+  border-radius: 12px;
+  border: 1px solid color-mix(in srgb, var(--border-base) 72%, transparent 28%);
+  background: color-mix(in srgb, var(--bg-1) 88%, white 12%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.hive-agent-tasks-virtual-list {
+  height: 100%;
+  max-height: 600px;
+  overflow: auto;
+  padding: 16px;
+  border-radius: 12px;
+  border: 1px solid color-mix(in srgb, var(--border-base) 72%, transparent 28%);
+  background: color-mix(in srgb, var(--bg-1) 88%, white 12%);
+}
+
+.hive-agent-tasks-virtual-item {
+  padding: 0 8px;
+}
+
+.hive-agent-overview-actions {
+  margin-top: 24px;
+  display: flex;
+  gap: 12px;
+}
+
+.hive-agent-message-card {
+  background: color-mix(in srgb, var(--bg-1) 90%, white 10%);
+  padding: 12px;
+  border-radius: var(--radius-md);
+  border: 1px solid color-mix(in srgb, var(--border-base) 72%, transparent 28%);
+}
+
+.hive-agent-message-card__title {
+  margin-bottom: 4px;
+}
+
+.hive-agent-kanban-column {
+  display: flex;
+  flex-direction: column;
+  width: 320px;
+  flex-shrink: 0;
+  border-radius: var(--radius-lg);
+  border: 1px solid color-mix(in srgb, var(--border-base) 74%, transparent 26%);
+  background: linear-gradient(180deg, color-mix(in srgb, var(--bg-1) 94%, white 6%) 0%, color-mix(in srgb, var(--bg-base) 96%, white 4%) 100%);
+  box-shadow: var(--shadow-sm);
+  transition: all 0.2s ease;
+}
+
+.hive-agent-kanban-column__header {
+  padding: 16px;
+  border-bottom: 1px solid color-mix(in srgb, var(--border-base) 74%, transparent 26%);
+  border-top: 3px solid transparent;
+  border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+}
+
+.hive-agent-kanban-column__header-inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.hive-agent-kanban-column__title {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.hive-agent-kanban-column__count {
+  padding: 2px 8px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.hive-agent-kanban-column__dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 999px;
+}
+
+.hive-agent-kanban-column__content {
+  flex: 1;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  min-height: 400px;
+  max-height: calc(100vh - 300px);
+  overflow-y: auto;
+  border-radius: 0 0 var(--radius-lg) var(--radius-lg);
+  transition: background-color 0.2s ease;
+}
+
+.hive-agent-kanban-column__empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 128px;
+  border: 2px dashed color-mix(in srgb, var(--border-base) 74%, transparent 26%);
+  border-radius: 12px;
+}
+
+.hive-agent-task-card {
+  border-radius: 12px;
+  padding: 16px;
+  border: 1px solid color-mix(in srgb, var(--border-base) 72%, transparent 28%);
+  background: linear-gradient(180deg, color-mix(in srgb, var(--bg-base) 96%, white 4%) 0%, color-mix(in srgb, var(--bg-1) 93%, white 7%) 100%);
+  box-shadow: 0 10px 24px -20px rgba(15, 23, 42, 0.55);
+  cursor: grab;
+  transition: box-shadow var(--transition-fast), border-color var(--transition-fast), transform var(--transition-fast);
+}
+
+.hive-agent-task-card:active {
+  cursor: grabbing;
+}
+
+.hive-agent-task-card:hover {
+  border-color: color-mix(in srgb, var(--brand) 32%, transparent 68%);
+  box-shadow: 0 16px 30px -24px rgba(15, 23, 42, 0.6);
+}
+
+.hive-agent-task-card--dragging {
+  box-shadow: 0 16px 30px -24px rgba(15, 23, 42, 0.68);
+}
+
+.hive-agent-task-card__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+
+.hive-agent-task-card__dependency {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin-bottom: 12px;
+  color: var(--color-warning);
+  font-size: 12px;
+}
+
+.hive-agent-task-card__footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-top: 8px;
+  border-top: 1px solid color-mix(in srgb, var(--border-base) 72%, transparent 28%);
+}
+
+.hive-agent-task-card__assignee {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 12px;
+  color: var(--text-secondary);
+}
+
+.hive-agent-task-card__assignee-avatar {
+  width: 20px;
+  height: 20px;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--brand-light) 72%, transparent 28%);
+  color: var(--brand);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+}
+
+.hive-agent-task-card__status {
+  margin-top: 8px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 12px;
+}
+
+.hive-agent-task-card__status--completed {
+  color: var(--color-success);
+}
+
+.hive-agent-task-card__status--failed {
+  color: var(--color-error);
+}
+
+.hive-agent-task-card__status-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 999px;
+  background: currentColor;
+}
+
+@media (max-width: 1024px) {
+  .hive-agent-analytics-grid,
+  .hive-agent-dependency-node__grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+/* ========================================================================== */
+/* HiveMind Model Preferences                                                  */
+/* ========================================================================== */
+
+.hive-model-settings {
+  border-radius: 14px;
+  border: 1px solid color-mix(in srgb, var(--border-base) 74%, transparent 26%);
+  background: linear-gradient(180deg, color-mix(in srgb, var(--bg-1) 94%, white 6%) 0%, color-mix(in srgb, var(--bg-base) 96%, white 4%) 100%);
+  box-shadow:
+    0 14px 28px -24px rgba(15, 23, 42, 0.6),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2);
+  padding: 16px;
+}
+
+.hive-model-settings__header {
+  margin-bottom: 14px;
+}
+
+.hive-model-settings__grid {
+  display: grid;
+  grid-template-columns: repeat(1, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.hive-model-selector-trigger {
+  border-radius: 10px !important;
+}
+
+@media (min-width: 960px) {
+  .hive-model-settings__grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}

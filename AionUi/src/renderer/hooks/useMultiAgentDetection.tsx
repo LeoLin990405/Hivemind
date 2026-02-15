@@ -4,7 +4,8 @@
 
 import { ipcBridge } from '@/common';
 import { toast } from 'sonner';
-import React, { useEffect } from 'react';
+import type React from 'react';
+import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 
 export const useMultiAgentDetection = (): { contextHolder: React.ReactNode } => {

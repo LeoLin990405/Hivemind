@@ -1,6 +1,6 @@
 /**
  * @license
- * Copyright 2025 AionUi (aionui.com)
+ * Copyright 2025 HiveMind (hivemind.com)
  * SPDX-License-Identifier: Apache-2.0
  */
 
@@ -32,6 +32,7 @@ import './theme/global.css';
 import './arco-override.css';
 import './i18n';
 import './styles/themes/index.css';
+import './nexus/styles/index.css';
 import HOC from './utils/HOC';
 import { arcoThemeConfig } from './theme/arco-theme';
 const root = createRoot(document.getElementById('root'));

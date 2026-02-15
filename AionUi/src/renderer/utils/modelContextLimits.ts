@@ -1,6 +1,6 @@
 /**
  * @license
- * Copyright 2025 AionUi (aionui.com)
+ * Copyright 2025 HiveMind (hivemind.com)
  * SPDX-License-Identifier: Apache-2.0
  */
 
@@ -49,6 +49,27 @@ const MODEL_CONTEXT_LIMITS: Record<string, number> = {
   'claude-3.5-haiku': 200_000,
   'claude-3-opus': 200_000,
   'claude-3-haiku': 200_000,
+  'claude-default': 200_000,
+
+  // DeepSeek / Qwen / Kimi / 其他 CLI 常用模型
+  'deepseek-reasoner': 128_000,
+  'deepseek-chat': 128_000,
+  'deepseek/deepseek-reasoner': 128_000,
+  'qwen-coder': 131_072,
+  'kimi-normal': 128_000,
+  'kimi-thinking': 128_000,
+
+  // HiveMind 内置模型 ID（回退）
+  'iflow-normal': 128_000,
+  'iflow-thinking': 128_000,
+  'qoder-default': 128_000,
+  'goose-default': 128_000,
+  'auggie-default': 128_000,
+  'copilot-default': 128_000,
+  'openclaw-default': 128_000,
+  'custom-default': 128_000,
+  'ollama-default': 128_000,
+  'o1-pro': 200_000,
 };
 
 /**
