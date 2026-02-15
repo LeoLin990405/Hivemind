@@ -50,9 +50,9 @@ export const plugins: WebpackPluginInstance[] = [
   new webpack.IgnorePlugin({
     resourceRegExp: /\.wasm\?binary$/,
   }),
-  // 忽略 OpenTelemetry telemetry 模块 - 这些是 aioncli-core 的可选依赖
-  // Ignore OpenTelemetry telemetry modules - these are optional dependencies of aioncli-core
+  // 忽略所有 OpenTelemetry 模块 - 这些是 aioncli-core 的可选遥测依赖
+  // Ignore all OpenTelemetry modules - these are optional telemetry dependencies of aioncli-core
   new webpack.IgnorePlugin({
-    resourceRegExp: /@opentelemetry\/(sdk-metrics|sdk-logs|sdk-node|exporter-.*)/,
+    resourceRegExp: /@opentelemetry\//,
   }),
 ];
