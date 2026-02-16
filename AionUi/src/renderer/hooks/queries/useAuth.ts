@@ -63,10 +63,7 @@ async function fetchCurrentUser(): Promise<User | null> {
  * Login mutation function
  */
 async function loginMutation(credentials: LoginRequest): Promise<LoginResponse> {
-  const response = await api.call<{ success: boolean; data: LoginResponse }>(
-    'auth.login',
-    credentials
-  );
+  const response = await api.call<{ success: boolean; data: LoginResponse }>('auth.login', credentials);
 
   if (!response.success || !response.data) {
     throw new Error('Login failed');
@@ -85,10 +82,7 @@ async function logoutMutation(params?: { all?: boolean }): Promise<void> {
 /**
  * Change password mutation function
  */
-async function changePasswordMutation(params: {
-  oldPassword: string;
-  newPassword: string;
-}): Promise<void> {
+async function changePasswordMutation(params: { oldPassword: string; newPassword: string }): Promise<void> {
   const response = await api.call<{ success: boolean }>('auth.changePassword', params);
 
   if (!response.success) {
@@ -154,12 +148,7 @@ export function useChangePassword() {
  * Hook: Combined auth state (similar to legacy useAuth)
  */
 export function useAuthState() {
-  const {
-    data: user,
-    isLoading,
-    isError,
-    refetch,
-  } = useCurrentUser();
+  const { data: user, isLoading, isError, refetch } = useCurrentUser();
   const loginMutation = useLogin();
   const logoutMutation = useLogout();
 

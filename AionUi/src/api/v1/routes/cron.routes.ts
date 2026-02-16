@@ -4,7 +4,8 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { Router, Request, Response, NextFunction } from 'express';
+import type { Request, Response, NextFunction } from 'express';
+import { Router } from 'express';
 import { z } from 'zod';
 import { paginationQuerySchema } from '../schemas/common';
 import { validateRequest } from '../middleware/validate';
@@ -182,55 +183,51 @@ router.post(
  * GET /api/v1/cron/jobs/:id
  * Get cron job details
  */
-router.get(
-  '/jobs/:id',
-  validateRequest({ params: z.object({ id: z.string().uuid() }) }),
-  async (req: Request, res: Response, next: NextFunction) => {
-    try {
-      const { id } = req.params;
+router.get('/jobs/:id', validateRequest({ params: z.object({ id: z.string().uuid() }) }), async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const { id } = req.params;
 
-      // TODO: Fetch from database
-      // const job = await cronService.getJob(id)
+    // TODO: Fetch from database
+    // const job = await cronService.getJob(id)
 
-      // Mock data
-      const job = {
-        id,
-        name: 'daily-backup',
-        displayName: 'Daily Database Backup',
-        description: 'Backup all conversations and settings',
-        schedule: '0 2 * * *',
-        timezone: 'UTC',
-        enabled: true,
-        status: 'idle' as const,
-        lastRun: new Date(Date.now() - 3600000).toISOString(),
-        nextRun: new Date(Date.now() + 82800000).toISOString(),
-        action: {
-          type: 'command',
-          command: 'npm run backup',
-        },
-        retryOnFailure: true,
-        maxRetries: 3,
-        runCount: 365,
-        successCount: 364,
-        failureCount: 1,
-        averageExecutionTime: 12500, // ms
-        createdAt: new Date(Date.now() - 31536000000).toISOString(),
-        updatedAt: new Date().toISOString(),
-      };
+    // Mock data
+    const job = {
+      id,
+      name: 'daily-backup',
+      displayName: 'Daily Database Backup',
+      description: 'Backup all conversations and settings',
+      schedule: '0 2 * * *',
+      timezone: 'UTC',
+      enabled: true,
+      status: 'idle' as const,
+      lastRun: new Date(Date.now() - 3600000).toISOString(),
+      nextRun: new Date(Date.now() + 82800000).toISOString(),
+      action: {
+        type: 'command',
+        command: 'npm run backup',
+      },
+      retryOnFailure: true,
+      maxRetries: 3,
+      runCount: 365,
+      successCount: 364,
+      failureCount: 1,
+      averageExecutionTime: 12500, // ms
+      createdAt: new Date(Date.now() - 31536000000).toISOString(),
+      updatedAt: new Date().toISOString(),
+    };
 
-      res.json({
-        success: true,
-        data: job,
-        meta: {
-          timestamp: new Date().toISOString(),
-          requestId: crypto.randomUUID(),
-        },
-      });
-    } catch (error) {
-      next(error);
-    }
+    res.json({
+      success: true,
+      data: job,
+      meta: {
+        timestamp: new Date().toISOString(),
+        requestId: crypto.randomUUID(),
+      },
+    });
+  } catch (error) {
+    next(error);
   }
-);
+});
 
 /**
  * PATCH /api/v1/cron/jobs/:id
@@ -246,13 +243,7 @@ router.patch(
       schedule: z.string().optional(),
       timezone: z.string().optional(),
       enabled: z.boolean().optional(),
-      action: z
-        .union([
-          z.object({ type: z.literal('command'), command: z.string() }),
-          z.object({ type: z.literal('skill'), skillId: z.string().uuid() }),
-          z.object({ type: z.literal('http'), url: z.string().url() }),
-        ])
-        .optional(),
+      action: z.union([z.object({ type: z.literal('command'), command: z.string() }), z.object({ type: z.literal('skill'), skillId: z.string().uuid() }), z.object({ type: z.literal('http'), url: z.string().url() })]).optional(),
       retryOnFailure: z.boolean().optional(),
       maxRetries: z.number().int().min(0).max(5).optional(),
     }),
@@ -305,66 +296,58 @@ router.patch(
  * DELETE /api/v1/cron/jobs/:id
  * Delete cron job
  */
-router.delete(
-  '/jobs/:id',
-  validateRequest({ params: z.object({ id: z.string().uuid() }) }),
-  async (req: Request, res: Response, next: NextFunction) => {
-    try {
-      const { id } = req.params;
+router.delete('/jobs/:id', validateRequest({ params: z.object({ id: z.string().uuid() }) }), async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const { id } = req.params;
 
-      // TODO: Delete from database and unschedule from CronService
-      // await cronService.deleteJob(id)
+    // TODO: Delete from database and unschedule from CronService
+    // await cronService.deleteJob(id)
 
-      res.json({
-        success: true,
-        data: { id, deleted: true },
-        meta: {
-          timestamp: new Date().toISOString(),
-          requestId: crypto.randomUUID(),
-        },
-      });
-    } catch (error) {
-      next(error);
-    }
+    res.json({
+      success: true,
+      data: { id, deleted: true },
+      meta: {
+        timestamp: new Date().toISOString(),
+        requestId: crypto.randomUUID(),
+      },
+    });
+  } catch (error) {
+    next(error);
   }
-);
+});
 
 /**
  * POST /api/v1/cron/jobs/:id/trigger
  * Manually trigger cron job execution
  */
-router.post(
-  '/jobs/:id/trigger',
-  validateRequest({ params: z.object({ id: z.string().uuid() }) }),
-  async (req: Request, res: Response, next: NextFunction) => {
-    try {
-      const { id } = req.params;
+router.post('/jobs/:id/trigger', validateRequest({ params: z.object({ id: z.string().uuid() }) }), async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const { id } = req.params;
 
-      // TODO: Execute job immediately via CronService
-      // const execution = await cronService.triggerJob(id)
+    // TODO: Execute job immediately via CronService
+    // const execution = await cronService.triggerJob(id)
 
-      // Mock response
-      const execution = {
-        jobId: id,
-        executionId: crypto.randomUUID(),
-        status: 'running' as const,
-        triggeredBy: 'manual',
-        startedAt: new Date().toISOString(),
-      };
+    // Mock response
+    const execution = {
+      jobId: id,
+      executionId: crypto.randomUUID(),
+      status: 'running' as const,
+      triggeredBy: 'manual',
+      startedAt: new Date().toISOString(),
+    };
 
-      res.json({
-        success: true,
-        data: execution,
-        meta: {
-          timestamp: new Date().toISOString(),
-          requestId: crypto.randomUUID(),
-        },
-      });
-    } catch (error) {
-      next(error);
-    }
+    res.json({
+      success: true,
+      data: execution,
+      meta: {
+        timestamp: new Date().toISOString(),
+        requestId: crypto.randomUUID(),
+      },
+    });
+  } catch (error) {
+    next(error);
   }
-);
+});
 
 /**
  * GET /api/v1/cron/jobs/:id/history
@@ -457,61 +440,53 @@ router.get(
  * POST /api/v1/cron/jobs/:id/pause
  * Pause cron job
  */
-router.post(
-  '/jobs/:id/pause',
-  validateRequest({ params: z.object({ id: z.string().uuid() }) }),
-  async (req: Request, res: Response, next: NextFunction) => {
-    try {
-      const { id } = req.params;
+router.post('/jobs/:id/pause', validateRequest({ params: z.object({ id: z.string().uuid() }) }), async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const { id } = req.params;
 
-      // TODO: Pause job in CronService
-      // await cronService.pauseJob(id)
+    // TODO: Pause job in CronService
+    // await cronService.pauseJob(id)
 
-      res.json({
-        success: true,
-        data: { id, status: 'paused', pausedAt: new Date().toISOString() },
-        meta: {
-          timestamp: new Date().toISOString(),
-          requestId: crypto.randomUUID(),
-        },
-      });
-    } catch (error) {
-      next(error);
-    }
+    res.json({
+      success: true,
+      data: { id, status: 'paused', pausedAt: new Date().toISOString() },
+      meta: {
+        timestamp: new Date().toISOString(),
+        requestId: crypto.randomUUID(),
+      },
+    });
+  } catch (error) {
+    next(error);
   }
-);
+});
 
 /**
  * POST /api/v1/cron/jobs/:id/resume
  * Resume paused cron job
  */
-router.post(
-  '/jobs/:id/resume',
-  validateRequest({ params: z.object({ id: z.string().uuid() }) }),
-  async (req: Request, res: Response, next: NextFunction) => {
-    try {
-      const { id } = req.params;
+router.post('/jobs/:id/resume', validateRequest({ params: z.object({ id: z.string().uuid() }) }), async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const { id } = req.params;
 
-      // TODO: Resume job in CronService
-      // await cronService.resumeJob(id)
+    // TODO: Resume job in CronService
+    // await cronService.resumeJob(id)
 
-      res.json({
-        success: true,
-        data: {
-          id,
-          status: 'idle',
-          resumedAt: new Date().toISOString(),
-          nextRun: new Date(Date.now() + 3600000).toISOString(),
-        },
-        meta: {
-          timestamp: new Date().toISOString(),
-          requestId: crypto.randomUUID(),
-        },
-      });
-    } catch (error) {
-      next(error);
-    }
+    res.json({
+      success: true,
+      data: {
+        id,
+        status: 'idle',
+        resumedAt: new Date().toISOString(),
+        nextRun: new Date(Date.now() + 3600000).toISOString(),
+      },
+      meta: {
+        timestamp: new Date().toISOString(),
+        requestId: crypto.randomUUID(),
+      },
+    });
+  } catch (error) {
+    next(error);
   }
-);
+});
 
 export default router;

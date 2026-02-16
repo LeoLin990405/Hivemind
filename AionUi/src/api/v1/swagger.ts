@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { Express } from 'express';
+import type { Express } from 'express';
 import swaggerUi from 'swagger-ui-express';
 import { generateOpenAPISpec } from './openapi';
 

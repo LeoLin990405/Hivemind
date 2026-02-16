@@ -45,10 +45,7 @@ export class UserRepository extends BaseRepository<typeof users> {
   /**
    * Update user profile
    */
-  async updateProfile(
-    userId: string,
-    data: Partial<Pick<User, 'displayName' | 'avatar' | 'bio' | 'settings'>>
-  ): Promise<User | null> {
+  async updateProfile(userId: string, data: Partial<Pick<User, 'displayName' | 'avatar' | 'bio' | 'settings'>>): Promise<User | null> {
     return this.updateById(userId, data);
   }
 
@@ -90,11 +87,7 @@ export class UserRepository extends BaseRepository<typeof users> {
   /**
    * Create a refresh token
    */
-  async createRefreshToken(data: {
-    userId: string;
-    token: string;
-    expiresAt: Date;
-  }): Promise<RefreshToken> {
+  async createRefreshToken(data: { userId: string; token: string; expiresAt: Date }): Promise<RefreshToken> {
     const results = await db.insert(refreshTokens).values(data).returning();
     return results[0];
   }
@@ -103,11 +96,7 @@ export class UserRepository extends BaseRepository<typeof users> {
    * Find refresh token
    */
   async findRefreshToken(token: string): Promise<RefreshToken | null> {
-    const results = await db
-      .select()
-      .from(refreshTokens)
-      .where(eq(refreshTokens.token, token))
-      .limit(1);
+    const results = await db.select().from(refreshTokens).where(eq(refreshTokens.token, token)).limit(1);
     return results[0] || null;
   }
 
@@ -123,10 +112,7 @@ export class UserRepository extends BaseRepository<typeof users> {
    * Delete expired refresh tokens
    */
   async deleteExpiredTokens(): Promise<number> {
-    const results = await db
-      .delete(refreshTokens)
-      .where(eq(refreshTokens.expiresAt, new Date()))
-      .returning();
+    const results = await db.delete(refreshTokens).where(eq(refreshTokens.expiresAt, new Date())).returning();
     return results.length;
   }
 
@@ -134,10 +120,7 @@ export class UserRepository extends BaseRepository<typeof users> {
    * Delete all user refresh tokens
    */
   async deleteUserTokens(userId: string): Promise<number> {
-    const results = await db
-      .delete(refreshTokens)
-      .where(eq(refreshTokens.userId, userId))
-      .returning();
+    const results = await db.delete(refreshTokens).where(eq(refreshTokens.userId, userId)).returning();
     return results.length;
   }
 }

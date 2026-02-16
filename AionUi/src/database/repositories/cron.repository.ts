@@ -6,14 +6,7 @@
 
 import { eq, desc, and, sql } from 'drizzle-orm';
 import { BaseRepository } from './base.repository';
-import {
-  cronJobs,
-  cronExecutions,
-  type CronJob,
-  type NewCronJob,
-  type CronExecution,
-  type NewCronExecution,
-} from '../schema';
+import { cronJobs, cronExecutions, type CronJob, type NewCronJob, type CronExecution, type NewCronExecution } from '../schema';
 import { db } from '../db';
 
 export class CronRepository extends BaseRepository<typeof cronJobs> {
@@ -45,33 +38,21 @@ export class CronRepository extends BaseRepository<typeof cronJobs> {
   /**
    * Update cron job
    */
-  async updateCronJob(
-    cronJobId: string,
-    data: Partial<
-      Pick<CronJob, 'name' | 'schedule' | 'timezone' | 'action' | 'retryOnFailure' | 'enabled'>
-    >
-  ): Promise<CronJob | null> {
+  async updateCronJob(cronJobId: string, data: Partial<Pick<CronJob, 'name' | 'schedule' | 'timezone' | 'action' | 'retryOnFailure' | 'enabled'>>): Promise<CronJob | null> {
     return this.updateById(cronJobId, data);
   }
 
   /**
    * Update job status
    */
-  async updateStatus(
-    cronJobId: string,
-    status: 'idle' | 'running' | 'error'
-  ): Promise<CronJob | null> {
+  async updateStatus(cronJobId: string, status: 'idle' | 'running' | 'error'): Promise<CronJob | null> {
     return this.updateById(cronJobId, { status });
   }
 
   /**
    * Update run statistics
    */
-  async updateRunStats(
-    cronJobId: string,
-    success: boolean,
-    duration?: number
-  ): Promise<CronJob | null> {
+  async updateRunStats(cronJobId: string, success: boolean, duration?: number): Promise<CronJob | null> {
     const job = await this.findById(cronJobId);
     if (!job) return null;
 
@@ -80,11 +61,7 @@ export class CronRepository extends BaseRepository<typeof cronJobs> {
       successCount: success ? sql`${cronJobs.successCount} + 1` : job.successCount,
       failureCount: !success ? sql`${cronJobs.failureCount} + 1` : job.failureCount,
       lastRunAt: new Date(),
-      averageDuration: duration
-        ? Math.round(
-            ((job.averageDuration || 0) * job.runCount + duration) / (job.runCount + 1)
-          )
-        : job.averageDuration,
+      averageDuration: duration ? Math.round(((job.averageDuration || 0) * job.runCount + duration) / (job.runCount + 1)) : job.averageDuration,
       status: 'idle',
     });
   }
@@ -116,15 +93,8 @@ export class CronRepository extends BaseRepository<typeof cronJobs> {
   /**
    * Update execution status
    */
-  async updateExecution(
-    executionId: string,
-    data: Partial<Pick<CronExecution, 'status' | 'output' | 'error' | 'duration' | 'completedAt'>>
-  ): Promise<CronExecution | null> {
-    const results = await db
-      .update(cronExecutions)
-      .set(data)
-      .where(eq(cronExecutions.id, executionId))
-      .returning();
+  async updateExecution(executionId: string, data: Partial<Pick<CronExecution, 'status' | 'output' | 'error' | 'duration' | 'completedAt'>>): Promise<CronExecution | null> {
+    const results = await db.update(cronExecutions).set(data).where(eq(cronExecutions.id, executionId)).returning();
     return results[0] || null;
   }
 
@@ -132,13 +102,7 @@ export class CronRepository extends BaseRepository<typeof cronJobs> {
    * Find executions for a cron job
    */
   async findExecutions(cronJobId: string, limit = 50, offset = 0): Promise<CronExecution[]> {
-    return db
-      .select()
-      .from(cronExecutions)
-      .where(eq(cronExecutions.cronJobId, cronJobId))
-      .orderBy(desc(cronExecutions.startedAt))
-      .limit(limit)
-      .offset(offset);
+    return db.select().from(cronExecutions).where(eq(cronExecutions.cronJobId, cronJobId)).orderBy(desc(cronExecutions.startedAt)).limit(limit).offset(offset);
   }
 
   /**

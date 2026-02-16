@@ -7,14 +7,7 @@
  */
 
 import axios, { type AxiosInstance, type AxiosError } from 'axios';
-import type {
-  APIClient,
-  APIRequestOptions,
-  APIResponse,
-  EventCallback,
-  UnsubscribeFn,
-  TokenStorage,
-} from './types';
+import type { APIClient, APIRequestOptions, APIResponse, EventCallback, UnsubscribeFn, TokenStorage } from './types';
 import { ConnectionStatus } from './types';
 import { tokenStorage as defaultTokenStorage } from './token-storage';
 
@@ -28,10 +21,7 @@ export class HTTPAPIClient implements APIClient {
   private isRefreshing = false;
   private refreshPromise: Promise<string> | null = null;
 
-  constructor(
-    baseURL: string = import.meta.env.VITE_API_URL || 'http://localhost:3000',
-    tokenStorage: TokenStorage = defaultTokenStorage
-  ) {
+  constructor(baseURL: string = import.meta.env.VITE_API_URL || 'http://localhost:3000', tokenStorage: TokenStorage = defaultTokenStorage) {
     this.baseURL = baseURL;
     this.tokenStorage = tokenStorage;
 
@@ -100,10 +90,7 @@ export class HTTPAPIClient implements APIClient {
           throw new Error('No refresh token available');
         }
 
-        const response = await axios.post<APIResponse<{ accessToken: string }>>(
-          `${this.baseURL}/api/v1/auth/refresh`,
-          { refreshToken }
-        );
+        const response = await axios.post<APIResponse<{ accessToken: string }>>(`${this.baseURL}/api/v1/auth/refresh`, { refreshToken });
 
         if (!response.data.success || !response.data.data) {
           throw new Error('Token refresh failed');
@@ -127,15 +114,11 @@ export class HTTPAPIClient implements APIClient {
    */
   async call<T = any>(method: string, data?: any, options?: APIRequestOptions): Promise<T> {
     try {
-      const response = await this.axiosInstance.post<APIResponse<T>>(
-        `/${method}`,
-        data,
-        {
-          timeout: options?.timeout,
-          headers: options?.headers,
-          signal: options?.signal,
-        }
-      );
+      const response = await this.axiosInstance.post<APIResponse<T>>(`/${method}`, data, {
+        timeout: options?.timeout,
+        headers: options?.headers,
+        signal: options?.signal,
+      });
 
       if (!response.data.success) {
         throw new Error(response.data.error?.message || 'API call failed');

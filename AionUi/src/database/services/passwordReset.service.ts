@@ -64,12 +64,7 @@ export class PasswordResetService {
     const results = await db
       .select()
       .from(passwordResetTokens)
-      .where(
-        and(
-          eq(passwordResetTokens.token, token),
-          eq(passwordResetTokens.used, false)
-        )
-      )
+      .where(and(eq(passwordResetTokens.token, token), eq(passwordResetTokens.used, false)))
       .limit(1);
 
     const resetToken = results[0];
@@ -121,10 +116,7 @@ export class PasswordResetService {
    * 清理过期的密码重置 token
    */
   async cleanupExpiredTokens(): Promise<number> {
-    const results = await db
-      .delete(passwordResetTokens)
-      .where(eq(passwordResetTokens.expiresAt, new Date()))
-      .returning();
+    const results = await db.delete(passwordResetTokens).where(eq(passwordResetTokens.expiresAt, new Date())).returning();
 
     return results.length;
   }

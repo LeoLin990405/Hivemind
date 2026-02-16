@@ -38,10 +38,7 @@ export class ProviderRepository extends BaseRepository<typeof providers> {
   /**
    * Update provider configuration
    */
-  async updateProvider(
-    providerId: string,
-    data: Partial<Pick<Provider, 'name' | 'apiKey' | 'baseUrl' | 'config' | 'enabled'>>
-  ): Promise<Provider | null> {
+  async updateProvider(providerId: string, data: Partial<Pick<Provider, 'name' | 'apiKey' | 'baseUrl' | 'config' | 'enabled'>>): Promise<Provider | null> {
     return this.updateById(providerId, data);
   }
 
@@ -83,12 +80,7 @@ export class ModelRepository extends BaseRepository<typeof models> {
    * Find model with provider info
    */
   async findByIdWithProvider(modelId: string) {
-    const results = await db
-      .select()
-      .from(models)
-      .leftJoin(providers, eq(models.providerId, providers.id))
-      .where(eq(models.id, modelId))
-      .limit(1);
+    const results = await db.select().from(models).leftJoin(providers, eq(models.providerId, providers.id)).where(eq(models.id, modelId)).limit(1);
 
     if (!results[0]) return null;
 
@@ -102,11 +94,7 @@ export class ModelRepository extends BaseRepository<typeof models> {
    * Find all models with provider info
    */
   async findAllWithProvider() {
-    const results = await db
-      .select()
-      .from(models)
-      .leftJoin(providers, eq(models.providerId, providers.id))
-      .where(eq(models.enabled, true));
+    const results = await db.select().from(models).leftJoin(providers, eq(models.providerId, providers.id)).where(eq(models.enabled, true));
 
     return results.map((r) => ({
       ...r.models,
@@ -124,15 +112,7 @@ export class ModelRepository extends BaseRepository<typeof models> {
   /**
    * Update model configuration
    */
-  async updateModel(
-    modelId: string,
-    data: Partial<
-      Pick<
-        Model,
-        'displayName' | 'modelId' | 'capabilities' | 'contextWindow' | 'maxOutputTokens' | 'enabled'
-      >
-    >
-  ): Promise<Model | null> {
+  async updateModel(modelId: string, data: Partial<Pick<Model, 'displayName' | 'modelId' | 'capabilities' | 'contextWindow' | 'maxOutputTokens' | 'enabled'>>): Promise<Model | null> {
     return this.updateById(modelId, data);
   }
 

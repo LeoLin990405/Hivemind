@@ -6,7 +6,8 @@
  * 密码重置路由
  */
 
-import { Router, Request, Response, NextFunction } from 'express';
+import type { Request, Response, NextFunction } from 'express';
+import { Router } from 'express';
 import { z } from 'zod';
 import { validateRequest } from '../middleware/validate';
 import { passwordResetRateLimiter } from '../middleware/rateLimiter';

@@ -6,7 +6,8 @@
  * File upload routes
  */
 
-import { Router, Request, Response, NextFunction } from 'express';
+import type { Request, Response, NextFunction } from 'express';
+import { Router } from 'express';
 import multer from 'multer';
 import path from 'path';
 import fs from 'fs/promises';
@@ -94,195 +95,177 @@ const upload = multer({
  * POST /api/v1/upload
  * Upload multiple files
  */
-router.post(
-  '/',
-  authenticateJWT,
-  upload.array('files', 10),
-  async (req: Request, res: Response, next: NextFunction) => {
-    try {
-      const files = req.files as Express.Multer.File[];
+router.post('/', authenticateJWT, upload.array('files', 10), async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const files = req.files as Express.Multer.File[];
 
-      if (!files || files.length === 0) {
-        return res.status(400).json({
-          success: false,
-          error: {
-            code: 'NO_FILES',
-            message: 'No files uploaded',
-          },
-        });
-      }
+    if (!files || files.length === 0) {
+      return res.status(400).json({
+        success: false,
+        error: {
+          code: 'NO_FILES',
+          message: 'No files uploaded',
+        },
+      });
+    }
 
-      // Process uploaded files
-      const uploadedFiles = files.map((file) => ({
+    // Process uploaded files
+    const uploadedFiles = files.map((file) => ({
+      filename: file.filename,
+      originalName: file.originalname,
+      path: file.path,
+      size: file.size,
+      mimetype: file.mimetype,
+      url: `/api/v1/upload/${req.user!.userId}/${file.filename}`,
+    }));
+
+    res.json({
+      success: true,
+      data: {
+        files: uploadedFiles,
+        count: uploadedFiles.length,
+      },
+      meta: {
+        timestamp: new Date().toISOString(),
+        requestId: crypto.randomUUID(),
+      },
+    });
+  } catch (error) {
+    next(error);
+  }
+});
+
+/**
+ * POST /api/v1/upload/single
+ * Upload a single file
+ */
+router.post('/single', authenticateJWT, upload.single('file'), async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const file = req.file;
+
+    if (!file) {
+      return res.status(400).json({
+        success: false,
+        error: {
+          code: 'NO_FILE',
+          message: 'No file uploaded',
+        },
+      });
+    }
+
+    res.json({
+      success: true,
+      data: {
         filename: file.filename,
         originalName: file.originalname,
         path: file.path,
         size: file.size,
         mimetype: file.mimetype,
         url: `/api/v1/upload/${req.user!.userId}/${file.filename}`,
-      }));
-
-      res.json({
-        success: true,
-        data: {
-          files: uploadedFiles,
-          count: uploadedFiles.length,
-        },
-        meta: {
-          timestamp: new Date().toISOString(),
-          requestId: crypto.randomUUID(),
-        },
-      });
-    } catch (error) {
-      next(error);
-    }
+      },
+      meta: {
+        timestamp: new Date().toISOString(),
+        requestId: crypto.randomUUID(),
+      },
+    });
+  } catch (error) {
+    next(error);
   }
-);
-
-/**
- * POST /api/v1/upload/single
- * Upload a single file
- */
-router.post(
-  '/single',
-  authenticateJWT,
-  upload.single('file'),
-  async (req: Request, res: Response, next: NextFunction) => {
-    try {
-      const file = req.file;
-
-      if (!file) {
-        return res.status(400).json({
-          success: false,
-          error: {
-            code: 'NO_FILE',
-            message: 'No file uploaded',
-          },
-        });
-      }
-
-      res.json({
-        success: true,
-        data: {
-          filename: file.filename,
-          originalName: file.originalname,
-          path: file.path,
-          size: file.size,
-          mimetype: file.mimetype,
-          url: `/api/v1/upload/${req.user!.userId}/${file.filename}`,
-        },
-        meta: {
-          timestamp: new Date().toISOString(),
-          requestId: crypto.randomUUID(),
-        },
-      });
-    } catch (error) {
-      next(error);
-    }
-  }
-);
+});
 
 /**
  * GET /api/v1/upload/:userId/:filename
  * Download/view an uploaded file
  */
-router.get(
-  '/:userId/:filename',
-  authenticateJWT,
-  async (req: Request, res: Response, next: NextFunction) => {
-    try {
-      const { userId, filename } = req.params;
+router.get('/:userId/:filename', authenticateJWT, async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const { userId, filename } = req.params;
 
-      // Security check: users can only access their own files (unless admin)
-      if (userId !== req.user!.userId && req.user!.role !== 'admin') {
-        return res.status(403).json({
-          success: false,
-          error: {
-            code: 'FORBIDDEN',
-            message: 'You can only access your own files',
-          },
-        });
-      }
-
-      const filePath = path.join(uploadsDir, userId, filename);
-
-      // Check if file exists
-      try {
-        await fs.access(filePath);
-      } catch {
-        return res.status(404).json({
-          success: false,
-          error: {
-            code: 'FILE_NOT_FOUND',
-            message: 'File not found',
-          },
-        });
-      }
-
-      // Send file
-      res.sendFile(filePath);
-    } catch (error) {
-      next(error);
+    // Security check: users can only access their own files (unless admin)
+    if (userId !== req.user!.userId && req.user!.role !== 'admin') {
+      return res.status(403).json({
+        success: false,
+        error: {
+          code: 'FORBIDDEN',
+          message: 'You can only access your own files',
+        },
+      });
     }
+
+    const filePath = path.join(uploadsDir, userId, filename);
+
+    // Check if file exists
+    try {
+      await fs.access(filePath);
+    } catch {
+      return res.status(404).json({
+        success: false,
+        error: {
+          code: 'FILE_NOT_FOUND',
+          message: 'File not found',
+        },
+      });
+    }
+
+    // Send file
+    res.sendFile(filePath);
+  } catch (error) {
+    next(error);
   }
-);
+});
 
 /**
  * DELETE /api/v1/upload/:userId/:filename
  * Delete an uploaded file
  */
-router.delete(
-  '/:userId/:filename',
-  authenticateJWT,
-  async (req: Request, res: Response, next: NextFunction) => {
-    try {
-      const { userId, filename } = req.params;
+router.delete('/:userId/:filename', authenticateJWT, async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const { userId, filename } = req.params;
 
-      // Security check
-      if (userId !== req.user!.userId && req.user!.role !== 'admin') {
-        return res.status(403).json({
-          success: false,
-          error: {
-            code: 'FORBIDDEN',
-            message: 'You can only delete your own files',
-          },
-        });
-      }
-
-      const filePath = path.join(uploadsDir, userId, filename);
-
-      // Check if file exists
-      try {
-        await fs.access(filePath);
-      } catch {
-        return res.status(404).json({
-          success: false,
-          error: {
-            code: 'FILE_NOT_FOUND',
-            message: 'File not found',
-          },
-        });
-      }
-
-      // Delete file
-      await fs.unlink(filePath);
-
-      res.json({
-        success: true,
-        data: {
-          message: 'File deleted successfully',
-          filename,
-        },
-        meta: {
-          timestamp: new Date().toISOString(),
-          requestId: crypto.randomUUID(),
+    // Security check
+    if (userId !== req.user!.userId && req.user!.role !== 'admin') {
+      return res.status(403).json({
+        success: false,
+        error: {
+          code: 'FORBIDDEN',
+          message: 'You can only delete your own files',
         },
       });
-    } catch (error) {
-      next(error);
     }
+
+    const filePath = path.join(uploadsDir, userId, filename);
+
+    // Check if file exists
+    try {
+      await fs.access(filePath);
+    } catch {
+      return res.status(404).json({
+        success: false,
+        error: {
+          code: 'FILE_NOT_FOUND',
+          message: 'File not found',
+        },
+      });
+    }
+
+    // Delete file
+    await fs.unlink(filePath);
+
+    res.json({
+      success: true,
+      data: {
+        message: 'File deleted successfully',
+        filename,
+      },
+      meta: {
+        timestamp: new Date().toISOString(),
+        requestId: crypto.randomUUID(),
+      },
+    });
+  } catch (error) {
+    next(error);
   }
-);
+});
 
 /**
  * GET /api/v1/upload/list

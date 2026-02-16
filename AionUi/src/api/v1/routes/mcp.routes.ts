@@ -4,7 +4,8 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { Router, Request, Response, NextFunction } from 'express';
+import type { Request, Response, NextFunction } from 'express';
+import { Router } from 'express';
 import { z } from 'zod';
 import { paginationQuerySchema } from '../schemas/common';
 import { validateRequest } from '../middleware/validate';
@@ -160,51 +161,47 @@ router.post(
  * GET /api/v1/mcp/servers/:id
  * Get MCP server details
  */
-router.get(
-  '/servers/:id',
-  validateRequest({ params: z.object({ id: z.string().uuid() }) }),
-  async (req: Request, res: Response, next: NextFunction) => {
-    try {
-      const { id } = req.params;
+router.get('/servers/:id', validateRequest({ params: z.object({ id: z.string().uuid() }) }), async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const { id } = req.params;
 
-      // TODO: Fetch from MCP service
-      // const server = await mcpService.getServer(id)
+    // TODO: Fetch from MCP service
+    // const server = await mcpService.getServer(id)
 
-      // Mock data
-      const server = {
-        id,
-        name: 'github',
-        displayName: 'GitHub',
-        description: 'Interact with GitHub repositories',
-        command: 'npx',
-        args: ['-y', '@modelcontextprotocol/server-github'],
-        env: { GITHUB_TOKEN: '***masked***' },
-        enabled: true,
-        status: 'connected' as const,
-        capabilities: {
-          tools: true,
-          resources: true,
-          prompts: true,
-        },
-        toolCount: 25,
-        resourceCount: 5,
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString(),
-      };
+    // Mock data
+    const server = {
+      id,
+      name: 'github',
+      displayName: 'GitHub',
+      description: 'Interact with GitHub repositories',
+      command: 'npx',
+      args: ['-y', '@modelcontextprotocol/server-github'],
+      env: { GITHUB_TOKEN: '***masked***' },
+      enabled: true,
+      status: 'connected' as const,
+      capabilities: {
+        tools: true,
+        resources: true,
+        prompts: true,
+      },
+      toolCount: 25,
+      resourceCount: 5,
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+    };
 
-      res.json({
-        success: true,
-        data: server,
-        meta: {
-          timestamp: new Date().toISOString(),
-          requestId: crypto.randomUUID(),
-        },
-      });
-    } catch (error) {
-      next(error);
-    }
+    res.json({
+      success: true,
+      data: server,
+      meta: {
+        timestamp: new Date().toISOString(),
+        requestId: crypto.randomUUID(),
+      },
+    });
+  } catch (error) {
+    next(error);
   }
-);
+});
 
 /**
  * PATCH /api/v1/mcp/servers/:id
@@ -270,85 +267,77 @@ router.patch(
  * DELETE /api/v1/mcp/servers/:id
  * Remove MCP server
  */
-router.delete(
-  '/servers/:id',
-  validateRequest({ params: z.object({ id: z.string().uuid() }) }),
-  async (req: Request, res: Response, next: NextFunction) => {
-    try {
-      const { id } = req.params;
+router.delete('/servers/:id', validateRequest({ params: z.object({ id: z.string().uuid() }) }), async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const { id } = req.params;
 
-      // TODO: Remove from MCP service
-      // await mcpService.removeServer(id)
+    // TODO: Remove from MCP service
+    // await mcpService.removeServer(id)
 
-      res.json({
-        success: true,
-        data: { id, deleted: true },
-        meta: {
-          timestamp: new Date().toISOString(),
-          requestId: crypto.randomUUID(),
-        },
-      });
-    } catch (error) {
-      next(error);
-    }
+    res.json({
+      success: true,
+      data: { id, deleted: true },
+      meta: {
+        timestamp: new Date().toISOString(),
+        requestId: crypto.randomUUID(),
+      },
+    });
+  } catch (error) {
+    next(error);
   }
-);
+});
 
 /**
  * GET /api/v1/mcp/servers/:id/tools
  * List tools provided by server
  */
-router.get(
-  '/servers/:id/tools',
-  validateRequest({ params: z.object({ id: z.string().uuid() }) }),
-  async (req: Request, res: Response, next: NextFunction) => {
-    try {
-      const { id } = req.params;
+router.get('/servers/:id/tools', validateRequest({ params: z.object({ id: z.string().uuid() }) }), async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const { id } = req.params;
 
-      // TODO: Fetch tools from MCP service
-      // const tools = await mcpService.listTools(id)
+    // TODO: Fetch tools from MCP service
+    // const tools = await mcpService.listTools(id)
 
-      // Mock data
-      const tools = [
-        {
-          name: 'create_issue',
-          description: 'Create a new GitHub issue',
-          inputSchema: {
-            type: 'object',
-            properties: {
-              title: { type: 'string' },
-              body: { type: 'string' },
-              labels: { type: 'array', items: { type: 'string' } },
-            },
-            required: ['title'],
+    // Mock data
+    const tools = [
+      {
+        name: 'create_issue',
+        description: 'Create a new GitHub issue',
+        inputSchema: {
+          type: 'object',
+          properties: {
+            title: { type: 'string' },
+            body: { type: 'string' },
+            labels: { type: 'array', items: { type: 'string' } },
+          },
+          required: ['title'],
+        },
+      },
+      {
+        name: 'list_issues',
+        description: 'List issues from a repository',
+        inputSchema: {
+          type: 'object',
+          properties: {
+            state: { type: 'string', enum: ['open', 'closed', 'all'] },
+            labels: { type: 'array', items: { type: 'string' } },
           },
         },
-        {
-          name: 'list_issues',
-          description: 'List issues from a repository',
-          inputSchema: {
-            type: 'object',
-            properties: {
-              state: { type: 'string', enum: ['open', 'closed', 'all'] },
-              labels: { type: 'array', items: { type: 'string' } },
-            },
-          },
-        },
-      ];
+      },
+    ];
 
-      res.json({
-        success: true,
-        data: tools,
-        meta: {
-          timestamp: new Date().toISOString(),
-          requestId: crypto.randomUUID(),
-        },
-      });
-    } catch (error) {
-      next(error);
-    }
+    res.json({
+      success: true,
+      data: tools,
+      meta: {
+        timestamp: new Date().toISOString(),
+        requestId: crypto.randomUUID(),
+      },
+    });
+  } catch (error) {
+    next(error);
   }
-);
+});
 
 /**
  * POST /api/v1/mcp/servers/:id/call

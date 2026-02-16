@@ -4,13 +4,10 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { Router, Request, Response, NextFunction } from 'express';
+import type { Request, Response, NextFunction } from 'express';
+import { Router } from 'express';
 import { z } from 'zod';
-import {
-  modelSchema,
-  createModelRequestSchema,
-  updateModelRequestSchema,
-} from '../schemas/model';
+import { modelSchema, createModelRequestSchema, updateModelRequestSchema } from '../schemas/model';
 import { paginationQuerySchema } from '../schemas/common';
 import { validateRequest } from '../middleware/validate';
 import { authenticateJWT } from '../middleware/auth';
@@ -109,91 +106,83 @@ router.get(
  * POST /api/v1/models
  * Create new model
  */
-router.post(
-  '/',
-  validateRequest({ body: createModelRequestSchema }),
-  async (req: Request, res: Response, next: NextFunction) => {
-    try {
-      const data = req.body as z.infer<typeof createModelRequestSchema>;
+router.post('/', validateRequest({ body: createModelRequestSchema }), async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const data = req.body as z.infer<typeof createModelRequestSchema>;
 
-      // TODO: Create in database
-      // const model = await modelService.create(data)
+    // TODO: Create in database
+    // const model = await modelService.create(data)
 
-      // Mock response
-      const model = {
-        id: crypto.randomUUID(),
-        ...data,
-        capabilities: data.capabilities || {
-          chat: true,
-          vision: false,
-          functionCalling: false,
-          streaming: true,
-        },
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString(),
-      };
+    // Mock response
+    const model = {
+      id: crypto.randomUUID(),
+      ...data,
+      capabilities: data.capabilities || {
+        chat: true,
+        vision: false,
+        functionCalling: false,
+        streaming: true,
+      },
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+    };
 
-      res.status(201).json({
-        success: true,
-        data: model,
-        meta: {
-          timestamp: new Date().toISOString(),
-          requestId: crypto.randomUUID(),
-        },
-      });
-    } catch (error) {
-      next(error);
-    }
+    res.status(201).json({
+      success: true,
+      data: model,
+      meta: {
+        timestamp: new Date().toISOString(),
+        requestId: crypto.randomUUID(),
+      },
+    });
+  } catch (error) {
+    next(error);
   }
-);
+});
 
 /**
  * GET /api/v1/models/:id
  * Get single model
  */
-router.get(
-  '/:id',
-  validateRequest({ params: z.object({ id: z.string().uuid() }) }),
-  async (req: Request, res: Response, next: NextFunction) => {
-    try {
-      const { id } = req.params;
+router.get('/:id', validateRequest({ params: z.object({ id: z.string().uuid() }) }), async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const { id } = req.params;
 
-      // TODO: Fetch from database
-      // const model = await modelService.getById(id)
+    // TODO: Fetch from database
+    // const model = await modelService.getById(id)
 
-      // Mock data
-      const model = {
-        id,
-        name: 'gemini-2.0-flash',
-        displayName: 'Gemini 2.0 Flash',
-        providerId: crypto.randomUUID(),
-        modelId: 'gemini-2.0-flash-exp',
-        capabilities: {
-          chat: true,
-          vision: true,
-          functionCalling: true,
-          streaming: true,
-        },
-        contextWindow: 1000000,
-        maxOutputTokens: 8192,
-        enabled: true,
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString(),
-      };
+    // Mock data
+    const model = {
+      id,
+      name: 'gemini-2.0-flash',
+      displayName: 'Gemini 2.0 Flash',
+      providerId: crypto.randomUUID(),
+      modelId: 'gemini-2.0-flash-exp',
+      capabilities: {
+        chat: true,
+        vision: true,
+        functionCalling: true,
+        streaming: true,
+      },
+      contextWindow: 1000000,
+      maxOutputTokens: 8192,
+      enabled: true,
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+    };
 
-      res.json({
-        success: true,
-        data: model,
-        meta: {
-          timestamp: new Date().toISOString(),
-          requestId: crypto.randomUUID(),
-        },
-      });
-    } catch (error) {
-      next(error);
-    }
+    res.json({
+      success: true,
+      data: model,
+      meta: {
+        timestamp: new Date().toISOString(),
+        requestId: crypto.randomUUID(),
+      },
+    });
+  } catch (error) {
+    next(error);
   }
-);
+});
 
 /**
  * PATCH /api/v1/models/:id
@@ -251,29 +240,25 @@ router.patch(
  * DELETE /api/v1/models/:id
  * Delete model
  */
-router.delete(
-  '/:id',
-  validateRequest({ params: z.object({ id: z.string().uuid() }) }),
-  async (req: Request, res: Response, next: NextFunction) => {
-    try {
-      const { id } = req.params;
+router.delete('/:id', validateRequest({ params: z.object({ id: z.string().uuid() }) }), async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const { id } = req.params;
 
-      // TODO: Delete from database
-      // await modelService.delete(id)
+    // TODO: Delete from database
+    // await modelService.delete(id)
 
-      res.json({
-        success: true,
-        data: { id, deleted: true },
-        meta: {
-          timestamp: new Date().toISOString(),
-          requestId: crypto.randomUUID(),
-        },
-      });
-    } catch (error) {
-      next(error);
-    }
+    res.json({
+      success: true,
+      data: { id, deleted: true },
+      meta: {
+        timestamp: new Date().toISOString(),
+        requestId: crypto.randomUUID(),
+      },
+    });
+  } catch (error) {
+    next(error);
   }
-);
+});
 
 /**
  * POST /api/v1/models/:id/test

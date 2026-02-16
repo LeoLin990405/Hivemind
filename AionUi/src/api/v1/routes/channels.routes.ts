@@ -4,7 +4,8 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { Router, Request, Response, NextFunction } from 'express';
+import type { Request, Response, NextFunction } from 'express';
+import { Router } from 'express';
 import { z } from 'zod';
 import { paginationQuerySchema } from '../schemas/common';
 import { validateRequest } from '../middleware/validate';
@@ -170,51 +171,47 @@ router.post(
  * GET /api/v1/channels/:id
  * Get channel details
  */
-router.get(
-  '/:id',
-  validateRequest({ params: z.object({ id: z.string().uuid() }) }),
-  async (req: Request, res: Response, next: NextFunction) => {
-    try {
-      const { id } = req.params;
+router.get('/:id', validateRequest({ params: z.object({ id: z.string().uuid() }) }), async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const { id } = req.params;
 
-      // TODO: Fetch from service
-      // const channel = await channelsService.getById(id)
+    // TODO: Fetch from service
+    // const channel = await channelsService.getById(id)
 
-      // Mock data
-      const channel = {
-        id,
-        name: 'gemini-codex-sync',
-        displayName: 'Gemini ↔ Codex Sync',
-        description: 'Synchronize context between Gemini and Codex agents',
-        type: 'agent' as const,
-        participants: [
-          { id: crypto.randomUUID(), name: 'gemini', type: 'agent', status: 'online' },
-          { id: crypto.randomUUID(), name: 'codex', type: 'agent', status: 'online' },
-        ],
-        active: true,
-        messageCount: 1247,
-        lastMessageAt: new Date(Date.now() - 600000).toISOString(),
-        metadata: {
-          syncInterval: 300000, // 5 min
-          autoReconnect: true,
-        },
-        createdAt: new Date(Date.now() - 2592000000).toISOString(),
-        updatedAt: new Date().toISOString(),
-      };
+    // Mock data
+    const channel = {
+      id,
+      name: 'gemini-codex-sync',
+      displayName: 'Gemini ↔ Codex Sync',
+      description: 'Synchronize context between Gemini and Codex agents',
+      type: 'agent' as const,
+      participants: [
+        { id: crypto.randomUUID(), name: 'gemini', type: 'agent', status: 'online' },
+        { id: crypto.randomUUID(), name: 'codex', type: 'agent', status: 'online' },
+      ],
+      active: true,
+      messageCount: 1247,
+      lastMessageAt: new Date(Date.now() - 600000).toISOString(),
+      metadata: {
+        syncInterval: 300000, // 5 min
+        autoReconnect: true,
+      },
+      createdAt: new Date(Date.now() - 2592000000).toISOString(),
+      updatedAt: new Date().toISOString(),
+    };
 
-      res.json({
-        success: true,
-        data: channel,
-        meta: {
-          timestamp: new Date().toISOString(),
-          requestId: crypto.randomUUID(),
-        },
-      });
-    } catch (error) {
-      next(error);
-    }
+    res.json({
+      success: true,
+      data: channel,
+      meta: {
+        timestamp: new Date().toISOString(),
+        requestId: crypto.randomUUID(),
+      },
+    });
+  } catch (error) {
+    next(error);
   }
-);
+});
 
 /**
  * PATCH /api/v1/channels/:id
@@ -255,11 +252,10 @@ router.patch(
         displayName: updates.displayName || 'Gemini ↔ Codex Sync',
         description: updates.description || 'Synchronize context between Gemini and Codex agents',
         type: 'agent' as const,
-        participants:
-          updates.participants || [
-            { id: crypto.randomUUID(), name: 'gemini', type: 'agent' },
-            { id: crypto.randomUUID(), name: 'codex', type: 'agent' },
-          ],
+        participants: updates.participants || [
+          { id: crypto.randomUUID(), name: 'gemini', type: 'agent' },
+          { id: crypto.randomUUID(), name: 'codex', type: 'agent' },
+        ],
         active: updates.active ?? true,
         messageCount: 1247,
         lastMessageAt: new Date(Date.now() - 600000).toISOString(),
@@ -286,29 +282,25 @@ router.patch(
  * DELETE /api/v1/channels/:id
  * Delete channel
  */
-router.delete(
-  '/:id',
-  validateRequest({ params: z.object({ id: z.string().uuid() }) }),
-  async (req: Request, res: Response, next: NextFunction) => {
-    try {
-      const { id } = req.params;
+router.delete('/:id', validateRequest({ params: z.object({ id: z.string().uuid() }) }), async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const { id } = req.params;
 
-      // TODO: Delete channel and clean up messages
-      // await channelsService.delete(id)
+    // TODO: Delete channel and clean up messages
+    // await channelsService.delete(id)
 
-      res.json({
-        success: true,
-        data: { id, deleted: true },
-        meta: {
-          timestamp: new Date().toISOString(),
-          requestId: crypto.randomUUID(),
-        },
-      });
-    } catch (error) {
-      next(error);
-    }
+    res.json({
+      success: true,
+      data: { id, deleted: true },
+      meta: {
+        timestamp: new Date().toISOString(),
+        requestId: crypto.randomUUID(),
+      },
+    });
+  } catch (error) {
+    next(error);
   }
-);
+});
 
 /**
  * POST /api/v1/channels/:id/message

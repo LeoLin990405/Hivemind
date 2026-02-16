@@ -55,9 +55,9 @@ Socket.IO is automatically initialized when the server starts:
 ```typescript
 // src/webserver/index.ts
 if (useSocketIO) {
-  initSocketIOAdapter(server);  // Socket.IO
+  initSocketIOAdapter(server); // Socket.IO
 } else {
-  initWebAdapter(wss);          // Native ws
+  initWebAdapter(wss); // Native ws
 }
 ```
 
@@ -116,19 +116,23 @@ unsubscribe();
 ```typescript
 // Emit event (no acknowledgment)
 api.ws.emit('typing:start', {
-  conversationId: 'conv123'
+  conversationId: 'conv123',
 });
 
 // For acknowledgments, use the socket directly
 const socket = api.ws.getSocket();
-socket?.emit('message:send', {
-  conversationId: 'conv123',
-  content: 'Hello World'
-}, (response) => {
-  if (response.success) {
-    console.log('Message sent:', response.messageId);
+socket?.emit(
+  'message:send',
+  {
+    conversationId: 'conv123',
+    content: 'Hello World',
+  },
+  (response) => {
+    if (response.success) {
+      console.log('Message sent:', response.messageId);
+    }
   }
-});
+);
 ```
 
 ### Joining Rooms
@@ -136,12 +140,12 @@ socket?.emit('message:send', {
 ```typescript
 // Join a conversation room
 api.ws.emit('conversation:join', {
-  conversationId: 'conv123'
+  conversationId: 'conv123',
 });
 
 // Leave a conversation room
 api.ws.emit('conversation:leave', {
-  conversationId: 'conv123'
+  conversationId: 'conv123',
 });
 ```
 
@@ -195,7 +199,7 @@ manager?.broadcast('system:notification', {
   type: 'info',
   title: 'Server Update',
   message: 'System will restart in 5 minutes',
-  timestamp: Date.now()
+  timestamp: Date.now(),
 });
 
 // Broadcast to specific user
@@ -238,8 +242,7 @@ socket.on('custom:event', (data, callback) => {
     callback({ success: true, data: result });
 
     // Broadcast to others in room
-    socket.to(ROOMS.conversation(data.conversationId))
-      .emit('custom:event:broadcast', result);
+    socket.to(ROOMS.conversation(data.conversationId)).emit('custom:event:broadcast', result);
   } catch (error) {
     callback({ success: false, error: error.message });
   }
@@ -254,8 +257,8 @@ socket.on('custom:event', (data, callback) => {
 // 1. Client connects with token
 const socket = io(baseURL, {
   auth: {
-    token: accessToken
-  }
+    token: accessToken,
+  },
 });
 
 // 2. Server validates token in middleware
@@ -291,7 +294,7 @@ setInterval(() => {
 ```typescript
 // Client refreshes token
 api.ws.emit('auth:refresh', {
-  refreshToken: newRefreshToken
+  refreshToken: newRefreshToken,
 });
 
 // Server updates stored token
@@ -311,10 +314,10 @@ socket.on('auth:refresh', (data) => {
 
 ```typescript
 export const NAMESPACES = {
-  DEFAULT: '/',               // Main namespace
-  CONVERSATIONS: '/conversations',  // Conversation-specific
-  NOTIFICATIONS: '/notifications',  // System notifications
-  ADMIN: '/admin'            // Admin-only namespace
+  DEFAULT: '/', // Main namespace
+  CONVERSATIONS: '/conversations', // Conversation-specific
+  NOTIFICATIONS: '/notifications', // System notifications
+  ADMIN: '/admin', // Admin-only namespace
 };
 ```
 
@@ -325,7 +328,7 @@ export const ROOMS = {
   conversation: (id) => `conversation:${id}`,
   user: (id) => `user:${id}`,
   admin: 'admin-room',
-  all: 'all-users'
+  all: 'all-users',
 };
 ```
 
@@ -340,7 +343,7 @@ conversationsNS.on('connection', (socket) => {
 
 // Client-side: Connect to namespace
 const convSocket = io('/conversations', {
-  auth: { token }
+  auth: { token },
 });
 ```
 
@@ -433,6 +436,7 @@ api.ws.subscribe('message:new', handleMessage);
 **Problem**: Client cannot connect to Socket.IO server
 
 **Solutions**:
+
 1. Check server is running: `npm run webui`
 2. Verify USE_SOCKET_IO=true in .env
 3. Check CORS configuration in server
@@ -444,6 +448,7 @@ api.ws.subscribe('message:new', handleMessage);
 **Problem**: Client subscribed but not receiving events
 
 **Solutions**:
+
 1. Verify event name matches exactly (case-sensitive)
 2. Check if client is in the correct room
 3. Verify server is emitting to correct room
@@ -454,6 +459,7 @@ api.ws.subscribe('message:new', handleMessage);
 **Problem**: Client keeps getting disconnected with "auth-expired"
 
 **Solutions**:
+
 1. Implement token refresh before expiration
 2. Check token expiration time (should be > connection time)
 3. Verify refresh token endpoint works

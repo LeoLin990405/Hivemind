@@ -121,9 +121,15 @@ export const SemanticResourceAttributes = new Proxy({}, { get: () => '' });
 // --- @opentelemetry/resources ---
 export const resourceFromAttributes = () => ({});
 export class Resource {
-  static default() { return new Resource(); }
-  static empty() { return new Resource(); }
-  merge() { return this; }
+  static default() {
+    return new Resource();
+  }
+  static empty() {
+    return new Resource();
+  }
+  merge() {
+    return this;
+  }
 }
 
 // --- @opentelemetry/sdk-metrics ---
@@ -133,72 +139,110 @@ export enum AggregationTemporality {
 }
 
 export class MeterProvider {
-  getMeter() { return noopMeter; }
-  shutdown() { return Promise.resolve(); }
-  forceFlush() { return Promise.resolve(); }
+  getMeter() {
+    return noopMeter;
+  }
+  shutdown() {
+    return Promise.resolve();
+  }
+  forceFlush() {
+    return Promise.resolve();
+  }
   addMetricReader() {}
 }
 
 export class ConsoleMetricExporter {
   export() {}
-  shutdown() { return Promise.resolve(); }
+  shutdown() {
+    return Promise.resolve();
+  }
 }
 
 export class PeriodicExportingMetricReader {
   constructor() {}
-  shutdown() { return Promise.resolve(); }
-  forceFlush() { return Promise.resolve(); }
+  shutdown() {
+    return Promise.resolve();
+  }
+  forceFlush() {
+    return Promise.resolve();
+  }
 }
 
 // --- @opentelemetry/sdk-trace-node / sdk-trace-base ---
 export class TracerProvider {
-  getTracer() { return noopTracer; }
-  shutdown() { return Promise.resolve(); }
-  forceFlush() { return Promise.resolve(); }
+  getTracer() {
+    return noopTracer;
+  }
+  shutdown() {
+    return Promise.resolve();
+  }
+  forceFlush() {
+    return Promise.resolve();
+  }
   addSpanProcessor() {}
   register() {}
 }
 
 export class BatchSpanProcessor {
   constructor() {}
-  shutdown() { return Promise.resolve(); }
-  forceFlush() { return Promise.resolve(); }
+  shutdown() {
+    return Promise.resolve();
+  }
+  forceFlush() {
+    return Promise.resolve();
+  }
   onStart() {}
   onEnd() {}
 }
 
 export class ConsoleSpanExporter {
   export() {}
-  shutdown() { return Promise.resolve(); }
+  shutdown() {
+    return Promise.resolve();
+  }
 }
 
 export class SimpleSpanProcessor extends BatchSpanProcessor {}
 
 // --- @opentelemetry/sdk-logs ---
 export class LoggerProvider {
-  getLogger() { return noopLogger; }
-  shutdown() { return Promise.resolve(); }
-  forceFlush() { return Promise.resolve(); }
+  getLogger() {
+    return noopLogger;
+  }
+  shutdown() {
+    return Promise.resolve();
+  }
+  forceFlush() {
+    return Promise.resolve();
+  }
   addLogRecordProcessor() {}
 }
 
 export class BatchLogRecordProcessor {
   constructor() {}
-  shutdown() { return Promise.resolve(); }
-  forceFlush() { return Promise.resolve(); }
+  shutdown() {
+    return Promise.resolve();
+  }
+  forceFlush() {
+    return Promise.resolve();
+  }
   onEmit() {}
 }
 
 export class ConsoleLogRecordExporter {
   export() {}
-  shutdown() { return Promise.resolve(); }
+  shutdown() {
+    return Promise.resolve();
+  }
 }
 
 // --- @opentelemetry/sdk-node ---
 export class NodeSDK {
   constructor() {}
   start() {}
-  shutdown() { return Promise.resolve(); }
+  shutdown() {
+    return Promise.resolve();
+  }
 }
 
 // --- @opentelemetry/otlp-exporter-base ---
@@ -211,19 +255,25 @@ export enum CompressionAlgorithm {
 export class OTLPTraceExporter {
   constructor() {}
   export() {}
-  shutdown() { return Promise.resolve(); }
+  shutdown() {
+    return Promise.resolve();
+  }
 }
 
 export class OTLPMetricExporter {
   constructor() {}
   export() {}
-  shutdown() { return Promise.resolve(); }
+  shutdown() {
+    return Promise.resolve();
+  }
 }
 
 export class OTLPLogExporter {
   constructor() {}
   export() {}
-  shutdown() { return Promise.resolve(); }
+  shutdown() {
+    return Promise.resolve();
+  }
 }
 
 // --- @opentelemetry/instrumentation-http ---
@@ -243,29 +293,53 @@ export const registerInstrumentations = () => {};
 export class TraceExporter {
   constructor() {}
   export() {}
-  shutdown() { return Promise.resolve(); }
+  shutdown() {
+    return Promise.resolve();
+  }
 }
 
 // --- @google-cloud/opentelemetry-cloud-monitoring-exporter ---
 export class MetricExporter {
   constructor() {}
   export() {}
-  shutdown() { return Promise.resolve(); }
+  shutdown() {
+    return Promise.resolve();
+  }
 }
 
 // --- Meter/Counter/Histogram classes for type compatibility ---
 export class Meter {
-  createCounter() { return noopCounter; }
-  createHistogram() { return noopHistogram; }
-  createUpDownCounter() { return noopUpDownCounter; }
-  createObservableGauge() { return noopObservableGauge; }
+  createCounter() {
+    return noopCounter;
+  }
+  createHistogram() {
+    return noopHistogram;
+  }
+  createUpDownCounter() {
+    return noopUpDownCounter;
+  }
+  createObservableGauge() {
+    return noopObservableGauge;
+  }
 }
 
-export class Counter { add() {} }
-export class Histogram { record() {} }
+export class Counter {
+  add() {}
+}
+export class Histogram {
+  record() {}
+}
 
 // Default export
 export default {
-  trace, metrics, context, propagation, diag, api, logs,
-  SpanStatusCode, ValueType, DiagLogLevel,
+  trace,
+  metrics,
+  context,
+  propagation,
+  diag,
+  api,
+  logs,
+  SpanStatusCode,
+  ValueType,
+  DiagLogLevel,
 };

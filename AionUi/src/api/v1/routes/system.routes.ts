@@ -4,7 +4,8 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { Router, Request, Response, NextFunction } from 'express';
+import type { Request, Response, NextFunction } from 'express';
+import { Router } from 'express';
 import { z } from 'zod';
 import { validateRequest } from '../middleware/validate';
 import { authenticateJWT } from '../middleware/auth';
@@ -18,97 +19,91 @@ router.use(authenticateJWT);
  * GET /api/v1/system/info
  * Get system information
  */
-router.get(
-  '/info',
-  async (req: Request, res: Response, next: NextFunction) => {
-    try {
-      // TODO: Fetch real system info
-      // const info = await systemService.getInfo()
+router.get('/info', async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    // TODO: Fetch real system info
+    // const info = await systemService.getInfo()
 
-      // Mock data
-      const info = {
-        version: '1.11.1',
-        platform: process.platform,
-        arch: process.arch,
-        nodeVersion: process.version,
-        uptime: process.uptime(),
-        memory: {
-          total: 16 * 1024 * 1024 * 1024, // 16GB
-          used: 8 * 1024 * 1024 * 1024, // 8GB
-          free: 8 * 1024 * 1024 * 1024, // 8GB
-        },
-        cpu: {
-          model: 'Apple M2 Pro',
-          cores: 10,
-          usage: 35.2, // percentage
-        },
-        database: {
-          type: 'sqlite',
-          size: 52428800, // 50MB
-          tables: 15,
-        },
-        api: {
-          version: 'v1',
-          endpoints: 105,
-          requestsHandled: 12847,
-          averageResponseTime: 45, // ms
-        },
-      };
+    // Mock data
+    const info = {
+      version: '1.11.1',
+      platform: process.platform,
+      arch: process.arch,
+      nodeVersion: process.version,
+      uptime: process.uptime(),
+      memory: {
+        total: 16 * 1024 * 1024 * 1024, // 16GB
+        used: 8 * 1024 * 1024 * 1024, // 8GB
+        free: 8 * 1024 * 1024 * 1024, // 8GB
+      },
+      cpu: {
+        model: 'Apple M2 Pro',
+        cores: 10,
+        usage: 35.2, // percentage
+      },
+      database: {
+        type: 'sqlite',
+        size: 52428800, // 50MB
+        tables: 15,
+      },
+      api: {
+        version: 'v1',
+        endpoints: 105,
+        requestsHandled: 12847,
+        averageResponseTime: 45, // ms
+      },
+    };
 
-      res.json({
-        success: true,
-        data: info,
-        meta: {
-          timestamp: new Date().toISOString(),
-          requestId: crypto.randomUUID(),
-        },
-      });
-    } catch (error) {
-      next(error);
-    }
+    res.json({
+      success: true,
+      data: info,
+      meta: {
+        timestamp: new Date().toISOString(),
+        requestId: crypto.randomUUID(),
+      },
+    });
+  } catch (error) {
+    next(error);
   }
-);
+});
 
 /**
  * GET /api/v1/system/health
  * Get system health status
  */
-router.get(
-  '/health',
-  async (req: Request, res: Response, next: NextFunction) => {
-    try {
-      // TODO: Check real health status
-      // const health = await systemService.checkHealth()
+router.get('/health', async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    // TODO: Check real health status
+    // const health = await systemService.checkHealth()
 
-      // Mock data
-      const health = {
-        status: 'healthy' as const,
-        uptime: process.uptime(),
-        checks: {
-          database: { status: 'healthy', latency: 2 },
-          filesystem: { status: 'healthy', writeable: true },
-          memory: { status: 'healthy', usage: 50 },
-          cpu: { status: 'healthy', usage: 35.2 },
-          mcpServers: { status: 'healthy', connected: 5, total: 5 },
-          skills: { status: 'healthy', loaded: 12, errors: 0 },
-          cronJobs: { status: 'healthy', running: 3, failed: 0 },
-        },
-        lastCheck: new Date().toISOString(),
-      };
+    // Mock data
+    const health = {
+      status: 'healthy' as const,
+      uptime: process.uptime(),
+      checks: {
+        database: { status: 'healthy', latency: 2 },
+        filesystem: { status: 'healthy', writeable: true },
+        memory: { status: 'healthy', usage: 50 },
+        cpu: { status: 'healthy', usage: 35.2 },
+        mcpServers: { status: 'healthy', connected: 5, total: 5 },
+        skills: { status: 'healthy', loaded: 12, errors: 0 },
+        cronJobs: { status: 'healthy', running: 3, failed: 0 },
+      },
+      lastCheck: new Date().toISOString(),
+    };
 
-      res.json({
-        success: true,
-        data: health,
-        meta: {
-          timestamp: new Date().toISOString(),
-          requestId: crypto.randomUUID(),
-        },
-      });
-    } catch (error) {
-      next(error);
-    }
+    res.json({
+      success: true,
+      data: health,
+      meta: {
+        timestamp: new Date().toISOString(),
+        requestId: crypto.randomUUID(),
+      },
+    });
+  } catch (error) {
+    next(error);
   }
-);
+});
 
 /**
  * GET /api/v1/system/logs
@@ -184,62 +179,59 @@ router.get(
  * GET /api/v1/system/config
  * Get system configuration
  */
-router.get(
-  '/config',
-  async (req: Request, res: Response, next: NextFunction) => {
-    try {
-      // TODO: Fetch configuration (mask sensitive values)
-      // const config = await systemService.getConfig()
+router.get('/config', async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    // TODO: Fetch configuration (mask sensitive values)
+    // const config = await systemService.getConfig()
 
-      // Mock data
-      const config = {
-        server: {
-          port: 3000,
-          host: 'localhost',
-          cors: {
-            enabled: true,
-            origins: ['http://localhost:5173'],
-          },
+    // Mock data
+    const config = {
+      server: {
+        port: 3000,
+        host: 'localhost',
+        cors: {
+          enabled: true,
+          origins: ['http://localhost:5173'],
         },
-        database: {
-          type: 'sqlite',
-          path: './data.db',
-          backupEnabled: true,
-          backupInterval: 86400000, // 24 hours
-        },
-        auth: {
-          jwtSecret: '***masked***',
-          jwtExpiry: 3600000, // 1 hour
-          refreshTokenExpiry: 2592000000, // 30 days
-        },
-        features: {
-          mcpEnabled: true,
-          skillsEnabled: true,
-          cronEnabled: true,
-          channelsEnabled: true,
-          notebooklmEnabled: true,
-          obsidianEnabled: true,
-        },
-        limits: {
-          maxFileSize: 104857600, // 100MB
-          maxConcurrentJobs: 10,
-          maxMessagesPerChannel: 10000,
-        },
-      };
+      },
+      database: {
+        type: 'sqlite',
+        path: './data.db',
+        backupEnabled: true,
+        backupInterval: 86400000, // 24 hours
+      },
+      auth: {
+        jwtSecret: '***masked***',
+        jwtExpiry: 3600000, // 1 hour
+        refreshTokenExpiry: 2592000000, // 30 days
+      },
+      features: {
+        mcpEnabled: true,
+        skillsEnabled: true,
+        cronEnabled: true,
+        channelsEnabled: true,
+        notebooklmEnabled: true,
+        obsidianEnabled: true,
+      },
+      limits: {
+        maxFileSize: 104857600, // 100MB
+        maxConcurrentJobs: 10,
+        maxMessagesPerChannel: 10000,
+      },
+    };
 
-      res.json({
-        success: true,
-        data: config,
-        meta: {
-          timestamp: new Date().toISOString(),
-          requestId: crypto.randomUUID(),
-        },
-      });
-    } catch (error) {
-      next(error);
-    }
+    res.json({
+      success: true,
+      data: config,
+      meta: {
+        timestamp: new Date().toISOString(),
+        requestId: crypto.randomUUID(),
+      },
+    });
+  } catch (error) {
+    next(error);
   }
-);
+});
 
 /**
  * PATCH /api/v1/system/config

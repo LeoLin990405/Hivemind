@@ -7,7 +7,8 @@
  * Catches React errors and displays fallback UI
  */
 
-import React, { Component, ReactNode } from 'react';
+import type { ReactNode } from 'react';
+import React, { Component } from 'react';
 import { Result, Button } from '@arco-design/web-react';
 import { IconExclamationCircle } from '@arco-design/web-react/icon';
 
@@ -73,11 +74,7 @@ export class ErrorBoundary extends Component<Props, State> {
 
   componentDidUpdate(prevProps: Props) {
     // Reset error state when resetKeys change
-    if (
-      this.props.resetKeys &&
-      prevProps.resetKeys &&
-      this.props.resetKeys.some((key, i) => key !== prevProps.resetKeys?.[i])
-    ) {
+    if (this.props.resetKeys && prevProps.resetKeys && this.props.resetKeys.some((key, i) => key !== prevProps.resetKeys?.[i])) {
       this.reset();
     }
   }
@@ -102,44 +99,40 @@ export class ErrorBoundary extends Component<Props, State> {
 
       // Default fallback UI
       return (
-        <div className="error-boundary-fallback p-8">
+        <div className='error-boundary-fallback p-8'>
           <Result
-            status="error"
+            status='error'
             icon={<IconExclamationCircle style={{ fontSize: 64, color: 'var(--color-danger-6)' }} />}
-            title="Something went wrong"
-            subTitle="An unexpected error occurred. Please try refreshing the page."
+            title='Something went wrong'
+            subTitle='An unexpected error occurred. Please try refreshing the page.'
             extra={[
-              <Button key="refresh" type="primary" onClick={() => window.location.reload()}>
+              <Button key='refresh' type='primary' onClick={() => window.location.reload()}>
                 Refresh Page
               </Button>,
-              <Button key="reset" onClick={this.reset}>
+              <Button key='reset' onClick={this.reset}>
                 Try Again
               </Button>,
             ]}
           >
             {process.env.NODE_ENV === 'development' && error && (
-              <div className="mt-6 text-left">
-                <details className="bg-gray-100 dark:bg-gray-800 p-4 rounded">
-                  <summary className="cursor-pointer font-semibold mb-2">
-                    Error Details (Development Only)
-                  </summary>
-                  <div className="space-y-2">
+              <div className='mt-6 text-left'>
+                <details className='bg-gray-100 dark:bg-gray-800 p-4 rounded'>
+                  <summary className='cursor-pointer font-semibold mb-2'>Error Details (Development Only)</summary>
+                  <div className='space-y-2'>
                     <div>
                       <strong>Error:</strong>
-                      <pre className="mt-1 text-sm overflow-auto">{error.toString()}</pre>
+                      <pre className='mt-1 text-sm overflow-auto'>{error.toString()}</pre>
                     </div>
                     {errorInfo && (
                       <div>
                         <strong>Component Stack:</strong>
-                        <pre className="mt-1 text-sm overflow-auto whitespace-pre-wrap">
-                          {errorInfo.componentStack}
-                        </pre>
+                        <pre className='mt-1 text-sm overflow-auto whitespace-pre-wrap'>{errorInfo.componentStack}</pre>
                       </div>
                     )}
                     {error.stack && (
                       <div>
                         <strong>Stack Trace:</strong>
-                        <pre className="mt-1 text-sm overflow-auto">{error.stack}</pre>
+                        <pre className='mt-1 text-sm overflow-auto'>{error.stack}</pre>
                       </div>
                     )}
                   </div>
@@ -171,15 +164,15 @@ export function QueryErrorBoundary({ children, onReset }: QueryErrorBoundaryProp
         console.error('React Query Error:', error, errorInfo);
       }}
       fallback={
-        <div className="query-error-boundary p-8">
+        <div className='query-error-boundary p-8'>
           <Result
-            status="error"
-            title="Failed to load data"
-            subTitle="There was an error loading the data. Please try again."
+            status='error'
+            title='Failed to load data'
+            subTitle='There was an error loading the data. Please try again.'
             extra={[
               <Button
-                key="retry"
-                type="primary"
+                key='retry'
+                type='primary'
                 onClick={() => {
                   onReset?.();
                   window.location.reload();
@@ -201,10 +194,7 @@ export function QueryErrorBoundary({ children, onReset }: QueryErrorBoundaryProp
  * withErrorBoundary HOC
  * Wraps a component with an error boundary
  */
-export function withErrorBoundary<P extends object>(
-  Component: React.ComponentType<P>,
-  errorBoundaryProps?: Omit<Props, 'children'>
-) {
+export function withErrorBoundary<P extends object>(Component: React.ComponentType<P>, errorBoundaryProps?: Omit<Props, 'children'>) {
   const WrappedComponent = (props: P) => (
     <ErrorBoundary {...errorBoundaryProps}>
       <Component {...props} />

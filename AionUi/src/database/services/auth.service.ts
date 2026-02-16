@@ -8,13 +8,7 @@
 
 import { UserService } from './user.service';
 import { EmailService } from './email.service';
-import {
-  generateTokenPair,
-  verifyRefreshToken,
-  getRefreshTokenExpiration,
-  generateRandomToken,
-  type JWTPayload,
-} from '../utils/jwt.util';
+import { generateTokenPair, verifyRefreshToken, getRefreshTokenExpiration, generateRandomToken, type JWTPayload } from '../utils/jwt.util';
 import type { User } from '../schema';
 
 export interface AuthResult {
@@ -43,12 +37,7 @@ export class AuthService {
   /**
    * Register new user and return auth tokens
    */
-  async register(data: {
-    username: string;
-    email: string;
-    password: string;
-    displayName?: string;
-  }): Promise<AuthResult> {
+  async register(data: { username: string; email: string; password: string; displayName?: string }): Promise<AuthResult> {
     // Create user
     const user = await this.userService.register(data);
 
@@ -81,11 +70,7 @@ export class AuthService {
   /**
    * Login user and return auth tokens (支持 2FA)
    */
-  async login(data: {
-    usernameOrEmail: string;
-    password: string;
-    twoFactorToken?: string;
-  }): Promise<AuthResult | { requiresTwoFactor: true; userId: string } | null> {
+  async login(data: { usernameOrEmail: string; password: string; twoFactorToken?: string }): Promise<AuthResult | { requiresTwoFactor: true; userId: string } | null> {
     // Authenticate user
     const user = await this.userService.authenticate(data.usernameOrEmail, data.password);
     if (!user) {

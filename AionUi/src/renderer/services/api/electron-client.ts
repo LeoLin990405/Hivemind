@@ -6,12 +6,7 @@
  * Electron API Client Implementation (Backward Compatibility)
  */
 
-import type {
-  APIClient,
-  APIRequestOptions,
-  EventCallback,
-  UnsubscribeFn,
-} from './types';
+import type { APIClient, APIRequestOptions, EventCallback, UnsubscribeFn } from './types';
 import { ConnectionStatus } from './types';
 
 // Extend window interface

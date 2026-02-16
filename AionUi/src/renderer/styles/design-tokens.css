@@ -132,15 +132,15 @@
   --transition-slow: 350ms ease;
 
   /* ── Semi-transparent semantic ──────────────────────────────────────── */
-  --primary-rgba-10: rgba(94, 106, 210, 0.10);
+  --primary-rgba-10: rgba(94, 106, 210, 0.1);
   --primary-rgba-15: rgba(94, 106, 210, 0.15);
-  --primary-rgba-20: rgba(94, 106, 210, 0.20);
-  --primary-rgba-30: rgba(94, 106, 210, 0.30);
-  --primary-rgba-40: rgba(94, 106, 210, 0.40);
-  --success-rgba-20: rgba(76, 175, 80, 0.20);
-  --warning-rgba-20: rgba(245, 158, 11, 0.20);
-  --danger-rgba-20: rgba(229, 72, 77, 0.20);
-  --info-rgba-20: rgba(59, 130, 246, 0.20);
+  --primary-rgba-20: rgba(94, 106, 210, 0.2);
+  --primary-rgba-30: rgba(94, 106, 210, 0.3);
+  --primary-rgba-40: rgba(94, 106, 210, 0.4);
+  --success-rgba-20: rgba(76, 175, 80, 0.2);
+  --warning-rgba-20: rgba(245, 158, 11, 0.2);
+  --danger-rgba-20: rgba(229, 72, 77, 0.2);
+  --info-rgba-20: rgba(59, 130, 246, 0.2);
 }
 
 /* ── Dark Theme ────────────────────────────────────────────────────────── */
@@ -181,7 +181,7 @@
   --info: #60a5fa;
 
   --brand: var(--accent);
-  --brand-light: rgba(124, 131, 219, 0.10);
+  --brand-light: rgba(124, 131, 219, 0.1);
   --brand-hover: var(--accent-hover);
 
   --aou-1: #1c1d2e;
@@ -220,18 +220,18 @@
   --dialog-fill-0: #1e1e1e;
 
   --shadow-xs: 0 1px 2px 0 rgba(0, 0, 0, 0.15);
-  --shadow-sm: 0 1px 3px 0 rgba(0, 0, 0, 0.20), 0 1px 2px -1px rgba(0, 0, 0, 0.15);
+  --shadow-sm: 0 1px 3px 0 rgba(0, 0, 0, 0.2), 0 1px 2px -1px rgba(0, 0, 0, 0.15);
   --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.25), 0 2px 4px -2px rgba(0, 0, 0, 0.15);
-  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.30), 0 4px 6px -4px rgba(0, 0, 0, 0.15);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.3), 0 4px 6px -4px rgba(0, 0, 0, 0.15);
   --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.35), 0 8px 10px -6px rgba(0, 0, 0, 0.15);
 
-  --primary-rgba-10: rgba(124, 131, 219, 0.10);
+  --primary-rgba-10: rgba(124, 131, 219, 0.1);
   --primary-rgba-15: rgba(124, 131, 219, 0.15);
-  --primary-rgba-20: rgba(124, 131, 219, 0.20);
-  --primary-rgba-30: rgba(124, 131, 219, 0.30);
-  --primary-rgba-40: rgba(124, 131, 219, 0.40);
-  --success-rgba-20: rgba(76, 175, 80, 0.20);
-  --warning-rgba-20: rgba(245, 158, 11, 0.20);
-  --danger-rgba-20: rgba(229, 72, 77, 0.20);
-  --info-rgba-20: rgba(96, 165, 250, 0.20);
+  --primary-rgba-20: rgba(124, 131, 219, 0.2);
+  --primary-rgba-30: rgba(124, 131, 219, 0.3);
+  --primary-rgba-40: rgba(124, 131, 219, 0.4);
+  --success-rgba-20: rgba(76, 175, 80, 0.2);
+  --warning-rgba-20: rgba(245, 158, 11, 0.2);
+  --danger-rgba-20: rgba(229, 72, 77, 0.2);
+  --info-rgba-20: rgba(96, 165, 250, 0.2);
 }

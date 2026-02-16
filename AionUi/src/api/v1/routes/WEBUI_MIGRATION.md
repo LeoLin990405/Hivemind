@@ -7,11 +7,13 @@ Guide for migrating WebUI components from Electron IPC to REST API.
 ### WebUI Status
 
 **Before (Electron)**:
+
 ```typescript
 const status = await window.electronAPI.webuiGetStatus();
 ```
 
 **After (HTTP)**:
+
 ```typescript
 import { api } from '@/services/api';
 
@@ -23,11 +25,13 @@ const status = await api.http.get('/webui/status');
 ### Change Password
 
 **Before (Electron)**:
+
 ```typescript
 await window.electronAPI.webuiChangePassword(newPassword);
 ```
 
 **After (HTTP)**:
+
 ```typescript
 import { api } from '@/services/api';
 
@@ -41,11 +45,13 @@ await api.http.post('/webui/change-password', {
 ### Generate QR Token
 
 **Before (Electron)**:
+
 ```typescript
 const qrData = await window.electronAPI.webuiGenerateQRToken();
 ```
 
 **After (HTTP)**:
+
 ```typescript
 import { api } from '@/services/api';
 
@@ -58,11 +64,13 @@ const result = await api.http.post('/webui/qr-token');
 ### Reset Password
 
 **Before (Electron)**:
+
 ```typescript
 await window.electronAPI.webuiResetPassword();
 ```
 
 **After (HTTP)**:
+
 ```typescript
 import { api } from '@/services/api';
 
@@ -76,11 +84,13 @@ await api.http.post('/webui/reset-password');
 ### Upload Single File
 
 **Before (Electron)**:
+
 ```typescript
 const filePath = window.electronAPI.getPathForFile(file);
 ```
 
 **After (HTTP)**:
+
 ```typescript
 import { api } from '@/services/api';
 
@@ -90,7 +100,7 @@ formData.append('file', file);
 const result = await fetch('/api/v1/upload/single', {
   method: 'POST',
   headers: {
-    'Authorization': `Bearer ${tokenStorage.getAccessToken()}`,
+    Authorization: `Bearer ${tokenStorage.getAccessToken()}`,
   },
   body: formData,
 });
@@ -103,14 +113,14 @@ const { data } = await result.json();
 
 ```typescript
 const formData = new FormData();
-files.forEach(file => {
+files.forEach((file) => {
   formData.append('files', file);
 });
 
 const result = await fetch('/api/v1/upload', {
   method: 'POST',
   headers: {
-    'Authorization': `Bearer ${tokenStorage.getAccessToken()}`,
+    Authorization: `Bearer ${tokenStorage.getAccessToken()}`,
   },
   body: formData,
 });
@@ -126,6 +136,7 @@ const { data } = await result.json();
 ### WebuiModalContent.tsx
 
 **Before**:
+
 ```typescript
 const [status, setStatus] = useState(null);
 
@@ -147,6 +158,7 @@ const handleChangePassword = async (newPassword: string) => {
 ```
 
 **After**:
+
 ```typescript
 import { api } from '@/services/api';
 
@@ -180,11 +192,12 @@ const handleChangePassword = async (newPassword: string) => {
 ## File Drag & Drop Migration
 
 **Before**:
+
 ```typescript
 const handleDrop = (event: DragEvent) => {
   const files = Array.from(event.dataTransfer.files);
 
-  files.forEach(file => {
+  files.forEach((file) => {
     if (window.electronAPI?.getPathForFile) {
       const filePath = window.electronAPI.getPathForFile(file);
       console.log('File path:', filePath);
@@ -194,6 +207,7 @@ const handleDrop = (event: DragEvent) => {
 ```
 
 **After**:
+
 ```typescript
 import { api } from '@/services/api';
 
@@ -201,7 +215,7 @@ const handleDrop = async (event: DragEvent) => {
   const files = Array.from(event.dataTransfer.files);
 
   const formData = new FormData();
-  files.forEach(file => {
+  files.forEach((file) => {
     formData.append('files', file);
   });
 
@@ -209,13 +223,13 @@ const handleDrop = async (event: DragEvent) => {
     const result = await fetch('/api/v1/upload', {
       method: 'POST',
       headers: {
-        'Authorization': `Bearer ${tokenStorage.getAccessToken()}`,
+        Authorization: `Bearer ${tokenStorage.getAccessToken()}`,
       },
       body: formData,
     });
 
     const { data } = await result.json();
-    data.files.forEach(file => {
+    data.files.forEach((file) => {
       console.log('Uploaded:', file.url);
     });
   } catch (error) {
@@ -261,6 +275,7 @@ if (isElectron()) {
 ## Error Handling
 
 **Electron IPC** (no structured errors):
+
 ```typescript
 try {
   await window.electronAPI.webuiChangePassword(pwd);
@@ -270,6 +285,7 @@ try {
 ```
 
 **HTTP API** (structured errors):
+
 ```typescript
 try {
   await api.http.post('/webui/change-password', { newPassword: pwd });

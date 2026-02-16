@@ -6,42 +6,23 @@
  * Socket.IO Manager - Enhanced WebSocket management with Socket.IO
  */
 
-import { Server as SocketIOServer, Socket } from 'socket.io';
+import type { Socket } from 'socket.io';
+import { Server as SocketIOServer } from 'socket.io';
 import type { Server as HTTPServer } from 'http';
 import { TokenMiddleware } from '../auth/middleware/TokenMiddleware';
 import { WEBSOCKET_CONFIG } from '../config/constants';
-import type {
-  ServerToClientEvents,
-  ClientToServerEvents,
-  InterServerEvents,
-  SocketData,
-  SendMessageRequest,
-  EditMessageRequest,
-  MessageResponse,
-  TypingEvent,
-  FileSelectionRequest,
-} from './types';
+import type { ServerToClientEvents, ClientToServerEvents, InterServerEvents, SocketData, SendMessageRequest, EditMessageRequest, MessageResponse, TypingEvent, FileSelectionRequest } from './types';
 import { NAMESPACES, ROOMS, EVENTS } from './types';
 
 /**
  * Type-safe Socket.IO Server
  */
-type TypedSocketIOServer = SocketIOServer<
-  ClientToServerEvents,
-  ServerToClientEvents,
-  InterServerEvents,
-  SocketData
->;
+type TypedSocketIOServer = SocketIOServer<ClientToServerEvents, ServerToClientEvents, InterServerEvents, SocketData>;
 
 /**
  * Type-safe Socket
  */
-type TypedSocket = Socket<
-  ClientToServerEvents,
-  ServerToClientEvents,
-  InterServerEvents,
-  SocketData
->;
+type TypedSocket = Socket<ClientToServerEvents, ServerToClientEvents, InterServerEvents, SocketData>;
 
 /**
  * Socket.IO Manager
@@ -228,11 +209,7 @@ export class SocketIOManager {
   /**
    * Handle send message event
    */
-  private handleSendMessage(
-    socket: TypedSocket,
-    data: SendMessageRequest,
-    callback: (response: MessageResponse) => void
-  ): void {
+  private handleSendMessage(socket: TypedSocket, data: SendMessageRequest, callback: (response: MessageResponse) => void): void {
     try {
       // Validate data
       if (!data.conversationId || !data.content) {
@@ -268,11 +245,7 @@ export class SocketIOManager {
   /**
    * Handle edit message event
    */
-  private handleEditMessage(
-    socket: TypedSocket,
-    data: EditMessageRequest,
-    callback: (response: MessageResponse) => void
-  ): void {
+  private handleEditMessage(socket: TypedSocket, data: EditMessageRequest, callback: (response: MessageResponse) => void): void {
     try {
       // TODO: Implement message edit logic
       // For now, just acknowledge
@@ -328,10 +301,7 @@ export class SocketIOManager {
     };
 
     // Broadcast to all users except sender
-    socket.broadcast.emit(
-      status === 'online' ? EVENTS.STATUS_ONLINE : EVENTS.STATUS_OFFLINE,
-      statusEvent
-    );
+    socket.broadcast.emit(status === 'online' ? EVENTS.STATUS_ONLINE : EVENTS.STATUS_OFFLINE, statusEvent);
   }
 
   /**

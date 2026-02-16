@@ -6,7 +6,8 @@
  * WebSocket Monitoring Routes
  */
 
-import { Router, Request, Response, NextFunction } from 'express';
+import type { Request, Response, NextFunction } from 'express';
+import { Router } from 'express';
 import { authenticateJWT } from '../middleware/auth';
 import { getCurrentManager } from '@/webserver/adapter';
 import type { SocketIOManager } from '@/webserver/websocket/SocketIOManager';
@@ -51,7 +52,7 @@ router.get('/stats', authenticateJWT, requireAdmin, async (req: Request, res: Re
     const connectedClients = manager.getConnectedClientsCount();
 
     // Get room information if using Socket.IO
-    let rooms: any[] = [];
+    const rooms: any[] = [];
     if ('getRoomClients' in manager) {
       const socketIOManager = manager as SocketIOManager;
       const io = socketIOManager.getIO();

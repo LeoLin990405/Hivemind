@@ -13,8 +13,7 @@ import { Message } from '@arco-design/web-react';
  * Global error handler for queries
  */
 const queryErrorHandler = (error: Error | unknown) => {
-  const message =
-    error instanceof Error ? error.message : 'An error occurred while fetching data';
+  const message = error instanceof Error ? error.message : 'An error occurred while fetching data';
 
   console.error('[Query Error]', message, error);
 
@@ -29,8 +28,7 @@ const queryErrorHandler = (error: Error | unknown) => {
  * Global error handler for mutations
  */
 const mutationErrorHandler = (error: Error | unknown) => {
-  const message =
-    error instanceof Error ? error.message : 'An error occurred while performing the operation';
+  const message = error instanceof Error ? error.message : 'An error occurred while performing the operation';
 
   console.error('[Mutation Error]', message, error);
 

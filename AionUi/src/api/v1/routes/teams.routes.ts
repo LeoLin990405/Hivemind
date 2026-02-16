@@ -4,7 +4,8 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { Router, Request, Response, NextFunction } from 'express';
+import type { Request, Response, NextFunction } from 'express';
+import { Router } from 'express';
 import { z } from 'zod';
 import { paginationQuerySchema } from '../schemas/common';
 import { validateRequest } from '../middleware/validate';
@@ -195,77 +196,73 @@ router.post(
  * GET /api/v1/teams/:id
  * Get team details
  */
-router.get(
-  '/:id',
-  validateRequest({ params: z.object({ id: z.string().uuid() }) }),
-  async (req: Request, res: Response, next: NextFunction) => {
-    try {
-      const { id } = req.params;
+router.get('/:id', validateRequest({ params: z.object({ id: z.string().uuid() }) }), async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const { id } = req.params;
 
-      // TODO: Fetch from service
-      // const team = await teamsService.getById(id)
+    // TODO: Fetch from service
+    // const team = await teamsService.getById(id)
 
-      // Mock data
-      const team = {
-        id,
-        name: 'research-team',
-        displayName: 'Research Team',
-        description: 'Multi-agent research and analysis team',
-        members: [
-          {
-            id: crypto.randomUUID(),
-            name: 'gemini-researcher',
-            agent: 'gemini',
-            role: 'researcher',
-            status: 'online',
-            config: { temperature: 0.7, maxTokens: 4096 },
-            tasksCompleted: 15,
-          },
-          {
-            id: crypto.randomUUID(),
-            name: 'codex-analyzer',
-            agent: 'codex',
-            role: 'analyzer',
-            status: 'online',
-            config: { model: 'gpt-4o', temperature: 0.3 },
-            tasksCompleted: 18,
-          },
-          {
-            id: crypto.randomUUID(),
-            name: 'claude-writer',
-            agent: 'acp',
-            role: 'writer',
-            status: 'online',
-            config: { model: 'claude-sonnet-4-5', maxTokens: 8192 },
-            tasksCompleted: 14,
-          },
-        ],
-        workflow: {
-          type: 'sequential' as const,
-          coordination: 'autonomous' as const,
+    // Mock data
+    const team = {
+      id,
+      name: 'research-team',
+      displayName: 'Research Team',
+      description: 'Multi-agent research and analysis team',
+      members: [
+        {
+          id: crypto.randomUUID(),
+          name: 'gemini-researcher',
+          agent: 'gemini',
+          role: 'researcher',
+          status: 'online',
+          config: { temperature: 0.7, maxTokens: 4096 },
+          tasksCompleted: 15,
         },
-        status: 'working' as const,
-        active: true,
-        tasksCompleted: 47,
-        tasksInProgress: 3,
-        averageTaskDuration: 345000, // ms
-        createdAt: new Date(Date.now() - 2592000000).toISOString(),
-        updatedAt: new Date().toISOString(),
-      };
-
-      res.json({
-        success: true,
-        data: team,
-        meta: {
-          timestamp: new Date().toISOString(),
-          requestId: crypto.randomUUID(),
+        {
+          id: crypto.randomUUID(),
+          name: 'codex-analyzer',
+          agent: 'codex',
+          role: 'analyzer',
+          status: 'online',
+          config: { model: 'gpt-4o', temperature: 0.3 },
+          tasksCompleted: 18,
         },
-      });
-    } catch (error) {
-      next(error);
-    }
+        {
+          id: crypto.randomUUID(),
+          name: 'claude-writer',
+          agent: 'acp',
+          role: 'writer',
+          status: 'online',
+          config: { model: 'claude-sonnet-4-5', maxTokens: 8192 },
+          tasksCompleted: 14,
+        },
+      ],
+      workflow: {
+        type: 'sequential' as const,
+        coordination: 'autonomous' as const,
+      },
+      status: 'working' as const,
+      active: true,
+      tasksCompleted: 47,
+      tasksInProgress: 3,
+      averageTaskDuration: 345000, // ms
+      createdAt: new Date(Date.now() - 2592000000).toISOString(),
+      updatedAt: new Date().toISOString(),
+    };
+
+    res.json({
+      success: true,
+      data: team,
+      meta: {
+        timestamp: new Date().toISOString(),
+        requestId: crypto.randomUUID(),
+      },
+    });
+  } catch (error) {
+    next(error);
   }
-);
+});
 
 /**
  * PATCH /api/v1/teams/:id
@@ -337,29 +334,25 @@ router.patch(
  * DELETE /api/v1/teams/:id
  * Delete team
  */
-router.delete(
-  '/:id',
-  validateRequest({ params: z.object({ id: z.string().uuid() }) }),
-  async (req: Request, res: Response, next: NextFunction) => {
-    try {
-      const { id } = req.params;
+router.delete('/:id', validateRequest({ params: z.object({ id: z.string().uuid() }) }), async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const { id } = req.params;
 
-      // TODO: Delete team (check for active tasks first)
-      // await teamsService.delete(id)
+    // TODO: Delete team (check for active tasks first)
+    // await teamsService.delete(id)
 
-      res.json({
-        success: true,
-        data: { id, deleted: true },
-        meta: {
-          timestamp: new Date().toISOString(),
-          requestId: crypto.randomUUID(),
-        },
-      });
-    } catch (error) {
-      next(error);
-    }
+    res.json({
+      success: true,
+      data: { id, deleted: true },
+      meta: {
+        timestamp: new Date().toISOString(),
+        requestId: crypto.randomUUID(),
+      },
+    });
+  } catch (error) {
+    next(error);
   }
-);
+});
 
 /**
  * POST /api/v1/teams/:id/members

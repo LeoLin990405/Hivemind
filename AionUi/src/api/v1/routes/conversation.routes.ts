@@ -4,15 +4,10 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { Router, Request, Response, NextFunction } from 'express';
+import type { Request, Response, NextFunction } from 'express';
+import { Router } from 'express';
 import { z } from 'zod';
-import {
-  conversationSchema,
-  createConversationRequestSchema,
-  updateConversationRequestSchema,
-  listConversationsQuerySchema,
-  sendMessageRequestSchema,
-} from '../schemas/conversation';
+import { conversationSchema, createConversationRequestSchema, updateConversationRequestSchema, listConversationsQuerySchema, sendMessageRequestSchema } from '../schemas/conversation';
 import { paginationQuerySchema } from '../schemas/common';
 import { validateRequest } from '../middleware/validate';
 import { authenticateJWT } from '../middleware/auth';
@@ -26,111 +21,18 @@ router.use(authenticateJWT);
  * GET /api/v1/conversations
  * List all conversations with pagination
  */
-router.get(
-  '/',
-  validateRequest({ query: listConversationsQuerySchema }),
-  async (req: Request, res: Response, next: NextFunction) => {
-    try {
-      const query = req.query as z.infer<typeof listConversationsQuerySchema>;
-      const { page, pageSize, platform, search, sortBy, sortOrder } = query;
+router.get('/', validateRequest({ query: listConversationsQuerySchema }), async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const query = req.query as z.infer<typeof listConversationsQuerySchema>;
+    const { page, pageSize, platform, search, sortBy, sortOrder } = query;
 
-      // TODO: Fetch from database
-      // const conversations = await conversationService.list(...)
+    // TODO: Fetch from database
+    // const conversations = await conversationService.list(...)
 
-      // Mock data
-      const mockConversations = [
-        {
-          id: crypto.randomUUID(),
-          name: 'Example Conversation',
-          platform: 'gemini' as const,
-          model: 'gemini-2.0-flash-exp',
-          provider: 'google',
-          workspace: '/Users/example/projects',
-          createdAt: new Date().toISOString(),
-          updatedAt: new Date().toISOString(),
-          messageCount: 5,
-        },
-      ];
-
-      const totalItems = 1;
-      const totalPages = Math.ceil(totalItems / pageSize);
-
-      res.json({
-        success: true,
-        data: mockConversations,
-        pagination: {
-          page,
-          pageSize,
-          totalPages,
-          totalItems,
-          hasNext: page < totalPages,
-          hasPrev: page > 1,
-        },
-        meta: {
-          timestamp: new Date().toISOString(),
-          requestId: crypto.randomUUID(),
-        },
-      });
-    } catch (error) {
-      next(error);
-    }
-  }
-);
-
-/**
- * POST /api/v1/conversations
- * Create new conversation
- */
-router.post(
-  '/',
-  validateRequest({ body: createConversationRequestSchema }),
-  async (req: Request, res: Response, next: NextFunction) => {
-    try {
-      const data = req.body as z.infer<typeof createConversationRequestSchema>;
-
-      // TODO: Create in database
-      // const conversation = await conversationService.create(data)
-
-      // Mock response
-      const conversation = {
+    // Mock data
+    const mockConversations = [
+      {
         id: crypto.randomUUID(),
-        ...data,
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString(),
-        messageCount: 0,
-      };
-
-      res.status(201).json({
-        success: true,
-        data: conversation,
-        meta: {
-          timestamp: new Date().toISOString(),
-          requestId: crypto.randomUUID(),
-        },
-      });
-    } catch (error) {
-      next(error);
-    }
-  }
-);
-
-/**
- * GET /api/v1/conversations/:id
- * Get single conversation
- */
-router.get(
-  '/:id',
-  validateRequest({ params: z.object({ id: z.string().uuid() }) }),
-  async (req: Request, res: Response, next: NextFunction) => {
-    try {
-      const { id } = req.params;
-
-      // TODO: Fetch from database
-      // const conversation = await conversationService.getById(id)
-
-      // Mock data
-      const conversation = {
-        id,
         name: 'Example Conversation',
         platform: 'gemini' as const,
         model: 'gemini-2.0-flash-exp',
@@ -139,21 +41,102 @@ router.get(
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString(),
         messageCount: 5,
-      };
+      },
+    ];
 
-      res.json({
-        success: true,
-        data: conversation,
-        meta: {
-          timestamp: new Date().toISOString(),
-          requestId: crypto.randomUUID(),
-        },
-      });
-    } catch (error) {
-      next(error);
-    }
+    const totalItems = 1;
+    const totalPages = Math.ceil(totalItems / pageSize);
+
+    res.json({
+      success: true,
+      data: mockConversations,
+      pagination: {
+        page,
+        pageSize,
+        totalPages,
+        totalItems,
+        hasNext: page < totalPages,
+        hasPrev: page > 1,
+      },
+      meta: {
+        timestamp: new Date().toISOString(),
+        requestId: crypto.randomUUID(),
+      },
+    });
+  } catch (error) {
+    next(error);
   }
-);
+});
+
+/**
+ * POST /api/v1/conversations
+ * Create new conversation
+ */
+router.post('/', validateRequest({ body: createConversationRequestSchema }), async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const data = req.body as z.infer<typeof createConversationRequestSchema>;
+
+    // TODO: Create in database
+    // const conversation = await conversationService.create(data)
+
+    // Mock response
+    const conversation = {
+      id: crypto.randomUUID(),
+      ...data,
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+      messageCount: 0,
+    };
+
+    res.status(201).json({
+      success: true,
+      data: conversation,
+      meta: {
+        timestamp: new Date().toISOString(),
+        requestId: crypto.randomUUID(),
+      },
+    });
+  } catch (error) {
+    next(error);
+  }
+});
+
+/**
+ * GET /api/v1/conversations/:id
+ * Get single conversation
+ */
+router.get('/:id', validateRequest({ params: z.object({ id: z.string().uuid() }) }), async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const { id } = req.params;
+
+    // TODO: Fetch from database
+    // const conversation = await conversationService.getById(id)
+
+    // Mock data
+    const conversation = {
+      id,
+      name: 'Example Conversation',
+      platform: 'gemini' as const,
+      model: 'gemini-2.0-flash-exp',
+      provider: 'google',
+      workspace: '/Users/example/projects',
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+      messageCount: 5,
+    };
+
+    res.json({
+      success: true,
+      data: conversation,
+      meta: {
+        timestamp: new Date().toISOString(),
+        requestId: crypto.randomUUID(),
+      },
+    });
+  } catch (error) {
+    next(error);
+  }
+});
 
 /**
  * PATCH /api/v1/conversations/:id
@@ -204,57 +187,49 @@ router.patch(
  * DELETE /api/v1/conversations/:id
  * Delete conversation
  */
-router.delete(
-  '/:id',
-  validateRequest({ params: z.object({ id: z.string().uuid() }) }),
-  async (req: Request, res: Response, next: NextFunction) => {
-    try {
-      const { id } = req.params;
+router.delete('/:id', validateRequest({ params: z.object({ id: z.string().uuid() }) }), async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const { id } = req.params;
 
-      // TODO: Delete from database
-      // await conversationService.delete(id)
+    // TODO: Delete from database
+    // await conversationService.delete(id)
 
-      res.json({
-        success: true,
-        data: { id, deleted: true },
-        meta: {
-          timestamp: new Date().toISOString(),
-          requestId: crypto.randomUUID(),
-        },
-      });
-    } catch (error) {
-      next(error);
-    }
+    res.json({
+      success: true,
+      data: { id, deleted: true },
+      meta: {
+        timestamp: new Date().toISOString(),
+        requestId: crypto.randomUUID(),
+      },
+    });
+  } catch (error) {
+    next(error);
   }
-);
+});
 
 /**
  * POST /api/v1/conversations/:id/reset
  * Reset conversation (delete all messages)
  */
-router.post(
-  '/:id/reset',
-  validateRequest({ params: z.object({ id: z.string().uuid() }) }),
-  async (req: Request, res: Response, next: NextFunction) => {
-    try {
-      const { id } = req.params;
+router.post('/:id/reset', validateRequest({ params: z.object({ id: z.string().uuid() }) }), async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const { id } = req.params;
 
-      // TODO: Reset in database
-      // await conversationService.reset(id)
+    // TODO: Reset in database
+    // await conversationService.reset(id)
 
-      res.json({
-        success: true,
-        data: { id, reset: true, messageCount: 0 },
-        meta: {
-          timestamp: new Date().toISOString(),
-          requestId: crypto.randomUUID(),
-        },
-      });
-    } catch (error) {
-      next(error);
-    }
+    res.json({
+      success: true,
+      data: { id, reset: true, messageCount: 0 },
+      meta: {
+        timestamp: new Date().toISOString(),
+        requestId: crypto.randomUUID(),
+      },
+    });
+  } catch (error) {
+    next(error);
   }
-);
+});
 
 /**
  * POST /api/v1/conversations/:id/messages
@@ -363,29 +338,25 @@ router.get(
  * POST /api/v1/conversations/:id/stop
  * Stop streaming message
  */
-router.post(
-  '/:id/stop',
-  validateRequest({ params: z.object({ id: z.string().uuid() }) }),
-  async (req: Request, res: Response, next: NextFunction) => {
-    try {
-      const { id } = req.params;
+router.post('/:id/stop', validateRequest({ params: z.object({ id: z.string().uuid() }) }), async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const { id } = req.params;
 
-      // TODO: Stop streaming via bridge
-      // await conversationService.stopStreaming(id)
+    // TODO: Stop streaming via bridge
+    // await conversationService.stopStreaming(id)
 
-      res.json({
-        success: true,
-        data: { id, stopped: true },
-        meta: {
-          timestamp: new Date().toISOString(),
-          requestId: crypto.randomUUID(),
-        },
-      });
-    } catch (error) {
-      next(error);
-    }
+    res.json({
+      success: true,
+      data: { id, stopped: true },
+      meta: {
+        timestamp: new Date().toISOString(),
+        requestId: crypto.randomUUID(),
+      },
+    });
+  } catch (error) {
+    next(error);
   }
-);
+});
 
 /**
  * GET /api/v1/conversations/:id/workspace

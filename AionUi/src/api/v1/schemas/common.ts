@@ -23,15 +23,7 @@ export const successResponseSchema = <T extends z.ZodTypeAny>(dataSchema: T) =>
 export const errorResponseSchema = z.object({
   success: z.literal(false),
   error: z.object({
-    code: z.enum([
-      'VALIDATION_ERROR',
-      'UNAUTHORIZED',
-      'FORBIDDEN',
-      'NOT_FOUND',
-      'CONFLICT',
-      'RATE_LIMIT_EXCEEDED',
-      'INTERNAL_ERROR',
-    ]),
+    code: z.enum(['VALIDATION_ERROR', 'UNAUTHORIZED', 'FORBIDDEN', 'NOT_FOUND', 'CONFLICT', 'RATE_LIMIT_EXCEEDED', 'INTERNAL_ERROR']),
     message: z.string(),
     details: z
       .array(

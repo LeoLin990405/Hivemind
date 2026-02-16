@@ -51,14 +51,7 @@ export class ModelService {
   /**
    * Create a new provider
    */
-  async createProvider(data: {
-    name: string;
-    type: 'google' | 'anthropic' | 'openai' | 'custom';
-    apiKey?: string;
-    baseUrl?: string;
-    config?: any;
-    enabled?: boolean;
-  }): Promise<Provider> {
+  async createProvider(data: { name: string; type: 'google' | 'anthropic' | 'openai' | 'custom'; apiKey?: string; baseUrl?: string; config?: any; enabled?: boolean }): Promise<Provider> {
     // Check if provider already exists
     const existing = await this.providerRepo.findByName(data.name);
     if (existing) {
@@ -166,16 +159,7 @@ export class ModelService {
   /**
    * Create a new model
    */
-  async createModel(data: {
-    name: string;
-    displayName: string;
-    providerId: string;
-    modelId: string;
-    capabilities?: any;
-    contextWindow?: number;
-    maxOutputTokens?: number;
-    enabled?: boolean;
-  }): Promise<Model> {
+  async createModel(data: { name: string; displayName: string; providerId: string; modelId: string; capabilities?: any; contextWindow?: number; maxOutputTokens?: number; enabled?: boolean }): Promise<Model> {
     // Verify provider exists
     const provider = await this.providerRepo.findById(data.providerId);
     if (!provider) {

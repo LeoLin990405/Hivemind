@@ -4,7 +4,8 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { Router, Request, Response, NextFunction } from 'express';
+import type { Request, Response, NextFunction } from 'express';
+import { Router } from 'express';
 import { z } from 'zod';
 import { validateRequest } from '../middleware/validate';
 import { authenticateJWT } from '../middleware/auth';
@@ -18,21 +19,19 @@ router.use(authenticateJWT);
  * GET /api/v1/update/check
  * Check for available updates
  */
-router.get(
-  '/check',
-  async (req: Request, res: Response, next: NextFunction) => {
-    try {
-      // TODO: Check for updates from update server
-      // const updateInfo = await updateService.checkForUpdates()
+router.get('/check', async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    // TODO: Check for updates from update server
+    // const updateInfo = await updateService.checkForUpdates()
 
-      // Mock data
-      const currentVersion = '1.11.1';
-      const updateInfo = {
-        currentVersion,
-        latestVersion: '1.12.0',
-        updateAvailable: true,
-        releaseDate: new Date('2025-02-20').toISOString(),
-        releaseNotes: `# Version 1.12.0
+    // Mock data
+    const currentVersion = '1.11.1';
+    const updateInfo = {
+      currentVersion,
+      latestVersion: '1.12.0',
+      updateAvailable: true,
+      releaseDate: new Date('2025-02-20').toISOString(),
+      releaseNotes: `# Version 1.12.0
 
 ## New Features
 - Enhanced NotebookLM integration
@@ -48,26 +47,25 @@ router.get(
 - Fixed conversation sync issues
 - Resolved MCP server timeout problems
 `,
-        downloadUrl: 'https://github.com/hivemind/releases/download/v1.12.0/Hivemind-1.12.0.dmg',
-        size: 125829120, // ~120MB
-        checksumSha256: 'abc123def456...',
-        breaking: false,
-        critical: false,
-      };
+      downloadUrl: 'https://github.com/hivemind/releases/download/v1.12.0/Hivemind-1.12.0.dmg',
+      size: 125829120, // ~120MB
+      checksumSha256: 'abc123def456...',
+      breaking: false,
+      critical: false,
+    };
 
-      res.json({
-        success: true,
-        data: updateInfo,
-        meta: {
-          timestamp: new Date().toISOString(),
-          requestId: crypto.randomUUID(),
-        },
-      });
-    } catch (error) {
-      next(error);
-    }
+    res.json({
+      success: true,
+      data: updateInfo,
+      meta: {
+        timestamp: new Date().toISOString(),
+        requestId: crypto.randomUUID(),
+      },
+    });
+  } catch (error) {
+    next(error);
   }
-);
+});
 
 /**
  * POST /api/v1/update/download
@@ -119,42 +117,38 @@ router.post(
  * GET /api/v1/update/download/:id
  * Get download progress
  */
-router.get(
-  '/download/:id',
-  validateRequest({ params: z.object({ id: z.string().uuid() }) }),
-  async (req: Request, res: Response, next: NextFunction) => {
-    try {
-      const { id } = req.params;
+router.get('/download/:id', validateRequest({ params: z.object({ id: z.string().uuid() }) }), async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const { id } = req.params;
 
-      // TODO: Get download status
-      // const status = await updateService.getDownloadStatus(id)
+    // TODO: Get download status
+    // const status = await updateService.getDownloadStatus(id)
 
-      // Mock data (simulate progress)
-      const status = {
-        downloadId: id,
-        version: '1.12.0',
-        status: 'downloading' as const,
-        progress: 67, // percentage
-        totalSize: 125829120,
-        downloadedSize: 84305203,
-        estimatedTimeRemaining: 45,
-        speed: 2097152, // bytes per second (2 MB/s)
-        startedAt: new Date(Date.now() - 120000).toISOString(),
-      };
+    // Mock data (simulate progress)
+    const status = {
+      downloadId: id,
+      version: '1.12.0',
+      status: 'downloading' as const,
+      progress: 67, // percentage
+      totalSize: 125829120,
+      downloadedSize: 84305203,
+      estimatedTimeRemaining: 45,
+      speed: 2097152, // bytes per second (2 MB/s)
+      startedAt: new Date(Date.now() - 120000).toISOString(),
+    };
 
-      res.json({
-        success: true,
-        data: status,
-        meta: {
-          timestamp: new Date().toISOString(),
-          requestId: crypto.randomUUID(),
-        },
-      });
-    } catch (error) {
-      next(error);
-    }
+    res.json({
+      success: true,
+      data: status,
+      meta: {
+        timestamp: new Date().toISOString(),
+        requestId: crypto.randomUUID(),
+      },
+    });
+  } catch (error) {
+    next(error);
   }
-);
+});
 
 /**
  * POST /api/v1/update/install

@@ -4,7 +4,8 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { Router, Request, Response, NextFunction } from 'express';
+import type { Request, Response, NextFunction } from 'express';
+import { Router } from 'express';
 import { z } from 'zod';
 import { paginationQuerySchema } from '../schemas/common';
 import { validateRequest } from '../middleware/validate';
@@ -92,15 +93,7 @@ router.post(
     body: z.object({
       title: z.string().min(1).max(200),
       description: z.string().optional(),
-      sources: z
-        .array(
-          z.union([
-            z.object({ type: z.literal('url'), url: z.string().url() }),
-            z.object({ type: z.literal('file'), path: z.string() }),
-            z.object({ type: z.literal('text'), content: z.string() }),
-          ])
-        )
-        .optional(),
+      sources: z.array(z.union([z.object({ type: z.literal('url'), url: z.string().url() }), z.object({ type: z.literal('file'), path: z.string() }), z.object({ type: z.literal('text'), content: z.string() })])).optional(),
     }),
   }),
   async (req: Request, res: Response, next: NextFunction) => {
@@ -216,8 +209,7 @@ router.post(
       const result = {
         notebookId: id,
         question,
-        answer:
-          'Based on the sources in your notebook, here is a comprehensive answer to your question...',
+        answer: 'Based on the sources in your notebook, here is a comprehensive answer to your question...',
         citations: includeSourceCitations
           ? [
               {

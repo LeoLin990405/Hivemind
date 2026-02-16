@@ -7,12 +7,7 @@
  */
 
 import { io, type Socket } from 'socket.io-client';
-import type {
-  EventCallback,
-  UnsubscribeFn,
-  WebSocketOptions,
-  TokenStorage,
-} from './types';
+import type { EventCallback, UnsubscribeFn, WebSocketOptions, TokenStorage } from './types';
 import { ConnectionStatus } from './types';
 import { tokenStorage as defaultTokenStorage } from './token-storage';
 
@@ -30,11 +25,7 @@ export class WebSocketManager {
   private eventListeners = new Map<string, Set<EventCallback>>();
   private statusListeners = new Set<(status: ConnectionStatus) => void>();
 
-  constructor(
-    baseURL: string = import.meta.env.VITE_API_URL || 'http://localhost:3000',
-    tokenStorage: TokenStorage = defaultTokenStorage,
-    options: WebSocketOptions = {}
-  ) {
+  constructor(baseURL: string = import.meta.env.VITE_API_URL || 'http://localhost:3000', tokenStorage: TokenStorage = defaultTokenStorage, options: WebSocketOptions = {}) {
     this.baseURL = baseURL;
     this.tokenStorage = tokenStorage;
     this.options = {

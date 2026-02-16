@@ -4,7 +4,8 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { Router, Request, Response, NextFunction } from 'express';
+import type { Request, Response, NextFunction } from 'express';
+import { Router } from 'express';
 import { z } from 'zod';
 import { paginationQuerySchema } from '../schemas/common';
 import { validateRequest } from '../middleware/validate';
@@ -156,54 +157,50 @@ router.post(
  * GET /api/v1/skills/:id
  * Get skill details
  */
-router.get(
-  '/:id',
-  validateRequest({ params: z.object({ id: z.string().uuid() }) }),
-  async (req: Request, res: Response, next: NextFunction) => {
-    try {
-      const { id } = req.params;
+router.get('/:id', validateRequest({ params: z.object({ id: z.string().uuid() }) }), async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const { id } = req.params;
 
-      // TODO: Fetch from database
-      // const skill = await skillsService.getById(id)
+    // TODO: Fetch from database
+    // const skill = await skillsService.getById(id)
 
-      // Mock data
-      const skill = {
-        id,
-        name: 'code-review',
-        displayName: 'Code Review',
-        description: 'Automated code review and quality analysis',
-        category: 'development',
-        version: '1.2.0',
-        author: 'Hivemind Team',
-        enabled: true,
-        installed: true,
-        path: '/skills/code-review',
-        config: {
-          maxFileSize: 1048576,
-          languages: ['typescript', 'javascript', 'python'],
-          rules: ['no-console', 'prefer-const', 'no-var'],
-        },
-        readme: '# Code Review Skill\n\nAutomated code review tool...',
-        dependencies: ['eslint', 'prettier'],
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString(),
-        lastExecutedAt: new Date(Date.now() - 3600000).toISOString(),
-        executionCount: 42,
-      };
+    // Mock data
+    const skill = {
+      id,
+      name: 'code-review',
+      displayName: 'Code Review',
+      description: 'Automated code review and quality analysis',
+      category: 'development',
+      version: '1.2.0',
+      author: 'Hivemind Team',
+      enabled: true,
+      installed: true,
+      path: '/skills/code-review',
+      config: {
+        maxFileSize: 1048576,
+        languages: ['typescript', 'javascript', 'python'],
+        rules: ['no-console', 'prefer-const', 'no-var'],
+      },
+      readme: '# Code Review Skill\n\nAutomated code review tool...',
+      dependencies: ['eslint', 'prettier'],
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+      lastExecutedAt: new Date(Date.now() - 3600000).toISOString(),
+      executionCount: 42,
+    };
 
-      res.json({
-        success: true,
-        data: skill,
-        meta: {
-          timestamp: new Date().toISOString(),
-          requestId: crypto.randomUUID(),
-        },
-      });
-    } catch (error) {
-      next(error);
-    }
+    res.json({
+      success: true,
+      data: skill,
+      meta: {
+        timestamp: new Date().toISOString(),
+        requestId: crypto.randomUUID(),
+      },
+    });
+  } catch (error) {
+    next(error);
   }
-);
+});
 
 /**
  * PATCH /api/v1/skills/:id
@@ -263,29 +260,25 @@ router.patch(
  * DELETE /api/v1/skills/:id
  * Uninstall skill
  */
-router.delete(
-  '/:id',
-  validateRequest({ params: z.object({ id: z.string().uuid() }) }),
-  async (req: Request, res: Response, next: NextFunction) => {
-    try {
-      const { id } = req.params;
+router.delete('/:id', validateRequest({ params: z.object({ id: z.string().uuid() }) }), async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const { id } = req.params;
 
-      // TODO: Uninstall skill (remove files, clean database)
-      // await skillsService.uninstall(id)
+    // TODO: Uninstall skill (remove files, clean database)
+    // await skillsService.uninstall(id)
 
-      res.json({
-        success: true,
-        data: { id, deleted: true, uninstalled: true },
-        meta: {
-          timestamp: new Date().toISOString(),
-          requestId: crypto.randomUUID(),
-        },
-      });
-    } catch (error) {
-      next(error);
-    }
+    res.json({
+      success: true,
+      data: { id, deleted: true, uninstalled: true },
+      meta: {
+        timestamp: new Date().toISOString(),
+        requestId: crypto.randomUUID(),
+      },
+    });
+  } catch (error) {
+    next(error);
   }
-);
+});
 
 /**
  * POST /api/v1/skills/:id/execute
@@ -318,11 +311,7 @@ router.post(
           data: {
             filesAnalyzed: 15,
             issuesFound: 3,
-            suggestions: [
-              'Consider using const instead of let in file.ts:42',
-              'Remove unused import in utils.ts:5',
-              'Add error handling in api.ts:120',
-            ],
+            suggestions: ['Consider using const instead of let in file.ts:42', 'Remove unused import in utils.ts:5', 'Add error handling in api.ts:120'],
           },
         },
         executionTime: Math.floor(Math.random() * 5000) + 1000, // 1-6s

@@ -209,6 +209,7 @@ const result = await api.call('conversation/list', { page: 1 });
 ```
 
 The client automatically uses the right transport:
+
 - In Electron: Uses `window.electronAPI.emit()`
 - In Browser: Uses `axios.post('/api/v1/conversation/list')`
 

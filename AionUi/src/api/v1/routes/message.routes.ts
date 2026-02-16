@@ -4,7 +4,8 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { Router, Request, Response, NextFunction } from 'express';
+import type { Request, Response, NextFunction } from 'express';
+import { Router } from 'express';
 import { z } from 'zod';
 import { messageSchema } from '../schemas/conversation';
 import { validateRequest } from '../middleware/validate';
@@ -19,40 +20,36 @@ router.use(authenticateJWT);
  * GET /api/v1/messages/:id
  * Get single message
  */
-router.get(
-  '/:id',
-  validateRequest({ params: z.object({ id: z.string().uuid() }) }),
-  async (req: Request, res: Response, next: NextFunction) => {
-    try {
-      const { id } = req.params;
+router.get('/:id', validateRequest({ params: z.object({ id: z.string().uuid() }) }), async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const { id } = req.params;
 
-      // TODO: Fetch from database
-      // const message = await messageService.getById(id)
+    // TODO: Fetch from database
+    // const message = await messageService.getById(id)
 
-      // Mock data
-      const message = {
-        id,
-        conversationId: crypto.randomUUID(),
-        role: 'user' as const,
-        content: 'Example message content',
-        createdAt: new Date().toISOString(),
-        toolCalls: [],
-        attachments: [],
-      };
+    // Mock data
+    const message = {
+      id,
+      conversationId: crypto.randomUUID(),
+      role: 'user' as const,
+      content: 'Example message content',
+      createdAt: new Date().toISOString(),
+      toolCalls: [],
+      attachments: [],
+    };
 
-      res.json({
-        success: true,
-        data: message,
-        meta: {
-          timestamp: new Date().toISOString(),
-          requestId: crypto.randomUUID(),
-        },
-      });
-    } catch (error) {
-      next(error);
-    }
+    res.json({
+      success: true,
+      data: message,
+      meta: {
+        timestamp: new Date().toISOString(),
+        requestId: crypto.randomUUID(),
+      },
+    });
+  } catch (error) {
+    next(error);
   }
-);
+});
 
 /**
  * PATCH /api/v1/messages/:id
@@ -105,29 +102,25 @@ router.patch(
  * DELETE /api/v1/messages/:id
  * Delete message
  */
-router.delete(
-  '/:id',
-  validateRequest({ params: z.object({ id: z.string().uuid() }) }),
-  async (req: Request, res: Response, next: NextFunction) => {
-    try {
-      const { id } = req.params;
+router.delete('/:id', validateRequest({ params: z.object({ id: z.string().uuid() }) }), async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const { id } = req.params;
 
-      // TODO: Delete from database
-      // await messageService.delete(id)
+    // TODO: Delete from database
+    // await messageService.delete(id)
 
-      res.json({
-        success: true,
-        data: { id, deleted: true },
-        meta: {
-          timestamp: new Date().toISOString(),
-          requestId: crypto.randomUUID(),
-        },
-      });
-    } catch (error) {
-      next(error);
-    }
+    res.json({
+      success: true,
+      data: { id, deleted: true },
+      meta: {
+        timestamp: new Date().toISOString(),
+        requestId: crypto.randomUUID(),
+      },
+    });
+  } catch (error) {
+    next(error);
   }
-);
+});
 
 /**
  * POST /api/v1/messages/:id/confirm

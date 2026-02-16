@@ -6,14 +6,7 @@
 
 import { eq, and, desc, sql } from 'drizzle-orm';
 import { BaseRepository } from './base.repository';
-import {
-  conversations,
-  messages,
-  type Conversation,
-  type NewConversation,
-  type Message,
-  type NewMessage,
-} from '../schema';
+import { conversations, messages, type Conversation, type NewConversation, type Message, type NewMessage } from '../schema';
 import { db } from '../db';
 
 export class ConversationRepository extends BaseRepository<typeof conversations> {
@@ -25,22 +18,14 @@ export class ConversationRepository extends BaseRepository<typeof conversations>
    * Find all conversations for a user
    */
   async findByUserId(userId: string, limit = 50, offset = 0): Promise<Conversation[]> {
-    return db
-      .select()
-      .from(conversations)
-      .where(eq(conversations.userId, userId))
-      .orderBy(desc(conversations.updatedAt))
-      .limit(limit)
-      .offset(offset);
+    return db.select().from(conversations).where(eq(conversations.userId, userId)).orderBy(desc(conversations.updatedAt)).limit(limit).offset(offset);
   }
 
   /**
    * Find conversation by ID and user ID
    */
   async findByIdAndUserId(conversationId: string, userId: string): Promise<Conversation | null> {
-    return this.findOne(
-      and(eq(conversations.id, conversationId), eq(conversations.userId, userId))!
-    );
+    return this.findOne(and(eq(conversations.id, conversationId), eq(conversations.userId, userId))!);
   }
 
   /**
@@ -53,10 +38,7 @@ export class ConversationRepository extends BaseRepository<typeof conversations>
   /**
    * Update conversation metadata
    */
-  async updateConversation(
-    conversationId: string,
-    data: Partial<Pick<Conversation, 'name' | 'model' | 'systemPrompt' | 'metadata'>>
-  ): Promise<Conversation | null> {
+  async updateConversation(conversationId: string, data: Partial<Pick<Conversation, 'name' | 'model' | 'systemPrompt' | 'metadata'>>): Promise<Conversation | null> {
     return this.updateById(conversationId, {
       ...data,
       updatedAt: new Date(),
@@ -99,29 +81,15 @@ export class ConversationRepository extends BaseRepository<typeof conversations>
   /**
    * Find all messages in a conversation
    */
-  async findMessages(
-    conversationId: string,
-    limit = 100,
-    offset = 0
-  ): Promise<Message[]> {
-    return db
-      .select()
-      .from(messages)
-      .where(eq(messages.conversationId, conversationId))
-      .orderBy(messages.createdAt)
-      .limit(limit)
-      .offset(offset);
+  async findMessages(conversationId: string, limit = 100, offset = 0): Promise<Message[]> {
+    return db.select().from(messages).where(eq(messages.conversationId, conversationId)).orderBy(messages.createdAt).limit(limit).offset(offset);
   }
 
   /**
    * Find a single message
    */
   async findMessageById(messageId: string): Promise<Message | null> {
-    const results = await db
-      .select()
-      .from(messages)
-      .where(eq(messages.id, messageId))
-      .limit(1);
+    const results = await db.select().from(messages).where(eq(messages.id, messageId)).limit(1);
     return results[0] || null;
   }
 
@@ -143,15 +111,8 @@ export class ConversationRepository extends BaseRepository<typeof conversations>
   /**
    * Update message content
    */
-  async updateMessage(
-    messageId: string,
-    data: Partial<Pick<Message, 'content' | 'metadata'>>
-  ): Promise<Message | null> {
-    const results = await db
-      .update(messages)
-      .set(data)
-      .where(eq(messages.id, messageId))
-      .returning();
+  async updateMessage(messageId: string, data: Partial<Pick<Message, 'content' | 'metadata'>>): Promise<Message | null> {
+    const results = await db.update(messages).set(data).where(eq(messages.id, messageId)).returning();
     return results[0] || null;
   }
 

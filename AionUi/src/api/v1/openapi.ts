@@ -5,28 +5,10 @@
  */
 
 import { OpenAPIRegistry, OpenApiGeneratorV3 } from '@asteasolutions/zod-to-openapi';
-import {
-  successResponseSchema,
-  errorResponseSchema,
-  paginatedResponseSchema,
-} from './schemas/common';
-import {
-  registerRequestSchema,
-  loginRequestSchema,
-  authResponseSchema,
-} from './schemas/auth';
-import {
-  conversationSchema,
-  createConversationRequestSchema,
-  messageSchema,
-  sendMessageRequestSchema,
-} from './schemas/conversation';
-import {
-  modelSchema,
-  providerSchema,
-  createModelRequestSchema,
-  createProviderRequestSchema,
-} from './schemas/model';
+import { successResponseSchema, errorResponseSchema, paginatedResponseSchema } from './schemas/common';
+import { registerRequestSchema, loginRequestSchema, authResponseSchema } from './schemas/auth';
+import { conversationSchema, createConversationRequestSchema, messageSchema, sendMessageRequestSchema } from './schemas/conversation';
+import { modelSchema, providerSchema, createModelRequestSchema, createProviderRequestSchema } from './schemas/model';
 
 export function generateOpenAPISpec() {
   const registry = new OpenAPIRegistry();

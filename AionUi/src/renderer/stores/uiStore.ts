@@ -91,11 +91,9 @@ export const useUIStore = create<UIState>()(
             sidebarCollapsed: !state.sidebarCollapsed,
           })),
 
-        setSidebarCollapsed: (collapsed) =>
-          set({ sidebarCollapsed: collapsed }),
+        setSidebarCollapsed: (collapsed) => set({ sidebarCollapsed: collapsed }),
 
-        setSidebarWidth: (width) =>
-          set({ sidebarWidth: width }),
+        setSidebarWidth: (width) => set({ sidebarWidth: width }),
 
         // Modal actions
         openModal: (modalId, data = {}) =>
@@ -143,8 +141,7 @@ export const useUIStore = create<UIState>()(
             notifications: state.notifications.filter((n) => n.id !== id),
           })),
 
-        clearNotifications: () =>
-          set({ notifications: [] }),
+        clearNotifications: () => set({ notifications: [] }),
 
         // Theme actions
         toggleTheme: () =>
@@ -152,12 +149,10 @@ export const useUIStore = create<UIState>()(
             isDarkMode: !state.isDarkMode,
           })),
 
-        setTheme: (isDark) =>
-          set({ isDarkMode: isDark }),
+        setTheme: (isDark) => set({ isDarkMode: isDark }),
 
         // Layout actions
-        setLayoutMode: (mode) =>
-          set({ layoutMode: mode }),
+        setLayoutMode: (mode) => set({ layoutMode: mode }),
       }),
       {
         name: 'hivemind-ui-store',

@@ -49,10 +49,7 @@ export interface UpdateUserRequest {
  * Fetch users list
  */
 async function fetchUsers(filters: ListUsersFilters = {}): Promise<ListUsersResponse> {
-  const response = await api.call<{ success: boolean; data: ListUsersResponse }>(
-    'admin.users.list',
-    filters
-  );
+  const response = await api.call<{ success: boolean; data: ListUsersResponse }>('admin.users.list', filters);
 
   if (!response.success || !response.data) {
     throw new Error('Failed to fetch users');
@@ -105,10 +102,7 @@ async function deleteUser(id: string): Promise<void> {
  * Reset user password (admin)
  */
 async function resetUserPassword(id: string): Promise<{ resetToken: string }> {
-  const response = await api.call<{ success: boolean; data: { resetToken: string } }>(
-    'admin.users.resetPassword',
-    { id }
-  );
+  const response = await api.call<{ success: boolean; data: { resetToken: string } }>('admin.users.resetPassword', { id });
 
   if (!response.success || !response.data) {
     throw new Error('Failed to reset password');

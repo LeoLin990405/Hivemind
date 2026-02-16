@@ -87,9 +87,7 @@ export function useCreateMessage() {
       });
 
       // Snapshot previous messages
-      const previousMessages = queryClient.getQueryData<Message[]>(
-        queryKeys.conversations.messages(conversationId)
-      );
+      const previousMessages = queryClient.getQueryData<Message[]>(queryKeys.conversations.messages(conversationId));
 
       // Create optimistic message
       const optimisticMessage: Message = {
@@ -103,10 +101,7 @@ export function useCreateMessage() {
       };
 
       // Optimistically update
-      queryClient.setQueryData<Message[]>(
-        queryKeys.conversations.messages(conversationId),
-        (old) => [...(old || []), optimisticMessage]
-      );
+      queryClient.setQueryData<Message[]>(queryKeys.conversations.messages(conversationId), (old) => [...(old || []), optimisticMessage]);
 
       // Return context with previous value
       return { previousMessages, conversationId };
@@ -118,15 +113,10 @@ export function useCreateMessage() {
       const { conversationId } = context;
 
       // Replace optimistic message with real one
-      queryClient.setQueryData<Message[]>(
-        queryKeys.conversations.messages(conversationId),
-        (old) => {
-          if (!old) return [newMessage];
-          return old.map((msg) =>
-            msg.id.startsWith('temp-') ? newMessage : msg
-          );
-        }
-      );
+      queryClient.setQueryData<Message[]>(queryKeys.conversations.messages(conversationId), (old) => {
+        if (!old) return [newMessage];
+        return old.map((msg) => (msg.id.startsWith('temp-') ? newMessage : msg));
+      });
 
       // Invalidate conversation (update lastMessageAt)
       queryClient.invalidateQueries({
@@ -140,10 +130,7 @@ export function useCreateMessage() {
       const { previousMessages, conversationId } = context;
 
       if (previousMessages) {
-        queryClient.setQueryData(
-          queryKeys.conversations.messages(conversationId),
-          previousMessages
-        );
+        queryClient.setQueryData(queryKeys.conversations.messages(conversationId), previousMessages);
       }
     },
   });
@@ -156,8 +143,7 @@ export function useUpdateMessage() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({ id, data }: { id: string; data: UpdateMessageRequest }) =>
-      updateMessage(id, data),
+    mutationFn: ({ id, data }: { id: string; data: UpdateMessageRequest }) => updateMessage(id, data),
     // Optimistic update
     onMutate: async ({ id, data }) => {
       // Find which conversation this message belongs to
@@ -190,17 +176,10 @@ export function useUpdateMessage() {
       });
 
       // Optimistically update
-      queryClient.setQueryData<Message[]>(
-        queryKeys.conversations.messages(conversationId),
-        (old) => {
-          if (!old) return old;
-          return old.map((msg) =>
-            msg.id === id
-              ? { ...msg, ...data, updatedAt: new Date().toISOString() }
-              : msg
-          );
-        }
-      );
+      queryClient.setQueryData<Message[]>(queryKeys.conversations.messages(conversationId), (old) => {
+        if (!old) return old;
+        return old.map((msg) => (msg.id === id ? { ...msg, ...data, updatedAt: new Date().toISOString() } : msg));
+      });
 
       return { previousMessage, conversationId };
     },
@@ -208,13 +187,10 @@ export function useUpdateMessage() {
     onError: (err, { id }, context) => {
       if (!context?.previousMessage || !context.conversationId) return;
 
-      queryClient.setQueryData<Message[]>(
-        queryKeys.conversations.messages(context.conversationId),
-        (old) => {
-          if (!old) return old;
-          return old.map((msg) => (msg.id === id ? context.previousMessage! : msg));
-        }
-      );
+      queryClient.setQueryData<Message[]>(queryKeys.conversations.messages(context.conversationId), (old) => {
+        if (!old) return old;
+        return old.map((msg) => (msg.id === id ? context.previousMessage! : msg));
+      });
     },
     // Always refetch
     onSettled: (_, __, { id }, context) => {
@@ -234,8 +210,7 @@ export function useDeleteMessage() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({ id, conversationId }: { id: string; conversationId: string }) =>
-      deleteMessage(id),
+    mutationFn: ({ id, conversationId }: { id: string; conversationId: string }) => deleteMessage(id),
     // Optimistic update
     onMutate: async ({ id, conversationId }) => {
       // Cancel outgoing refetches
@@ -244,15 +219,10 @@ export function useDeleteMessage() {
       });
 
       // Snapshot previous messages
-      const previousMessages = queryClient.getQueryData<Message[]>(
-        queryKeys.conversations.messages(conversationId)
-      );
+      const previousMessages = queryClient.getQueryData<Message[]>(queryKeys.conversations.messages(conversationId));
 
       // Optimistically remove
-      queryClient.setQueryData<Message[]>(
-        queryKeys.conversations.messages(conversationId),
-        (old) => (old || []).filter((msg) => msg.id !== id)
-      );
+      queryClient.setQueryData<Message[]>(queryKeys.conversations.messages(conversationId), (old) => (old || []).filter((msg) => msg.id !== id));
 
       return { previousMessages, conversationId };
     },
@@ -260,10 +230,7 @@ export function useDeleteMessage() {
     onError: (err, { conversationId }, context) => {
       if (!context?.previousMessages) return;
 
-      queryClient.setQueryData(
-        queryKeys.conversations.messages(conversationId),
-        context.previousMessages
-      );
+      queryClient.setQueryData(queryKeys.conversations.messages(conversationId), context.previousMessages);
     },
     // Always refetch
     onSettled: (_, __, { conversationId }) => {

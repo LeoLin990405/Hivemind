@@ -23,12 +23,7 @@ export class UserService {
   /**
    * Register a new user
    */
-  async register(data: {
-    username: string;
-    email: string;
-    password: string;
-    displayName?: string;
-  }): Promise<User> {
+  async register(data: { username: string; email: string; password: string; displayName?: string }): Promise<User> {
     // Check if user already exists
     const existingUser = await this.userRepo.findByUsernameOrEmail(data.username);
     if (existingUser) {

@@ -150,18 +150,14 @@ export const useConversationStore = create<ConversationState>()(
           }),
 
         // UI state actions
-        setScrollToBottom: (scroll) =>
-          set({ scrollToBottom: scroll }),
+        setScrollToBottom: (scroll) => set({ scrollToBottom: scroll }),
 
-        setIsComposing: (composing) =>
-          set({ isComposing: composing }),
+        setIsComposing: (composing) => set({ isComposing: composing }),
 
         // Search actions
-        setSearchQuery: (query) =>
-          set({ searchQuery: query }),
+        setSearchQuery: (query) => set({ searchQuery: query }),
 
-        setSearchResults: (results) =>
-          set({ searchResults: results }),
+        setSearchResults: (results) => set({ searchResults: results }),
 
         clearSearch: () =>
           set({
@@ -181,11 +177,9 @@ export const useConversationStore = create<ConversationState>()(
             return { selectedMessageIds: newSelection };
           }),
 
-        clearSelection: () =>
-          set({ selectedMessageIds: new Set() }),
+        clearSelection: () => set({ selectedMessageIds: new Set() }),
 
-        selectAll: (messageIds) =>
-          set({ selectedMessageIds: new Set(messageIds) }),
+        selectAll: (messageIds) => set({ selectedMessageIds: new Set(messageIds) }),
       }),
       {
         name: 'hivemind-conversation-store',
@@ -205,10 +199,8 @@ export const useConversationStore = create<ConversationState>()(
 export const conversationSelectors = {
   activeConversationId: (state: ConversationState) => state.activeConversationId,
   drafts: (state: ConversationState) => state.drafts,
-  draft: (conversationId: string) => (state: ConversationState) =>
-    state.drafts[conversationId]?.content || '',
-  typingUsers: (conversationId: string) => (state: ConversationState) =>
-    state.typingUsers[conversationId] || [],
+  draft: (conversationId: string) => (state: ConversationState) => state.drafts[conversationId]?.content || '',
+  typingUsers: (conversationId: string) => (state: ConversationState) => state.typingUsers[conversationId] || [],
   scrollToBottom: (state: ConversationState) => state.scrollToBottom,
   isComposing: (state: ConversationState) => state.isComposing,
   searchQuery: (state: ConversationState) => state.searchQuery,

@@ -570,10 +570,7 @@ body,
 }
 
 .hive-shell {
-  background:
-    radial-gradient(1100px 420px at -10% -20%, var(--hive-glow-primary), transparent 62%),
-    radial-gradient(900px 360px at 120% -10%, var(--hive-glow-secondary), transparent 58%),
-    linear-gradient(180deg, var(--bg-base) 0%, var(--bg-1) 100%);
+  background: radial-gradient(1100px 420px at -10% -20%, var(--hive-glow-primary), transparent 62%), radial-gradient(900px 360px at 120% -10%, var(--hive-glow-secondary), transparent 58%), linear-gradient(180deg, var(--bg-base) 0%, var(--bg-1) 100%);
   color: var(--text-primary);
 }
 
@@ -602,9 +599,7 @@ body,
   width: 38px;
   height: 38px;
   border-radius: 12px;
-  background:
-    radial-gradient(circle at 18% 18%, rgba(255, 255, 255, 0.24), transparent 42%),
-    linear-gradient(145deg, var(--brand), color-mix(in srgb, var(--brand) 70%, #0ea5e9 30%));
+  background: radial-gradient(circle at 18% 18%, rgba(255, 255, 255, 0.24), transparent 42%), linear-gradient(145deg, var(--brand), color-mix(in srgb, var(--brand) 70%, #0ea5e9 30%));
   box-shadow:
     0 8px 20px -12px var(--hive-glow-primary),
     inset 0 1px 0 rgba(255, 255, 255, 0.35);
@@ -673,8 +668,7 @@ body,
 .hive-nav-item--active {
   color: var(--text-primary);
   border-color: color-mix(in srgb, var(--brand) 32%, transparent 68%);
-  background:
-    linear-gradient(180deg, color-mix(in srgb, var(--brand-light) 76%, transparent 24%) 0%, color-mix(in srgb, var(--brand-light) 48%, transparent 52%) 100%);
+  background: linear-gradient(180deg, color-mix(in srgb, var(--brand-light) 76%, transparent 24%) 0%, color-mix(in srgb, var(--brand-light) 48%, transparent 52%) 100%);
   box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.24);
 }
 
@@ -713,8 +707,7 @@ body,
 }
 
 .hive-content {
-  background:
-    linear-gradient(180deg, color-mix(in srgb, var(--bg-base) 62%, white 38%) 0%, color-mix(in srgb, var(--bg-1) 92%, white 8%) 100%);
+  background: linear-gradient(180deg, color-mix(in srgb, var(--bg-base) 62%, white 38%) 0%, color-mix(in srgb, var(--bg-1) 92%, white 8%) 100%);
   border: 1px solid var(--hive-border-soft);
   border-radius: 14px;
   box-shadow:
@@ -780,10 +773,7 @@ body,
 }
 
 [data-theme='dark'] .hive-shell {
-  background:
-    radial-gradient(980px 380px at -8% -20%, var(--hive-glow-primary), transparent 64%),
-    radial-gradient(760px 320px at 115% -10%, var(--hive-glow-secondary), transparent 60%),
-    linear-gradient(180deg, #080d16 0%, var(--bg-base) 100%);
+  background: radial-gradient(980px 380px at -8% -20%, var(--hive-glow-primary), transparent 64%), radial-gradient(760px 320px at 115% -10%, var(--hive-glow-secondary), transparent 60%), linear-gradient(180deg, #080d16 0%, var(--bg-base) 100%);
 }
 
 [data-theme='dark'] .hive-sider {
@@ -1097,7 +1087,9 @@ body,
 
 .hive-confirm-option {
   border-color: color-mix(in srgb, var(--border-base) 70%, transparent 30%) !important;
-  transition: background-color var(--transition-fast), border-color var(--transition-fast);
+  transition:
+    background-color var(--transition-fast),
+    border-color var(--transition-fast);
 }
 
 .hive-confirm-option:hover {
@@ -1162,9 +1154,7 @@ body,
 /* ========================================================================== */
 
 .hive-settings-page {
-  background:
-    radial-gradient(640px 260px at 4% 0%, color-mix(in srgb, var(--brand-light) 24%, transparent 76%), transparent 68%),
-    linear-gradient(180deg, color-mix(in srgb, var(--bg-base) 96%, white 4%) 0%, var(--bg-base) 100%);
+  background: radial-gradient(640px 260px at 4% 0%, color-mix(in srgb, var(--brand-light) 24%, transparent 76%), transparent 68%), linear-gradient(180deg, color-mix(in srgb, var(--bg-base) 96%, white 4%) 0%, var(--bg-base) 100%);
 }
 
 .hive-settings-content {
@@ -1254,9 +1244,7 @@ body,
 .hive-agent-teams-layout {
   padding: 24px;
   gap: 14px;
-  background:
-    radial-gradient(700px 320px at 0% 0%, color-mix(in srgb, var(--brand-light) 20%, transparent 80%), transparent 70%),
-    linear-gradient(180deg, color-mix(in srgb, var(--bg-base) 96%, white 4%) 0%, var(--bg-base) 100%);
+  background: radial-gradient(700px 320px at 0% 0%, color-mix(in srgb, var(--brand-light) 20%, transparent 80%), transparent 70%), linear-gradient(180deg, color-mix(in srgb, var(--bg-base) 96%, white 4%) 0%, var(--bg-base) 100%);
 }
 
 .hive-agent-teams-layout__header {
@@ -1718,7 +1706,10 @@ body,
   background: linear-gradient(180deg, color-mix(in srgb, var(--bg-base) 96%, white 4%) 0%, color-mix(in srgb, var(--bg-1) 93%, white 7%) 100%);
   box-shadow: 0 10px 24px -20px rgba(15, 23, 42, 0.55);
   cursor: grab;
-  transition: box-shadow var(--transition-fast), border-color var(--transition-fast), transform var(--transition-fast);
+  transition:
+    box-shadow var(--transition-fast),
+    border-color var(--transition-fast),
+    transform var(--transition-fast);
 }
 
 .hive-agent-task-card:active {
@@ -1855,25 +1846,39 @@ body,
 }
 
 /* ----- Neon Glow Effects ----- */
-.neon-glow-sm { box-shadow: var(--neon-glow-sm); }
-.neon-glow-md { box-shadow: var(--neon-glow-md); }
-.neon-glow-lg { box-shadow: var(--neon-glow-lg); }
-.neon-border-glow { box-shadow: var(--neon-border-glow); }
+.neon-glow-sm {
+  box-shadow: var(--neon-glow-sm);
+}
+.neon-glow-md {
+  box-shadow: var(--neon-glow-md);
+}
+.neon-glow-lg {
+  box-shadow: var(--neon-glow-lg);
+}
+.neon-border-glow {
+  box-shadow: var(--neon-border-glow);
+}
 
 .neon-text {
   text-shadow: var(--neon-text-glow);
 }
 
 .neon-text-danger {
-  text-shadow: 0 0 8px rgba(255, 51, 102, 0.6), 0 0 20px rgba(255, 51, 102, 0.2);
+  text-shadow:
+    0 0 8px rgba(255, 51, 102, 0.6),
+    0 0 20px rgba(255, 51, 102, 0.2);
 }
 
 .neon-text-success {
-  text-shadow: 0 0 8px rgba(0, 255, 136, 0.6), 0 0 20px rgba(0, 255, 136, 0.2);
+  text-shadow:
+    0 0 8px rgba(0, 255, 136, 0.6),
+    0 0 20px rgba(0, 255, 136, 0.2);
 }
 
 .neon-text-warning {
-  text-shadow: 0 0 8px rgba(255, 170, 0, 0.6), 0 0 20px rgba(255, 170, 0, 0.2);
+  text-shadow:
+    0 0 8px rgba(255, 170, 0, 0.6),
+    0 0 20px rgba(255, 170, 0, 0.2);
 }
 
 /* ----- Gradient Border (animated) ----- */
@@ -1888,16 +1893,12 @@ body,
   inset: 0;
   padding: 1px;
   border-radius: inherit;
-  background: linear-gradient(
-    135deg,
-    var(--gradient-border-from),
-    var(--gradient-border-via),
-    var(--gradient-border-to),
-    var(--gradient-border-from)
-  );
+  background: linear-gradient(135deg, var(--gradient-border-from), var(--gradient-border-via), var(--gradient-border-to), var(--gradient-border-from));
   background-size: 300% 300%;
   animation: gradient-shift 6s ease infinite;
-  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask:
+    linear-gradient(#fff 0 0) content-box,
+    linear-gradient(#fff 0 0);
   -webkit-mask-composite: xor;
   mask-composite: exclude;
   pointer-events: none;
@@ -1909,8 +1910,13 @@ body,
 }
 
 @keyframes gradient-shift {
-  0%, 100% { background-position: 0% 50%; }
-  50% { background-position: 100% 50%; }
+  0%,
+  100% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
 }
 
 /* ----- HUD Corner Accents ----- */
@@ -1979,21 +1985,19 @@ body,
   content: '';
   position: absolute;
   inset: 0;
-  background: repeating-linear-gradient(
-    0deg,
-    transparent,
-    transparent 2px,
-    var(--scanline-color) 2px,
-    var(--scanline-color) 4px
-  );
+  background: repeating-linear-gradient(0deg, transparent, transparent 2px, var(--scanline-color) 2px, var(--scanline-color) 4px);
   pointer-events: none;
   z-index: 2;
   animation: scanline-scroll 8s linear infinite;
 }
 
 @keyframes scanline-scroll {
-  0% { transform: translateY(0); }
-  100% { transform: translateY(4px); }
+  0% {
+    transform: translateY(0);
+  }
+  100% {
+    transform: translateY(4px);
+  }
 }
 
 /* ----- Pulse / Breathing Animations ----- */
@@ -2002,8 +2006,15 @@ body,
 }
 
 @keyframes pulse-glow {
-  0%, 100% { box-shadow: 0 0 4px var(--pulse-color); }
-  50% { box-shadow: 0 0 16px var(--pulse-color), 0 0 4px var(--pulse-color); }
+  0%,
+  100% {
+    box-shadow: 0 0 4px var(--pulse-color);
+  }
+  50% {
+    box-shadow:
+      0 0 16px var(--pulse-color),
+      0 0 4px var(--pulse-color);
+  }
 }
 
 .pulse-dot {
@@ -2011,8 +2022,15 @@ body,
 }
 
 @keyframes pulse-dot {
-  0%, 100% { opacity: 1; transform: scale(1); }
-  50% { opacity: 0.5; transform: scale(0.85); }
+  0%,
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.5;
+    transform: scale(0.85);
+  }
 }
 
 /* Status dot breathing for Nexus */
@@ -2021,8 +2039,15 @@ body,
 }
 
 @keyframes pulse-dot-ok {
-  0%, 100% { box-shadow: 0 0 3px rgba(0, 255, 136, 0.5); }
-  50% { box-shadow: 0 0 10px rgba(0, 255, 136, 0.7), 0 0 3px rgba(0, 255, 136, 0.4); }
+  0%,
+  100% {
+    box-shadow: 0 0 3px rgba(0, 255, 136, 0.5);
+  }
+  50% {
+    box-shadow:
+      0 0 10px rgba(0, 255, 136, 0.7),
+      0 0 3px rgba(0, 255, 136, 0.4);
+  }
 }
 
 /* ----- Flicker / Data Stream ----- */
@@ -2031,8 +2056,21 @@ body,
 }
 
 @keyframes flicker {
-  0%, 19%, 21%, 23%, 25%, 54%, 56%, 100% { opacity: 1; }
-  20%, 24%, 55% { opacity: 0.6; }
+  0%,
+  19%,
+  21%,
+  23%,
+  25%,
+  54%,
+  56%,
+  100% {
+    opacity: 1;
+  }
+  20%,
+  24%,
+  55% {
+    opacity: 0.6;
+  }
 }
 
 /* ----- Neon Underline ----- */
@@ -2075,8 +2113,14 @@ body,
 }
 
 @keyframes fade-up-enter {
-  from { opacity: 0; transform: translateY(12px); }
-  to { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .scale-enter {
@@ -2084,8 +2128,14 @@ body,
 }
 
 @keyframes scale-enter {
-  from { opacity: 0; transform: scale(0.92); }
-  to { opacity: 1; transform: scale(1); }
+  from {
+    opacity: 0;
+    transform: scale(0.92);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {

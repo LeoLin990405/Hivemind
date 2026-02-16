@@ -9,8 +9,7 @@ import { Pool } from 'pg';
 import * as schema from './schema';
 
 // Database connection configuration
-const connectionString =
-  process.env.DATABASE_URL || 'postgresql://hivemind:hivemind_dev_password@localhost:5432/hivemind';
+const connectionString = process.env.DATABASE_URL || 'postgresql://hivemind:hivemind_dev_password@localhost:5432/hivemind';
 
 // Create PostgreSQL connection pool
 export const pool = new Pool({

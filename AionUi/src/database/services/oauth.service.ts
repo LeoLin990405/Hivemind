@@ -35,7 +35,7 @@ export class OAuthService {
    */
   async loginOrRegister(profile: OAuthProfile): Promise<AuthResult> {
     // 查找是否存在 OAuth 账户
-    let oauthAccount = await this.findOAuthAccount(profile.provider, profile.providerId);
+    const oauthAccount = await this.findOAuthAccount(profile.provider, profile.providerId);
 
     let user: User;
 
@@ -139,15 +139,7 @@ export class OAuthService {
   /**
    * 创建 OAuth 账户
    */
-  private async createOAuthAccount(data: {
-    userId: string;
-    provider: string;
-    providerId: string;
-    email: string;
-    displayName?: string;
-    avatar?: string;
-    raw?: string;
-  }): Promise<OAuthAccount> {
+  private async createOAuthAccount(data: { userId: string; provider: string; providerId: string; email: string; displayName?: string; avatar?: string; raw?: string }): Promise<OAuthAccount> {
     const results = await db.insert(oauthAccounts).values(data).returning();
     return results[0];
   }

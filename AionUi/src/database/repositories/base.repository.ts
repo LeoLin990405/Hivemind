@@ -6,8 +6,9 @@
  * Base repository with common CRUD operations
  */
 
-import { SQL, eq, and } from 'drizzle-orm';
-import { PgTable } from 'drizzle-orm/pg-core';
+import type { SQL } from 'drizzle-orm';
+import { eq, and } from 'drizzle-orm';
+import type { PgTable } from 'drizzle-orm/pg-core';
 import { db } from '../db';
 
 export abstract class BaseRepository<T extends PgTable> {
@@ -29,11 +30,7 @@ export abstract class BaseRepository<T extends PgTable> {
    */
   async findById(id: string): Promise<any | null> {
     const idColumn = this.table.id as any;
-    const results = await db
-      .select()
-      .from(this.table)
-      .where(eq(idColumn, id))
-      .limit(1);
+    const results = await db.select().from(this.table).where(eq(idColumn, id)).limit(1);
     return results[0] || null;
   }
 
@@ -65,11 +62,7 @@ export abstract class BaseRepository<T extends PgTable> {
    */
   async updateById(id: string, data: any): Promise<any | null> {
     const idColumn = this.table.id as any;
-    const results = await db
-      .update(this.table)
-      .set(data)
-      .where(eq(idColumn, id))
-      .returning();
+    const results = await db.update(this.table).set(data).where(eq(idColumn, id)).returning();
     return results[0] || null;
   }
 

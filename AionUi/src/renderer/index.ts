@@ -75,27 +75,9 @@ const AppProviders: React.FC<PropsWithChildren> = ({ children }) =>
   React.createElement(
     QueryClientProvider,
     { client: queryClient },
-    React.createElement(
-      AuthProvider,
-      null,
-      React.createElement(
-        ThemeProvider,
-        null,
-        React.createElement(
-          MemoryProvider,
-          null,
-          React.createElement(
-            PreviewProvider,
-            null,
-            React.createElement(ConversationTabsProvider, null, children)
-          )
-        )
-      )
-    ),
+    React.createElement(AuthProvider, null, React.createElement(ThemeProvider, null, React.createElement(MemoryProvider, null, React.createElement(PreviewProvider, null, React.createElement(ConversationTabsProvider, null, children))))),
     // Add React Query DevTools (only in development)
-    process.env.NODE_ENV === 'development'
-      ? React.createElement(ReactQueryDevtools, { initialIsOpen: false })
-      : null
+    process.env.NODE_ENV === 'development' ? React.createElement(ReactQueryDevtools, { initialIsOpen: false }) : null
   );
 
 const Config: React.FC<PropsWithChildren> = ({ children }) => {

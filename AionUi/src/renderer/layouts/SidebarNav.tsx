@@ -111,51 +111,15 @@ const SidebarNav: React.FC<SidebarNavProps> = ({ collapsed, onSessionClick }) =>
         </div>
 
         <div className='hive-nav-section'>
-          <NavItem
-            label={t('knowledge.title', { defaultValue: 'Knowledge Hub' })}
-            icon={<BookOpen size={20} />}
-            collapsed={collapsed}
-            active={isKnowledge}
-            onClick={() => safeNavigate(isKnowledge ? '/guid' : '/knowledge')}
-          />
-          <NavItem
-            label={t('memory.title')}
-            icon={<History size={20} />}
-            collapsed={collapsed}
-            active={isMemory}
-            onClick={() => safeNavigate(isMemory ? '/guid' : '/memory')}
-          />
-          <NavItem
-            label={t('agentTeams.title', { defaultValue: 'Agent Teams' })}
-            icon={<Users size={20} />}
-            collapsed={collapsed}
-            active={isAgentTeams}
-            onClick={() => safeNavigate(isAgentTeams ? '/guid' : '/agent-teams/dashboard')}
-          />
-          <NavItem
-            label={t('skills.title', { defaultValue: 'Skills' })}
-            icon={<Wrench size={20} />}
-            collapsed={collapsed}
-            active={isSkills}
-            onClick={() => safeNavigate(isSkills ? '/guid' : '/skills')}
-          />
-          <NavItem
-            label={t('monitor.title', { defaultValue: 'Monitor' })}
-            icon={<LayoutDashboard size={20} />}
-            collapsed={collapsed}
-            active={isMonitor}
-            onClick={() => safeNavigate(isMonitor ? '/guid' : '/monitor')}
-          />
+          <NavItem label={t('knowledge.title', { defaultValue: 'Knowledge Hub' })} icon={<BookOpen size={20} />} collapsed={collapsed} active={isKnowledge} onClick={() => safeNavigate(isKnowledge ? '/guid' : '/knowledge')} />
+          <NavItem label={t('memory.title')} icon={<History size={20} />} collapsed={collapsed} active={isMemory} onClick={() => safeNavigate(isMemory ? '/guid' : '/memory')} />
+          <NavItem label={t('agentTeams.title', { defaultValue: 'Agent Teams' })} icon={<Users size={20} />} collapsed={collapsed} active={isAgentTeams} onClick={() => safeNavigate(isAgentTeams ? '/guid' : '/agent-teams/dashboard')} />
+          <NavItem label={t('skills.title', { defaultValue: 'Skills' })} icon={<Wrench size={20} />} collapsed={collapsed} active={isSkills} onClick={() => safeNavigate(isSkills ? '/guid' : '/skills')} />
+          <NavItem label={t('monitor.title', { defaultValue: 'Monitor' })} icon={<LayoutDashboard size={20} />} collapsed={collapsed} active={isMonitor} onClick={() => safeNavigate(isMonitor ? '/guid' : '/monitor')} />
         </div>
 
         <div className='hive-nav-section sider-footer'>
-          <NavItem
-            label={isSettings ? t('common.back') : t('common.settings')}
-            icon={isSettings ? <ArrowLeftCircle size={20} /> : <Settings size={20} />}
-            collapsed={collapsed}
-            active={isSettings}
-            onClick={handleSettingsClick}
-          />
+          <NavItem label={isSettings ? t('common.back') : t('common.settings')} icon={isSettings ? <ArrowLeftCircle size={20} /> : <Settings size={20} />} collapsed={collapsed} active={isSettings} onClick={handleSettingsClick} />
         </div>
       </div>
     </TooltipProvider>

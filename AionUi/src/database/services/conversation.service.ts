@@ -19,10 +19,7 @@ export class ConversationService {
   /**
    * Get all conversations for a user
    */
-  async getUserConversations(
-    userId: string,
-    options: { limit?: number; offset?: number } = {}
-  ): Promise<Conversation[]> {
+  async getUserConversations(userId: string, options: { limit?: number; offset?: number } = {}): Promise<Conversation[]> {
     const { limit = 50, offset = 0 } = options;
     return this.conversationRepo.findByUserId(userId, limit, offset);
   }
@@ -37,14 +34,7 @@ export class ConversationService {
   /**
    * Create a new conversation
    */
-  async createConversation(data: {
-    userId: string;
-    name: string;
-    platform: 'hivemind' | 'gemini' | 'claude' | 'codex' | 'custom';
-    model: string;
-    systemPrompt?: string;
-    metadata?: any;
-  }): Promise<Conversation> {
+  async createConversation(data: { userId: string; name: string; platform: 'hivemind' | 'gemini' | 'claude' | 'codex' | 'custom'; model: string; systemPrompt?: string; metadata?: any }): Promise<Conversation> {
     const newConversation: NewConversation = {
       userId: data.userId,
       name: data.name,
@@ -97,10 +87,7 @@ export class ConversationService {
   /**
    * Unarchive a conversation
    */
-  async unarchiveConversation(
-    conversationId: string,
-    userId: string
-  ): Promise<Conversation | null> {
+  async unarchiveConversation(conversationId: string, userId: string): Promise<Conversation | null> {
     // Verify ownership
     const conversation = await this.conversationRepo.findByIdAndUserId(conversationId, userId);
     if (!conversation) {
@@ -128,11 +115,7 @@ export class ConversationService {
   /**
    * Get messages for a conversation
    */
-  async getMessages(
-    conversationId: string,
-    userId: string,
-    options: { limit?: number; offset?: number } = {}
-  ): Promise<Message[]> {
+  async getMessages(conversationId: string, userId: string, options: { limit?: number; offset?: number } = {}): Promise<Message[]> {
     // Verify ownership
     const conversation = await this.conversationRepo.findByIdAndUserId(conversationId, userId);
     if (!conversation) {
@@ -242,10 +225,7 @@ export class ConversationService {
       throw new Error('Message not found');
     }
 
-    const conversation = await this.conversationRepo.findByIdAndUserId(
-      message.conversationId,
-      userId
-    );
+    const conversation = await this.conversationRepo.findByIdAndUserId(message.conversationId, userId);
     if (!conversation) {
       throw new Error('Access denied');
     }
@@ -263,10 +243,7 @@ export class ConversationService {
       throw new Error('Message not found');
     }
 
-    const conversation = await this.conversationRepo.findByIdAndUserId(
-      message.conversationId,
-      userId
-    );
+    const conversation = await this.conversationRepo.findByIdAndUserId(message.conversationId, userId);
     if (!conversation) {
       throw new Error('Access denied');
     }

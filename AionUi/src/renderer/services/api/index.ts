@@ -8,21 +8,13 @@
 
 import { HTTPAPIClient } from './http-client';
 import { ElectronAPIClient, isElectron } from './electron-client';
-import { WebSocketManager, getWebSocketManager } from './websocket-manager';
+import type { WebSocketManager } from './websocket-manager';
+import { getWebSocketManager } from './websocket-manager';
 import { tokenStorage, LocalStorageTokenStorage, MemoryTokenStorage } from './token-storage';
 import type { APIClient } from './types';
 
 // Re-export types
-export type {
-  APIClient,
-  APIRequestOptions,
-  APIResponse,
-  EventCallback,
-  UnsubscribeFn,
-  ConnectionStatus,
-  WebSocketOptions,
-  TokenStorage,
-} from './types';
+export type { APIClient, APIRequestOptions, APIResponse, EventCallback, UnsubscribeFn, ConnectionStatus, WebSocketOptions, TokenStorage } from './types';
 
 // Re-export classes
 export { HTTPAPIClient } from './http-client';

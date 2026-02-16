@@ -83,13 +83,8 @@ export interface UpdateConversationRequest {
 /**
  * Fetch conversations list
  */
-async function fetchConversations(
-  filters: ListConversationsFilters = {}
-): Promise<ListConversationsResponse> {
-  const response = await api.call<{ success: boolean; data: ListConversationsResponse }>(
-    'conversations.list',
-    filters
-  );
+async function fetchConversations(filters: ListConversationsFilters = {}): Promise<ListConversationsResponse> {
+  const response = await api.call<{ success: boolean; data: ListConversationsResponse }>('conversations.list', filters);
 
   if (!response.success || !response.data) {
     throw new Error('Failed to fetch conversations');
@@ -102,10 +97,7 @@ async function fetchConversations(
  * Fetch conversation by ID
  */
 async function fetchConversation(id: string): Promise<Conversation> {
-  const response = await api.call<{ success: boolean; data: Conversation }>(
-    'conversations.get',
-    { id }
-  );
+  const response = await api.call<{ success: boolean; data: Conversation }>('conversations.get', { id });
 
   if (!response.success || !response.data) {
     throw new Error('Conversation not found');
@@ -118,10 +110,7 @@ async function fetchConversation(id: string): Promise<Conversation> {
  * Fetch conversation messages
  */
 async function fetchConversationMessages(conversationId: string): Promise<Message[]> {
-  const response = await api.call<{ success: boolean; data: Message[] }>(
-    'conversations.messages',
-    { conversationId }
-  );
+  const response = await api.call<{ success: boolean; data: Message[] }>('conversations.messages', { conversationId });
 
   if (!response.success || !response.data) {
     throw new Error('Failed to fetch messages');
@@ -134,10 +123,7 @@ async function fetchConversationMessages(conversationId: string): Promise<Messag
  * Create conversation
  */
 async function createConversation(data: CreateConversationRequest): Promise<Conversation> {
-  const response = await api.call<{ success: boolean; data: Conversation }>(
-    'conversations.create',
-    data
-  );
+  const response = await api.call<{ success: boolean; data: Conversation }>('conversations.create', data);
 
   if (!response.success || !response.data) {
     throw new Error('Failed to create conversation');
@@ -149,14 +135,8 @@ async function createConversation(data: CreateConversationRequest): Promise<Conv
 /**
  * Update conversation
  */
-async function updateConversation(
-  id: string,
-  data: UpdateConversationRequest
-): Promise<Conversation> {
-  const response = await api.call<{ success: boolean; data: Conversation }>(
-    'conversations.update',
-    { id, ...data }
-  );
+async function updateConversation(id: string, data: UpdateConversationRequest): Promise<Conversation> {
+  const response = await api.call<{ success: boolean; data: Conversation }>('conversations.update', { id, ...data });
 
   if (!response.success || !response.data) {
     throw new Error('Failed to update conversation');
@@ -234,14 +214,10 @@ export function useUpdateConversation() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({ id, data }: { id: string; data: UpdateConversationRequest }) =>
-      updateConversation(id, data),
+    mutationFn: ({ id, data }: { id: string; data: UpdateConversationRequest }) => updateConversation(id, data),
     onSuccess: (updatedConversation) => {
       // Update conversation in cache
-      queryClient.setQueryData(
-        queryKeys.conversations.detail(updatedConversation.id),
-        updatedConversation
-      );
+      queryClient.setQueryData(queryKeys.conversations.detail(updatedConversation.id), updatedConversation);
       // Invalidate conversations list
       queryClient.invalidateQueries({ queryKey: queryKeys.conversations.lists() });
     },

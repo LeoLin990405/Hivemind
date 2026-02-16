@@ -6,7 +6,8 @@
  * OAuth 路由（Google、GitHub）
  */
 
-import { Router, Request, Response, NextFunction } from 'express';
+import type { Request, Response } from 'express';
+import { Router, NextFunction } from 'express';
 import passport from '../config/passport.config';
 import type { AuthResult } from '../../../database/services/auth.service';
 
@@ -24,21 +25,14 @@ router.get('/google', passport.authenticate('google', { scope: ['profile', 'emai
  * GET /api/v1/auth/google/callback
  * Google OAuth 回调
  */
-router.get(
-  '/google/callback',
-  passport.authenticate('google', { session: false, failureRedirect: `${FRONTEND_URL}/login?error=oauth_failed` }),
-  (req: Request, res: Response) => {
-    const authResult = req.user as AuthResult;
+router.get('/google/callback', passport.authenticate('google', { session: false, failureRedirect: `${FRONTEND_URL}/login?error=oauth_failed` }), (req: Request, res: Response) => {
+  const authResult = req.user as AuthResult;
 
-    // 重定向到前端，携带 tokens
-    const redirectUrl = `${FRONTEND_URL}/auth/callback?` +
-      `access_token=${authResult.accessToken}&` +
-      `refresh_token=${authResult.refreshToken}&` +
-      `expires_in=${authResult.expiresIn}`;
+  // 重定向到前端，携带 tokens
+  const redirectUrl = `${FRONTEND_URL}/auth/callback?` + `access_token=${authResult.accessToken}&` + `refresh_token=${authResult.refreshToken}&` + `expires_in=${authResult.expiresIn}`;
 
-    res.redirect(redirectUrl);
-  }
-);
+  res.redirect(redirectUrl);
+});
 
 /**
  * GET /api/v1/auth/github
@@ -50,20 +44,13 @@ router.get('/github', passport.authenticate('github', { scope: ['user:email'], s
  * GET /api/v1/auth/github/callback
  * GitHub OAuth 回调
  */
-router.get(
-  '/github/callback',
-  passport.authenticate('github', { session: false, failureRedirect: `${FRONTEND_URL}/login?error=oauth_failed` }),
-  (req: Request, res: Response) => {
-    const authResult = req.user as AuthResult;
+router.get('/github/callback', passport.authenticate('github', { session: false, failureRedirect: `${FRONTEND_URL}/login?error=oauth_failed` }), (req: Request, res: Response) => {
+  const authResult = req.user as AuthResult;
 
-    // 重定向到前端，携带 tokens
-    const redirectUrl = `${FRONTEND_URL}/auth/callback?` +
-      `access_token=${authResult.accessToken}&` +
-      `refresh_token=${authResult.refreshToken}&` +
-      `expires_in=${authResult.expiresIn}`;
+  // 重定向到前端，携带 tokens
+  const redirectUrl = `${FRONTEND_URL}/auth/callback?` + `access_token=${authResult.accessToken}&` + `refresh_token=${authResult.refreshToken}&` + `expires_in=${authResult.expiresIn}`;
 
-    res.redirect(redirectUrl);
-  }
-);
+  res.redirect(redirectUrl);
+});
 
 export default router;

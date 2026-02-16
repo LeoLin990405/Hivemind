@@ -4,7 +4,8 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { Router, Request, Response, NextFunction } from 'express';
+import type { Request, Response, NextFunction } from 'express';
+import { Router } from 'express';
 import { z } from 'zod';
 import { validateRequest } from '../middleware/validate';
 import { authenticateJWT } from '../middleware/auth';
@@ -55,8 +56,7 @@ router.post(
   }),
   async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const { model, messages, system, maxTokens, temperature, topP, topK, stream, tools } =
-        req.body;
+      const { model, messages, system, maxTokens, temperature, topP, topK, stream, tools } = req.body;
 
       // TODO: Call Anthropic Messages API
       // const response = await acpService.messages({ model, messages, ... })
@@ -99,63 +99,60 @@ router.post(
  * GET /api/v1/acp/models
  * List available Claude models
  */
-router.get(
-  '/models',
-  async (req: Request, res: Response, next: NextFunction) => {
-    try {
-      // TODO: Fetch from Anthropic API
-      // const models = await acpService.listModels()
+router.get('/models', async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    // TODO: Fetch from Anthropic API
+    // const models = await acpService.listModels()
 
-      // Mock data
-      const models = [
-        {
-          id: 'claude-opus-4-6',
-          displayName: 'Claude Opus 4.6',
-          description: 'Most capable model for complex tasks',
-          contextWindow: 200000,
-          maxOutputTokens: 16384,
-          pricing: {
-            input: 15.0,
-            output: 75.0,
-          },
+    // Mock data
+    const models = [
+      {
+        id: 'claude-opus-4-6',
+        displayName: 'Claude Opus 4.6',
+        description: 'Most capable model for complex tasks',
+        contextWindow: 200000,
+        maxOutputTokens: 16384,
+        pricing: {
+          input: 15.0,
+          output: 75.0,
         },
-        {
-          id: 'claude-sonnet-4-5-20250929',
-          displayName: 'Claude Sonnet 4.5',
-          description: 'Balanced performance and speed',
-          contextWindow: 200000,
-          maxOutputTokens: 16384,
-          pricing: {
-            input: 3.0,
-            output: 15.0,
-          },
+      },
+      {
+        id: 'claude-sonnet-4-5-20250929',
+        displayName: 'Claude Sonnet 4.5',
+        description: 'Balanced performance and speed',
+        contextWindow: 200000,
+        maxOutputTokens: 16384,
+        pricing: {
+          input: 3.0,
+          output: 15.0,
         },
-        {
-          id: 'claude-haiku-4-5-20251001',
-          displayName: 'Claude Haiku 4.5',
-          description: 'Fast and cost-effective',
-          contextWindow: 200000,
-          maxOutputTokens: 8192,
-          pricing: {
-            input: 0.8,
-            output: 4.0,
-          },
+      },
+      {
+        id: 'claude-haiku-4-5-20251001',
+        displayName: 'Claude Haiku 4.5',
+        description: 'Fast and cost-effective',
+        contextWindow: 200000,
+        maxOutputTokens: 8192,
+        pricing: {
+          input: 0.8,
+          output: 4.0,
         },
-      ];
+      },
+    ];
 
-      res.json({
-        success: true,
-        data: models,
-        meta: {
-          timestamp: new Date().toISOString(),
-          requestId: crypto.randomUUID(),
-        },
-      });
-    } catch (error) {
-      next(error);
-    }
+    res.json({
+      success: true,
+      data: models,
+      meta: {
+        timestamp: new Date().toISOString(),
+        requestId: crypto.randomUUID(),
+      },
+    });
+  } catch (error) {
+    next(error);
   }
-);
+});
 
 /**
  * POST /api/v1/acp/count-tokens
@@ -265,45 +262,41 @@ router.post(
  * GET /api/v1/acp/batch/:id
  * Get batch status
  */
-router.get(
-  '/batch/:id',
-  validateRequest({ params: z.object({ id: z.string() }) }),
-  async (req: Request, res: Response, next: NextFunction) => {
-    try {
-      const { id } = req.params;
+router.get('/batch/:id', validateRequest({ params: z.object({ id: z.string() }) }), async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const { id } = req.params;
 
-      // TODO: Fetch batch status from Anthropic API
-      // const batch = await acpService.getBatch(id)
+    // TODO: Fetch batch status from Anthropic API
+    // const batch = await acpService.getBatch(id)
 
-      // Mock response
-      const batch = {
-        id,
-        type: 'message_batch',
-        processingStatus: 'ended',
-        requestCounts: {
-          processing: 0,
-          succeeded: 5,
-          errored: 0,
-          canceled: 0,
-          expired: 0,
-        },
-        createdAt: new Date(Date.now() - 3600000).toISOString(),
-        endedAt: new Date().toISOString(),
-        resultsUrl: `https://api.anthropic.com/v1/batches/${id}/results`,
-      };
+    // Mock response
+    const batch = {
+      id,
+      type: 'message_batch',
+      processingStatus: 'ended',
+      requestCounts: {
+        processing: 0,
+        succeeded: 5,
+        errored: 0,
+        canceled: 0,
+        expired: 0,
+      },
+      createdAt: new Date(Date.now() - 3600000).toISOString(),
+      endedAt: new Date().toISOString(),
+      resultsUrl: `https://api.anthropic.com/v1/batches/${id}/results`,
+    };
 
-      res.json({
-        success: true,
-        data: batch,
-        meta: {
-          timestamp: new Date().toISOString(),
-          requestId: crypto.randomUUID(),
-        },
-      });
-    } catch (error) {
-      next(error);
-    }
+    res.json({
+      success: true,
+      data: batch,
+      meta: {
+        timestamp: new Date().toISOString(),
+        requestId: crypto.randomUUID(),
+      },
+    });
+  } catch (error) {
+    next(error);
   }
-);
+});
 
 export default router;

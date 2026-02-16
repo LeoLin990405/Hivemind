@@ -6,7 +6,8 @@
  * 管理员 - 用户管理路由
  */
 
-import { Router, Request, Response, NextFunction } from 'express';
+import type { Request, Response, NextFunction } from 'express';
+import { Router } from 'express';
 import { z } from 'zod';
 import { authenticateJWT, requireRole } from '../../middleware/auth';
 import { validateRequest } from '../../middleware/validate';

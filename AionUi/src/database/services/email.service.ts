@@ -269,12 +269,7 @@ export class EmailService {
   /**
    * 发送通用邮件
    */
-  private async sendEmail(options: {
-    to: string;
-    subject: string;
-    html: string;
-    text?: string;
-  }): Promise<boolean> {
+  private async sendEmail(options: { to: string; subject: string; html: string; text?: string }): Promise<boolean> {
     if (!this.transporter) {
       console.warn('[邮件服务] 传输器未初始化 - 邮件未发送');
       console.log('[邮件服务] 模拟发送邮件:');

@@ -4,29 +4,12 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import {
-  pgTable,
-  uuid,
-  varchar,
-  text,
-  timestamp,
-  pgEnum,
-  integer,
-  index,
-  jsonb,
-} from 'drizzle-orm/pg-core';
+import { pgTable, uuid, varchar, text, timestamp, pgEnum, integer, index, jsonb } from 'drizzle-orm/pg-core';
 import { createInsertSchema, createSelectSchema } from 'drizzle-zod';
 import { users } from './users';
 
 // Enums
-export const conversationPlatformEnum = pgEnum('conversation_platform', [
-  'gemini',
-  'codex',
-  'claude',
-  'acp',
-  'hivemind',
-  'openclaw',
-]);
+export const conversationPlatformEnum = pgEnum('conversation_platform', ['gemini', 'codex', 'claude', 'acp', 'hivemind', 'openclaw']);
 
 export const messageRoleEnum = pgEnum('message_role', ['user', 'assistant', 'system']);
 

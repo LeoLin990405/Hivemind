@@ -352,6 +352,7 @@ const sidebarCollapsed = useUIStore((state) => state.sidebarCollapsed);
 ### From Context to React Query
 
 **Before (Context):**
+
 ```typescript
 const { conversations, loading, error, fetchConversations } = useConversationContext();
 
@@ -361,6 +362,7 @@ useEffect(() => {
 ```
 
 **After (React Query):**
+
 ```typescript
 const { data: conversations, isLoading, error } = useConversations();
 // No need for useEffect, React Query handles fetching
@@ -369,12 +371,14 @@ const { data: conversations, isLoading, error } = useConversations();
 ### From useState to Zustand
 
 **Before (useState):**
+
 ```typescript
 const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
 // State is lost on unmount, need manual persistence
 ```
 
 **After (Zustand):**
+
 ```typescript
 const collapsed = useUIStore((state) => state.sidebarCollapsed);
 const toggle = useUIStore((state) => state.toggleSidebar);

@@ -4,7 +4,8 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { Router, Request, Response, NextFunction } from 'express';
+import type { Request, Response, NextFunction } from 'express';
+import { Router } from 'express';
 import { z } from 'zod';
 import { validateRequest } from '../middleware/validate';
 import { authenticateJWT } from '../middleware/auth';
@@ -40,8 +41,7 @@ router.post(
   }),
   async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const { model, messages, temperature, maxTokens, topP, stream, functions, functionCall } =
-        req.body;
+      const { model, messages, temperature, maxTokens, topP, stream, functions, functionCall } = req.body;
 
       // TODO: Call OpenAI API
       // const response = await codexService.chat({ model, messages, ... })
@@ -57,8 +57,7 @@ router.post(
             index: 0,
             message: {
               role: 'assistant' as const,
-              content:
-                'This is a mock response from Codex/OpenAI. In production, this would be the actual AI response.',
+              content: 'This is a mock response from Codex/OpenAI. In production, this would be the actual AI response.',
             },
             finishReason: 'stop',
           },
@@ -88,72 +87,69 @@ router.post(
  * GET /api/v1/codex/models
  * List available OpenAI models
  */
-router.get(
-  '/models',
-  async (req: Request, res: Response, next: NextFunction) => {
-    try {
-      // TODO: Fetch from OpenAI API
-      // const models = await codexService.listModels()
+router.get('/models', async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    // TODO: Fetch from OpenAI API
+    // const models = await codexService.listModels()
 
-      // Mock data
-      const models = [
-        {
-          id: 'o3',
-          displayName: 'o3',
-          description: 'Advanced reasoning model with breakthrough performance',
-          contextWindow: 200000,
-          maxOutputTokens: 100000,
-        },
-        {
-          id: 'o3-mini',
-          displayName: 'o3-mini',
-          description: 'Efficient reasoning model for faster tasks',
-          contextWindow: 200000,
-          maxOutputTokens: 100000,
-        },
-        {
-          id: 'gpt-4o',
-          displayName: 'GPT-4o',
-          description: 'Most advanced multimodal model',
-          contextWindow: 128000,
-          maxOutputTokens: 16384,
-        },
-        {
-          id: 'gpt-4o-mini',
-          displayName: 'GPT-4o Mini',
-          description: 'Fast and cost-effective',
-          contextWindow: 128000,
-          maxOutputTokens: 16384,
-        },
-        {
-          id: 'o1',
-          displayName: 'o1',
-          description: 'Reasoning model for complex problems',
-          contextWindow: 200000,
-          maxOutputTokens: 100000,
-        },
-        {
-          id: 'o1-mini',
-          displayName: 'o1-mini',
-          description: 'Efficient reasoning for STEM tasks',
-          contextWindow: 128000,
-          maxOutputTokens: 65536,
-        },
-      ];
+    // Mock data
+    const models = [
+      {
+        id: 'o3',
+        displayName: 'o3',
+        description: 'Advanced reasoning model with breakthrough performance',
+        contextWindow: 200000,
+        maxOutputTokens: 100000,
+      },
+      {
+        id: 'o3-mini',
+        displayName: 'o3-mini',
+        description: 'Efficient reasoning model for faster tasks',
+        contextWindow: 200000,
+        maxOutputTokens: 100000,
+      },
+      {
+        id: 'gpt-4o',
+        displayName: 'GPT-4o',
+        description: 'Most advanced multimodal model',
+        contextWindow: 128000,
+        maxOutputTokens: 16384,
+      },
+      {
+        id: 'gpt-4o-mini',
+        displayName: 'GPT-4o Mini',
+        description: 'Fast and cost-effective',
+        contextWindow: 128000,
+        maxOutputTokens: 16384,
+      },
+      {
+        id: 'o1',
+        displayName: 'o1',
+        description: 'Reasoning model for complex problems',
+        contextWindow: 200000,
+        maxOutputTokens: 100000,
+      },
+      {
+        id: 'o1-mini',
+        displayName: 'o1-mini',
+        description: 'Efficient reasoning for STEM tasks',
+        contextWindow: 128000,
+        maxOutputTokens: 65536,
+      },
+    ];
 
-      res.json({
-        success: true,
-        data: models,
-        meta: {
-          timestamp: new Date().toISOString(),
-          requestId: crypto.randomUUID(),
-        },
-      });
-    } catch (error) {
-      next(error);
-    }
+    res.json({
+      success: true,
+      data: models,
+      meta: {
+        timestamp: new Date().toISOString(),
+        requestId: crypto.randomUUID(),
+      },
+    });
+  } catch (error) {
+    next(error);
   }
-);
+});
 
 /**
  * POST /api/v1/codex/completions

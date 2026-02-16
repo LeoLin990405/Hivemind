@@ -75,10 +75,7 @@ export interface UpdateSkillRequest {
  * Fetch skills list
  */
 async function fetchSkills(filters: ListSkillsFilters = {}): Promise<ListSkillsResponse> {
-  const response = await api.call<{ success: boolean; data: ListSkillsResponse }>(
-    'skills.list',
-    filters
-  );
+  const response = await api.call<{ success: boolean; data: ListSkillsResponse }>('skills.list', filters);
 
   if (!response.success || !response.data) {
     throw new Error('Failed to fetch skills');

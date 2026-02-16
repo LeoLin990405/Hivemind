@@ -45,10 +45,7 @@ export class SkillRepository extends BaseRepository<typeof skills> {
   /**
    * Update skill configuration
    */
-  async updateSkill(
-    skillId: string,
-    data: Partial<Pick<Skill, 'displayName' | 'description' | 'version' | 'config' | 'enabled'>>
-  ): Promise<Skill | null> {
+  async updateSkill(skillId: string, data: Partial<Pick<Skill, 'displayName' | 'description' | 'version' | 'config' | 'enabled'>>): Promise<Skill | null> {
     return this.updateById(skillId, data);
   }
 
@@ -83,13 +80,7 @@ export class SkillRepository extends BaseRepository<typeof skills> {
    * Find logs for a skill
    */
   async findLogs(skillId: string, limit = 50, offset = 0): Promise<SkillLog[]> {
-    return db
-      .select()
-      .from(skillLogs)
-      .where(eq(skillLogs.skillId, skillId))
-      .orderBy(desc(skillLogs.executedAt))
-      .limit(limit)
-      .offset(offset);
+    return db.select().from(skillLogs).where(eq(skillLogs.skillId, skillId)).orderBy(desc(skillLogs.executedAt)).limit(limit).offset(offset);
   }
 
   /**
