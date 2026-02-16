@@ -23,7 +23,7 @@ import { getSendBoxDraftHook, type FileOrFolderItem } from '@/renderer/hooks/use
 import { useAddOrUpdateMessage } from '@/renderer/messages/hooks';
 import { usePreviewContext } from '@/renderer/pages/conversation/preview';
 import { allSupportedExts, type FileMetadata } from '@/renderer/services/FileService';
-import { DesignTokens } from '@/renderer/design-system';
+import { tokens } from '@/renderer/design-tokens';
 import { getModelContextLimit } from '@/renderer/utils/modelContextLimits';
 import { iconColors } from '@/renderer/theme/colors';
 import { emitter, useAddEventListener } from '@/renderer/utils/emitter';
@@ -735,7 +735,7 @@ const HivemindSendBox: React.FC<{ conversation_id: string; gatewayUrl?: string }
         <SelectTrigger
           className='w-[180px] h-7 text-xs'
           style={{
-            borderRadius: DesignTokens.radius.md,
+            borderRadius: tokens.radius.md,
           }}
         >
           <SelectValue placeholder={t('hivemind.selectProvider')}>

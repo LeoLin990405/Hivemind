@@ -66,9 +66,9 @@ const SectionHeader: React.FC<{ title: string; action?: React.ReactNode }> = ({ 
  */
 const StatusBadge: React.FC<{ status: 'running' | 'stopped' | 'error' | string; text?: string }> = ({ status, text }) => {
   const colors = {
-    running: 'bg-green-500/20 text-green-600',
-    stopped: 'bg-gray-500/20 text-gray-500',
-    error: 'bg-red-500/20 text-red-600',
+    running: 'bg-[var(--success-rgba-20)] text-success',
+    stopped: 'bg-fill-2 text-t-secondary',
+    error: 'bg-[var(--danger-rgba-20)] text-danger',
   };
 
   const defaultTexts = {
@@ -359,7 +359,7 @@ const TelegramConfigForm: React.FC<TelegramConfigFormProps> = ({ pluginStatus, m
 
       {/* Next Steps Guide - show when bot is enabled and no authorized users yet */}
       {pluginStatus?.enabled && pluginStatus?.connected && authorizedUsers.length === 0 && (
-        <div className='bg-blue-50 dark:bg-blue-900/20 rd-12px p-16px border border-blue-200 dark:border-blue-800'>
+        <div className='bg-[var(--info-rgba-20)] rd-12px p-16px border border-[var(--info)]'>
           <SectionHeader title={t('settings.assistant.nextSteps', 'Next Steps')} />
           <div className='text-14px text-t-secondary space-y-8px'>
             <p className='m-0'>

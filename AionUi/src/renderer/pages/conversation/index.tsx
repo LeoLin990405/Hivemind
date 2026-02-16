@@ -1,5 +1,5 @@
 import { ipcBridge } from '@/common';
-import { DesignTokens } from '@/renderer/design-system';
+import { tokens } from '@/renderer/design-tokens';
 import { Loader2 } from 'lucide-react';
 import React, { useEffect, useRef } from 'react';
 import { useParams } from 'react-router-dom';
@@ -48,9 +48,9 @@ const ChatConversationIndex: React.FC = () => {
   return (
     <div
       style={{
-        padding: DesignTokens.spacing.md,
-        borderRadius: DesignTokens.radius.lg,
-        transition: DesignTokens.transitions.base,
+        padding: tokens.spacing.md,
+        borderRadius: tokens.radius.lg,
+        transition: tokens.transitions.base,
       }}
     >
       <ChatConversation conversation={data}></ChatConversation>

@@ -8,7 +8,7 @@ import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { Tag } from '@arco-design/web-react';
 import { PROVIDER_TIERS } from '@/agent/hivemind/types';
-import { DesignTokens } from '@/renderer/design-system';
+import { tokens } from '@/renderer/design-tokens';
 
 interface HivemindProviderBadgeProps {
   provider: string;
@@ -25,9 +25,9 @@ const HivemindProviderBadge: React.FC<HivemindProviderBadgeProps> = ({ provider,
     <div
       className='flex items-center gap-6px mb-6px'
       style={{
-        transition: DesignTokens.transitions.fast,
-        padding: DesignTokens.spacing.xs,
-        borderRadius: DesignTokens.radius.md,
+        transition: tokens.transitions.fast,
+        padding: tokens.spacing.xs,
+        borderRadius: tokens.radius.md,
       }}
     >
       <Tag color={tier.color} size='small'>

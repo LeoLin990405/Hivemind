@@ -568,7 +568,7 @@ const WebuiModalContent: React.FC = () => {
           {/* WebUI 服务卡片 / WebUI Service Card */}
           <div className='px-[12px] md:px-[32px] py-16px bg-2 rd-16px'>
             {/* 启用 WebUI / Enable WebUI */}
-            <PreferenceRow label={t('settings.webui.enable')} extra={startLoading ? <span className='text-12px text-warning'>{t('settings.webui.starting')}</span> : status?.running ? <span className='text-12px text-green-500'>✓ {t('settings.webui.running')}</span> : null}>
+            <PreferenceRow label={t('settings.webui.enable')} extra={startLoading ? <span className='text-12px text-warning'>{t('settings.webui.starting')}</span> : status?.running ? <span className='text-12px text-success'>✓ {t('settings.webui.running')}</span> : null}>
               <Switch checked={status?.running || startLoading} loading={startLoading} onChange={handleToggle} />
             </PreferenceRow>
 

@@ -1,16 +1,22 @@
-import React, { useEffect, useRef } from 'react';
+/**
+ * @license
+ * Copyright 2026 HiveMind (hivemind.com)
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/renderer/components/ui/tooltip';
+import WorkspaceGroupedHistory from '@/renderer/pages/conversation/WorkspaceGroupedHistory';
+import { usePreviewContext } from '@/renderer/pages/conversation/preview';
+import SettingsSider from '@/renderer/pages/settings/SettingsSider';
 import classNames from 'classnames';
+import { ArrowLeftCircle, BookOpen, History, LayoutDashboard, Plus, Settings, Users, Wrench } from 'lucide-react';
+import React, { useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { ArrowLeftCircle, BookOpen, History, LayoutDashboard, Plus, Settings, Wrench } from 'lucide-react';
-import WorkspaceGroupedHistory from './pages/conversation/WorkspaceGroupedHistory';
-import SettingsSider from './pages/settings/SettingsSider';
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/renderer/components/ui/tooltip';
-import { usePreviewContext } from './pages/conversation/preview';
 
-interface SiderProps {
+interface SidebarNavProps {
+  collapsed: boolean;
   onSessionClick?: () => void;
-  collapsed?: boolean;
 }
 
 interface NavItemProps {
@@ -46,13 +52,13 @@ const NavItem: React.FC<NavItemProps> = ({ label, icon, onClick, collapsed, acti
   );
 };
 
-const Sider: React.FC<SiderProps> = ({ onSessionClick, collapsed = false }) => {
+const SidebarNav: React.FC<SidebarNavProps> = ({ collapsed, onSessionClick }) => {
   const location = useLocation();
   const { pathname, search, hash } = location;
-
   const { t } = useTranslation();
   const navigate = useNavigate();
   const { closePreview } = usePreviewContext();
+
   const isSettings = pathname.startsWith('/settings');
   const isMonitor = pathname.startsWith('/monitor');
   const isKnowledge = pathname.startsWith('/knowledge');
@@ -68,9 +74,7 @@ const Sider: React.FC<SiderProps> = ({ onSessionClick, collapsed = false }) => {
   }, [pathname, search, hash]);
 
   const safeNavigate = (target: string) => {
-    Promise.resolve(navigate(target)).catch((error) => {
-      console.error('Navigation failed:', error);
-    });
+    Promise.resolve(navigate(target)).catch((error) => console.error('Navigation failed:', error));
     onSessionClick?.();
   };
 
@@ -82,32 +86,12 @@ const Sider: React.FC<SiderProps> = ({ onSessionClick, collapsed = false }) => {
     safeNavigate('/settings/hivemind');
   };
 
-  const handleMonitorClick = () => {
-    safeNavigate(isMonitor ? '/guid' : '/monitor');
-  };
-
-  const handleKnowledgeClick = () => {
-    safeNavigate(isKnowledge ? '/guid' : '/knowledge');
-  };
-
-  const handleAgentTeamsClick = () => {
-    safeNavigate(isAgentTeams ? '/guid' : '/agent-teams/dashboard');
-  };
-
-  const handleSkillsClick = () => {
-    safeNavigate(isSkills ? '/guid' : '/skills');
-  };
-
-  const handleMemoryClick = () => {
-    safeNavigate(isMemory ? '/guid' : '/memory');
-  };
-
   return (
     <TooltipProvider>
       <div className='size-full flex flex-col hive-nav'>
         <div className='flex-1 min-h-0 overflow-y-auto'>
           {isSettings ? (
-            <SettingsSider collapsed={collapsed}></SettingsSider>
+            <SettingsSider collapsed={collapsed} />
           ) : (
             <div className='size-full flex flex-col'>
               <NavItem
@@ -121,25 +105,62 @@ const Sider: React.FC<SiderProps> = ({ onSessionClick, collapsed = false }) => {
                   safeNavigate('/guid');
                 }}
               />
-              <WorkspaceGroupedHistory collapsed={collapsed} onSessionClick={onSessionClick}></WorkspaceGroupedHistory>
+              <WorkspaceGroupedHistory collapsed={collapsed} onSessionClick={onSessionClick} />
             </div>
           )}
         </div>
 
         <div className='hive-nav-section'>
-          <NavItem label={t('knowledge.title', { defaultValue: 'Knowledge Hub' })} icon={<BookOpen size={20} />} collapsed={collapsed} active={isKnowledge} onClick={handleKnowledgeClick} />
-          <NavItem label={t('memory.title')} icon={<History size={20} />} collapsed={collapsed} active={isMemory} onClick={handleMemoryClick} />
-          <NavItem label={t('monitor.title', { defaultValue: 'Monitor' })} icon={<LayoutDashboard size={20} />} collapsed={collapsed} active={isMonitor} onClick={handleMonitorClick} />
-          <NavItem label={t('skills.title', { defaultValue: 'Skills' })} icon={<Wrench size={20} />} collapsed={collapsed} active={isSkills} onClick={handleSkillsClick} />
-          <NavItem label={t('agentTeams.title', { defaultValue: 'Agent Teams' })} icon={<LayoutDashboard size={20} />} collapsed={collapsed} active={isAgentTeams} onClick={handleAgentTeamsClick} />
+          <NavItem
+            label={t('knowledge.title', { defaultValue: 'Knowledge Hub' })}
+            icon={<BookOpen size={20} />}
+            collapsed={collapsed}
+            active={isKnowledge}
+            onClick={() => safeNavigate(isKnowledge ? '/guid' : '/knowledge')}
+          />
+          <NavItem
+            label={t('memory.title')}
+            icon={<History size={20} />}
+            collapsed={collapsed}
+            active={isMemory}
+            onClick={() => safeNavigate(isMemory ? '/guid' : '/memory')}
+          />
+          <NavItem
+            label={t('agentTeams.title', { defaultValue: 'Agent Teams' })}
+            icon={<Users size={20} />}
+            collapsed={collapsed}
+            active={isAgentTeams}
+            onClick={() => safeNavigate(isAgentTeams ? '/guid' : '/agent-teams/dashboard')}
+          />
+          <NavItem
+            label={t('skills.title', { defaultValue: 'Skills' })}
+            icon={<Wrench size={20} />}
+            collapsed={collapsed}
+            active={isSkills}
+            onClick={() => safeNavigate(isSkills ? '/guid' : '/skills')}
+          />
+          <NavItem
+            label={t('monitor.title', { defaultValue: 'Monitor' })}
+            icon={<LayoutDashboard size={20} />}
+            collapsed={collapsed}
+            active={isMonitor}
+            onClick={() => safeNavigate(isMonitor ? '/guid' : '/monitor')}
+          />
         </div>
 
         <div className='hive-nav-section sider-footer'>
-          <NavItem label={isSettings ? t('common.back') : t('common.settings')} icon={isSettings ? <ArrowLeftCircle size={20} /> : <Settings size={20} />} collapsed={collapsed} active={isSettings} onClick={handleSettingsClick} />
+          <NavItem
+            label={isSettings ? t('common.back') : t('common.settings')}
+            icon={isSettings ? <ArrowLeftCircle size={20} /> : <Settings size={20} />}
+            collapsed={collapsed}
+            active={isSettings}
+            onClick={handleSettingsClick}
+          />
         </div>
       </div>
     </TooltipProvider>
   );
 };
 
-export default Sider;
+export { NavItem };
+export default SidebarNav;

@@ -68,7 +68,7 @@ const CacheManager: React.FC = () => {
     }
   };
 
-  const hitRateColor = (cacheStats?.hit_rate || 0) > 0.7 ? 'text-green-600' : 'text-yellow-600';
+  const hitRateColor = (cacheStats?.hit_rate || 0) > 0.7 ? 'text-success' : 'text-warning';
 
   return (
     <div className='space-y-4'>

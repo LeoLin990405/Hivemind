@@ -177,8 +177,8 @@ const KimiModalContent: React.FC<KimiModalContentProps> = ({ onRequestClose }) =
                   <Button variant='outline' size='sm' className='rounded-full' onClick={handleHealthCheck} disabled={healthCheckStatus === 'checking'}>
                     {healthCheckStatus === 'checking' ? t('common.checking') : t('settings.kimiCheckConnection')}
                   </Button>
-                  {healthCheckStatus === 'success' && <span className='text-green-500'>✓ {t('settings.kimiConnectionSuccess')}</span>}
-                  {healthCheckStatus === 'error' && <span className='text-red-500'>✗ {t('settings.kimiConnectionFailed')}</span>}
+                  {healthCheckStatus === 'success' && <span className='text-success'>✓ {t('settings.kimiConnectionSuccess')}</span>}
+                  {healthCheckStatus === 'error' && <span className='text-danger'>✗ {t('settings.kimiConnectionFailed')}</span>}
                 </div>
               </div>
             </div>

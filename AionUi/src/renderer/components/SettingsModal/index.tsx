@@ -6,7 +6,7 @@
 
 import HiveModal from '@/renderer/components/base/HiveModal';
 import HiveScrollArea from '@/renderer/components/base/HiveScrollArea';
-import { DesignTokens } from '@/renderer/design-system';
+import { tokens } from '@/renderer/design-tokens';
 import { iconColors } from '@/renderer/theme/colors';
 import { isElectronDesktop } from '@/renderer/utils/platform';
 import { Tabs, TabsList, TabsTrigger } from '@/renderer/components/ui/tabs';
@@ -282,8 +282,8 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ visible, onCancel, defaul
               'text-t-secondary hover:bg-fill-1': activeTab !== item.key,
             })}
             style={{
-              borderRadius: DesignTokens.radius.md,
-              transition: DesignTokens.transitions.fast,
+              borderRadius: tokens.radius.md,
+              transition: tokens.transitions.fast,
             }}
             onClick={() => setActiveTab(item.key)}
           >
@@ -306,9 +306,9 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ visible, onCancel, defaul
           width: isMobile ? `clamp(var(--app-min-width, 360px), 100vw, ${MODAL_WIDTH.mobile}px)` : `clamp(var(--app-min-width, 360px), 100vw, ${MODAL_WIDTH.desktop}px)`,
           minWidth: 'var(--app-min-width, 360px)',
           maxHeight: isMobile ? MODAL_HEIGHT.mobile : undefined,
-          borderRadius: DesignTokens.radius.xl,
-          boxShadow: DesignTokens.shadows.lg,
-          transition: DesignTokens.transitions.base,
+          borderRadius: tokens.radius.xl,
+          boxShadow: tokens.shadows.lg,
+          transition: tokens.transitions.base,
         }}
         contentStyle={{ padding: isMobile ? '16px' : '24px 24px 32px' }}
         title={t('settings.title')}

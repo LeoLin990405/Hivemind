@@ -66,7 +66,7 @@ const Dashboard: React.FC = () => {
             <CardTitle className='text-sm font-medium text-muted-foreground'>{t('monitor.dashboard.overallSuccessRate', { defaultValue: 'Success Rate' })}</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className={`text-2xl font-bold ${(stats?.overall_success_rate || 0) > 0.9 ? 'text-green-600' : 'text-red-600'}`}>{((stats?.overall_success_rate || 0) * 100).toFixed(1)}%</div>
+            <div className={`text-2xl font-bold ${(stats?.overall_success_rate || 0) > 0.9 ? 'text-success' : 'text-danger'}`}>{((stats?.overall_success_rate || 0) * 100).toFixed(1)}%</div>
           </CardContent>
         </Card>
 
@@ -84,7 +84,7 @@ const Dashboard: React.FC = () => {
             <CardTitle className='text-sm font-medium text-muted-foreground'>{t('monitor.dashboard.cacheHitRate', { defaultValue: 'Cache Hit Rate' })}</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className={`text-2xl font-bold ${(cacheStats?.hit_rate || 0) > 0.7 ? 'text-green-600' : 'text-yellow-600'}`}>{((cacheStats?.hit_rate || 0) * 100).toFixed(1)}%</div>
+            <div className={`text-2xl font-bold ${(cacheStats?.hit_rate || 0) > 0.7 ? 'text-success' : 'text-warning'}`}>{((cacheStats?.hit_rate || 0) * 100).toFixed(1)}%</div>
           </CardContent>
         </Card>
       </div>
@@ -123,11 +123,11 @@ const Dashboard: React.FC = () => {
                     <TableCell className='font-medium'>{provider.provider}</TableCell>
                     <TableCell>{provider.requests.toLocaleString()}</TableCell>
                     <TableCell>
-                      <span className={provider.success_rate > 0.9 ? 'text-green-600' : 'text-red-600'}>{(provider.success_rate * 100).toFixed(1)}%</span>
+                      <span className={provider.success_rate > 0.9 ? 'text-success' : 'text-danger'}>{(provider.success_rate * 100).toFixed(1)}%</span>
                     </TableCell>
                     <TableCell>{provider.avg_latency_ms.toFixed(0)}ms</TableCell>
                     <TableCell>
-                      <span className={provider.errors > 0 ? 'text-red-600' : ''}>{provider.errors.toLocaleString()}</span>
+                      <span className={provider.errors > 0 ? 'text-danger' : ''}>{provider.errors.toLocaleString()}</span>
                     </TableCell>
                   </TableRow>
                 ))

@@ -151,9 +151,9 @@ const ApiKeyEditorModal: React.FC<ApiKeyEditorModalProps> = ({ visible, apiKeys,
       case 'testing':
         return <LoadingOne theme='outline' size={14} className='loading lh-[1] flex' />;
       case 'valid':
-        return <CheckOne theme='filled' size={16} className='text-green-500 flex' />;
+        return <CheckOne theme='filled' size={16} className='text-success flex' />;
       case 'invalid':
-        return <CloseOne theme='filled' size={16} className='text-red-500 flex' />;
+        return <CloseOne theme='filled' size={16} className='text-danger flex' />;
       default:
         return null;
     }
@@ -177,7 +177,7 @@ const ApiKeyEditorModal: React.FC<ApiKeyEditorModalProps> = ({ visible, apiKeys,
                       // 编辑状态：只显示保存按钮
                       <Tooltip>
                         <TooltipTrigger asChild>
-                          <Button variant='ghost' size='sm' onClick={() => toggleEditing(key.id)} className='text-green-600'>
+                          <Button variant='ghost' size='sm' onClick={() => toggleEditing(key.id)} className='text-success'>
                             <CheckSmall theme='outline' size={16} className='flex' />
                           </Button>
                         </TooltipTrigger>
