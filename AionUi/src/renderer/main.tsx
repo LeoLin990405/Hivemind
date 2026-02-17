@@ -8,14 +8,14 @@ import React from 'react';
 import Router from './router';
 import { useAuth } from './context/AuthContext';
 
-const Main = () => {
+const Main = () =&gt; {
   const { ready } = useAuth();
 
   if (!ready) {
     return null;
   }
 
-  return <Router />;
+  return &lt;Router /&gt;;
 };
 
 export default Main;

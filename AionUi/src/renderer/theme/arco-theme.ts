@@ -4,31 +4,31 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { DesignTokens } from '@/renderer/design-system';
+import { tokens } from '@/renderer/design-tokens';
 
 export const arcoThemeConfig = {
-  primaryColor: DesignTokens.colors.primary[500],
+  primaryColor: tokens.colors.accent.light,
   componentConfig: {
     Button: {
       style: {
-        borderRadius: DesignTokens.radius.sm,
-        transition: DesignTokens.transitions.base,
+        borderRadius: tokens.radius.sm,
+        transition: tokens.transitions.base,
       },
     },
     Card: {
       style: {
-        borderRadius: DesignTokens.radius.md,
-        boxShadow: DesignTokens.shadows.md,
+        borderRadius: tokens.radius.md,
+        boxShadow: tokens.shadows.md,
       },
     },
     Input: {
       style: {
-        borderRadius: DesignTokens.radius.sm,
+        borderRadius: tokens.radius.sm,
       },
     },
     Modal: {
       style: {
-        borderRadius: DesignTokens.radius.lg,
+        borderRadius: tokens.radius.lg,
       },
     },
   },
