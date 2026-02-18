@@ -389,7 +389,7 @@ const ChatLayout: React.FC<{
           }}
         >
           <div
-            className='hive-chat-panel-shell flex flex-col h-full'
+            className='hive-chat-panel-shell flex flex-col h-full min-h-0'
             onClick={() => {
               const isMobile = window.innerWidth < 768;
               if (isMobile && !rightSiderCollapsed) {
@@ -420,7 +420,7 @@ const ChatLayout: React.FC<{
                 )}
               </div>
             </header>
-            <main className='hive-chat-main flex flex-col flex-1 bg-1 overflow-hidden'>{props.children}</main>
+            <main className='hive-chat-main flex flex-col flex-1 min-h-0 bg-1 overflow-hidden'>{props.children}</main>
           </div>
 
           {/* 会话右侧拖动手柄：在桌面模式下调节会话和预览的宽度比例 */}

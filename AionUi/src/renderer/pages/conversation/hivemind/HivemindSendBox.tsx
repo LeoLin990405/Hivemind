@@ -828,7 +828,7 @@ const HivemindSendBox: React.FC<{ conversation_id: string; gatewayUrl?: string }
   }, [providerSelector, modelSelector, tokenUsage, selectedContextLimit]);
 
   return (
-    <div className='max-w-800px w-full mx-auto flex flex-col mt-auto mb-16px'>
+    <div className='max-w-800px w-full mx-auto flex flex-col mb-16px'>
       <HivemindRoutingInfo requestedProvider={selectedProvider} actualProvider={lastProvider} />
       {lastProvider && <HivemindProviderBadge provider={lastProvider} cached={lastCached} latencyMs={lastLatencyMs} totalTokens={lastTokens} />}
 

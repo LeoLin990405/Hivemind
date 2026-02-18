@@ -6,7 +6,6 @@
 
 import { ConversationProvider } from '@/renderer/context/ConversationContext';
 import { useHivemindStatus } from '@/renderer/hooks/useHivemindStatus';
-import FlexFullContainer from '@renderer/components/FlexFullContainer';
 import MessageList from '@renderer/messages/MessageList';
 import { MessageListProvider, useMessageLstCache } from '@renderer/messages/hooks';
 import HOC from '@renderer/utils/HOC';
@@ -36,14 +35,14 @@ const HivemindChat: React.FC<{
 
   return (
     <ConversationProvider value={{ conversationId: conversation_id, workspace, type: 'hivemind' }}>
-      <div className='hive-chat-scene flex-1 flex flex-col px-20px'>
-        {!connected && <Alert className='hive-chat-warning mx-auto max-w-800px w-full mt-8px' type='warning' content={reconnecting ? t('hivemind.status.reconnecting') : t('hivemind.status.reconnectFailed')} showIcon closable />}
-        <FlexFullContainer>
-          <MessageList className='flex-1'></MessageList>
-        </FlexFullContainer>
-        <ConversationChatConfirm conversation_id={conversation_id}>
-          <HivemindSendBox conversation_id={conversation_id} />
-        </ConversationChatConfirm>
+      <div className='hive-chat-scene flex flex-col flex-1 min-h-0 px-20px'>
+        {!connected && <Alert className='hive-chat-warning mx-auto max-w-800px w-full mt-8px shrink-0' type='warning' content={reconnecting ? t('hivemind.status.reconnecting') : t('hivemind.status.reconnectFailed')} showIcon closable />}
+        <MessageList className='flex-1 min-h-0' />
+        <div className='shrink-0 pt-2'>
+          <ConversationChatConfirm conversation_id={conversation_id}>
+            <HivemindSendBox conversation_id={conversation_id} />
+          </ConversationChatConfirm>
+        </div>
       </div>
     </ConversationProvider>
   );

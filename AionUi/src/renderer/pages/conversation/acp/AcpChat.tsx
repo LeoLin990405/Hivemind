@@ -6,7 +6,6 @@
 
 import { ConversationProvider } from '@/renderer/context/ConversationContext';
 import type { AcpBackend } from '@/types/acpTypes';
-import FlexFullContainer from '@renderer/components/FlexFullContainer';
 import MessageList from '@renderer/messages/MessageList';
 import { MessageListProvider, useMessageLstCache } from '@renderer/messages/hooks';
 import HOC from '@renderer/utils/HOC';
@@ -23,13 +22,13 @@ const AcpChat: React.FC<{
 
   return (
     <ConversationProvider value={{ conversationId: conversation_id, workspace, type: 'acp' }}>
-      <div className='hive-chat-scene flex-1 flex flex-col px-20px'>
-        <FlexFullContainer>
-          <MessageList className='flex-1'></MessageList>
-        </FlexFullContainer>
-        <ConversationChatConfirm conversation_id={conversation_id}>
-          <AcpSendBox conversation_id={conversation_id} backend={backend}></AcpSendBox>
-        </ConversationChatConfirm>
+      <div className='hive-chat-scene flex flex-col flex-1 min-h-0 px-20px'>
+        <MessageList className='flex-1 min-h-0' />
+        <div className='shrink-0 pt-2'>
+          <ConversationChatConfirm conversation_id={conversation_id}>
+            <AcpSendBox conversation_id={conversation_id} backend={backend}></AcpSendBox>
+          </ConversationChatConfirm>
+        </div>
       </div>
     </ConversationProvider>
   );

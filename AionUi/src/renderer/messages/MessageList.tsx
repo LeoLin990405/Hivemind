@@ -162,12 +162,13 @@ const MessageList: React.FC<{ className?: string }> = ({ className }) => {
   };
 
   return (
-    <div className={classNames('relative flex-1 h-full hive-message-list', className)}>
+    <div className={classNames('relative flex flex-col flex-1 min-h-0 hive-message-list', className)}>
       <Image.PreviewGroup actionsLayout={['zoomIn', 'zoomOut', 'originalSize', 'rotateLeft', 'rotateRight']}>
         <ImagePreviewContext.Provider value={{ inPreviewGroup: true }}>
           <Virtuoso
             ref={virtuosoRef}
-            className='flex-1 h-full pb-10px box-border hive-message-scroll'
+            style={{ flex: 1, minHeight: 0 }}
+            className='pb-10px box-border hive-message-scroll'
             data={processedList}
             initialTopMostItemIndex={processedList.length - 1}
             atBottomThreshold={100}

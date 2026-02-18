@@ -5,17 +5,18 @@
  */
 
 import React from 'react';
-import Router from './router';
+import { AppShell } from './layouts';
+import PanelRoute from './router';
 import { useAuth } from './context/AuthContext';
 
-const Main = () =&gt; {
+const Main = () => {
   const { ready } = useAuth();
 
   if (!ready) {
     return null;
   }
 
-  return &lt;Router /&gt;;
+  return <PanelRoute layout={<AppShell />} />;
 };
 
 export default Main;
