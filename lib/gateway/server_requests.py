@@ -46,7 +46,8 @@ async def _process_single_request(self, request: GatewayRequest) -> None:
                 "provider": request.provider,
                 "message": request.message,
                 "model": request.metadata.get("model"),
-                "user_id": request.metadata.get("user_id", "default")
+                "user_id": request.metadata.get("user_id", "default"),
+                "request_id": request.id,
             }
 
             # Apply pre-request hook (context injection)
@@ -296,6 +297,7 @@ async def _handle_success(
                 "request_id": request.id,
                 "_memory_injected": request.metadata.get("_memory_injected", False),
                 "_memory_count": request.metadata.get("_memory_count", 0),
+                "_system_context_injected": request.metadata.get("_system_context_injected", False),
             }
 
             response_dict = {

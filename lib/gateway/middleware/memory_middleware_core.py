@@ -32,12 +32,13 @@ class MemoryMiddlewareCoreMixin:
         self.registry = CCBRegistry()
 
         # 加载配置
-        self.config = config or self._load_config()
-        self.enabled = self.config.get("memory", {}).get("enabled", True)
-        self.auto_inject = self.config.get("memory", {}).get("auto_inject", True)
-        self.auto_record = self.config.get("memory", {}).get("auto_record", True)
-        self.max_injected = self.config.get("memory", {}).get("max_injected_memories", 5)
-        self.inject_system_context = self.config.get("memory", {}).get("inject_system_context", True)
+        self.config = self._normalize_config(config or self._load_config())
+        memory_cfg = self.config.get("memory", {})
+        self.enabled = memory_cfg.get("enabled", True)
+        self.auto_inject = memory_cfg.get("auto_inject", True)
+        self.auto_record = memory_cfg.get("auto_record", True)
+        self.max_injected = memory_cfg.get("max_injected_memories", 5)
+        self.inject_system_context = memory_cfg.get("inject_system_context", True)
 
         # 预加载系统上下文（Skills、MCP、Providers）
         self.system_context = SystemContextBuilder()
@@ -51,7 +52,7 @@ class MemoryMiddlewareCoreMixin:
 
         # 🆕 v2.0: 启发式检索器
         self.heuristic_retriever = None
-        self.use_heuristic = self.config.get("memory", {}).get("use_heuristic_retrieval", True)
+        self.use_heuristic = memory_cfg.get("use_heuristic_retrieval", True)
         if HAS_HEURISTIC and self.use_heuristic:
             try:
                 self.heuristic_retriever = HeuristicRetriever()
@@ -63,36 +64,88 @@ class MemoryMiddlewareCoreMixin:
         logger.info(f"System context preloaded: {self.system_context.get_stats()}")
         logger.info(f"Skills discovery: {self.enable_skill_discovery}")
 
-    def _load_config(self) -> Dict[str, Any]:
-        """加载配置文件"""
-        config_file = Path.home() / ".ccb" / "gateway_config.json"
-
-        if config_file.exists():
-            with open(config_file) as f:
-                return json.load(f)
-
-        # 默认配置
+    def _default_config(self) -> Dict[str, Any]:
         return {
             "memory": {
                 "enabled": True,
                 "auto_inject": True,
                 "auto_record": True,
                 "max_injected_memories": 5,
-                "inject_system_context": True,  # 新增：注入系统上下文
+                "inject_system_context": True,
                 "injection_strategy": "recent_plus_relevant",
-                "use_heuristic_retrieval": True  # v2.0: 使用启发式检索
+                "use_heuristic_retrieval": True,
             },
             "skills": {
-                "auto_discover": True,  # 🆕 自动发现相关技能
-                "recommend_skills": True,  # 🆕 推荐技能给用户
-                "max_recommendations": 3  # 🆕 最多推荐技能数
+                "auto_discover": True,
+                "recommend_skills": True,
+                "max_recommendations": 3,
             },
             "recommendation": {
                 "enabled": True,
                 "auto_switch_provider": False,
-                "confidence_threshold": 0.7
-            }
+                "confidence_threshold": 0.7,
+            },
         }
+
+    def _merge_dict(self, base: Dict[str, Any], overrides: Dict[str, Any]) -> Dict[str, Any]:
+        merged = dict(base)
+        for key, value in overrides.items():
+            if isinstance(merged.get(key), dict) and isinstance(value, dict):
+                merged[key] = self._merge_dict(merged[key], value)
+            else:
+                merged[key] = value
+        return merged
+
+    def _normalize_config(self, raw: Dict[str, Any]) -> Dict[str, Any]:
+        """Normalize both legacy and flat memory config formats to nested shape."""
+        defaults = self._default_config()
+        if not isinstance(raw, dict):
+            return defaults
+
+        if "memory" in raw and isinstance(raw.get("memory"), dict):
+            return self._merge_dict(defaults, raw)
+
+        memory_keys = set(defaults["memory"].keys())
+        memory_cfg = {k: v for k, v in raw.items() if k in memory_keys}
+
+        # Compatibility: older memory_config.json used `context_injection`.
+        if "auto_inject" not in memory_cfg and "context_injection" in raw:
+            memory_cfg["auto_inject"] = bool(raw.get("context_injection"))
+
+        nested = {
+            "memory": memory_cfg,
+            "skills": raw.get("skills", {}),
+            "recommendation": raw.get("recommendation", {}),
+        }
+        return self._merge_dict(defaults, nested)
+
+    def _load_config(self) -> Dict[str, Any]:
+        """Load memory config with compatibility fallback."""
+        merged = self._default_config()
+
+        # Legacy source: ~/.ccb/gateway_config.json (contains nested `memory` block).
+        legacy_file = Path.home() / ".ccb" / "gateway_config.json"
+        if legacy_file.exists():
+            try:
+                with open(legacy_file, encoding="utf-8") as f:
+                    legacy = json.load(f)
+                if isinstance(legacy, dict):
+                    merged = self._merge_dict(merged, self._normalize_config(legacy))
+            except (OSError, ValueError, TypeError):
+                logger.warning("Failed to load legacy gateway memory config: %s", legacy_file)
+
+        # Preferred source: ~/.ccb/memory_config.json via MemoryConfig manager.
+        # This should override stale legacy values when both exist.
+        try:
+            from lib.memory.memory_config import get_memory_config
+
+            modern = get_memory_config().get_all()
+            if isinstance(modern, dict):
+                merged = self._merge_dict(merged, self._normalize_config(modern))
+        except (ImportError, RuntimeError, ValueError, TypeError, KeyError, AttributeError, OSError):
+            logger.debug("MemoryConfig module unavailable, using legacy/default config")
+
+        return merged
 
     async def pre_request(self, request: Dict[str, Any]) -> Dict[str, Any]:
         """

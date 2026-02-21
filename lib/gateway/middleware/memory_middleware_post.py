@@ -57,7 +57,8 @@ class MemoryMiddlewarePostMixin:
                 "latency_ms": response.get("latency_ms"),
                 "tokens": response.get("tokens"),
                 "memory_injected": request.get("_memory_injected", False),
-                "memory_count": request.get("_memory_count", 0)
+                "memory_count": request.get("_memory_count", 0),
+                "system_context_injected": request.get("_system_context_injected", False),
             }
 
             # 记录对话
@@ -65,7 +66,13 @@ class MemoryMiddlewarePostMixin:
                 provider=provider,
                 question=message,
                 answer=response_text,
-                metadata=metadata
+                request_id=request.get("request_id"),
+                model=request.get("model"),
+                latency_ms=response.get("latency_ms"),
+                tokens=response.get("tokens") or 0,
+                context_injected=bool(request.get("_memory_injected", False)),
+                context_count=int(request.get("_memory_count", 0) or 0),
+                metadata=metadata,
             )
 
             logger.info(f"Conversation recorded: provider={provider}")
@@ -363,4 +370,3 @@ class MemoryMiddlewarePostMixin:
         except (RuntimeError, ValueError, TypeError, KeyError, AttributeError, OSError) as e:
             logger.info(f"Discussion recording error: {e}")
             return None
-

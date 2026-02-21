@@ -168,7 +168,7 @@ _Orchestrate teams of AI agents to handle complex, multi-step tasks collaborativ
   - Interactive graph navigation with D3.js
 
 - **Provider Integration**
-  - Support 6+ AI providers (Claude, Gemini, Kimi, Qwen, DeepSeek, CCB)
+  - Support 6+ AI providers (Claude, Gemini, Kimi, Qwen, Qoder, CCB)
   - Intelligent model selection and routing
   - Fallback strategies for failed tasks
 
@@ -372,7 +372,7 @@ A: HiveMind is a **free and open-source** **Multi-AI Agent Desktop**. Compared t
 | Dimension     | Claude Cowork        | HiveMind (This Project)                       |
 | :------------ | :------------------- | :------------------------------------------ |
 | OS            | macOS Only           | 🍏 macOS / 🪟 Windows / 🐧 Linux            |
-| Model Support | Claude Only          | 🤖 Gemini, Claude, DeepSeek, OpenAI, Ollama |
+| Model Support | Claude Only          | 🤖 Gemini, Claude, Qwen, OpenAI, Ollama |
 | Interaction   | GUI                  | 🖥️ Full GUI + WebUI Remote Access           |
 | Cost          | Subscription $100/mo | 🆓 Completely Free & Open Source            |
 

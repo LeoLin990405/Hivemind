@@ -61,7 +61,7 @@ ccb ask --no-cache "问题"    # 绕过缓存
 | claude | gemini → codex |
 | gemini | claude → codex |
 | codex | claude → gemini |
-| deepseek | claude → gemini |
+| qoder | claude → gemini |
 | kimi | claude → qwen |
 | qwen | claude → kimi |
 
@@ -86,7 +86,7 @@ ccb ask --max-retries 5 "问题"
 
 ```bash
 ccb ask "@all 最佳方案"
-ccb ask --multi --providers claude,gemini,deepseek "分析"
+ccb ask --multi --providers claude,gemini,qwen "分析"
 ccb ask --multi --strategy merge "问题"
 ```
 

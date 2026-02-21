@@ -188,6 +188,8 @@ class UpdateConfigRequest(BaseModel):
     """Request body for updating memory configuration."""
     enabled: Optional[bool] = Field(None, description="Enable/disable memory system")
     auto_inject: Optional[bool] = Field(None, description="Auto-inject memories")
+    auto_record: Optional[bool] = Field(None, description="Auto-record conversations to memory")
+    inject_system_context: Optional[bool] = Field(None, description="Inject system context into prompt")
     max_injected_memories: Optional[int] = Field(None, ge=0, le=50, description="Max memories to inject")
     injection_strategy: Optional[str] = Field(None, description="Injection strategy")
     skills_auto_discover: Optional[bool] = Field(None, description="Auto-discover skills")
@@ -205,4 +207,3 @@ class CCParallelTestRequest(BaseModel):
     message: str = Field(..., description="Test message to send to providers")
     providers: Optional[List[str]] = Field(None, description="List of provider names (default: all active)")
     timeout_s: float = Field(60.0, description="Timeout in seconds", ge=1.0, le=300.0)
-

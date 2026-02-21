@@ -317,6 +317,10 @@ if HAS_FASTAPI:
                 updates["enabled"] = request.enabled
             if request.auto_inject is not None:
                 updates["auto_inject"] = request.auto_inject
+            if request.auto_record is not None:
+                updates["auto_record"] = request.auto_record
+            if request.inject_system_context is not None:
+                updates["inject_system_context"] = request.inject_system_context
             if request.max_injected_memories is not None:
                 updates["max_injected_memories"] = request.max_injected_memories
             if request.injection_strategy is not None:
@@ -333,10 +337,17 @@ if HAS_FASTAPI:
             validation = config.validate()
 
             if memory_middleware:
-                memory_middleware.config = config.get_all()
+                all_config = config.get_all()
+                memory_middleware.config = {
+                    "memory": all_config,
+                    "skills": all_config.get("skills", {}),
+                    "recommendation": all_config.get("recommendation", {}),
+                }
                 memory_middleware.enabled = config.get("enabled", True)
                 memory_middleware.auto_inject = config.get("auto_inject", True)
+                memory_middleware.auto_record = config.get("auto_record", True)
                 memory_middleware.max_injected = config.get("max_injected_memories", 5)
+                memory_middleware.inject_system_context = config.get("inject_system_context", True)
 
             return JSONResponse(
                 content={

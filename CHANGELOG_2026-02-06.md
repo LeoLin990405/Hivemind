@@ -65,11 +65,11 @@ Result: 3 relevant memories found
 **用户体验**:
 ```bash
 # 之前
-ccb-cli deepseek "复杂问题"
+ccb-cli qwen "复杂问题"
 → 等待 300s → 超时 → Exit 1 → 任务丢失 ❌
 
 # 现在
-ccb-cli deepseek "复杂问题"
+ccb-cli qwen "复杂问题"
 → 等待 300s → 超时检测 → 自动切换异步
 → 询问: "是否实时跟踪？[Y/n]"
 → 任务继续后台运行 ✅
@@ -154,10 +154,10 @@ a072622 Fix Issue #9: Optimize FTS5 Chinese tokenization
 ccb-cli kimi "你的问题"
 
 # 直接异步
-ccb-cli --async deepseek "复杂任务"
+ccb-cli --async qwen "复杂任务"
 
 # 流式模式
-ccb-cli -s deepseek "需要看思考过程"
+ccb-cli -s qwen "需要看思考过程"
 ```
 
 ### Gemini 调用（避免认证问题）

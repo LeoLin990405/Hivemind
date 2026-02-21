@@ -45,16 +45,27 @@ class CCBLightMemory:
     def __init__(self, user_id: str = "leo"):
         self.v2 = CCBMemoryV2(user_id=user_id)
 
-    def record_conversation(self, provider: str, question: str, answer: str,
-                          metadata: Optional[Dict] = None, tokens: int = 0):
-        """Backward compatible conversation recording."""
-        return self.v2.record_conversation(
-            provider=provider,
-            question=question,
-            answer=answer,
-            tokens=tokens,
-            metadata=metadata
-        )
+    def record_conversation(
+        self,
+        provider: str,
+        question: str,
+        answer: str,
+        metadata: Optional[Dict] = None,
+        tokens: int = 0,
+        **kwargs,
+    ):
+        """Backward compatible conversation recording.
+
+        Accepts extended kwargs (e.g. request_id/context_injected) and forwards
+        them to v2, while keeping old call sites compatible.
+        """
+        payload = dict(kwargs or {})
+        payload.setdefault("provider", provider)
+        payload.setdefault("question", question)
+        payload.setdefault("answer", answer)
+        payload.setdefault("tokens", tokens)
+        payload.setdefault("metadata", metadata)
+        return self.v2.record_conversation(**payload)
 
     def search_conversations(self, query: str, limit: int = 5,
                             provider: Optional[str] = None):

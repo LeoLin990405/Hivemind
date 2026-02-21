@@ -1706,10 +1706,6 @@ class AILauncher:
 
         return False
 
-    def _build_deepseek_start_cmd(self) -> str:
-        cmd = (os.environ.get("DEEPSEEK_START_CMD") or "deepseek").strip() or "deepseek"
-        return cmd
-
     def _build_opencode_start_cmd(self) -> str:
         # OpenCode CLI (TUI). Allow override via env for custom wrappers.
         cmd = (os.environ.get("OPENCODE_START_CMD") or "opencode").strip() or "opencode"
@@ -2080,7 +2076,7 @@ class AILauncher:
 
         env_overrides = self._managed_env_overrides()
         start_cmd = self._build_env_prefix(env_overrides) + _build_export_path_cmd(self.script_dir / "bin") + self._get_start_cmd(provider)
-        label = "DeepSeek" if provider == "deepseek" else provider.capitalize()
+        label = provider.capitalize()
         pane_title_marker = f"CCB-{label}"
 
         backend = TmuxBackend()
@@ -2116,8 +2112,6 @@ class AILauncher:
             self._write_kimi_session(runtime, None, pane_id=pane_id, pane_title_marker=pane_title_marker, start_cmd=start_cmd)
         elif provider == "qwen":
             self._write_qwen_session(runtime, None, pane_id=pane_id, pane_title_marker=pane_title_marker, start_cmd=start_cmd)
-        elif provider == "deepseek":
-            self._write_deepseek_session(runtime, None, pane_id=pane_id, pane_title_marker=pane_title_marker, start_cmd=start_cmd)
         else:
             print(f"❌ {t('unknown_provider', provider=provider)}")
             return None
@@ -2429,35 +2423,6 @@ class AILauncher:
 
         return self._run_shell_command(start_cmd, cwd=str(Path.cwd()))
 
-    def _start_deepseek_current_pane(self) -> int:
-        runtime = self.runtime_dir / "deepseek"
-        runtime.mkdir(parents=True, exist_ok=True)
-
-        pane_id = self._current_pane_id()
-        if not pane_id:
-            print("❌ Unable to determine current pane id for DeepSeek", file=sys.stderr)
-            return 1
-
-        pane_title_marker = "CCB-DeepSeek"
-        if self.terminal_type == "tmux":
-            try:
-                backend = TmuxBackend()
-                backend.set_pane_title(pane_id, pane_title_marker)
-                backend.set_pane_user_option(pane_id, "@ccb_agent", "DeepSeek")
-            except Exception:
-                pass
-
-        start_cmd = self._build_env_prefix(self._managed_env_overrides()) + _build_export_path_cmd(self.script_dir / "bin") + self._build_deepseek_start_cmd()
-        self._write_deepseek_session(
-            runtime,
-            None,
-            pane_id=pane_id,
-            pane_title_marker=pane_title_marker,
-            start_cmd=start_cmd,
-        )
-
-        return self._run_shell_command(start_cmd, cwd=str(Path.cwd()))
-
     def _start_provider_in_current_pane(self, provider: str) -> int:
         if provider == "claude":
             return self._start_claude()
@@ -2475,8 +2440,6 @@ class AILauncher:
             return self._start_kimi_current_pane()
         if provider == "qwen":
             return self._start_qwen_current_pane()
-        if provider == "deepseek":
-            return self._start_deepseek_current_pane()
         print(f"❌ {t('unknown_provider', provider=provider)}")
         return 1
 
@@ -2883,54 +2846,6 @@ class AILauncher:
         self._maybe_start_provider_daemon("qwen")
         return True
 
-    def _write_deepseek_session(self, runtime, tmux_session, pane_id=None, pane_title_marker=None, start_cmd=None):
-        session_file = self._project_session_file(".deepseek-session")
-
-        writable, reason, fix = check_session_writable(session_file)
-        if not writable:
-            print(f"❌ Cannot write {session_file.name}: {reason}", file=sys.stderr)
-            print(f"💡 Fix: {fix}", file=sys.stderr)
-            return False
-
-        data = {
-            "session_id": self.session_id,
-            "ccb_project_id": compute_ccb_project_id(self.project_root),
-            "runtime_dir": str(runtime),
-            "terminal": self.terminal_type,
-            "tmux_session": tmux_session,
-            "pane_id": pane_id,
-            "pane_title_marker": pane_title_marker,
-            "work_dir": str(self.project_root),
-            "work_dir_norm": _normalize_path_for_match(str(self.project_root)),
-            "start_dir": str(self.invocation_dir),
-            "active": True,
-            "started_at": time.strftime("%Y-%m-%d %H:%M:%S"),
-            "start_cmd": str(start_cmd) if start_cmd else None,
-        }
-
-        ok, err = safe_write_session(session_file, json.dumps(data, ensure_ascii=False, indent=2))
-        if not ok:
-            print(err, file=sys.stderr)
-            return False
-        try:
-            upsert_registry({
-                "ccb_session_id": self.session_id,
-                "ccb_project_id": compute_ccb_project_id(self.project_root),
-                "work_dir": str(self.project_root),
-                "terminal": self.terminal_type,
-                "providers": {
-                    "deepseek": {
-                        "pane_id": pane_id,
-                        "pane_title_marker": pane_title_marker,
-                        "session_file": str(session_file),
-                    }
-                },
-            })
-        except Exception:
-            pass
-        self._maybe_start_provider_daemon("deepseek")
-        return True
-
     def _claude_project_dir(self, work_dir: Path) -> Path:
         projects_root = Path.home() / ".claude" / "projects"
         # Claude Code uses a filesystem-friendly key derived from the working directory.
@@ -3272,7 +3187,6 @@ class AILauncher:
                 self._project_session_file(".opencode-session"),
                 self._project_session_file(".claude-session"),
                 self._project_session_file(".droid-session"),
-                self._project_session_file(".deepseek-session"),
             ]:
                 if session_file.exists():
                     try:

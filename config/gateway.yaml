@@ -156,6 +156,6 @@ providers:
 
 # Memory Configuration
 memory:
-  inject_system_context: false  # 临时禁用以测试
+  inject_system_context: true
   auto_inject: true
   auto_record: true

@@ -23,13 +23,13 @@ Unify 10 AI providers behind a single gateway with intelligent routing, shared m
 
 ## What is Hivemind?
 
-Hivemind turns Claude Code into a **multi-AI orchestration hub**. Instead of talking to one AI at a time, you dispatch tasks to whichever provider is best suited — Kimi for Chinese, Codex for code review, Gemini for frontend, DeepSeek for reasoning — all through one unified API with automatic fallback, caching, and memory injection.
+Hivemind turns Claude Code into a **multi-AI orchestration hub**. Instead of talking to one AI at a time, you dispatch tasks to whichever provider is best suited — Kimi for Chinese, Codex for code review, Gemini for frontend, Qwen for reasoning — all through one unified API with automatic fallback, caching, and memory injection.
 
 ```
 You ──▶ Claude Code ────────────────────────┐
                                              ├──▶ Hivemind Gateway ──┬──▶ Kimi      (Chinese, fast)
 You ──▶ HiveMindUI (Desktop Client) ────────────┘                        ├──▶ Qwen      (code, fast)
-                                                                      ├──▶ DeepSeek  (reasoning)
+                                                                      ├──▶ Qoder     (reasoning)
                                                                       ├──▶ Codex     (code review)
                                                                       ├──▶ Gemini    (frontend, multimodal)
                                                                       ├──▶ iFlow     (workflow)
@@ -106,7 +106,7 @@ Dual-architecture memory inspired by cognitive science:
 | Feature | Description |
 |---------|-------------|
 | **Async Pipeline** | Submit → poll → fetch. Non-blocking, parallel multi-AI dispatch |
-| **Fallback Chains** | `kimi → qwen → deepseek`. Auto-retry with exponential backoff |
+| **Fallback Chains** | `kimi → qwen → codex`. Auto-retry with exponential backoff |
 | **Response Cache** | 34%+ hit rate. Per-provider TTL. Save tokens and time |
 | **Health Monitoring** | Real-time provider status. Auto-disable unhealthy providers |
 | **Multi-AI Discussion** | Structured debates between providers with round-based turns |
@@ -167,7 +167,7 @@ Dual-architecture memory inspired by cognitive science:
 | Tier | Providers | Response Time | Best For |
 |------|-----------|---------------|----------|
 | 🚀 Fast | Kimi, Qwen | 3–15s | Chinese, code generation, quick answers |
-| ⚡ Medium | DeepSeek, iFlow, OpenCode, Qoder, Droid | 15–60s | Reasoning, workflows, multi-model |
+| ⚡ Medium | iFlow, OpenCode, Qoder, Droid | 15–60s | Reasoning, workflows, multi-model |
 | 🐢 Slow | Codex, Gemini | 60–180s | Code review, frontend, multimodal |
 | 📍 Local | Antigravity | Varies | Local proxy, custom endpoints |
 
@@ -447,7 +447,6 @@ Each provider has `ask` / `pend` / `ping` shortcuts:
 |----------|-----|------|------|
 | Kimi | `kask` | `kpend` | `kping` |
 | Qwen | `qask` | `qpend` | `qping` |
-| DeepSeek | `dask` | `dpend` | `dping` |
 | Gemini | `gask` | `gpend` | `gping` |
 | Codex | `cask` | `cpend` | `cping` |
 | OpenCode | `oask` | `opend` | `oping` |
@@ -475,7 +474,7 @@ ccb-cli gemini 3f "..."        # Gemini 3 Flash
 ccb-cli gemini 3p "..."        # Gemini 3 Pro
 ccb-cli gemini 2.5f "..."      # Gemini 2.5 Flash
 ccb-cli gemini 2f "..."        # Gemini 2.0 Flash
-ccb-cli deepseek reasoner "."  # DeepSeek R1
+ccb-cli qwen "..."             # Qwen coder-model
 ccb-cli kimi thinking "..."    # Kimi with chain-of-thought
 ```
 
@@ -558,7 +557,7 @@ This project was built with contributions from multiple AI systems:
 | **Claude** | Architect & Orchestrator | Core design, memory system, testing, documentation |
 | **Codex** | Code Engineer | v1.0 refactoring, v1.1 implementation, v1.2 HiveMindUI integration |
 | **Kimi** | Chinese Specialist | Chinese NLP, Ollama integration, i18n |
-| **DeepSeek** | Reasoning Engine | Algorithm design, scoring formulas |
+| **Qoder** | Reasoning Engine | Algorithm design, scoring formulas |
 | **Gemini** | Frontend & Analysis | Web UI, multimodal analysis |
 | **Qwen** | Code Generator | Provider adapters, CLI tools |
 
