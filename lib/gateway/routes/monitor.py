@@ -1,4 +1,4 @@
-"""Monitoring routes for AionUi Gateway monitor pages."""
+"""Monitoring routes for HiveMindUI Gateway monitor pages."""
 from __future__ import annotations
 
 from datetime import datetime, timezone

@@ -670,7 +670,7 @@ curl -X POST http://localhost:8765/knowledge/v2/notebook/abc123/source/upload \
 
 **目录结构**:
 ```
-AionUi/src/renderer/pages/knowledge/
+HiveMindUI/src/renderer/pages/knowledge/
 ├── index.tsx                    # Knowledge Hub 主页面
 ├── components/
 │   ├── NotebookList.tsx        # Notebook 列表
@@ -686,7 +686,7 @@ AionUi/src/renderer/pages/knowledge/
 
 #### 3.2 主页面实现
 
-**文件**: `AionUi/src/renderer/pages/knowledge/index.tsx`
+**文件**: `HiveMindUI/src/renderer/pages/knowledge/index.tsx`
 
 ```typescript
 /**
@@ -919,7 +919,7 @@ export default KnowledgeHubPage;
 
 #### 3.3 添加路由
 
-**文件**: `AionUi/src/renderer/App.tsx` (或路由配置文件)
+**文件**: `HiveMindUI/src/renderer/App.tsx` (或路由配置文件)
 
 ```typescript
 import KnowledgeHubPage from './pages/knowledge';
@@ -930,7 +930,7 @@ import KnowledgeHubPage from './pages/knowledge';
 
 #### 3.4 添加导航菜单
 
-**文件**: `AionUi/src/renderer/components/Sidebar/index.tsx`
+**文件**: `HiveMindUI/src/renderer/components/Sidebar/index.tsx`
 
 ```typescript
 // 在侧边栏菜单中添加 Knowledge Hub 入口
@@ -942,7 +942,7 @@ import KnowledgeHubPage from './pages/knowledge';
 
 #### 3.5 国际化
 
-**文件**: `AionUi/src/renderer/i18n/locales/zh-CN.json`
+**文件**: `HiveMindUI/src/renderer/i18n/locales/zh-CN.json`
 
 ```json
 {
@@ -1237,7 +1237,7 @@ def test_full_pipeline():
 
 ```bash
 # 启动蜂巢应用
-cd AionUi
+cd HiveMindUI
 npm start
 
 # 手动测试清单:
@@ -1278,7 +1278,7 @@ cd /Users/leo/.local/share/codex-dual
 python3 -m lib.gateway.gateway_server --port 8765 &
 
 # 5. 构建并启动蜂巢应用
-cd AionUi
+cd HiveMindUI
 npm run build
 npm start
 ```

@@ -1,4 +1,4 @@
-# AionUI 设计重塑完成报告
+# HiveMindUI 设计重塑完成报告
 
 **执行日期**: 2026-02-12
 **执行者**: Claude Code (Codex)
@@ -8,7 +8,7 @@
 
 ## 📋 执行摘要
 
-成功完成 AionUI (HiveMind) 应用的完整设计重塑，包括：
+成功完成 HiveMindUI (HiveMind) 应用的完整设计重塑，包括：
 
 1. ✅ **配色方案**: 从紫色 (#7583b2) 更新为现代简约 Sky Blue (#0ea5e9)
 2. ✅ **Logo 设计**: 创建全新的六边形蜂巢图案（SVG 渐变）
@@ -135,10 +135,10 @@ xl: 32px
 ### 品牌资源 (P2)
 | 文件 | 变更 |
 |------|------|
-| `resources/aionui_logo_black_bg.svg` | ✅ 更新 |
-| `resources/aionui_logo_no_border.png` | ✅ 更新 |
-| `resources/aionui-banner-1.png` | ✅ 更新 |
-| `resources/aionui_readme_header_0807.png` | ✅ 更新 |
+| `resources/hivemindui_logo_black_bg.svg` | ✅ 更新 |
+| `resources/hivemindui_logo_no_border.png` | ✅ 更新 |
+| `resources/hivemindui-banner-1.png` | ✅ 更新 |
+| `resources/hivemindui_readme_header_0807.png` | ✅ 更新 |
 
 ---
 

@@ -38,20 +38,20 @@ __pycache__/
 .DS_Store
 Thumbs.db
 
-# === AionUI Electron App ===
-AionUi/node_modules/
-AionUi/out/
-AionUi/dist/
-AionUi/.vite/
-AionUi/.webpack/
-AionUi/coverage/
-AionUi/.nyc_output/
-AionUi/bun.lock
-AionUi/package-lock.json
+# === HiveMindUI Electron App ===
+HiveMindUI/node_modules/
+HiveMindUI/out/
+HiveMindUI/dist/
+HiveMindUI/.vite/
+HiveMindUI/.webpack/
+HiveMindUI/coverage/
+HiveMindUI/.nyc_output/
+HiveMindUI/bun.lock
+HiveMindUI/package-lock.json
 
-# AionUI large demo assets
-AionUi/resources/*.gif
-AionUi/resources/*.mp4
+# HiveMindUI large demo assets
+HiveMindUI/resources/*.gif
+HiveMindUI/resources/*.mp4
 
 # === Runtime/session files ===
 .ccb_config/*-session

@@ -1,14 +1,14 @@
-# Hivemind ↔ AionUi 项目合并计划
+# Hivemind ↔ HiveMindUI 项目合并计划
 
 **日期**: 2026-02-10
 **执行者**: Codex
-**目标**: 将 Desktop AionUi (含 Hivemind 集成) 完整合并到 Hivemind 仓库
+**目标**: 将 Desktop HiveMindUI (含 Hivemind 集成) 完整合并到 Hivemind 仓库
 
 ---
 
 ## 一、当前状态
 
-### Desktop AionUi (`/Users/leo/Desktop/AionUi`)
+### Desktop HiveMindUI (`/Users/leo/Desktop/HiveMindUI`)
 
 | 分类 | 状态 | 说明 |
 |------|------|------|
@@ -17,19 +17,19 @@
 | **Plan B-fix** | ✅ 完成 | 6 个 Bug 修复 |
 | **Plan C** | 🟡 部分完成 | 7 项功能中完成 4 项 |
 | **Git 状态** | ⚠️ 未提交 | 34 个修改文件 + 8 个新增文件 |
-| **Remote** | `iOfficeAI/AionUi.git` | 原始上游仓库（不推送 Hivemind 改动） |
+| **Remote** | `iOfficeAI/HiveMindUI.git` | 原始上游仓库（不推送 Hivemind 改动） |
 
 ### Hivemind Repo (`~/.local/share/codex-dual/`)
 
 | 分类 | 状态 | 说明 |
 |------|------|------|
-| **AionUi 子目录** | 🟡 Plan A only | 有 Plan A 的旧版本 |
-| **Git 状态** | 干净 | `AionUi/` 显示为 untracked |
+| **HiveMindUI 子目录** | 🟡 Plan A only | 有 Plan A 的旧版本 |
+| **Git 状态** | 干净 | `HiveMindUI/` 显示为 untracked |
 | **Remote** | `LeoLin990405/Hivemind.git` | 目标推送仓库 |
 
 ### 差异文件清单
 
-Desktop 比 codex-dual/AionUi/ 多出的改动（Plan B + B-fix + Plan C 部分）:
+Desktop 比 codex-dual/HiveMindUI/ 多出的改动（Plan B + B-fix + Plan C 部分）:
 
 ```
 20 个 Hivemind 核心文件有差异:
@@ -73,27 +73,27 @@ Desktop 比 codex-dual/AionUi/ 多出的改动（Plan B + B-fix + Plan C 部分�
 ### Phase 1: 同步代码
 
 ```bash
-# 1. Rsync Desktop → codex-dual/AionUi/ (排除 .git, node_modules, PLAN 文档)
+# 1. Rsync Desktop → codex-dual/HiveMindUI/ (排除 .git, node_modules, PLAN 文档)
 rsync -av \
   --exclude='.git/' \
   --exclude='node_modules/' \
   --exclude='PLAN_*.md' \
   --delete \
-  /Users/leo/Desktop/AionUi/ \
-  /Users/leo/.local/share/codex-dual/AionUi/
+  /Users/leo/Desktop/HiveMindUI/ \
+  /Users/leo/.local/share/codex-dual/HiveMindUI/
 
 # 2. 验证同步结果
-cd /Users/leo/.local/share/codex-dual/AionUi
+cd /Users/leo/.local/share/codex-dual/HiveMindUI
 ls -la src/agent/hivemind/
 ls -la src/renderer/pages/conversation/hivemind/
 ```
 
-**预期**: Desktop 的所有改动（Plan A + B + B-fix + Plan C 部分）全部同步到 codex-dual/AionUi/
+**预期**: Desktop 的所有改动（Plan A + B + B-fix + Plan C 部分）全部同步到 codex-dual/HiveMindUI/
 
 ### Phase 2: 安装依赖 + Lint
 
 ```bash
-cd /Users/leo/.local/share/codex-dual/AionUi
+cd /Users/leo/.local/share/codex-dual/HiveMindUI
 
 # 1. 安装依赖
 npm install
@@ -110,14 +110,14 @@ npm run lint:fix
 ### Phase 3: 移动 PLAN 文档
 
 ```bash
-# 将 PLAN 文档移到 Hivemind 仓库的 docs/ 目录（不放在 AionUi/ 子目录）
-mv /Users/leo/Desktop/AionUi/PLAN_B_HIVEMIND_ENHANCEMENT.md \
+# 将 PLAN 文档移到 Hivemind 仓库的 docs/ 目录（不放在 HiveMindUI/ 子目录）
+mv /Users/leo/Desktop/HiveMindUI/PLAN_B_HIVEMIND_ENHANCEMENT.md \
    /Users/leo/.local/share/codex-dual/docs/
 
-mv /Users/leo/Desktop/AionUi/PLAN_BFIX_AND_C_HIVEMIND.md \
+mv /Users/leo/Desktop/HiveMindUI/PLAN_BFIX_AND_C_HIVEMIND.md \
    /Users/leo/.local/share/codex-dual/docs/
 
-mv /Users/leo/Desktop/AionUi/HIVEMIND_MERGE_PLAN.md \
+mv /Users/leo/Desktop/HiveMindUI/HIVEMIND_MERGE_PLAN.md \
    /Users/leo/.local/share/codex-dual/docs/
 ```
 
@@ -129,17 +129,17 @@ cd /Users/leo/.local/share/codex-dual
 # 1. 查看状态
 git status
 
-# 2. Add AionUi 目录（首次添加）
-git add AionUi/
+# 2. Add HiveMindUI 目录（首次添加）
+git add HiveMindUI/
 
 # 3. Add PLAN 文档
 git add docs/PLAN_*.md docs/HIVEMIND_MERGE_PLAN.md
 
 # 4. 提交
 git commit -m "$(cat <<'EOF'
-feat(aionui): integrate AionUi v1.8.5 with Hivemind Gateway
+feat(hivemindui): integrate HiveMindUI v1.8.5 with Hivemind Gateway
 
-- Add complete AionUi desktop app as subdirectory
+- Add complete HiveMindUI desktop app as subdirectory
 - Implement Hivemind agent integration (Plan A+B+B-fix+C partial)
 - Support 9 AI providers via Gateway API (Kimi/Qwen/DeepSeek/etc.)
 - Add token persistence, system prompt, workspace file selection
@@ -171,13 +171,13 @@ git remote -v
 git push origin main
 
 # 3. 验证远程仓库
-# 访问 https://github.com/LeoLin990405/Hivemind 确认 AionUi/ 目录已存在
+# 访问 https://github.com/LeoLin990405/Hivemind 确认 HiveMindUI/ 目录已存在
 ```
 
-### Phase 6: 清理 Desktop AionUi
+### Phase 6: 清理 Desktop HiveMindUI
 
 ```bash
-cd /Users/leo/Desktop/AionUi
+cd /Users/leo/Desktop/HiveMindUI
 
 # 选项 A: 还原所有 Hivemind 改动（因为已合并到 Hivemind 仓库）
 git checkout .
@@ -188,7 +188,7 @@ git clean -fd  # 删除 untracked 文件（hivemind 目录、PLAN 文档等）
 git checkout -b hivemind-integration
 ```
 
-**推荐选项 A**: 因为 Desktop AionUi 的 remote 是 `iOfficeAI/AionUi.git`，我们不打算向原仓库推送 Hivemind 改动。Hivemind 改动已经完整归入 Hivemind 仓库。
+**推荐选项 A**: 因为 Desktop HiveMindUI 的 remote 是 `iOfficeAI/HiveMindUI.git`，我们不打算向原仓库推送 Hivemind 改动。Hivemind 改动已经完整归入 Hivemind 仓库。
 
 ---
 
@@ -198,23 +198,23 @@ git checkout -b hivemind-integration
 
 ### 代码层面
 
-- [ ] `codex-dual/AionUi/src/agent/hivemind/` 目录存在且包含 4 个文件
-- [ ] `codex-dual/AionUi/src/renderer/pages/conversation/hivemind/` 目录存在且包含 4 个文件
+- [ ] `codex-dual/HiveMindUI/src/agent/hivemind/` 目录存在且包含 4 个文件
+- [ ] `codex-dual/HiveMindUI/src/renderer/pages/conversation/hivemind/` 目录存在且包含 4 个文件
 - [ ] `npm run lint` 无错误
-- [ ] `git log` 显示最新 commit 包含 AionUi 集成
+- [ ] `git log` 显示最新 commit 包含 HiveMindUI 集成
 - [ ] `git remote -v` 确认 remote 是 Hivemind 仓库
 
 ### GitHub 远程仓库
 
 - [ ] 访问 `https://github.com/LeoLin990405/Hivemind`
-- [ ] 确认 `AionUi/` 目录可见
+- [ ] 确认 `HiveMindUI/` 目录可见
 - [ ] 确认 `docs/PLAN_*.md` 文件存在
-- [ ] 最新 commit 显示 "feat(aionui): integrate AionUi..."
+- [ ] 最新 commit 显示 "feat(hivemindui): integrate HiveMindUI..."
 
-### 功能验证（可选 - 需要运行 AionUi）
+### 功能验证（可选 - 需要运行 HiveMindUI）
 
 ```bash
-cd /Users/leo/.local/share/codex-dual/AionUi
+cd /Users/leo/.local/share/codex-dual/HiveMindUI
 npm start
 ```
 
@@ -428,10 +428,10 @@ if (streamError) {
 ✅ Phase 3: PLAN 文档已移动
 ✅ Phase 4: Git commit 完成 (commit SHA)
 ✅ Phase 5: Push 到 Hivemind 完成 (GitHub link)
-✅ Phase 6: Desktop AionUi 清理完成
+✅ Phase 6: Desktop HiveMindUI 清理完成
 
 验证:
-- codex-dual/AionUi 文件数: [数量]
+- codex-dual/HiveMindUI 文件数: [数量]
 - 最新 commit SHA: [hash]
 - GitHub 可见: [链接]
 ```

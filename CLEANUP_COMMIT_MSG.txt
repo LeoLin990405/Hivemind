@@ -1,7 +1,7 @@
-feat(monitor): deprecate original WebUI, finalize AionUi replacement
+feat(monitor): deprecate original WebUI, finalize HiveMindUI replacement
 
 Complete the transition from standalone web_server.py to integrated
-AionUi monitoring interface.
+HiveMindUI monitoring interface.
 
 Changes:
 - Move lib/web_server.py → deprecated/web_server.py.deprecated
@@ -10,21 +10,21 @@ Changes:
 - Add WEBUI_REPLACEMENT_STATUS.md with full analysis
 
 Justification:
-- AionUi provides 100% feature coverage (8/8 features)
+- HiveMindUI provides 100% feature coverage (8/8 features)
 - Better UX: Modern React UI vs HTML templates
 - Internationalization: 6 languages vs English only
 - Unified interface: Chat + monitoring in one app
 - Easier maintenance: Single codebase
 
 Migration:
-- Users should use AionUi's /monitor page instead
-- See docs/MIGRATION_TO_AIONUI.md for details
+- Users should use HiveMindUI's /monitor page instead
+- See docs/MIGRATION_TO_HIVEMINDUI.md for details
 - Emergency rollback: Copy files from deprecated/ if needed
 
 Related commits:
-- Previous: feat(monitor): integrate Gateway monitoring into AionUi
+- Previous: feat(monitor): integrate Gateway monitoring into HiveMindUI
 - This commit completes the replacement by deprecating old files
 
 Testing:
-- Verified AionUi monitor pages work (pending Gateway restart)
-- All original WebUI features accessible via AionUi
+- Verified HiveMindUI monitor pages work (pending Gateway restart)
+- All original WebUI features accessible via HiveMindUI

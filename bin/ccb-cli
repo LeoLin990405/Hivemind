@@ -391,6 +391,7 @@ parse_and_call() {
                 3p|3-pro) model="gemini-3-pro-preview"; message="${args[*]:1}" ;;
                 2.5f|2.5-flash) model="gemini-2.5-flash"; message="${args[*]:1}" ;;
                 2.5p|2.5-pro) model="gemini-2.5-pro"; message="${args[*]:1}" ;;
+                2f|2-flash) model="gemini-2.0-flash"; message="${args[*]:1}" ;;
                 gemini-*) message="${args[*]:1}" ;;
                 *)
                     model="gemini-3-flash-preview"

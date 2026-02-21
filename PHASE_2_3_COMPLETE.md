@@ -52,7 +52,7 @@
 
 ### 创建的文件
 
-1. **AionUi/src/renderer/pages/knowledge/index.tsx** (~300 行)
+1. **HiveMindUI/src/renderer/pages/knowledge/index.tsx** (~300 行)
    - 完整的 Knowledge Hub 页面组件
    - 系统状态监控卡片
    - Notebook 列表展示
@@ -61,21 +61,21 @@
 
 ### 修改的文件
 
-1. **AionUi/src/renderer/router.tsx**
+1. **HiveMindUI/src/renderer/router.tsx**
    - 添加 `KnowledgeHub` 组件导入
    - 添加 `/knowledge` 路由
 
-2. **AionUi/src/renderer/sider.tsx**
+2. **HiveMindUI/src/renderer/sider.tsx**
    - 添加 `IconBook` 图标导入
    - 添加 `isKnowledge` 状态跟踪
    - 添加 `handleKnowledgeClick` 函数
    - 添加 Knowledge Hub 导航按钮 (侧边栏底部)
 
-3. **AionUi/src/renderer/i18n/locales/zh-CN.json**
+3. **HiveMindUI/src/renderer/i18n/locales/zh-CN.json**
    - 添加完整的 `knowledge` 命名空间
    - 22 个翻译 key
 
-4. **AionUi/src/renderer/i18n/locales/en-US.json**
+4. **HiveMindUI/src/renderer/i18n/locales/en-US.json**
    - 添加完整的 `knowledge` 命名空间 (英文)
    - 22 个翻译 key
 
@@ -134,7 +134,7 @@ lib/gateway/routes/
 lib/gateway/
 └── app.py                   ← 修改 (register router)
 
-AionUi/src/renderer/
+HiveMindUI/src/renderer/
 ├── pages/knowledge/
 │   └── index.tsx            ← 新文件 (主页面)
 ├── router.tsx               ← 修改 (add route)

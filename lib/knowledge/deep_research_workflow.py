@@ -82,16 +82,16 @@ class DeepResearchWorkflow:
         date = datetime.now().strftime("%Y-%m-%d")
         filename = f"{date}_{self._safe_name(topic)}_Literature_Review.md"
         path = self.vault_path / "03_NotebookLM" / "Deep_Research_Reports" / filename
-        path.parent.mkdir(parents=True, exist_ok=True)
 
-        path.write_text(
-            "---\n"
-            "type: deep-research-report\n"
-            f"topic: {topic}\n"
-            f"date: {date}\n"
-            "source: NotebookLM Deep Research\n"
-            "tags: [deep-research, literature-review, ai-generated]\n"
-            "---\n\n"
+        frontmatter = {
+            "type": "deep-research-report",
+            "topic": topic,
+            "date": date,
+            "source": "NotebookLM Deep Research",
+            "tags": ["deep-research", "literature-review", "ai-generated"],
+        }
+        
+        body = (
             f"# Literature Review: {topic}\n\n"
             f"**Generated**: {date}\n"
             "**Source**: NotebookLM Deep Research\n\n"
@@ -104,10 +104,10 @@ class DeepResearchWorkflow:
             "## 📚 Sources\n"
             "<!-- Auto-populated from NotebookLM -->\n\n"
             "## 🔗 Related Notes\n"
-            "<!-- Manual links -->\n",
-            encoding="utf-8",
+            "<!-- Manual links -->\n"
         )
 
+        self.manager._write_markdown_note(path, frontmatter, body)
         return path
 
     @staticmethod

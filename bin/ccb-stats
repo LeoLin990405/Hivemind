@@ -25,9 +25,9 @@ from typing import Optional
 
 # Add lib to path
 script_dir = Path(__file__).resolve().parent.parent
-sys.path.insert(0, str(script_dir / "lib"))
+sys.path.insert(0, str(script_dir))
 
-from performance_tracker import PerformanceTracker, ProviderStats
+from lib.performance_tracker import PerformanceTracker, ProviderStats
 
 
 def format_timestamp(ts: float) -> str:

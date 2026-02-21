@@ -1,4 +1,4 @@
-# 原始 WebUI vs AionUi 监控功能 - 完整对比
+# 原始 WebUI vs HiveMindUI 监控功能 - 完整对比
 
 **日期**: 2026-02-10
 **Gateway 进程**: PID 98884 (运行中，启动时间早于新路由添加)
@@ -9,7 +9,7 @@
 
 ### 原始 WebUI 功能（lib/web_server.py）
 
-| 功能 | 端点 | AionUi 实现 | 状态 |
+| 功能 | 端点 | HiveMindUI 实现 | 状态 |
 |------|------|------------|------|
 | **Dashboard 总览** | `GET /` | `/monitor` Dashboard 页面 | ✅ 已实现 |
 | **Provider 性能统计** | `GET /stats` | Dashboard 中的表格 | ✅ 已实现 |
@@ -50,7 +50,7 @@ _include_router_if_available(app, monitor_routes.router, tags=["monitor"])
 
 ---
 
-## 三、AionUi UI 实现状态
+## 三、HiveMindUI UI 实现状态
 
 ### 前端组件清单
 
@@ -141,7 +141,7 @@ curl http://localhost:8765/api/monitor/stats
 |  | ❌ 无多语言支持 |
 |  | ❌ 无桌面应用 |
 
-### AionUi Monitor (port 3000/桌面)
+### HiveMindUI Monitor (port 3000/桌面)
 
 | 优势 | 劣势 |
 |------|------|
@@ -166,14 +166,14 @@ pkill -f "python.*gateway_server"
 python3 -m lib.gateway.gateway_server --port 8765
 ```
 
-#### Step 2: 启动 AionUi
+#### Step 2: 启动 HiveMindUI
 
 ```bash
 # Terminal 2: 桌面模式
-cd AionUi && npm start
+cd HiveMindUI && npm start
 
 # 或 WebUI 模式
-cd AionUi && npm run webui -- --port 3000
+cd HiveMindUI && npm run webui -- --port 3000
 ```
 
 #### Step 3: 验证功能
@@ -200,7 +200,7 @@ pkill -f "python.*web_server"
 
 ## 七、优势分析
 
-### 为什么 AionUi 更好？
+### 为什么 HiveMindUI 更好？
 
 1. **统一体验**:
    - 用户无需切换工具（聊天 + 监控一体）
@@ -235,8 +235,8 @@ pkill -f "python.*web_server"
 pkill -f "python.*gateway_server"
 python3 -m lib.gateway.gateway_server --port 8765
 
-# 2. 启动 AionUi
-cd AionUi && npm start
+# 2. 启动 HiveMindUI
+cd HiveMindUI && npm start
 
 # 3. 验证监控功能
 # 访问 http://localhost:3000/monitor
@@ -250,9 +250,9 @@ pkill -f "python.*web_server"
 ```bash
 # 1. 两个系统并行运行一段时间
 python3 lib/web_server.py --port 8080 &  # 原始
-cd AionUi && npm start                     # 新版
+cd HiveMindUI && npm start                     # 新版
 
-# 2. 用户逐步切换到 AionUi
+# 2. 用户逐步切换到 HiveMindUI
 # 3. 确认无问题后停止原始 WebUI
 ```
 
@@ -260,7 +260,7 @@ cd AionUi && npm start                     # 新版
 
 ## 九、回滚方案
 
-如果 AionUi 监控出现问题，可以随时回滚:
+如果 HiveMindUI 监控出现问题，可以随时回滚:
 
 ```bash
 # 启动原始 WebUI
@@ -282,7 +282,7 @@ python3 lib/web_server.py --port 8080
 **前提条件**:
 1. ✅ 代码已完成（100% 功能覆盖）
 2. ⚠️ **需要重启 Gateway**（加载新路由）
-3. ✅ AionUi 已安装依赖（npm install）
+3. ✅ HiveMindUI 已安装依赖（npm install）
 
 **替代后的优势**:
 - 统一界面（聊天 + 监控）
@@ -295,7 +295,7 @@ python3 lib/web_server.py --port 8080
 # 立即执行
 pkill -f "python.*gateway_server"
 python3 -m lib.gateway.gateway_server --port 8765
-cd AionUi && npm start
+cd HiveMindUI && npm start
 ```
 
 ---

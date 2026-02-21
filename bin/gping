@@ -20,6 +20,7 @@ try:
     def main():
         try:
             parser = argparse.ArgumentParser(prog="gping", add_help=True)
+            parser.add_argument("model", nargs="?", default=None, help="Optional model shortcut (ignored)")
             parser.add_argument("--session-file", dest="session_file", default=None, help="Path to .gemini-session (or .ccb_config/.gemini-session)")
             args = parser.parse_args()
             if args.session_file:

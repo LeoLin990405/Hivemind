@@ -44,13 +44,34 @@ class _FakeNotebookLMClient:
         return {"answer": f"auto::{question[:40]}"}
 
 
+class _FakeObsidianCLI:
+    def __init__(self, **kwargs):
+        pass
+    def create_note(self, **kwargs):
+        return False
+    def open_note(self, **kwargs):
+        return False
+    def search(self, **kwargs):
+        return False
+    def daily_note(self, **kwargs):
+        return False
+    def move_note(self, **kwargs):
+        return False
+    def delete_note(self, **kwargs):
+        return False
+
+
 def test_audio_overview_workflow_generates_transcript_note(tmp_path) -> None:
     vault = tmp_path / "Knowledge-Hub"
     notes_dir = vault / "04_Research_Notes" / "AI"
     notes_dir.mkdir(parents=True)
     (notes_dir / "note1.md").write_text("# Note 1\ncontent", encoding="utf-8")
 
-    manager = NotebookLMManager(vault_path=str(vault), nlm_client=_FakeNotebookLMClient())
+    manager = NotebookLMManager(
+        vault_path=str(vault),
+        nlm_client=_FakeNotebookLMClient(),
+        cli=_FakeObsidianCLI(),
+    )
     workflow = AudioOverviewWorkflow(vault_path=str(vault), manager=manager)
 
     output = workflow.generate_podcast_from_notes(
@@ -68,7 +89,11 @@ def test_audio_overview_workflow_generates_transcript_note(tmp_path) -> None:
 
 def test_deep_research_workflow_gap_pipeline(tmp_path) -> None:
     vault = tmp_path / "Knowledge-Hub"
-    manager = NotebookLMManager(vault_path=str(vault), nlm_client=_FakeNotebookLMClient())
+    manager = NotebookLMManager(
+        vault_path=str(vault),
+        nlm_client=_FakeNotebookLMClient(),
+        cli=_FakeObsidianCLI(),
+    )
     workflow = DeepResearchWorkflow(vault_path=str(vault), manager=manager)
 
     review = workflow.literature_review("AI Safety and Alignment", save_to_obsidian=True)

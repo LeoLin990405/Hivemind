@@ -50,10 +50,28 @@ class _FakeNotebookLMClient:
         return {"answer": f"generated::{question[:24]}"}
 
 
+class _FakeObsidianCLI:
+    def __init__(self, **kwargs):
+        pass
+    def create_note(self, **kwargs):
+        return False  # Force fallback to file I/O for tests
+    def open_note(self, **kwargs):
+        return False
+    def search(self, **kwargs):
+        return False
+    def daily_note(self, **kwargs):
+        return False
+    def move_note(self, **kwargs):
+        return False
+    def delete_note(self, **kwargs):
+        return False
+
+
 def test_create_notebook_with_obsidian_sync(tmp_path) -> None:
     manager = NotebookLMManager(
         vault_path=str(tmp_path / "Knowledge-Hub"),
         nlm_client=_FakeNotebookLMClient(),
+        cli=_FakeObsidianCLI(),
     )
 
     meta = manager.create_notebook_with_obsidian_sync("Transformer Architecture", category="AI_Research")
@@ -69,8 +87,10 @@ def test_add_pdf_with_tracking_rotates_when_limit_reached(tmp_path) -> None:
     manager = NotebookLMManager(
         vault_path=str(tmp_path / "Knowledge-Hub"),
         nlm_client=client,
+        cli=_FakeObsidianCLI(),
         max_sources_per_notebook=1,
     )
+    # ...
 
     meta = manager.create_notebook_with_obsidian_sync("Rotation Test")
     notebook_id = meta["notebook_id"]
@@ -95,6 +115,7 @@ def test_generate_all_artifacts_syncs_to_obsidian(tmp_path) -> None:
     manager = NotebookLMManager(
         vault_path=str(tmp_path / "Knowledge-Hub"),
         nlm_client=_FakeNotebookLMClient(),
+        cli=_FakeObsidianCLI(),
     )
     meta = manager.create_notebook_with_obsidian_sync("Artifacts Test")
 

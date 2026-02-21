@@ -144,20 +144,22 @@ class AudioOverviewWorkflow:
             audio_path = copied
 
         transcript_path = audio_dir / f"{datetime.now().strftime('%Y-%m-%d_%H%M%S')}_Transcript.md"
-        transcript_path.write_text(
-            "---\n"
-            "type: notebooklm-audio-transcript\n"
-            f"generated: {datetime.now().isoformat(timespec='seconds')}\n"
-            f"audio_file: {audio_path.name}\n"
-            "tags: [notebooklm, audio, transcript]\n"
-            "---\n\n"
+        
+        frontmatter = {
+            "type": "notebooklm-audio-transcript",
+            "generated": datetime.now().isoformat(timespec="seconds"),
+            "audio_file": audio_path.name,
+            "tags": ["notebooklm", "audio", "transcript"],
+        }
+        
+        body = (
             "# Audio Overview Transcript\n\n"
             f"![[{audio_path.relative_to(self.vault_path)}]]\n\n"
             "## Transcript\n"
-            f"{(transcript or '').strip()}\n",
-            encoding="utf-8",
+            f"{(transcript or '').strip()}\n"
         )
 
+        self.manager._write_markdown_note(transcript_path, frontmatter, body)
         return transcript_path
 
     @staticmethod

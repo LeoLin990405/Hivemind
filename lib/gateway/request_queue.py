@@ -362,7 +362,16 @@ class AsyncRequestQueue:
         try:
             await handler(request)
         except (RuntimeError, ValueError, TypeError, KeyError, AttributeError, OSError) as e:
-            self.queue.mark_completed(request.id, error=str(e))
+            # Only mark as failed if request is not already in a terminal state
+            # (handler may have completed successfully before this exception)
+            stored = self.queue.store.get_request(request.id)
+            if stored and stored.status not in (
+                RequestStatus.COMPLETED,
+                RequestStatus.FAILED,
+                RequestStatus.TIMEOUT,
+                RequestStatus.CANCELLED,
+            ):
+                self.queue.mark_completed(request.id, error=str(e))
         finally:
             # Remove from active tasks
             async with self._tasks_lock:

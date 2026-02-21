@@ -4,7 +4,7 @@
 
 set -e
 
-echo "🧹 Cleaning up original WebUI and replacing with AionUi..."
+echo "🧹 Cleaning up original WebUI and replacing with HiveMindUI..."
 echo ""
 
 # Step 1: Deprecate original WebUI files
@@ -28,13 +28,13 @@ cp README.md README.md.backup
 # Remove old WebUI instructions
 cat << 'EOF' > /tmp/readme_patch.txt
 The original web_server.py (port 8080) has been deprecated and replaced
-by AionUi's integrated monitoring features.
+by HiveMindUI's integrated monitoring features.
 
-For monitoring, use AionUi:
-- Desktop: cd AionUi && npm start
-- WebUI: cd AionUi && npm run webui -- --port 3000
+For monitoring, use HiveMindUI:
+- Desktop: cd HiveMindUI && npm start
+- WebUI: cd HiveMindUI && npm run webui -- --port 3000
 
-Access monitoring at: /monitor page in AionUi
+Access monitoring at: /monitor page in HiveMindUI
 EOF
 
 echo "   ✓ README updated"
@@ -49,7 +49,7 @@ cat << 'EOF' > deprecated/README.md
 **Date**: 2026-02-10
 **Status**: DEPRECATED - Do not use
 
-These files have been replaced by AionUi's integrated monitoring features.
+These files have been replaced by HiveMindUI's integrated monitoring features.
 
 ## Original Files
 
@@ -58,9 +58,9 @@ These files have been replaced by AionUi's integrated monitoring features.
 
 ## Replacement
 
-**Use AionUi instead**:
+**Use HiveMindUI instead**:
 ```bash
-cd AionUi && npm start
+cd HiveMindUI && npm start
 ```
 
 Navigate to `/monitor` page for all monitoring features:
@@ -71,11 +71,11 @@ Navigate to `/monitor` page for all monitoring features:
 
 ## Migration Guide
 
-See: `docs/MIGRATION_TO_AIONUI.md`
+See: `docs/MIGRATION_TO_HIVEMINDUI.md`
 
 ## Why Deprecated?
 
-1. **Unified Interface**: AionUi provides both chat and monitoring in one app
+1. **Unified Interface**: HiveMindUI provides both chat and monitoring in one app
 2. **Better UX**: Modern React UI with Arco Design
 3. **Internationalization**: 6 languages support
 4. **Feature Parity**: 100% coverage of original WebUI features
@@ -106,7 +106,7 @@ echo "📝 Step 4: Updating .gitignore..."
 if ! grep -q "# Deprecated WebUI" .gitignore; then
     cat << 'EOF' >> .gitignore
 
-# Deprecated WebUI (replaced by AionUi)
+# Deprecated WebUI (replaced by HiveMindUI)
 lib/web_server.py
 lib/web_server_template.py
 EOF
@@ -130,6 +130,6 @@ echo ""
 echo "🚀 Next steps:"
 echo "   1. Commit these changes"
 echo "   2. Restart Gateway: pkill -f gateway_server && python3 -m lib.gateway.gateway_server --port 8765"
-echo "   3. Start AionUi: cd AionUi && npm start"
+echo "   3. Start HiveMindUI: cd HiveMindUI && npm start"
 echo "   4. Verify /monitor page works"
 echo ""

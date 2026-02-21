@@ -1,6 +1,6 @@
-feat(monitor): deprecate original WebUI, complete AionUi replacement
+feat(monitor): deprecate original WebUI, complete HiveMindUI replacement
 
-Replace standalone web_server.py with integrated AionUi monitoring.
+Replace standalone web_server.py with integrated HiveMindUI monitoring.
 
 ## What Changed
 
@@ -14,7 +14,7 @@ Replace standalone web_server.py with integrated AionUi monitoring.
 - Integrate route registration in lib/gateway/app.py
 - Export monitor routes in routes/__init__.py
 
-**Frontend** (AionUi monitor pages):
+**Frontend** (HiveMindUI monitor pages):
 - Add GatewayMonitorService (98 lines)
 - Add useGatewayStats hook (68 lines)
 - Add 4 monitor pages (407 lines):
@@ -27,14 +27,14 @@ Replace standalone web_server.py with integrated AionUi monitoring.
 - Add i18n keys (6 locales)
 
 **Documentation**:
-- Add MIGRATION_TO_AIONUI.md
-- Add AIONUI_VS_WEBUI_COMPARISON.md (detailed analysis)
+- Add MIGRATION_TO_HIVEMINDUI.md
+- Add HIVEMINDUI_VS_WEBUI_COMPARISON.md (detailed analysis)
 - Add WEBUI_REPLACEMENT_STATUS.md (verification status)
 - Update README.md with monitoring instructions
 
 ## Why Deprecate?
 
-| Metric | Original WebUI | AionUi Monitor |
+| Metric | Original WebUI | HiveMindUI Monitor |
 |--------|----------------|----------------|
 | Feature Coverage | 8 features | 8 features (100%) |
 | UI Framework | HTML templates | React + Arco Design |
@@ -51,11 +51,11 @@ python3 lib/web_server.py --port 8080
 
 **New way**:
 ```bash
-cd AionUi && npm start
+cd HiveMindUI && npm start
 # Navigate to /monitor page
 ```
 
-See: `docs/MIGRATION_TO_AIONUI.md` for details.
+See: `docs/MIGRATION_TO_HIVEMINDUI.md` for details.
 
 ## Emergency Rollback
 
@@ -70,6 +70,6 @@ Not recommended - files are unmaintained.
    python3 -m lib.gateway.gateway_server --port 8765
    ```
 
-2. Start AionUi and verify `/monitor` page
+2. Start HiveMindUI and verify `/monitor` page
 
 Total changes: ~1,100 lines across backend, frontend, and docs.

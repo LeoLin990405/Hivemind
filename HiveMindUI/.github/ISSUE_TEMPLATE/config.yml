@@ -1,0 +1,11 @@
+blank_issues_enabled: false
+contact_links:
+  - name: 💬 Community Discussions
+    url: https://github.com/iOfficeAI/HiveMindUI/discussions
+    about: Ask questions, share ideas, and discuss HiveMindUI with the community
+  - name: 📖 Documentation
+    url: https://github.com/iOfficeAI/HiveMindUI/wiki
+    about: Check our documentation for setup guides, configuration, and troubleshooting
+  - name: 🔒 Security Issues
+    url: mailto:security@hivemindui.com
+    about: Report security vulnerabilities privately (DO NOT create public issues)

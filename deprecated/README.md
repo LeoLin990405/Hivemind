@@ -3,18 +3,18 @@
 **Date**: 2026-02-10
 **Status**: ⚠️ DEPRECATED - Do not use
 
-These files have been **replaced by AionUi's integrated monitoring features**.
+These files have been **replaced by HiveMindUI's integrated monitoring features**.
 
 ## Original Files
 
 - `web_server.py.deprecated` - Original FastAPI monitoring dashboard (port 8080)
 - `web_server_template.py.deprecated` - HTML templates
 
-## Replacement: AionUi Monitor
+## Replacement: HiveMindUI Monitor
 
-**Use AionUi instead**:
+**Use HiveMindUI instead**:
 ```bash
-cd AionUi && npm start
+cd HiveMindUI && npm start
 ```
 
 Navigate to **`/monitor`** page for all monitoring features:
@@ -35,7 +35,7 @@ Navigate to **`/monitor`** page for all monitoring features:
 
 ## Migration Guide
 
-See: [`docs/MIGRATION_TO_AIONUI.md`](../docs/MIGRATION_TO_AIONUI.md)
+See: [`docs/MIGRATION_TO_HIVEMINDUI.md`](../docs/MIGRATION_TO_HIVEMINDUI.md)
 
 ## Emergency Rollback (NOT RECOMMENDED)
 
@@ -54,10 +54,10 @@ python3 lib/web_server.py --port 8080
 
 ## Timeline
 
-- **2026-02-09**: AionUi integration started (Plan A+B)
+- **2026-02-09**: HiveMindUI integration started (Plan A+B)
 - **2026-02-10**: Monitoring extension completed (Plan C + Monitor pages)
 - **2026-02-10**: Original WebUI deprecated
 
 ---
 
-For questions or issues, see: [AIONUI_VS_WEBUI_COMPARISON.md](../docs/AIONUI_VS_WEBUI_COMPARISON.md)
+For questions or issues, see: [HIVEMINDUI_VS_WEBUI_COMPARISON.md](../docs/HIVEMINDUI_VS_WEBUI_COMPARISON.md)

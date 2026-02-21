@@ -1,14 +1,14 @@
-# Plan B: AionUI Hivemind 功能增强 — Codex 执行文档
+# Plan B: HiveMindUI Hivemind 功能增强 — Codex 执行文档
 
 **日期**: 2026-02-10
-**项目根目录**: `/Users/leo/Desktop/AionUi`
+**项目根目录**: `/Users/leo/Desktop/HiveMindUI`
 **所有路径均相对于项目根目录**
 
 ---
 
 ## 前置准备
 
-确认你已在 `/Users/leo/Desktop/AionUi` 目录下工作。项目用 TypeScript + React + Electron。
+确认你已在 `/Users/leo/Desktop/HiveMindUI` 目录下工作。项目用 TypeScript + React + Electron。
 
 **项目约定**（见 `CLAUDE.md`）：
 - 代码注释用英文
@@ -725,7 +725,7 @@ const HivemindProviderBadge: React.FC<HivemindProviderBadgeProps> = ({ provider,
 ```typescript
 /**
  * @license
- * Copyright 2026 AionUi (aionui.com)
+ * Copyright 2026 HiveMindUI (hivemindui.com)
  * SPDX-License-Identifier: Apache-2.0
  */
 
@@ -819,7 +819,7 @@ export function useHivemindStatus(gatewayUrl = 'http://localhost:8765') {
 // 当前完整文件替换为:
 /**
  * @license
- * Copyright 2026 AionUi (aionui.com)
+ * Copyright 2026 HiveMindUI (hivemindui.com)
  * SPDX-License-Identifier: Apache-2.0
  */
 

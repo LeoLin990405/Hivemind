@@ -15,7 +15,7 @@ Unify 10 AI providers behind a single gateway with intelligent routing, shared m
 
 **[English](README.md) | [简体中文](README.zh-CN.md)**
 
-[Quick Start](#quick-start) &bull; [Architecture](#architecture) &bull; [Desktop Client](#desktop-client-aionui) &bull; [API Reference](#api-reference) &bull; [CLI Tools](#cli-tools) &bull; [Roadmap](#roadmap)
+[Quick Start](#quick-start) &bull; [Architecture](#architecture) &bull; [Desktop Client](#desktop-client-hivemindui) &bull; [API Reference](#api-reference) &bull; [CLI Tools](#cli-tools) &bull; [Roadmap](#roadmap)
 
 </div>
 
@@ -28,7 +28,7 @@ Hivemind turns Claude Code into a **multi-AI orchestration hub**. Instead of tal
 ```
 You ──▶ Claude Code ────────────────────────┐
                                              ├──▶ Hivemind Gateway ──┬──▶ Kimi      (Chinese, fast)
-You ──▶ AionUI (Desktop Client) ────────────┘                        ├──▶ Qwen      (code, fast)
+You ──▶ HiveMindUI (Desktop Client) ────────────┘                        ├──▶ Qwen      (code, fast)
                                                                       ├──▶ DeepSeek  (reasoning)
                                                                       ├──▶ Codex     (code review)
                                                                       ├──▶ Gemini    (frontend, multimodal)
@@ -181,9 +181,9 @@ Dual-architecture memory inspired by cognitive science:
 
 ---
 
-## Desktop Client (AionUI)
+## Desktop Client (HiveMindUI)
 
-Hivemind integrates [AionUI](https://github.com/Aion-Community/AionUI) as a desktop GUI — built with Electron + React 19, with native Hivemind integration.
+Hivemind integrates [HiveMindUI](https://github.com/Aion-Community/HiveMindUI) as a desktop GUI — built with Electron + React 19, with native Hivemind integration.
 
 ### Highlights
 
@@ -196,18 +196,18 @@ Hivemind integrates [AionUI](https://github.com/Aion-Community/AionUI) as a desk
   - **💾 Cache Manager** — Cache statistics with one-click clearing
   - **📋 Task Queue** — Task list with status filtering and error tracking
   - **⚙️ Rate Limiting** — Per-provider rate limit status and reset controls (in Settings)
-- **Full AionUI capabilities** — Multi-agent conversations, image generation, file management
+- **Full HiveMindUI capabilities** — Multi-agent conversations, image generation, file management
 
 ### Quick Start
 
 ```bash
-cd AionUi
+cd HiveMindUI
 npm install
 npm start          # Dev mode with hot reload
 npm run build      # Production build
 ```
 
-AionUI defaults to `http://localhost:8765`. Ensure Gateway is running first:
+HiveMindUI defaults to `http://localhost:8765`. Ensure Gateway is running first:
 
 ```bash
 python3 -m lib.gateway.gateway_server --port 8765
@@ -237,13 +237,13 @@ Open **Monitor** from the left sidebar to access the integrated monitoring dashb
    - Reset buttons for individual providers
    - Live status updates
 
-> **Note**: The original standalone WebUI (`lib/web_server.py` on port 8080) has been **deprecated** and replaced by AionUI's integrated monitoring. See `deprecated/README.md` for details.
+> **Note**: The original standalone WebUI (`lib/web_server.py` on port 8080) has been **deprecated** and replaced by HiveMindUI's integrated monitoring. See `deprecated/README.md` for details.
 
 ### Architecture
 
 ```
 ┌──────────────────────────────────────┐
-│         AionUI (Electron)            │
+│         HiveMindUI (Electron)            │
 │                                      │
 │  ┌────────────┐  ┌───────────────┐   │
 │  │ React UI   │  │ Hivemind      │   │
@@ -270,7 +270,7 @@ Open **Monitor** from the left sidebar to access the integrated monitoring dashb
 | **Core Agent** | | |
 | Types | `src/agent/hivemind/types.ts` | Provider options, speed tiers, config types |
 | Connection | `src/agent/hivemind/HivemindConnection.ts` | Gateway HTTP + SSE client |
-| Adapter | `src/agent/hivemind/HivemindAdapter.ts` | Gateway response → AionUI message format |
+| Adapter | `src/agent/hivemind/HivemindAdapter.ts` | Gateway response → HiveMindUI message format |
 | Agent | `src/agent/hivemind/index.ts` | HivemindAgent main class |
 | Manager | `src/process/task/HivemindAgentManager.ts` | Conversation lifecycle management |
 | **Chat UI** | | |
@@ -289,7 +289,7 @@ Open **Monitor** from the left sidebar to access the integrated monitoring dashb
 | Rate Limit | `src/renderer/.../RateLimitControl.tsx` | Rate limit controls (113 lines) |
 | Worker | `src/worker/hivemind.ts` | Worker stub |
 
-> **License**: AionUI is licensed under Apache-2.0. See `AionUi/LICENSE` for details.
+> **License**: HiveMindUI is licensed under Apache-2.0. See `HiveMindUI/LICENSE` for details.
 
 
 ## Quick Start
@@ -473,6 +473,8 @@ ccb-cli codex o4-mini "..."    # Codex with o4-mini (fast)
 ccb-cli codex gpt-4o "..."     # Codex with GPT-4o (multimodal)
 ccb-cli gemini 3f "..."        # Gemini 3 Flash
 ccb-cli gemini 3p "..."        # Gemini 3 Pro
+ccb-cli gemini 2.5f "..."      # Gemini 2.5 Flash
+ccb-cli gemini 2f "..."        # Gemini 2.0 Flash
 ccb-cli deepseek reasoner "."  # DeepSeek R1
 ccb-cli kimi thinking "..."    # Kimi with chain-of-thought
 ```
@@ -483,7 +485,7 @@ ccb-cli kimi thinking "..."    # Kimi with chain-of-thought
 
 ```
 Hivemind/
-├── AionUi/                    # Desktop client (Electron + React 19)
+├── HiveMindUI/                    # Desktop client (Electron + React 19)
 │   ├── src/
 │   │   ├── agent/hivemind/    # Hivemind Gateway client
 │   │   ├── renderer/          # React UI with Hivemind components
@@ -510,8 +512,8 @@ Hivemind/
 │   └── skills/                 # Skills discovery + Tool index
 ├── tests/                      # 195 test cases
 ├── docs/                       # Architecture & roadmap docs
-│   ├── MIGRATION_TO_AIONUI.md  # WebUI migration guide
-│   ├── AIONUI_VS_WEBUI_COMPARISON.md  # Feature comparison
+│   ├── MIGRATION_TO_HIVEMINDUI.md  # WebUI migration guide
+│   ├── HIVEMINDUI_VS_WEBUI_COMPARISON.md  # Feature comparison
 │   └── WEBUI_REPLACEMENT_STATUS.md    # Replacement verification
 ├── deprecated/                 # Deprecated original WebUI
 │   ├── web_server.py.deprecated
@@ -530,7 +532,7 @@ Hivemind/
 | v0.26 | ✅ Done | Knowledge Hub, 10 providers, Web UI |
 | v1.0 | ✅ Done | Modular refactoring, 19 route modules, BaseCommReader |
 | v1.1 | ✅ Done | Shared knowledge, tool router, unified query |
-| **v1.2** | **✅ Current** | **AionUI desktop client, Hivemind agent integration, monitoring dashboard (replaces WebUI), 6 monitor API endpoints, DB schema v13** |
+| **v1.2** | **✅ Current** | **HiveMindUI desktop client, Hivemind agent integration, monitoring dashboard (replaces WebUI), 6 monitor API endpoints, DB schema v13** |
 | v1.3 | Planned | Vector semantic search, jieba segmentation |
 
 ---
@@ -554,7 +556,7 @@ This project was built with contributions from multiple AI systems:
 | AI | Role | Contributions |
 |----|------|---------------|
 | **Claude** | Architect & Orchestrator | Core design, memory system, testing, documentation |
-| **Codex** | Code Engineer | v1.0 refactoring, v1.1 implementation, v1.2 AionUI integration |
+| **Codex** | Code Engineer | v1.0 refactoring, v1.1 implementation, v1.2 HiveMindUI integration |
 | **Kimi** | Chinese Specialist | Chinese NLP, Ollama integration, i18n |
 | **DeepSeek** | Reasoning Engine | Algorithm design, scoring formulas |
 | **Gemini** | Frontend & Analysis | Web UI, multimodal analysis |

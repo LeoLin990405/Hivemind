@@ -15,7 +15,7 @@
 
 **[English](README.md) | [简体中文](README.zh-CN.md)**
 
-[快速开始](#快速开始) &bull; [系统架构](#系统架构) &bull; [桌面客户端](#桌面客户端-aionui) &bull; [API 参考](#api-参考) &bull; [CLI 工具](#cli-工具) &bull; [开发路线](#开发路线)
+[快速开始](#快速开始) &bull; [系统架构](#系统架构) &bull; [桌面客户端](#桌面客户端-hivemindui) &bull; [API 参考](#api-参考) &bull; [CLI 工具](#cli-工具) &bull; [开发路线](#开发路线)
 
 </div>
 
@@ -28,7 +28,7 @@ Hivemind 将 Claude Code 打造为**多 AI 编排中枢**。不再一次只与�
 ```
 你 ──▶ Claude Code ─────────────────────────┐
                                             ├──▶ Hivemind Gateway ──┬──▶ Kimi      (中文, 快速)
-你 ──▶ AionUI (桌面端) ──────────────────────┘                        ├──▶ Qwen      (代码, 快速)
+你 ──▶ HiveMindUI (桌面端) ──────────────────────┘                        ├──▶ Qwen      (代码, 快速)
                                                                        ├──▶ DeepSeek  (推理)
                                                                        ├──▶ Codex     (代码审查)
                                                                        ├──▶ Gemini    (前端, 多模态)
@@ -181,9 +181,9 @@ curl "localhost:8765/api/tools/search?q=github+pr"  # → MCP create_pull_reques
 
 ---
 
-## 桌面客户端 (AionUI)
+## 桌面客户端 (HiveMindUI)
 
-Hivemind 集成了 [AionUI](https://github.com/Aion-Community/AionUI) 作为桌面 GUI — 基于 Electron + React 19，并原生支持 Hivemind 集成。
+Hivemind 集成了 [HiveMindUI](https://github.com/Aion-Community/HiveMindUI) 作为桌面 GUI — 基于 Electron + React 19，并原生支持 Hivemind 集成。
 
 ### 亮点
 
@@ -196,18 +196,18 @@ Hivemind 集成了 [AionUI](https://github.com/Aion-Community/AionUI) 作为桌�
   - **💾 Cache Manager** — 缓存统计 + 一键清除
   - **📋 Task Queue** — 任务列表 + 状态筛选 + 错误追踪
   - **⚙️ Rate Limiting** — 按 Provider 的速率限制状态和重置控制（在设置中）
-- **完整 AionUI 功能** — 多 Agent 对话、图片生成、文件管理等
+- **完整 HiveMindUI 功能** — 多 Agent 对话、图片生成、文件管理等
 
 ### 快速启动
 
 ```bash
-cd AionUi
+cd HiveMindUI
 npm install
 npm start          # 开发模式（热重载）
 npm run build      # 生产构建
 ```
 
-AionUI 默认连接 `http://localhost:8765`。请先确保 Gateway 已启动：
+HiveMindUI 默认连接 `http://localhost:8765`。请先确保 Gateway 已启动：
 
 ```bash
 python3 -m lib.gateway.gateway_server --port 8765
@@ -237,13 +237,13 @@ python3 -m lib.gateway.gateway_server --port 8765
    - 单个 Provider 的重置按钮
    - 实时状态更新
 
-> **注意**: 原始独立 WebUI（`lib/web_server.py`，端口 8080）已**废弃**，由 AionUI 的集成监控替代。详见 `deprecated/README.md`。
+> **注意**: 原始独立 WebUI（`lib/web_server.py`，端口 8080）已**废弃**，由 HiveMindUI 的集成监控替代。详见 `deprecated/README.md`。
 
 ### 架构
 
 ```
 ┌──────────────────────────────────────┐
-│         AionUI (Electron)            │
+│         HiveMindUI (Electron)            │
 │                                      │
 │  ┌────────────┐  ┌───────────────┐   │
 │  │ React UI   │  │ Hivemind      │   │
@@ -270,7 +270,7 @@ python3 -m lib.gateway.gateway_server --port 8765
 | **核心 Agent** | | |
 | 类型定义 | `src/agent/hivemind/types.ts` | Provider 选项、速度分级、配置类型 |
 | 连接层 | `src/agent/hivemind/HivemindConnection.ts` | Gateway HTTP + SSE 客户端 |
-| 适配器 | `src/agent/hivemind/HivemindAdapter.ts` | Gateway 响应 → AionUI 消息格式转换 |
+| 适配器 | `src/agent/hivemind/HivemindAdapter.ts` | Gateway 响应 → HiveMindUI 消息格式转换 |
 | Agent | `src/agent/hivemind/index.ts` | HivemindAgent 主类 |
 | 管理器 | `src/process/task/HivemindAgentManager.ts` | 会话生命周期管理 |
 | **聊天 UI** | | |
@@ -289,7 +289,7 @@ python3 -m lib.gateway.gateway_server --port 8765
 | Rate Limit | `src/renderer/.../RateLimitControl.tsx` | 速率限制控制（113 行）|
 | Worker | `src/worker/hivemind.ts` | Worker 存根 |
 
-> **许可证**: AionUI 采用 Apache-2.0 许可证。详见 `AionUi/LICENSE`。
+> **许可证**: HiveMindUI 采用 Apache-2.0 许可证。详见 `HiveMindUI/LICENSE`。
 
 
 ## 快速开始
@@ -483,7 +483,7 @@ ccb-cli kimi thinking "..."    # Kimi 思考链模式
 
 ```
 Hivemind/
-├── AionUi/                    # 桌面客户端 (Electron + React 19)
+├── HiveMindUI/                    # 桌面客户端 (Electron + React 19)
 │   ├── src/
 │   │   ├── agent/hivemind/    # Hivemind Gateway 客户端
 │   │   ├── renderer/          # React UI（含 Hivemind 组件）
@@ -510,8 +510,8 @@ Hivemind/
 │   └── skills/                 # 技能发现 + 工具索引
 ├── tests/                      # 195 个测试用例
 ├── docs/                       # 架构与路线图文档
-│   ├── MIGRATION_TO_AIONUI.md  # WebUI 迁移指南
-│   ├── AIONUI_VS_WEBUI_COMPARISON.md  # 功能对比
+│   ├── MIGRATION_TO_HIVEMINDUI.md  # WebUI 迁移指南
+│   ├── HIVEMINDUI_VS_WEBUI_COMPARISON.md  # 功能对比
 │   └── WEBUI_REPLACEMENT_STATUS.md    # 替换验证状态
 ├── deprecated/                 # 已废弃的原始 WebUI
 │   ├── web_server.py.deprecated
@@ -530,7 +530,7 @@ Hivemind/
 | v0.26 | ✅ 完成 | 知识中枢、10 个 Provider、Web UI |
 | v1.0 | ✅ 完成 | 模块化重构、19 个路由模块、BaseCommReader |
 | v1.1 | ✅ 完成 | 共享知识、工具路由器、统一查询 |
-| **v1.2** | **✅ 当前** | **AionUI 桌面客户端、Hivemind Agent 集成、监控仪表盘（取代 WebUI）、6 个监控 API 端点、数据库 Schema v13** |
+| **v1.2** | **✅ 当前** | **HiveMindUI 桌面客户端、Hivemind Agent 集成、监控仪表盘（取代 WebUI）、6 个监控 API 端点、数据库 Schema v13** |
 | v1.3 | 计划中 | 向量语义搜索、jieba 分词 |
 
 ---
@@ -554,7 +554,7 @@ Hivemind 由人类与 AI 协作构建，欢迎贡献。
 | AI | 角色 | 贡献 |
 |----|------|------|
 | **Claude** | 架构师与编排者 | 核心设计、记忆系统、测试、文档 |
-| **Codex** | 代码工程师 | v1.0 重构、v1.1 实现、v1.2 AionUI 集成 |
+| **Codex** | 代码工程师 | v1.0 重构、v1.1 实现、v1.2 HiveMindUI 集成 |
 | **Kimi** | 中文专家 | 中文 NLP、Ollama 集成、国际化 |
 | **DeepSeek** | 推理引擎 | 算法设计、评分公式 |
 | **Gemini** | 前端与分析 | Web UI、多模态分析 |

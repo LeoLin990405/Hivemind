@@ -2,7 +2,7 @@
 
 **日期**: 2026-02-10
 **执行者**: Codex
-**项目根目录**: `/Users/leo/Desktop/AionUi`
+**项目根目录**: `/Users/leo/Desktop/HiveMindUI`
 **前置**: Plan B 全部 Phase 已落地但未提交，需先修复已知问题再推进 Plan C
 
 ---

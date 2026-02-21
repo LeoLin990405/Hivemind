@@ -1,0 +1,29 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "module": "commonjs",
+    "outDir": "dist/server",
+    "rootDir": "src",
+    "declaration": false,
+    "sourceMap": true
+  },
+  "include": [
+    "src/server.ts",
+    "src/adapter/standalone.ts",
+    "src/process/**/*",
+    "src/webserver/**/*",
+    "src/database/**/*",
+    "src/common/**/*",
+    "src/agent/**/*",
+    "src/channels/**/*",
+    "src/types/**/*"
+  ],
+  "exclude": [
+    "src/renderer/**/*",
+    "src/index.ts",
+    "src/adapter/main.ts",
+    "src/adapter/browser.ts",
+    "src/preload.ts",
+    "node_modules"
+  ]
+}

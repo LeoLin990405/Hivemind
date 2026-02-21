@@ -1,6 +1,6 @@
 # Codex 任务：蜂巢 UI 全面更新计划
 
-**工作目录**: `/Users/leo/.local/share/codex-dual/AionUi`
+**工作目录**: `/Users/leo/.local/share/codex-dual/HiveMindUI`
 **执行时间**: 2026-02-12
 **优先级**: P0 (高优先级)
 
@@ -18,7 +18,7 @@
 
 ### 0.1 环境检查
 ```bash
-cd /Users/leo/.local/share/codex-dual/AionUi
+cd /Users/leo/.local/share/codex-dual/HiveMindUI
 
 # 确保应用未运行
 pkill -f "Electron" 2>/dev/null || echo "✓ 无运行中的 Electron 进程"

@@ -57,7 +57,7 @@ CFBundleVersion: 1.8.5
    - ✅ tr-TR.json (土耳其语)
 
 4. **应用名称更新**
-   - ✅ 所有语言中 "AionUi" → "Hivemind/蜂巢"
+   - ✅ 所有语言中 "HiveMindUI" → "Hivemind/蜂巢"
    - ✅ 页面标题: 蜂巢 - Hivemind
 
 ---
@@ -241,13 +241,13 @@ open -a 蜂巢
 ```
 交付物:
   ~/Downloads/Hivemind_1.8.5_arm64.dmg (主要安装包)
-  ~/Downloads/AionUi-1.8.5-mac-arm64-manual.dmg (旧版本，可删除)
+  ~/Downloads/HiveMindUI-1.8.5-mac-arm64-manual.dmg (旧版本，可删除)
 
 构建产物:
-  /Users/leo/.local/share/codex-dual/AionUi/out/蜂巢-darwin-arm64/蜂巢.app
+  /Users/leo/.local/share/codex-dual/HiveMindUI/out/蜂巢-darwin-arm64/蜂巢.app
 
 源代码:
-  /Users/leo/.local/share/codex-dual/AionUi/
+  /Users/leo/.local/share/codex-dual/HiveMindUI/
 
 文档:
   /Users/leo/.local/share/codex-dual/CODEX_TASKS.md (执行文档)

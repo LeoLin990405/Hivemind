@@ -10,6 +10,7 @@ import yaml
 from lib.common.logging import get_logger
 
 from .notebooklm_client import NotebookLMClient
+from .obsidian_cli_wrapper import ObsidianCLIWrapper
 from .source_manager import NotebookLMSourceManager, SourceRecord
 
 
@@ -87,6 +88,7 @@ class NotebookLMManager:
         vault_path: str = "~/Knowledge-Hub",
         max_sources_per_notebook: int = 50,
         nlm_client: Optional[Any] = None,
+        cli: Optional[ObsidianCLIWrapper] = None,
     ):
         del api_key  # reserved for future Enterprise API support
 
@@ -106,6 +108,7 @@ class NotebookLMManager:
         self._ensure_vault_structure()
 
         self.nlm = nlm_client or NotebookLMClient()
+        self.cli = cli or ObsidianCLIWrapper(vault=self.vault_path.name)
         self.source_manager = NotebookLMSourceManager(max_sources=self.max_sources)
         self.registry = self._load_registry()
 
@@ -499,6 +502,25 @@ class NotebookLMManager:
             f"path={file_path} | reason={reason}\n"
         )
 
+        try:
+            rel_path = self.source_tracker_path.relative_to(self.vault_path)
+            # Check if file exists first to ensure header
+            if not self.source_tracker_path.exists():
+                header = (
+                    "# NotebookLM Source Tracker\n\n"
+                    "This file records source add/rotate events.\n\n"
+                    "## History\n\n"
+                )
+                success = self.cli.create_note(title=rel_path.stem, content=header + line, folder=str(rel_path.parent), overwrite=True)
+            else:
+                success = self.cli.create_note(title=rel_path.stem, content=line, folder=str(rel_path.parent), append=True)
+            
+            if success:
+                return
+        except Exception as exc:
+            logger.debug("Failed to track source via CLI: %s", exc)
+
+        # Fallback to direct file I/O
         if not self.source_tracker_path.exists():
             self.source_tracker_path.write_text(
                 "# NotebookLM Source Tracker\n\n"
@@ -619,11 +641,26 @@ class NotebookLMManager:
         except KeyError:
             return
 
+        # Use CLI wrapper to append to the sync log within the meta file
         meta_file = self.active_root / meta["folder"] / "_notebook_meta.md"
+        line = f"- {datetime.now().isoformat(timespec='seconds')} - {message}\n"
+        
+        try:
+            rel_path = meta_file.relative_to(self.vault_path)
+            success = self.cli.create_note(
+                title=rel_path.stem,
+                content=line,
+                folder=str(rel_path.parent),
+                append=True
+            )
+            if success:
+                return
+        except Exception as exc:
+            logger.debug("Failed to append sync log via CLI: %s", exc)
+
+        # Fallback to direct file I/O
         if not meta_file.exists():
             return
-
-        line = f"- {datetime.now().isoformat(timespec='seconds')} - {message}\n"
         with meta_file.open("a", encoding="utf-8") as handle:
             handle.write(line)
 
@@ -669,9 +706,29 @@ class NotebookLMManager:
         return parsed if isinstance(parsed, dict) else {}
 
     def _write_markdown_note(self, path: Path, frontmatter: Dict[str, Any], body: str) -> None:
-        path.parent.mkdir(parents=True, exist_ok=True)
+        # Use CLI wrapper for creating notes to ensure proper integration with Obsidian app
+        # Fall back to direct file write if CLI fails or is unavailable
         payload = self._render_frontmatter(frontmatter)
-        path.write_text(f"{payload}\n\n{body.strip()}\n", encoding="utf-8")
+        full_content = f"{payload}\n\n{body.strip()}\n"
+
+        try:
+            # Attempt to use obsidian-cli
+            rel_path = path.relative_to(self.vault_path)
+            folder = str(rel_path.parent) if rel_path.parent != Path(".") else None
+            success = self.cli.create_note(
+                title=rel_path.stem,
+                content=full_content,
+                folder=folder,
+                overwrite=True
+            )
+            if success:
+                return
+        except Exception as exc:
+            logger.debug("Failed to create note via CLI, falling back to file I/O: %s", exc)
+
+        # Fallback to direct file I/O
+        path.parent.mkdir(parents=True, exist_ok=True)
+        path.write_text(full_content, encoding="utf-8")
 
     def _extract_id(self, payload: Any) -> str:
         if payload is None:
@@ -679,6 +736,14 @@ class NotebookLMManager:
         if isinstance(payload, str):
             return payload
         if isinstance(payload, dict):
+            # Check nested keys for notebooklm-py v0.3.2+
+            if "notebook" in payload and isinstance(payload["notebook"], dict):
+                val = payload["notebook"].get("id")
+                if val: return str(val)
+            if "source" in payload and isinstance(payload["source"], dict):
+                val = payload["source"].get("id")
+                if val: return str(val)
+                
             return str(payload.get("id") or payload.get("notebook_id") or payload.get("source_id") or "")
 
         for attr in ["id", "notebook_id", "source_id"]:

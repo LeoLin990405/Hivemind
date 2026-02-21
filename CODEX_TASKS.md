@@ -1,6 +1,6 @@
 # Codex 执行任务：蜂巢应用打包与全中文界面
 
-**工作目录**: `/Users/leo/.local/share/codex-dual/AionUi`
+**工作目录**: `/Users/leo/.local/share/codex-dual/HiveMindUI`
 **执行时间**: 2026-02-11
 **目标**: 完成两个任务 - 打包 macOS 应用 + UI 全中文化
 
@@ -162,7 +162,7 @@ const template = [
 
 **启动应用测试**:
 ```bash
-cd /Users/leo/.local/share/codex-dual/AionUi
+cd /Users/leo/.local/share/codex-dual/HiveMindUI
 npm start
 ```
 
@@ -182,7 +182,7 @@ npm start
 ### 步骤 2.6: 提交全中文改动
 
 ```bash
-cd /Users/leo/.local/share/codex-dual/AionUi
+cd /Users/leo/.local/share/codex-dual/HiveMindUI
 
 # 查看修改
 git status
@@ -210,7 +210,7 @@ git log --oneline -1
 ### 步骤 1.1: 环境准备
 
 ```bash
-cd /Users/leo/.local/share/codex-dual/AionUi
+cd /Users/leo/.local/share/codex-dual/HiveMindUI
 
 # 设置镜像源
 export ELECTRON_MIRROR=https://npmmirror.com/mirrors/electron/
@@ -343,11 +343,11 @@ echo "✓ 安装包已复制到 ~/Downloads/"
 cd /Users/leo/.local/share/codex-dual
 
 # 检查是否有构建脚本修改
-git diff AionUi/scripts/build-with-builder.js
+git diff HiveMindUI/scripts/build-with-builder.js
 
 # 如果有修改则提交
-if ! git diff --quiet AionUi/scripts/build-with-builder.js; then
-  git add AionUi/scripts/build-with-builder.js
+if ! git diff --quiet HiveMindUI/scripts/build-with-builder.js; then
+  git add HiveMindUI/scripts/build-with-builder.js
   git commit -m "fix(build): 修复构建脚本的 electron-forge 调用
 
 使用 npm run package 替代 npm exec electron-forge
@@ -406,7 +406,7 @@ ENOSPC: no space left on device
 **解决**:
 ```bash
 # 检查空间
-df -h /Users/leo/.local/share/codex-dual/AionUi
+df -h /Users/leo/.local/share/codex-dual/HiveMindUI
 
 # 清理构建产物
 rm -rf out/ .webpack/ dist/ node_modules/.cache/
@@ -467,7 +467,7 @@ DMG 文件: ~/Downloads/Hivemind_1.8.5_arm64.dmg
 
 **推荐执行顺序**:
 ```bash
-cd /Users/leo/.local/share/codex-dual/AionUi
+cd /Users/leo/.local/share/codex-dual/HiveMindUI
 
 # 1. 全中文化
 执行任务 2 的步骤 2.1 → 2.6
